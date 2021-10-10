@@ -1,0 +1,391 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\v8-v142-x64.9.3.345.3\build\native\v8-v142-x64.props" Condition="Exists('..\packages\v8-v142-x64.9.3.345.3\build\native\v8-v142-x64.props')" />
+  <Import Project="..\packages\v8.redist-v142-x64.9.3.345.3\build\native\v8.redist-v142-x64.props" Condition="Exists('..\packages\v8.redist-v142-x64.9.3.345.3\build\native\v8.redist-v142-x64.props')" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{1d8dd832-bbd4-4f09-a6fd-9b90dc01aeda}</ProjectGuid>
+    <RootNamespace>src</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(ProjectDir)lib\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\boost;$(ProjectDir)v8pp;C:\VulkanSDK\1.2.170.0\Include\vulkan;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>C:\Users\ignat\source\repos\Game\Game\lib\debug;C:\boost\stage\lib;C:\Program Files\Python39\libs;C:\Users\ignat\source\repos\Game\Game\lua\LuaBridge-2.6\Source\LuaBridge;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\ignat\source\repos\Game\Game\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\v8\include;C:\Users\ignat\v8;C:\boost;C:\Program Files\Python39\include;C:\Users\ignat\source\repos\Game\Game\lua\LuaBridge-2.6\Source;C:\Users\ignat\source\repos\Game\Game\lua\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>C:\Users\ignat\source\repos\Game\Game\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\ignat\source\repos\Game\Game\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\v8\include;C:\Users\ignat\v8;C:\Program Files\Python39\include;C:\boost;C:\Users\ignat\source\repos\Game\Game\lua\LuaBridge-2.6\Source;C:\Users\ignat\source\repos\Game\Game\lua\include;C:\Users\ignat\source\repos\Game\Game\SDL2-2.0.16\include;C:\ForMyProject\libraries\assimp-5.0.1\include;C:\Users\ignat\source\repos\Game\Game\v8pp;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>C:\Users\ignat\source\repos\Game\Game\lib\Release;C:\Program Files\Python39\libs;C:\boost\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\ignat\source\repos\Game\Game\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\v8\include;C:\Users\ignat\v8;C:\Program Files\Python39\include;C:\boost;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <EnableModules>true</EnableModules>
+      <TranslateIncludes>false</TranslateIncludes>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vulkan-1.lib;BulletDynamics_Debug.lib;BulletCollision_Debug.lib;LinearMath_Debug.lib;tbb_debug.lib;lua52.lib;SDL2.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <AdditionalOptions>/errorlimit:0 %(AdditionalOptions)</AdditionalOptions>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\source\repos\Game\Game\Include\Physics;C:\Users\ignat\source\repos\Game\Game\Include\FMOD;C:\Users\ignat\source\repos\Game\Game\Include\oneapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <EnableModules>true</EnableModules>
+      <TranslateIncludes>false</TranslateIncludes>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;BulletDynamics_Debug.lib;BulletCollision_Debug.lib;LinearMath_Debug.lib;tbb_debug.lib;lua52.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <AdditionalOptions>/errorlimit:0 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalIncludeDirectories>C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\source\repos\Game\Game\TBB\include\oneapi;C:\Users\ignat\source\repos\Game\Game\Include\FMOD;C:\Users\ignat\source\repos\Game\Game\Include\Physics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;tbb12.lib;lua52.lib;SDL2.lib;assimp-vc142-mt.lib;v8.dll.lib;v8_libbase.dll.lib;v8_libplatform.dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalIncludeDirectories>C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\source\repos\Game\Game\TBB\include\oneapi;C:\Users\ignat\source\repos\Game\Game\Include\FMOD;C:\Users\ignat\source\repos\Game\Game\Include\Physics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;tbb12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AudioSystem.cpp" />
+    <ClCompile Include="BaseRenderWindow.cpp" />
+    <ClCompile Include="BaseVulkanRender.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CommandPool.cpp" />
+    <ClCompile Include="DebugUI.cpp" />
+    <ClCompile Include="DescriptorPool.cpp" />
+    <ClCompile Include="DescriptorSetLayout.cpp" />
+    <ClCompile Include="FileSystem.cpp" />
+    <ClCompile Include="GameLogic.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObjectFactory.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="ImageCreator.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="JScript.cpp" />
+    <ClCompile Include="JScriptEngine.cpp" />
+    <ClCompile Include="JSWrappers.cpp" />
+    <ClCompile Include="LoadExecuter.cpp" />
+    <ClCompile Include="LuaEngine.cpp" />
+    <ClCompile Include="LuaScript.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Mesh1.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Network.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Pipeline.cpp" />
+    <ClCompile Include="PythonEngine.cpp" />
+    <ClCompile Include="PythonScript.cpp" />
+    <ClCompile Include="Render.cpp" />
+    <ClCompile Include="RenderObject.cpp" />
+    <ClCompile Include="RenderObjectCreator.cpp" />
+    <ClCompile Include="RenderWindow.cpp" />
+    <ClCompile Include="RigidBoby.cpp" />
+    <ClCompile Include="ScriptEngine.cpp" />
+    <ClCompile Include="ScriptManager.cpp" />
+    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TransformFactory.cpp" />
+    <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="VkBuffer.cpp" />
+    <ClCompile Include="VulkanRender.cpp" />
+    <ClCompile Include="WorkSpace.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AbstractComponent.hpp" />
+    <ClInclude Include="AudioSystem.hpp" />
+    <ClInclude Include="BaseRenderWindow.h" />
+    <ClInclude Include="BaseScript.hpp" />
+    <ClInclude Include="BaseScriptEngine.hpp" />
+    <ClInclude Include="BaseVulkanRender.hpp" />
+    <ClInclude Include="CommandBuffer.hpp" />
+    <ClInclude Include="CommandPool.hpp" />
+    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="DebugUI.h" />
+    <ClInclude Include="DescriptorPool.hpp" />
+    <ClInclude Include="DescriptorSetLayouts.hpp" />
+    <ClInclude Include="FileSystem.hpp" />
+    <ClInclude Include="GameLogic.h" />
+    <ClInclude Include="GameObject.hpp" />
+    <ClInclude Include="GameObjectFactory.hpp" />
+    <ClInclude Include="ICreatable.hpp" />
+    <ClInclude Include="Image.hpp" />
+    <ClInclude Include="ImageCreator.hpp" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="ImGui\imgui-1.83\imgui_internal.h" />
+    <ClInclude Include="ImGui\imgui-1.83\imstb_rectpack.h" />
+    <ClInclude Include="ImGui\imgui-1.83\imstb_textedit.h" />
+    <ClInclude Include="ImGui\imgui-1.83\imstb_truetype.h" />
+    <ClInclude Include="imgui_impl_glfw.h" />
+    <ClInclude Include="imgui_impl_sdl.h" />
+    <ClInclude Include="Input.hpp" />
+    <ClInclude Include="IScript.hpp" />
+    <ClInclude Include="IScriptObject.hpp" />
+    <ClInclude Include="JScript.hpp" />
+    <ClInclude Include="JSWrappers.hpp" />
+    <ClInclude Include="LoadExecuter.hpp" />
+    <ClInclude Include="LuaEngine.hpp" />
+    <ClInclude Include="LuaScript.hpp" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh1.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Network.hpp" />
+    <ClInclude Include="Physics.hpp" />
+    <ClInclude Include="Pipeline.hpp" />
+    <ClInclude Include="PythonEngine.hpp" />
+    <ClInclude Include="PythonScript.hpp" />
+    <ClInclude Include="Render.h" />
+    <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="RenderObjectCreator.hpp" />
+    <ClInclude Include="RenderWindow.hpp" />
+    <ClInclude Include="RigidBoby.hpp" />
+    <ClInclude Include="JScriptEngine.hpp" />
+    <ClInclude Include="ScriptManager.h" />
+    <ClInclude Include="Time.hpp" />
+    <ClInclude Include="Transform.hpp" />
+    <ClInclude Include="TransformFactory.h" />
+    <ClInclude Include="Vector.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VkBuffer.hpp" />
+    <ClInclude Include="VulkanRender.h" />
+    <ClInclude Include="WorkSpace.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="scripts\BEbraCore.js" />
+    <None Include="scripts\hello_world.js" />
+    <None Include="shaders\shader.frag" />
+    <None Include="shaders\shader.vert" />
+    <None Include="TAA.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\v8.redist-v142-x64.9.3.345.3\build\native\v8.redist-v142-x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\v8.redist-v142-x64.9.3.345.3\build\native\v8.redist-v142-x64.props'))" />
+    <Error Condition="!Exists('..\packages\v8-v142-x64.9.3.345.3\build\native\v8-v142-x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\v8-v142-x64.9.3.345.3\build\native\v8-v142-x64.props'))" />
+  </Target>
+</Project>
