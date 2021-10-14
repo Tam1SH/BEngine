@@ -42,8 +42,6 @@ namespace BEbraEngine {
 
         glm::vec3 GetPosition() const noexcept;
 
-        ~Transform() {
-            std::cout << "TRANSFORM " << this << " DESTROYED" << std::endl;
-        };
+        ~Transform() { };
     };
 }

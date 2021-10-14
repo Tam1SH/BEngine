@@ -45,16 +45,16 @@ namespace BEbraEngine {
         Time::UpdateTime();
 
         if (Input::IsKeyPressed(SDL_SCANCODE_W)) {
-            camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
+        //    camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
         }
         if (Input::IsKeyPressed(SDL_SCANCODE_A)) {
-            camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());
+        //    camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());
         }
         if (Input::IsKeyPressed(SDL_SCANCODE_D)) {
-            camera->ProcessKeyboard(RIGHT, Time::GetDeltaTime());
+        //    camera->ProcessKeyboard(RIGHT, Time::GetDeltaTime());
         }
         if (Input::IsKeyPressed(SDL_SCANCODE_S)) {
-            camera->ProcessKeyboard(BACKWARD, Time::GetDeltaTime());
+        //    camera->ProcessKeyboard(BACKWARD, Time::GetDeltaTime());
         }
         camera->Update();
         scriptManager->RunScripts();

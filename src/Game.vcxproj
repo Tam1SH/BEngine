@@ -15,13 +15,13 @@
       <Configuration>Release</Configuration>
       <Platform>ARM</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -33,27 +33,21 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{1d8dd832-bbd4-4f09-a6fd-9b90dc01aeda}</ProjectGuid>
     <RootNamespace>src</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <TargetFramework>net5.0</TargetFramework>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
@@ -66,7 +60,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -82,13 +83,10 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="PropertySheets">
@@ -97,20 +95,25 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(ProjectDir)lib\debug;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\boost;$(ProjectDir)v8pp;C:\VulkanSDK\1.2.170.0\Include\vulkan;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(IncludePath)</IncludePath>
+    <PublicIncludeDirectories>
+    </PublicIncludeDirectories>
+    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(IncludePath)</IncludePath>
+    <PublicIncludeDirectories />
+    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <LinkIncremental>true</LinkIncremental>
@@ -119,43 +122,44 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>C:\Users\ignat\source\repos\Game\Game\lib\Release;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\ignat\source\repos\Game\Game\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\v8\include;C:\Users\ignat\v8;C:\Program Files\Python39\include;C:\boost;C:\Users\ignat\source\repos\Game\Game\lua\LuaBridge-2.6\Source;C:\Users\ignat\source\repos\Game\Game\lua\include;C:\Users\ignat\source\repos\Game\Game\SDL2-2.0.16\include;C:\ForMyProject\libraries\assimp-5.0.1\include;C:\Users\ignat\source\repos\Game\Game\v8pp;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>C:\Users\ignat\source\repos\Game\Game\lib\Release;C:\Program Files\Python39\libs;C:\boost\stage\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>C:\Users\ignat\source\repos\Game\Game\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\v8\include;C:\Users\ignat\v8;C:\Program Files\Python39\include;C:\boost;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;$(SolutionDir)Include\GLFW</AdditionalIncludeDirectories>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <EnableModules>true</EnableModules>
+      <TranslateIncludes>false</TranslateIncludes>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
@@ -163,7 +167,7 @@
       <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;$(SolutionDir)Include\GLFW</AdditionalIncludeDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
       <EnableModules>true</EnableModules>
@@ -173,9 +177,9 @@
       <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;BulletDynamics_Debug.lib;BulletCollision_Debug.lib;LinearMath_Debug.lib;tbb_debug.lib;lua52.lib;SDL2.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalOptions>/errorlimit:0 %(AdditionalOptions)</AdditionalOptions>
@@ -215,7 +219,6 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -223,7 +226,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>C:\Users\ignat\source\repos\Game\Game\Include\stb-master;C:\Users\ignat\source\repos\Game\Game\TBB\include\oneapi;C:\Users\ignat\source\repos\Game\Game\Include\FMOD;C:\Users\ignat\source\repos\Game\Game\Include\Physics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;$(SolutionDir)Include\GLFW</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
@@ -232,7 +235,32 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;tbb12.lib;lua52.lib;SDL2.lib;assimp-vc142-mt.lib;v8.dll.lib;v8_libbase.dll.lib;v8_libplatform.dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;tbb12.lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;$(SolutionDir)Include\GLFW</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;tbb12.lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -258,18 +286,21 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;tbb12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;BulletDynamics.lib;BulletCollision.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="BaseRenderWindow.cpp" />
+    <ClCompile Include="BaseRenderWindow_Mobile.cpp" />
+    <ClCompile Include="BaseRenderWindow_Desktop.cpp" />
     <ClCompile Include="BaseVulkanRender.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandPool.cpp" />
     <ClCompile Include="DebugUI.cpp" />
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="DescriptorSetLayout.cpp" />
+    <ClCompile Include="DirectRender.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -302,10 +333,10 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformFactory.cpp" />
-    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="VkBuffer.cpp" />
     <ClCompile Include="VulkanRender.cpp" />
+    <ClCompile Include="VulkanWindow.cpp" />
     <ClCompile Include="WorkSpace.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -318,6 +349,7 @@
     <ClInclude Include="CommandBuffer.hpp" />
     <ClInclude Include="CommandPool.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="platform.h" />
     <ClInclude Include="DebugUI.h" />
     <ClInclude Include="DescriptorPool.hpp" />
     <ClInclude Include="DescriptorSetLayouts.hpp" />
@@ -328,14 +360,6 @@
     <ClInclude Include="ICreatable.hpp" />
     <ClInclude Include="Image.hpp" />
     <ClInclude Include="ImageCreator.hpp" />
-    <ClInclude Include="imconfig.h" />
-    <ClInclude Include="imgui.h" />
-    <ClInclude Include="ImGui\imgui-1.83\imgui_internal.h" />
-    <ClInclude Include="ImGui\imgui-1.83\imstb_rectpack.h" />
-    <ClInclude Include="ImGui\imgui-1.83\imstb_textedit.h" />
-    <ClInclude Include="ImGui\imgui-1.83\imstb_truetype.h" />
-    <ClInclude Include="imgui_impl_glfw.h" />
-    <ClInclude Include="imgui_impl_sdl.h" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="IScript.hpp" />
     <ClInclude Include="IScriptObject.hpp" />
@@ -350,6 +374,7 @@
     <ClInclude Include="Network.hpp" />
     <ClInclude Include="Physics.hpp" />
     <ClInclude Include="Pipeline.hpp" />
+    <ClInclude Include="platform_window.hpp" />
     <ClInclude Include="PythonEngine.hpp" />
     <ClInclude Include="PythonScript.hpp" />
     <ClInclude Include="Render.h" />
@@ -362,10 +387,13 @@
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Transform.hpp" />
     <ClInclude Include="TransformFactory.h" />
-    <ClInclude Include="Vector.h" />
+    <ClInclude Include="Vector4.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VkBuffer.hpp" />
     <ClInclude Include="VulkanRender.h" />
+    <ClInclude Include="VulkanWindow.h" />
     <ClInclude Include="WorkSpace.h" />
   </ItemGroup>
   <ItemGroup>

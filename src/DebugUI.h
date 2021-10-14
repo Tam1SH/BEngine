@@ -1,11 +1,9 @@
 #pragma once
-#ifndef __ANDROID__
+#ifdef __ANDROID__
 #include <vulkan/vulkan.h>
 #include "RenderWindow.hpp"
 #include "BaseVulkanRender.hpp"
-//#include "imgui.h"
-//#include "imgui_impl_sdl.h"
-//#include "imgui_impl_vulkan.h
+#include "platform.h"
 #include "WorkSpace.h"
 namespace BEbraEngine {
     
@@ -23,21 +21,21 @@ namespace BEbraEngine {
         std::shared_ptr<WorkSpace> workspace;
 
     private:
-       // static void check_vk_result(VkResult err);
+        static void check_vk_result(VkResult err);
 
-    //    void _createPool();
+        void _createPool();
     public:
-   //     void UploadFonts();
+        void UploadFonts();
 
-    //    void Create(BaseVulkanRender* render, VulkanWindow* window);
+        void Create(BaseVulkanRender* render, VulkanWindow* window);
 
-    //    void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
+        void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
 
-    //    void TreeObjects(std::shared_ptr<AbstractComponent> component);
+        void TreeObjects(std::shared_ptr<AbstractComponent> component);
 
-    //    void Prepare();
+        void Prepare();
 
-    //    void Destroy();
+        void Destroy();
 
     };
 }

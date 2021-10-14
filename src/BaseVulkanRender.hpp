@@ -4,15 +4,14 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <string>
-
 #include <optional>
 #include <stdexcept>
-#include <set>
 #include <array>
 #include <glm/glm.hpp>
 #include <fstream>
-#include "VkBuffer.hpp"
 #include "Image.hpp"
+#include "VkBuffer.hpp"
+#include <set>
 #include <oneapi/tbb.h>
 #include "DescriptorSetLayouts.hpp"
 #include <SDL_vulkan.h>
@@ -23,14 +22,10 @@
 const uint32_t WIDTH = 1920;
 const uint32_t HEIGHT = 1080;
 
-#ifdef NDEBUG
-    const bool enableValidationLayers = false;
-    #else
-    #ifndef __ANDROID__
+#ifdef _DEBUG
     const bool enableValidationLayers = true;
-    #else
+#else 
     const bool enableValidationLayers = false;
-    #endif
 #endif
 
 
@@ -43,8 +38,6 @@ const std::vector<const char*> deviceExtensions = {
 };
 
 const int MAX_FRAMES_IN_FLIGHT = 3;
-
-
 
 const std::vector<Vertex> vertices = {
 
@@ -78,7 +71,6 @@ const std::vector<uint32_t> indices = {
     
 };
 namespace BEbraEngine {
-    class VulkanWindow;
 
     class __vulkanRender {
     private:
@@ -108,6 +100,8 @@ namespace BEbraEngine {
 
 
     };
+
+    class VulkanWindow;
     class BaseVulkanRender
     {
 
@@ -126,11 +120,6 @@ namespace BEbraEngine {
             std::vector<VkSurfaceFormatKHR> formats;
             std::vector<VkPresentModeKHR> presentModes;
         };
-
-        void run() {
-            initRender();
-            Init();
-        }
 
         BaseVulkanRender();
 
@@ -246,41 +235,13 @@ namespace BEbraEngine {
 
         void recreateSwapChain();
 
-        void createDepthResources() {
-            VkFormat depthFormat = findDepthFormat();
+        void createDepthResources();
 
-            createImage(swapChainExtent.width, swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
-            depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
-            //transitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-        }
+        VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
-        VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
-            for (VkFormat format : candidates) {
-                VkFormatProperties props;
-                vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
+        VkFormat findDepthFormat();
 
-                if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
-                    return format;
-                }
-                else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
-                    return format;
-                }
-            }
-
-            throw std::runtime_error("failed to find supported format!");
-        }
-
-        VkFormat findDepthFormat() {
-            return findSupportedFormat(
-                { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
-                VK_IMAGE_TILING_OPTIMAL,
-                VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
-            );
-        }
-
-        bool hasStencilComponent(VkFormat format) {
-            return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
-        }
+        bool hasStencilComponent(VkFormat format);
 
         void ResizeDescriptorPool(unsigned int count);
 
@@ -301,8 +262,6 @@ namespace BEbraEngine {
         void createTextureSampler(VkSampler& textureSampler);
 
         //static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
-
-        void mainLoop();
 
         VkDevice GetDevice();
 
@@ -377,9 +336,9 @@ namespace BEbraEngine {
 
         void createSyncObjects();
 
-        VkCommandBuffer beginSingleTimeCommands();
+     //   VkCommandBuffer beginSingleTimeCommands();
 
-        void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+      //  void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
         void createCmdBuffers();
 

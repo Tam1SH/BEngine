@@ -183,7 +183,7 @@
     <ClCompile Include="PythonScript.cpp">
       <Filter>Исходные файлы\Script\Python</Filter>
     </ClCompile>
-    <ClCompile Include="BaseRenderWindow.cpp">
+    <ClCompile Include="BaseRenderWindow_Mobile.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -198,7 +198,16 @@
     <ClCompile Include="Time.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Vector.cpp">
+    <ClCompile Include="VulkanWindow.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseRenderWindow_Desktop.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectRender.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseRenderWindow.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -223,27 +232,6 @@
     </ClInclude>
     <ClInclude Include="RenderObjectCreator.hpp">
       <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="imconfig.h">
-      <Filter>Файлы заголовков\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui.h">
-      <Filter>Файлы заголовков\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_glfw.h">
-      <Filter>Файлы заголовков\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui-1.83\imgui_internal.h">
-      <Filter>Файлы заголовков\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui-1.83\imstb_rectpack.h">
-      <Filter>Файлы заголовков\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui-1.83\imstb_textedit.h">
-      <Filter>Файлы заголовков\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui-1.83\imstb_truetype.h">
-      <Filter>Файлы заголовков\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Pipeline.hpp">
       <Filter>Файлы заголовков</Filter>
@@ -311,9 +299,6 @@
     <ClInclude Include="BaseRenderWindow.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_impl_sdl.h">
-      <Filter>Файлы заголовков\ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="DebugUI.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -374,7 +359,22 @@
     <ClInclude Include="GameLogic.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Vector.h">
+    <ClInclude Include="Vector4.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="platform.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanWindow.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="platform_window.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

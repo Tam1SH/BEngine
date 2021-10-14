@@ -54,7 +54,6 @@ namespace BEbraEngine {
 
     RigidBody::RigidBody()
     {
-        std::cout << "RIGIDBODY " << this << " CREATED" << std::endl;
         shape = new btSphereShape(btScalar(1.));
         linearFactor = btVector3(1, 1, 1);
         AngularFactor = btVector3(1, 1, 1);
@@ -84,6 +83,5 @@ namespace BEbraEngine {
     {
         physics->GetDynamicsWorld()->removeRigidBody(body);
         delete shape;
-        std::cout << "RIGIDBODY " << this << " DESTROYED" << std::endl;
     }
 }

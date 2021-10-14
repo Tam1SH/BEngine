@@ -28,13 +28,12 @@ Input::~Input() {
 }
 
 
-void Input::mouse_callback(SDL_Window* window, int xpos, int ypos)
+void Input::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     *inst->mouse_x = xpos;
     *inst->mouse_y = ypos;
 }
-
-void Input::scroll_callback(SDL_Window* window, int xoffset, int yoffset)
+void Input::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     *inst->scroll_x = xoffset;
     *inst->scroll_y = yoffset;
@@ -68,7 +67,13 @@ int Input::GetY()
 
 void Input::SetWindow(SDL_Window* window)
 {
+    SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
     Input::getInstance()->window = window;
+}
+void Input::SetWindow(GLFWwindow* window)
+{
+    Input::getInstance()->window1 = window;
+    glfwSetCursorPosCallback(window, mouse_callback);
 }
 
 Input* Input::getInstance()
@@ -80,7 +85,7 @@ Input* Input::getInstance()
 
 bool Input::IsKeyPressed(SDL_Scancode key)
 {
-    if (Input::state[key])
-        return true;
+   // if (Input::state[key])
+    //    return true;
     return false;
 }

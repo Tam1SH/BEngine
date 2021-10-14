@@ -1,7 +1,7 @@
-#ifndef __ANDROID__
+#ifdef __ANDROID__
 #include "DebugUI.h"
 namespace BEbraEngine {
-    /*
+    
     void DebugUI::check_vk_result(VkResult err)
 
     {
@@ -238,7 +238,7 @@ namespace BEbraEngine {
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext();
     }
-    */
+    
 }
 
 #endif

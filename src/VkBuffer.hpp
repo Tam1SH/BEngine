@@ -1,6 +1,5 @@
 #pragma once
 #include <vulkan/vulkan.h>
-#include <iostream>
 namespace BEbraEngine {
     struct Buffer {
 
@@ -10,8 +9,7 @@ namespace BEbraEngine {
 
         size_t size = 0;
 
-        Buffer() {
-        }
+        Buffer() { }
         Buffer(Buffer&& tmp) noexcept
             : self(tmp.self)
             , memory(tmp.memory)
@@ -20,16 +18,8 @@ namespace BEbraEngine {
             tmp.self = VK_NULL_HANDLE;
             tmp.memory = VK_NULL_HANDLE;
         }
-        Buffer& operator=(Buffer&& tmp) noexcept
-        {
-            Destroy();
-            size = tmp.size;
-            self = tmp.self;
-            memory = tmp.memory;
-            tmp.memory = VK_NULL_HANDLE;
-            tmp.self = VK_NULL_HANDLE;
-            return *this;
-        }
+        Buffer& operator=(Buffer&& tmp) noexcept;
+
         void Destroy();
 
         ~Buffer();

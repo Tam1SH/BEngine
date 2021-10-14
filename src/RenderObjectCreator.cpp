@@ -22,8 +22,8 @@ namespace BEbraEngine {
         render->_createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer.self, buffer.memory);
         render->copyBuffer1(stagingBuffer, buffer.self, bufferSize, cmdBuffer);
 
-        // vkDestroyBuffer(render->GetDevice(), stagingBuffer, nullptr);
-        // vkFreeMemory(render->GetDevice(), stagingBufferMemory, nullptr);
+        vkDestroyBuffer(render->GetDevice(), stagingBuffer, nullptr);
+        vkFreeMemory(render->GetDevice(), stagingBufferMemory, nullptr);
 
         return buffer;
     }
@@ -38,7 +38,7 @@ namespace BEbraEngine {
         VkDeviceMemory stagingBufferMemory;
         render->_createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-        thread_local void* _data;
+        void* _data;
         vkMapMemory(render->GetDevice(), stagingBufferMemory, 0, bufferSize, 0, &_data);
         memcpy(_data, data.data(), (size_t)bufferSize);
         vkUnmapMemory(render->GetDevice(), stagingBufferMemory);
