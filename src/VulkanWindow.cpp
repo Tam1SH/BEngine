@@ -22,7 +22,7 @@ namespace BEbraEngine {
 		render->createInstance();
 		Vulkan_CreateSurface(BaseVulkanRender::instance, &render->surface);
 		render->initRender();
-		render->Init();
+		//render->Init();
 	}
 	VulkanRender* VulkanWindow::GetRender()
 	{

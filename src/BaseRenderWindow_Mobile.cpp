@@ -29,6 +29,7 @@ namespace BEbraEngine {
 	void BaseWindow::update() {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
+			SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
 			/*
 			//    ImGui_ImplSDL2_ProcessEvent(&event);
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {

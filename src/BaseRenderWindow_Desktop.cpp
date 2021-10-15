@@ -11,14 +11,17 @@ namespace BEbraEngine {
 
 
 	};
+	
 	void BaseWindow::Vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface)
 	{
 		glfwCreateWindowSurface(instance, handle, NULL, surface);
 	}
+	
 	void BaseWindow::update() {
 		glfwPollEvents();
 		onUpdateFrame();
 	}
+
 	std::vector<const char*> BaseWindow::Vulkan_GetInstanceExtensions()
 	{
 		uint32_t count;

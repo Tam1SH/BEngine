@@ -1,6 +1,5 @@
 #include "Input.hpp"
 
-
 Input* Input::inst;
 
 int* Input::mouse_x;
@@ -16,7 +15,7 @@ int* Input::scroll_y;
 Input::Input()
 {
     mouse_x = new int();
-    mouse_y = new int();
+    mouse_y = new int(); 
     scroll_x = new int();
     scroll_y = new int();
 }
@@ -58,6 +57,7 @@ int Input::GetScrollY()
 int Input::GetX()
 {
     return *inst->mouse_x;
+    
 }
 
 int Input::GetY()

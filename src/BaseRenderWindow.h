@@ -32,23 +32,20 @@ namespace BEbraEngine {
 		virtual void Resize(const Vector2& newSize) = 0;
 		virtual void CreateWindow(const Vector2& size, const std::string& title) = 0;
 		virtual void CreateWindow(int w, int h, const std::string& title) = 0;
+		virtual void onResizeCallback() = 0;
+		virtual void onUpdateFrame() = 0;
+
 
 		void update();
-
 		Vector2 GetWindowSize() const noexcept;
 		void SetWindowSize(const Vector2& newSize) const noexcept;
 		int Width() const noexcept;
 		int Height() const noexcept;
 		void SetPosition(const Vector2& position) const noexcept;
 		Vector2 GetPosition() const noexcept;
-
 		void Vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface);
 		std::vector<const char*> Vulkan_GetInstanceExtensions();
-		virtual void onResizeCallback() = 0;
-		virtual void onUpdateFrame() = 0;
-
 		BaseWindow();
-
 		~BaseWindow();
 	};
 

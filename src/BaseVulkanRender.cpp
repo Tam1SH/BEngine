@@ -1660,15 +1660,23 @@ namespace BEbraEngine {
 
     VKAPI_ATTR VkBool32 VKAPI_CALL BaseVulkanRender::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
     {
-        //std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-        std::string str = pCallbackData->pMessage;
-        std::cout << str << std::endl;
-        /*
-        if (sp.size() == 3)
-            std::cout << sp[2];
-        std::cout << std::endl;
-        std::cout << std::endl;
-        */
+        if (messageSeverity & VK_DEBUG_REPORT_ERROR_BIT_EXT)
+        {
+            std::cout << "Validation Layer: Error: " << pCallbackData->pMessage << std::endl;
+        }
+        else if (messageSeverity & VK_DEBUG_REPORT_WARNING_BIT_EXT)
+        {
+            std::cout << "Validation Layer: Warning: " << pCallbackData->pMessage << std::endl;
+        }
+        else if (messageSeverity & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
+        {
+            std::cout << "Validation Layer: Performance warning: " << pCallbackData->pMessage << std::endl;
+        }
+        else
+        {
+            std::cout << "Validation Layer: Information: " << pCallbackData->pMessage << std::endl;
+        }
+
         return VK_FALSE;
     }
 

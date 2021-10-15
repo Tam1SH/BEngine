@@ -3,6 +3,7 @@
 #include "Input.hpp"
 #include "BaseVulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+
 namespace BEbraEngine {
     Camera* Camera::instance;
     BaseVulkanRender* Camera::render;

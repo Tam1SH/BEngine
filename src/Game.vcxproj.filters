@@ -19,9 +19,6 @@
     <Filter Include="Файлы заголовков\ImGui">
       <UniqueIdentifier>{cba1c011-0c14-48bf-a1e6-4daed914ee76}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\VulkanClasses">
-      <UniqueIdentifier>{29ba9f6d-5663-483a-a828-ed4045c26232}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Файлы заголовков\VulkanClasses">
       <UniqueIdentifier>{919b718a-d5e0-4aac-b907-f899a61bf29f}</UniqueIdentifier>
     </Filter>
@@ -64,6 +61,15 @@
     <Filter Include="Файлы заголовков\Abstraction">
       <UniqueIdentifier>{a6d67411-7f10-4012-80ef-207c56d69606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\RenderSystems">
+      <UniqueIdentifier>{9983e18b-45e6-482e-b604-88740bfd248e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\RenderSystems\VulkanClasses">
+      <UniqueIdentifier>{29ba9f6d-5663-483a-a828-ed4045c26232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\RenderSystems\DirectX">
+      <UniqueIdentifier>{c65fa002-3378-4dce-b7a7-e81809065673}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -88,13 +94,13 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="DescriptorPool.cpp">
-      <Filter>Исходные файлы\VulkanClasses</Filter>
+      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
     <ClCompile Include="CommandPool.cpp">
-      <Filter>Исходные файлы\VulkanClasses</Filter>
+      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
     <ClCompile Include="DescriptorSetLayout.cpp">
-      <Filter>Исходные файлы\VulkanClasses</Filter>
+      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
     <ClCompile Include="Physics.cpp">
       <Filter>Исходные файлы\PhysicsClasses</Filter>
@@ -106,7 +112,7 @@
       <Filter>Исходные файлы\PhysicsClasses</Filter>
     </ClCompile>
     <ClCompile Include="BaseVulkanRender.cpp">
-      <Filter>Исходные файлы\VulkanClasses</Filter>
+      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
     <ClCompile Include="RenderWindow.cpp">
       <Filter>Исходные файлы</Filter>
@@ -205,9 +211,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="DirectRender.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\RenderSystems\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="BaseRenderWindow.cpp">
+    <ClCompile Include="DirectWindow.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -375,6 +381,15 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="platform_window.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectWindow.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractRenderSystem.hpp">
+      <Filter>Исходные файлы\RenderSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectRender.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -291,7 +291,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AudioSystem.cpp" />
-    <ClCompile Include="BaseRenderWindow.cpp" />
     <ClCompile Include="BaseRenderWindow_Mobile.cpp" />
     <ClCompile Include="BaseRenderWindow_Desktop.cpp" />
     <ClCompile Include="BaseVulkanRender.cpp" />
@@ -301,6 +300,7 @@
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="DescriptorSetLayout.cpp" />
     <ClCompile Include="DirectRender.cpp" />
+    <ClCompile Include="DirectWindow.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -341,6 +341,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbstractComponent.hpp" />
+    <ClInclude Include="AbstractRenderSystem.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BaseRenderWindow.h" />
     <ClInclude Include="BaseScript.hpp" />
@@ -349,6 +350,8 @@
     <ClInclude Include="CommandBuffer.hpp" />
     <ClInclude Include="CommandPool.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="DirectRender.hpp" />
+    <ClInclude Include="DirectWindow.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="DebugUI.h" />
     <ClInclude Include="DescriptorPool.hpp" />

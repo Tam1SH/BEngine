@@ -12,7 +12,7 @@ TODO: подумать над реализацей:
 ****************************************************************************************
  * воркспейса и вообще, хорошая ли это затея разделять эту сущность на редактор и логику
  * абстрагировать доступ к рендеру, т.к их будет как минимум 2
- * сделать абстрактные классы для окна т.к я хуй знает что я буду делать и вообще охото на пк юзать GLFW
+ * сделать абстрактные классы для окна т.к я хуй знает что я буду делать и вообще охото на пк юзать GLFW (сделано) 
  * также и для физики так как возможно я буду и другой физ. движок прикручивать
  * сделать свой класс векторов чтобы потом не ебаться с разными векторами из разных либ
  * ну и также для объектов рендера
@@ -34,6 +34,7 @@ TODO: подумать над реализацей:
 #include "GameLogic.h"
 #include "Vector2.h"
 #include "VulkanWindow.h"
+#include "DirectWindow.h"
 #include "Input.hpp"
 namespace BEbraEngine {
 
@@ -45,6 +46,7 @@ namespace BEbraEngine {
       //  std::unique_ptr<DebugUI> UId;
         
         std::unique_ptr<BaseWindow> window;
+        std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace;
         std::unique_ptr<GameLogic> gameLogic;
 
@@ -53,8 +55,14 @@ namespace BEbraEngine {
         void Init() {
             window = std::unique_ptr<VulkanWindow>(new VulkanWindow());
             window->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-            workspace = std::shared_ptr<WorkSpace>(new WorkSpace());
 
+            window1 = std::unique_ptr<DirectWindow>(new DirectWindow());
+            window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
+
+
+
+            workspace = std::shared_ptr<WorkSpace>(new WorkSpace());
+            
        //     UId = std::make_unique<DebugUI>();
                 
             
@@ -82,6 +90,7 @@ namespace BEbraEngine {
          //   UId->Prepare();
             gameLogic->Update();
             window->update();
+            window1->update();
         }
 
         ~Engine() {
