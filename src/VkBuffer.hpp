@@ -1,7 +1,8 @@
 #pragma once
 #include <vulkan/vulkan.h>
+#include "RenderBuffer.hpp"
 namespace BEbraEngine {
-    struct Buffer {
+    struct Buffer : public RenderBuffer{
 
         VkBuffer self = VK_NULL_HANDLE;
 

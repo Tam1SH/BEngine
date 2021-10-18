@@ -6,9 +6,9 @@
 #include "AbstractComponent.hpp"
 #include <vulkan/vulkan.h>
 #include "VkBuffer.hpp"
+//TODO: нарушает и S и D в солиде блять. Избавиться нахуй от признаков того, что это вообще рендериться.
 namespace BEbraEngine {
-    // ���������� ��������� ��������� ��������� �������� ������. ������������ � �������� ����������, ����� ��������� �������� �� ����������� ��� ������� ������� ������� �����
-    enum Camera_Movement {
+        enum Camera_Movement {
         FORWARD,
         BACKWARD,
         LEFT,
@@ -23,8 +23,7 @@ namespace BEbraEngine {
     const float SENSITIVITY = 0.1f;
     const float ZOOM = 45.0f;
 
-    // ����������� ����� ������, ������� ������������ ������� ������ � ��������� ��������������� �������� ����, ������� � ������� ��� ������������� � OpenGL
-
+   
     class BaseVulkanRender;
     class Camera : public AbstractComponent
     {
@@ -32,7 +31,7 @@ namespace BEbraEngine {
         static BaseVulkanRender* render;
     public:
         static Camera* instance;
-        // ��������� ������ �� ���������
+       
 
         static void SetRender(BaseVulkanRender* render);
 
@@ -41,42 +40,38 @@ namespace BEbraEngine {
 
         float lastX;
         float lastY;
-        // �������� ������
+        
         glm::vec3 Position;
         glm::vec3 Front;
         glm::vec3 Up;
         glm::vec3 Right;
         glm::vec3 WorldUp;
-        // ���� ������
+        
         float Yaw;
         float Pitch;
-        // ��������� ������
+
         float MovementSpeed;
         float MouseSensitivity;
         float Zoom;
 
         int width;
         int height;
-        // �����������, ������������ �������
-        Camera() {}
+               Camera() {}
         Camera(uint32_t width, uint32_t height, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 
-        // �����������, ������������ �������
+        
         Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
 
-        // ���������� ������� ����, ����������� � �������������� ����� ������ � LookAt-������� 
         glm::mat4 GetViewMatrix();
 
-        //������������ ������� ������, ���������� �� ����� ������������������ ������� �����. ��������� ������� �������� � ���� ������������� ������� ������������ (��� ��������������� ��� �� ������� ������)
+        
         void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 
-        //������������ ������� ������, ���������� �� ������� ����� � ������� ����. ������� � �������� ���������� �������� �������� ��� � ����������� X, ��� � � ����������� Y.
         void _move(float& x, float& y);
 
         void ProcessMouseMovement(bool constrainPitch = true);
 
-        // ������������ ������� ������, ���������� �� ������� ������ ��������� ����. ���������� ������ ������� ������ �� ������������ ��� �������� 
         void ProcessMouseScroll(float yoffset);
 
         void CreateCameraSet();
@@ -84,7 +79,6 @@ namespace BEbraEngine {
         void Update();
 
     private:
-        // ��������� ������-����� �� (�����������) ����� ������ ������
         void updateCameraVectors();
     };
 }

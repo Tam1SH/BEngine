@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "RenderObjectCreator.hpp"
-
+#include "Listener.hpp"
 
 namespace BEbraEngine {
     class VulkanRender;
@@ -12,7 +12,8 @@ namespace BEbraEngine {
     class Render;
     class Camera;
     class Time;
-    class GameLogic {
+    //TODO: ListenerOnTick
+    class GameLogic : public IListenerOnRender {
     private:
         std::shared_ptr<Render> render;
         std::shared_ptr<Physics> physics;
@@ -27,6 +28,8 @@ namespace BEbraEngine {
         GameLogic(VulkanRender* render, std::shared_ptr<WorkSpace> workspace);
 
         void ScriptInit();
+
+        void onUpdateFrame() override;
 
         void Update();
 

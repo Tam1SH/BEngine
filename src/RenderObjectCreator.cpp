@@ -3,6 +3,7 @@
 #include "VulkanRender.h"
 #include "Mesh1.h"
 #include "Transform.hpp"
+//TODO: пересмотреть создания буфферов и создание граф. объекта.
 namespace BEbraEngine {
     template<typename T>
     Buffer RenderObjectFactory::CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage, VkCommandBuffer& cmdBuffer)
@@ -52,6 +53,18 @@ namespace BEbraEngine {
         return buffer;
     }
 
+
+    Buffer RenderObjectFactory::CreateIndexBuffer(std::vector<uint32_t> indices)
+    {
+        return CreateBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    }
+
+    Buffer RenderObjectFactory::CreateVertexBuffer(std::vector<Vertex> vertices)
+    {
+        return CreateBuffer(vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    }
+
+
     Texture RenderObjectFactory::CreateImage(Texture img)
     {
         return img;
@@ -66,17 +79,6 @@ namespace BEbraEngine {
     {
         return CreateBuffer(vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, cmdBuffer);
     }
-
-    Buffer RenderObjectFactory::CreateIndexBuffer(std::vector<uint32_t> indices)
-    {
-        return CreateBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
-    }
-
-    Buffer RenderObjectFactory::CreateVertexBuffer(std::vector<Vertex> vertices)
-    {
-        return CreateBuffer(vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-    }
-
     void RenderObjectFactory::CreateSet(Buffer& uniformBuffer, VkDeviceSize size, Texture* texture, VkDescriptorSet& set)
     {
 

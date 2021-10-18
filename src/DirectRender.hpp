@@ -1,5 +1,5 @@
 #pragma once
-#ifdef _WIN64
+#if defined(_WIN64) && defined(BEBRA_USE_GLFW)
 #include <d3d11.h>
 #include <d3dx11.h>
 #include <DirectXMath.h>
@@ -7,8 +7,8 @@
 #include "AbstractRenderSystem.hpp"
 #include <d3dcompiler.h>
 
-
-
+#include "RenderBuffer.hpp"
+#include "Vertex.h"
 namespace BEbraEngine {
 	class DirectRender : public AbstractRender {
     public:
@@ -28,8 +28,13 @@ namespace BEbraEngine {
     public:
 
 		void Create(BaseWindow* window) override;
+
         HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
         HRESULT InitDevice();
+        RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
+        RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
+        RenderBuffer* CreateUniformBuffer(size_t size) override;
+        HRESULT InitResource();
 
         void Render();
 
@@ -37,6 +42,8 @@ namespace BEbraEngine {
 
         DirectRender();
         ~DirectRender();
+    private:
+        struct Buffer;
 	};
 }
 #endif

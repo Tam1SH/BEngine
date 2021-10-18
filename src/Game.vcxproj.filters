@@ -114,9 +114,6 @@
     <ClCompile Include="BaseVulkanRender.cpp">
       <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
-    <ClCompile Include="RenderWindow.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="AudioSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -157,9 +154,6 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Render.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanRender.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="WorkSpace.cpp">
@@ -215,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="DirectWindow.cpp">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanRender.cpp">
+      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -392,6 +389,12 @@
     <ClInclude Include="DirectRender.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Listener.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderBuffer.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -415,5 +418,10 @@
     <Text Include="..\CMakeLists.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Tutorial03.hlsl">
+      <Filter>Файлы ресурсов\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

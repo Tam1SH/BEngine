@@ -1,8 +1,12 @@
 #include "BaseRenderWindow.h"
 #include "Input.hpp"
 #include <vector>
+#include <iostream>
 #ifdef BEBRA_USE_GLFW
 namespace BEbraEngine {
+	
+	
+	
 	enum class SurfaceType
 	{
 		DirectX,
@@ -11,15 +15,36 @@ namespace BEbraEngine {
 
 
 	};
-	
+	static void ResizeCallBack(GLFWwindow* window, int width, int height) {
+		auto _win = reinterpret_cast<BaseWindow*>(glfwGetWindowUserPointer(window));
+		_win->onResizeCallback(width, height);
+		//_win->notifyOnUpdateFrame();
+		
+		
+	}
 	void BaseWindow::Vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface)
 	{
 		glfwCreateWindowSurface(instance, handle, NULL, surface);
 	}
-	
+	void BaseWindow::attach(IListenerOnRender* listener)
+	{
+		R_L.push_back(listener);
+	}
+	void BaseWindow::detach(IListenerOnRender* listener)
+	{
+		std::remove(R_L.begin(), R_L.end(), listener);
+	}
+	void BaseWindow::notifyOnUpdateFrame()
+	{
+		for (auto listener : R_L) {
+			listener->onUpdateFrame();
+		}
+	}
 	void BaseWindow::update() {
+		
 		glfwPollEvents();
-		onUpdateFrame();
+		onUpdate();
+		notifyOnUpdateFrame();
 	}
 
 	std::vector<const char*> BaseWindow::Vulkan_GetInstanceExtensions()
@@ -42,6 +67,9 @@ namespace BEbraEngine {
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		handle = glfwCreateWindow(w, h, title, NULL, NULL);
 		glfwSetWindowUserPointer(handle, this);
+		glfwSetFramebufferSizeCallback(handle, ResizeCallBack);
+		//glfwSetWindowRefreshCallback(handle, Refresh);
+		
 		Input::SetWindow(handle);
 	}
 
@@ -57,9 +85,9 @@ namespace BEbraEngine {
 
 	Vector2 BaseWindow::GetWindowSize() const noexcept
 	{
-		int* w = 0, * h = 0;
-		glfwGetWindowSize(handle, w, h);
-		return Vector2(*w, *h);
+		int w = 0, h = 0;
+		glfwGetWindowSize(handle, &w, &h);
+		return Vector2(w, h);
 	}
 
 	int BaseWindow::Width() const noexcept
@@ -79,9 +107,9 @@ namespace BEbraEngine {
 
 	Vector2 BaseWindow::GetPosition() const noexcept
 	{
-		int* x = 0, * y = 0;
-		glfwGetWindowPos(handle, x, y);
-		return Vector2(*x, *y);
+		int x = 0, y = 0;
+		glfwGetWindowPos(handle, &x, &y);
+		return Vector2(x, y);
 	}
 
 	BaseWindow::BaseWindow() 

@@ -1,5 +1,6 @@
 #include "VkBuffer.hpp"
 #include "BaseVulkanRender.hpp"
+//TODO: сделать не зависимым от граф. апи.
 namespace BEbraEngine {
     Buffer& Buffer::operator=(Buffer&& tmp) noexcept
     {

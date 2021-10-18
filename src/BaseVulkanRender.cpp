@@ -150,13 +150,13 @@ namespace BEbraEngine {
         return inFlightFences.data();
     }
 
-    void BaseVulkanRender::recreateSwapChain()
+    void BaseVulkanRender::recreateSwapChain(uint32_t width, uint32_t height)
     {
         vkDeviceWaitIdle(device);
 
         cleanupSwapChain();
 
-        createSwapChain();
+        createSwapChain(width, height);
         createImageViews();
         createDepthResources();
         createRenderPass();
@@ -475,10 +475,10 @@ namespace BEbraEngine {
     {
 
         //std::system("C:/Users/ignat/source/repos/Game/Game/shaders/sh.bat");
-        this->pickPhysicalDevice();
+        pickPhysicalDevice();
         createLogicalDevice();
         setupDebugMessenger();
-        createSwapChain();
+      //  createSwapChain();
         createDepthResources();
         createImageViews();
     
@@ -734,13 +734,15 @@ namespace BEbraEngine {
         vkQueueWaitIdle(GetGraphicsQueue());
     }
 
-    void BaseVulkanRender::createSwapChain()
+    void BaseVulkanRender::createSwapChain(uint32_t width, uint32_t height)
     {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+        VkExtent2D extent;
+        extent.height = height;
+        extent.width = width;
 
         uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
         if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
@@ -770,7 +772,7 @@ namespace BEbraEngine {
 
         createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
         createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-        createInfo.presentMode = VK_PRESENT_MODE_FIFO_KHR;
+        createInfo.presentMode = presentMode;
         createInfo.clipped = VK_TRUE;
 
         if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
@@ -1397,6 +1399,7 @@ namespace BEbraEngine {
         uint32_t imageIndex;
         VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
+        /*
         if (result == VK_ERROR_OUT_OF_DATE_KHR) {
             recreateSwapChain();
             return;
@@ -1404,7 +1407,7 @@ namespace BEbraEngine {
         else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
             throw std::runtime_error("failed to acquire swap chain image!");
         }
-
+        */
 
         if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
             vkWaitForFences(device, 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
@@ -1450,7 +1453,7 @@ namespace BEbraEngine {
         presentInfo.pImageIndices = &imageIndex;
 
         result = vkQueuePresentKHR(presentQueue, &presentInfo);
-
+        /*
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
             framebufferResized = false;
             recreateSwapChain();
@@ -1458,6 +1461,7 @@ namespace BEbraEngine {
         else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");
         }
+        */
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
         vkQueueWaitIdle(GetGraphicsQueue());
@@ -1718,6 +1722,10 @@ namespace BEbraEngine {
         }
     }
 
+    void BaseVulkanRender::WriteDataOnBuffer(VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size)
+    {
+    }
+
     /*
     void BaseVulkanRender::framebufferResizeCallback(GLFWwindow* window, int width, int height)
     {
@@ -1739,6 +1747,56 @@ namespace BEbraEngine {
     VkQueue BaseVulkanRender::GetGraphicsQueue()
     {
         return graphicsQueue;
+    }
+
+    void BaseVulkanRender::Create(BaseWindow* window)
+    {
+        this->window = dynamic_cast<VulkanWindow*>(window);
+        auto size = this->window->GetDrawableSize();
+        createInstance();
+        this->window->Vulkan_CreateSurface(BaseVulkanRender::instance, &surface);
+        pickPhysicalDevice();
+        createLogicalDevice();
+        setupDebugMessenger();
+        createSwapChain(size.x, size.y);
+        createDepthResources();
+        createImageViews();
+
+        createRenderPass();
+
+        //SetDescriptorLayouts();
+        createObjectDescriptorSetLayout();
+        createCameraDescriptorSetLayout();
+        createGraphicsPipeline();
+        // createLineGraphicsPipeline();
+        createFramebuffers();
+        createCommandPool();
+
+        createDescriptorPool();
+        createCopyCmdBuffer();
+        createCmdBuffers();
+        createSyncObjects();
+
+        isCreate = true;
+        FamilyIndices = findQueueFamilies(physicalDevice);
+
+        Init();
+    }
+
+    RenderBuffer* BaseVulkanRender::CreateIndexBuffer(std::vector<uint32_t> indices)
+    {
+        return CreateBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    }
+    RenderBuffer* BaseVulkanRender::CreateUniformBuffer(size_t size)
+    {
+        Buffer* buffer = new Buffer();
+        buffer->size = size;
+        _createBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer->self, buffer->memory);
+        return buffer;
+    }
+    RenderBuffer* BaseVulkanRender::CreateVertexBuffer(std::vector<Vertex> vertices)
+    {
+        return CreateBuffer(vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
 
     BaseVulkanRender::BaseVulkanRender() {}

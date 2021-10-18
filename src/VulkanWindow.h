@@ -19,19 +19,13 @@ namespace BEbraEngine {
 
 		VulkanRender* GetRender();
 
-		void onResizeCallback() override;
-
-		void GetInstanceExtensions(unsigned int* pCount, std::vector<const char*>& pNames);
+		void onResizeCallback(int width, int height) override;
 
 		Vector2 GetDrawableSize();
 
 		void SetVulkanRender(VulkanRender* render);
 
-		void Resize(int w, int h)  override;
-
-		void Resize(const Vector2& newSize)  override;
-
-		void onUpdateFrame() override;
+		void onUpdate() override;
 
 		~VulkanWindow();
 

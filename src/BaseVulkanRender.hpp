@@ -16,6 +16,8 @@
 #include "DescriptorSetLayouts.hpp"
 #include <SDL_vulkan.h>
 #include "Vertex.h"
+#include "AbstractRenderSystem.hpp"
+#include "RenderBuffer.hpp"
 #undef min
 #undef max
 
@@ -39,7 +41,7 @@ const std::vector<const char*> deviceExtensions = {
 
 const int MAX_FRAMES_IN_FLIGHT = 3;
 
-const std::vector<Vertex> vertices = {
+const std::vector<BEbraEngine::Vertex> vertices = {
 
     
     
@@ -70,6 +72,10 @@ const std::vector<uint32_t> indices = {
     6, 4, 7
     
 };
+//TODO: само существование всей этой хуйни является анти-оопешной блять. 
+//Связанность с этим супер классом блять и всеми файлами которые трогают 
+//рендер(почти все) настолько сильна, как связанность хронического алкоголика с бутылкой.
+//Надо эту залупу переписывать нахуй под корень(хотя здесь нихуя и нет почти кроме инициализации).
 namespace BEbraEngine {
 
     class __vulkanRender {
@@ -102,9 +108,20 @@ namespace BEbraEngine {
     };
 
     class VulkanWindow;
-    class BaseVulkanRender
+    class BaseVulkanRender : public AbstractRender
     {
 
+    public:
+        void Create(BaseWindow* window) override;
+
+        template<typename T>
+        RenderBuffer* CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage);
+
+        RenderBuffer* CreateUniformBuffer(size_t size) override;
+
+        RenderBuffer* BaseVulkanRender::CreateIndexBuffer(std::vector<uint32_t> indices) override;
+
+        RenderBuffer* BaseVulkanRender::CreateVertexBuffer(std::vector<Vertex> vertices) override;
     public:
         struct QueueFamilyIndices {
             std::optional<uint32_t> graphicsFamily;
@@ -233,7 +250,7 @@ namespace BEbraEngine {
 
         VkFence* GetCurrentFence();
 
-        void recreateSwapChain();
+        void recreateSwapChain(uint32_t width, uint32_t height);
 
         void createDepthResources();
 
@@ -296,9 +313,6 @@ namespace BEbraEngine {
 
     private:
 
-
-
-
         void cleanupSwapChain();
 
         void cleanUpDefault();
@@ -312,7 +326,7 @@ namespace BEbraEngine {
 
         void createLogicalDevice();
 
-        void createSwapChain();
+        void createSwapChain(uint32_t width, uint32_t height);
 
         void createImageViews();
 
@@ -372,5 +386,31 @@ namespace BEbraEngine {
         VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 
         void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
-    };
+        static void WriteDataOnBuffer(VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size);
+};
+
+
+    template<typename T>
+    inline RenderBuffer* BaseVulkanRender::CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage)
+    {
+        Buffer* buffer = new Buffer();
+        VkDeviceSize bufferSize = sizeof(data[0]) * data.size();
+        buffer->size = bufferSize;
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+        void* _data;
+        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &_data);
+        memcpy(_data, data.data(), (size_t)bufferSize);
+        vkUnmapMemory(device, stagingBufferMemory);
+
+        _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer->self, buffer->memory);
+        copyBuffer(stagingBuffer, buffer->self, bufferSize);
+
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
+        vkFreeMemory(device, stagingBufferMemory, nullptr);
+
+        return buffer;
+    }
 }

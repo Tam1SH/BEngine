@@ -4,6 +4,7 @@
 #include "Image.hpp"
 //#include <tbb.h>
 #include <iostream>
+//TODO: Сделать независимым от апи.
 namespace BEbraEngine {
     class ImageCreator {
     private:

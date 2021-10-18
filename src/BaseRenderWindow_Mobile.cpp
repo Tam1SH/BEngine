@@ -19,9 +19,15 @@ namespace BEbraEngine {
 		SDL_Vulkan_GetInstanceExtensions(handle, &count, extensions.data() + additional_extension_count);
 		return extensions;
 	}
-	BaseWindow::BaseWindow()
+	void BaseWindow::attach(IListenerOnRender* listener)
 	{
 	}
+	void BaseWindow::detach(IListenerOnRender* listener)
+	{
+	}
+	//void BaseWindow::notifyOnUpdateFrame()
+	//{
+	//}
 	void BaseWindow::SetWindowSize(const Vector2& newSize) const noexcept
 	{
 		SDL_SetWindowSize(handle, newSize.x, newSize.y);
@@ -30,19 +36,20 @@ namespace BEbraEngine {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
-			/*
+			
 			//    ImGui_ImplSDL2_ProcessEvent(&event);
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
-				window->onResizeCallback();
+				auto size = GetWindowSize();
+				this->onResizeCallback(size.x,size.y);
 			}
 			if (event.type == SDL_WINDOWEVENT_CLOSE) {
 
 			}
-			*/
+			
 
 
 		}
-		onUpdateFrame();
+		onUpdate();
 	}
 	void BaseWindow::_onCreateWindow(int w, int h, const SurfaceType& type, const char* title)
 	{
@@ -50,10 +57,9 @@ namespace BEbraEngine {
 		if (type == Vulkan) {
 			flag = SDL_WINDOW_VULKAN;
 		}
-		SDL_Init(SDL_INIT_VIDEO);
+		
 		handle = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flag | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
 		Input::SetWindow(handle);
-		Input::SetKeyBoardState(SDL_GetKeyboardState(NULL));
 	}
 	void BaseWindow::onCreateWindow(const Vector2& size, const SurfaceType& type, const std::string& title = "BEbraEngine")
 	{
@@ -68,9 +74,9 @@ namespace BEbraEngine {
 
 	Vector2 BaseWindow::GetWindowSize() const noexcept
 	{
-		int* w = 0, * h = 0;
-		SDL_GetWindowSize(handle, w, h);
-		return Vector2(*w, *h);
+		int w = 0, h = 0;
+		SDL_GetWindowSize(handle, &w, &h);
+		return Vector2(w, h);
 	}
 
 	int BaseWindow::Width() const noexcept
@@ -90,13 +96,20 @@ namespace BEbraEngine {
 
 	Vector2 BaseWindow::GetPosition() const noexcept
 	{
-		int* x = 0, * y = 0;
-		SDL_GetWindowPosition(handle, x, y);
-		return Vector2(*x, *y);
+		int x = 0, y = 0;
+		SDL_GetWindowPosition(handle, &x, &y);
+		return Vector2(x, y);
+	}
+
+	BaseWindow::BaseWindow()
+	{
+		SDL_Init(SDL_INIT_VIDEO);
 	}
 
 	BaseWindow::~BaseWindow()
 	{
+		SDL_DestroyWindow(handle);
+		SDL_Quit();
 	}
 
 }

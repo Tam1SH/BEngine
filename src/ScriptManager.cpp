@@ -8,7 +8,7 @@
 //#include "PythonEngine.hpp"
 #include "JScriptEngine.hpp"
 
-
+//TODO: стал бесполезен.
 namespace BEbraEngine {
 	constexpr const wchar_t* LUA = L"LUA";
 	constexpr const wchar_t* PYTHON = L"PYTHON";

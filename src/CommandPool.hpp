@@ -2,6 +2,7 @@
 #include <vulkan.h>
 #include <array>
 #include <vector>
+//TODO: этот хуй бесполезен, ну почти.
 class CommandPool {
 private:
 

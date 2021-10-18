@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include "Camera.hpp"
 #include "Input.hpp"
 #include "BaseVulkanRender.hpp"

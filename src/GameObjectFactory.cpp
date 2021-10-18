@@ -9,6 +9,7 @@
 #include "Render.h"
 #include "Physics.hpp"
 #include "WorkSpace.h"
+//TODO: пересмотреть инициализацию объектов полностью.
 namespace BEbraEngine {
 	GameObjectFactory::GameObjectFactory(std::shared_ptr<Render> render, std::shared_ptr<Physics> physics)
 		: render(render), physics(physics)

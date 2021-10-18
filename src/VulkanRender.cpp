@@ -153,6 +153,7 @@ namespace BEbraEngine {
             {
                 vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &camera->set, 0, nullptr);
 
+                //TODO: оверхед, нахуя так делать? Надо избавиться от этого ебаного цикла и сделать единственный дескриптор для динамических объектов 
                 for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
                     if (lock_object->expired()) {
                         lock_object = objects.erase(lock_object);

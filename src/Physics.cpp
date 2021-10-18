@@ -3,12 +3,13 @@
 #include "GameObject.hpp"
 #include "Transform.hpp"
 #include "Time.hpp"
+//TODO: сделать так, чтобы физика параллельно обрабатывалась бл€ть(жаль производительность растЄт ниху€ не линейно). ѕерекомпилить с использованием TBB(пока только дл€ винды)
 namespace BEbraEngine {
 
 
     void Physics::Update()
     {
-        dynamicsWorld->stepSimulation(Time::GetDeltaTime());
+        dynamicsWorld->stepSimulation(Time::GetDeltaTime() * 1000, 10);
         for (auto lock_body = bodies.begin(); lock_body != bodies.end();++lock_body) {
             if (lock_body->expired()) {
                 lock_body = bodies.erase(lock_body);

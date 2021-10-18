@@ -2,6 +2,7 @@
 #include "AbstractComponent.hpp"
 #include <list>
 #include "GameObject.hpp"
+//TODO: ну хуй знает, а есть толк от этого?
 namespace BEbraEngine {
     class WorkSpace : public AbstractComponent {
     protected:

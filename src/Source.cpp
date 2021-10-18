@@ -14,7 +14,7 @@ TODO: подумать над реализацей:
  * абстрагировать доступ к рендеру, т.к их будет как минимум 2
  * сделать абстрактные классы для окна т.к я хуй знает что я буду делать и вообще охото на пк юзать GLFW (сделано) 
  * также и для физики так как возможно я буду и другой физ. движок прикручивать
- * сделать свой класс векторов чтобы потом не ебаться с разными векторами из разных либ
+ * сделать свой класс векторов чтобы потом не ебаться с разными векторами из разных либ(сделано)
  * ну и также для объектов рендера
  * присобачить Mono
 ****************************************************************************************
@@ -55,22 +55,21 @@ namespace BEbraEngine {
         void Init() {
             window = std::unique_ptr<VulkanWindow>(new VulkanWindow());
             window->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
+            auto d = dynamic_cast<DirectWindow*>(window.get());
+            if (!d) {
+                workspace = std::shared_ptr<WorkSpace>(new WorkSpace());
 
-            window1 = std::unique_ptr<DirectWindow>(new DirectWindow());
-            window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
+                //     UId = std::make_unique<DebugUI>();
 
 
+                   //  UId->SetWorkSpace(workspace);
+                auto render = static_cast<VulkanWindow*>(window.get())->GetRender();
+                //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
 
-            workspace = std::shared_ptr<WorkSpace>(new WorkSpace());
-            
-       //     UId = std::make_unique<DebugUI>();
-                
-            
-          //  UId->SetWorkSpace(workspace);
-            auto render = static_cast<VulkanWindow*>(window.get())->GetRender();
-         //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
+                gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render, workspace));
+                window->attach(gameLogic.get());
+            }
 
-            gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render, workspace));
 
         }
         void Start() {
@@ -88,9 +87,8 @@ namespace BEbraEngine {
         void Update() {
 
          //   UId->Prepare();
-            gameLogic->Update();
             window->update();
-            window1->update();
+           // window1->update();
         }
 
         ~Engine() {

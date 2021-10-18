@@ -1,5 +1,7 @@
-#pragma once
+
+//TODO: imgui живёт своей жизни в плане рендера, но надо избавиться от признаков конкретного апи(вулкана например) здесь.
 #ifdef __ANDROID__
+#pragma once
 #include <vulkan/vulkan.h>
 #include "RenderWindow.hpp"
 #include "BaseVulkanRender.hpp"

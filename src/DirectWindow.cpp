@@ -1,16 +1,10 @@
 #include "DirectWindow.h"
 #include "DirectRender.hpp"
+#ifdef BEBRA_USE_GLFW
 namespace BEbraEngine {
 	HWND DirectWindow::getHandle()
 	{
 		return glfwGetWin32Window(handle);
-	}
-	void DirectWindow::Resize(int w, int h)
-	{
-	}
-
-	void DirectWindow::Resize(const Vector2& newSize)
-	{
 	}
 
 	void DirectWindow::CreateWindow(const Vector2& size, const std::string& title)
@@ -27,11 +21,11 @@ namespace BEbraEngine {
 		render->Create(this);
 	}
 
-	void DirectWindow::onResizeCallback()
+	void DirectWindow::onResizeCallback(int width, int height)
 	{
 	}
 
-	void DirectWindow::onUpdateFrame()
+	void DirectWindow::onUpdate()
 	{
 		render->Render();
 	}
@@ -44,3 +38,4 @@ namespace BEbraEngine {
 	{
 	}
 }
+#endif

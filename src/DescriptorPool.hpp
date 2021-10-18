@@ -3,6 +3,7 @@
 #include <array>
 #include "BaseVulkanRender.hpp"
 #include <stdexcept>
+//TODO: этот хуй может быть очень полезен, но в нЄм ниху€ нет.
 namespace BEbraEngine {
     class DescriptorPool {
     private:

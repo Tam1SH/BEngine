@@ -1,5 +1,6 @@
 #include "LoadExecuter.hpp"
 #undef min
+//TODO: ну хуй знает, в принципе от этого может быть толк, но как минимум избавиться от вулкана.
 namespace BEbraEngine {
     
     void LoadExecuter::Create(VkDevice& device, BaseVulkanRender* render)

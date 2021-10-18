@@ -2,6 +2,7 @@
 #include <vulkan/vulkan.h>
 #include <string>
 #include "AbstractComponent.hpp"
+//TODO: Ну, понятно.
 namespace BEbraEngine {
     class Texture : public AbstractComponent {
     public:

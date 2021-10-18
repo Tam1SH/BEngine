@@ -5,6 +5,7 @@
 
 
 #include "Camera.hpp"
+//TODO: крайне тупое решение.
 namespace BEbraEngine {
     class RenderObject;
     class VulkanRender : public BaseVulkanRender {

@@ -6,6 +6,7 @@
 #include "Physics.hpp"
 #include "VulkanRender.h"
 #include "Input.hpp"
+//TODO: занимается вообще всем нахуй.
 namespace BEbraEngine {
 
 
@@ -18,7 +19,7 @@ namespace BEbraEngine {
         objectFactory = std::unique_ptr<GameObjectFactory>(new GameObjectFactory(this->render, physics));
         objectFactory->SetWorkSpace(workspace);
         scriptManager->SetWorkSpace(workspace);
-        camera = std::shared_ptr<Camera>(new Camera(0, 0, glm::vec3(0)));
+        camera = std::shared_ptr<Camera>(new Camera(0, 0, glm::vec3(0,1,10)));
         camera->SetRender(render);
         creator.render = render;
         creator.CreateStorageBuffer(sizeof(glm::mat4) * 2, camera->buffer);
@@ -40,22 +41,28 @@ namespace BEbraEngine {
         //scriptManager->InitScripts();
     }
 
+    void GameLogic::onUpdateFrame()
+    {
+        Update();
+    }
+
     void GameLogic::Update()
     {
         Time::UpdateTime();
+        
+        if (Input::IsKeyPressed(KEY_CODE::KEY_A)) {
+            camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());
+        }
+        if (Input::IsKeyPressed(KEY_CODE::KEY_D)) {
+            camera->ProcessKeyboard(RIGHT, Time::GetDeltaTime());
+        }
+        if (Input::IsKeyPressed(KEY_CODE::KEY_S)) {
+            camera->ProcessKeyboard(BACKWARD, Time::GetDeltaTime());
+        }
+        if (Input::IsKeyPressed(KEY_CODE::KEY_W)) {
+            camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
+        }
 
-        if (Input::IsKeyPressed(SDL_SCANCODE_W)) {
-        //    camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
-        }
-        if (Input::IsKeyPressed(SDL_SCANCODE_A)) {
-        //    camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());
-        }
-        if (Input::IsKeyPressed(SDL_SCANCODE_D)) {
-        //    camera->ProcessKeyboard(RIGHT, Time::GetDeltaTime());
-        }
-        if (Input::IsKeyPressed(SDL_SCANCODE_S)) {
-        //    camera->ProcessKeyboard(BACKWARD, Time::GetDeltaTime());
-        }
         camera->Update();
         scriptManager->RunScripts();
         physics->Update();

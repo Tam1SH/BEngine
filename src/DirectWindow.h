@@ -13,12 +13,10 @@ namespace BEbraEngine {
 		std::unique_ptr<DirectRender> render;
 	public:
 		HWND getHandle();
-		void Resize(int w, int h) override;
-		void Resize(const Vector2& newSize) override;
 		void CreateWindow(const Vector2& size, const std::string& title) override;
 		void CreateWindow(int w, int h, const std::string& title) override;
-		void onResizeCallback() override;
-		void onUpdateFrame() override;
+		void onResizeCallback(int width, int height) override;
+		void onUpdate() override;
 		DirectWindow();
 		~DirectWindow();
 	};

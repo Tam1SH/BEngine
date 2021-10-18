@@ -1,59 +1,43 @@
+#define NOMINMAX
 #include "VulkanWindow.h"
 #include <memory>
 #undef CreateWindow
+
 namespace BEbraEngine {
 
 	void VulkanWindow::CreateWindow(const Vector2& size, const std::string& title)
 	{
 		onCreateWindow(size, BaseWindow::SurfaceType::Vulkan, title);
 		render = std::make_unique<VulkanRender>();
-		render->window = this;
-		render->createInstance();
-		Vulkan_CreateSurface(BaseVulkanRender::instance, &render->surface);
-		render->initRender();
-		render->Init();
+		render->Create(this);
 	}
 
 	void VulkanWindow::CreateWindow(int w, int h, const std::string& title)
 	{
 		onCreateWindow(w, h, BaseWindow::SurfaceType::Vulkan, title);
 		render = std::make_unique<VulkanRender>();
-		render->window = this;
-		render->createInstance();
-		Vulkan_CreateSurface(BaseVulkanRender::instance, &render->surface);
-		render->initRender();
-		//render->Init();
+		render->Create(this);
 	}
+
 	VulkanRender* VulkanWindow::GetRender()
 	{
 		return render.get();
 	}
-	void VulkanWindow::onResizeCallback()
+
+	void VulkanWindow::onResizeCallback(int width, int height)
 	{
-		render->recreateSwapChain();
+		render->recreateSwapChain(width, height);
+		render->UpdateFrame();
 	}
+
 	Vector2 VulkanWindow::GetDrawableSize()
 	{
 		Vector2 vec;
 		vec = GetWindowSize();
-
-		//SDL_Vulkan_GetDrawableSize(handle, w, h);
 		return vec;
 	}
-	void VulkanWindow::Resize(int w, int h)
-	{
-		//SDL_SetWindowSize(handle, w, h);
-		SetWindowSize(Vector2(w, h));
-		render->recreateSwapChain();
-	}
-	void VulkanWindow::Resize(const Vector2& newSize)
-	{
-		SetWindowSize(newSize);
 
-		render->recreateSwapChain();
-	}
-
-	void VulkanWindow::onUpdateFrame()
+	void VulkanWindow::onUpdate()
 	{
 
 		render->UpdateFrame();
@@ -61,10 +45,6 @@ namespace BEbraEngine {
 
 	VulkanWindow::~VulkanWindow()
 	{
-		//SDL_DestroyWindow(handle);
-		//SDL_Quit();
-		//glfwTerminate();
-
 	}
 
 	void VulkanWindow::SetVulkanRender(VulkanRender* render)
