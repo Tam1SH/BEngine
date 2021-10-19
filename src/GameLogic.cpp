@@ -6,25 +6,27 @@
 #include "Physics.hpp"
 #include "VulkanRender.h"
 #include "Input.hpp"
+#include "Render.h"
 //TODO: занимается вообще всем нахуй.
 namespace BEbraEngine {
 
 
-    GameLogic::GameLogic(VulkanRender* render, std::shared_ptr<WorkSpace> workspace)
+    GameLogic::GameLogic(AbstractRender* render, std::shared_ptr<WorkSpace> workspace, Camera* camera)
     {
         scriptManager = std::shared_ptr<ScriptManager>(new ScriptManager());
         this->workspace = workspace;
-        this->render = std::shared_ptr<Render>(new Render(render));
+        this->render = std::shared_ptr<AbstractRender>(render);
         physics = std::shared_ptr<Physics>(new Physics());
         objectFactory = std::unique_ptr<GameObjectFactory>(new GameObjectFactory(this->render, physics));
         objectFactory->SetWorkSpace(workspace);
         scriptManager->SetWorkSpace(workspace);
-        camera = std::shared_ptr<Camera>(new Camera(0, 0, glm::vec3(0,1,10)));
-        camera->SetRender(render);
-        creator.render = render;
-        creator.CreateStorageBuffer(sizeof(glm::mat4) * 2, camera->buffer);
-        camera->CreateCameraSet();
-        render->camera = camera.get();
+        this->camera = camera;
+
+       // camera->SetRender(render);
+       // creator.render = render;
+       // creator.CreateStorageBuffer(sizeof(glm::mat4) * 2, camera->buffer);
+       // camera->CreateCameraSet();
+       // render->camera = camera.get();
 
 
         ScriptInit();
@@ -34,7 +36,9 @@ namespace BEbraEngine {
     {
         //scriptManager->LoadScripts();
 
-        auto obj = GameObject::New();
+        for (int i = 0; i < 10; i++) {
+            GameObject::New(glm::vec3(i));
+        }
         //auto script = scriptManager->GetScriptByName(L"hello_world.js");
         //script->SetActive(true);
         //obj->AddComponent(script);

@@ -2,12 +2,13 @@
 #include "Vector2.h"
 #include "BaseRenderWindow.h"
 #include "VulkanRender.h"
+#include <memory>
 #undef CreateWindow
 namespace BEbraEngine {
 
 	class VulkanWindow : public BaseWindow {
 	private:
-		std::unique_ptr<VulkanRender> render;
+		std::shared_ptr<VulkanRender> render;
 
 	public:
 
@@ -15,9 +16,9 @@ namespace BEbraEngine {
 
 		void CreateWindow(int w, int h, const std::string& title = "BEbraEngine") override;
 
-		VulkanWindow() {}
+		VulkanWindow(std::shared_ptr<VulkanRender> render) { this->render = std::shared_ptr<VulkanRender>(render); }
 
-		VulkanRender* GetRender();
+		AbstractRender* getRender();
 
 		void onResizeCallback(int width, int height) override;
 

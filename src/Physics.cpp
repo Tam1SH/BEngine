@@ -9,7 +9,7 @@ namespace BEbraEngine {
 
     void Physics::Update()
     {
-        dynamicsWorld->stepSimulation(Time::GetDeltaTime() * 1000, 10);
+        dynamicsWorld->stepSimulation(Time::GetDeltaTime() * 1/5);
         for (auto lock_body = bodies.begin(); lock_body != bodies.end();++lock_body) {
             if (lock_body->expired()) {
                 lock_body = bodies.erase(lock_body);

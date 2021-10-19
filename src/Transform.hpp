@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include "VkBuffer.hpp"
+#include "RenderBuffer.hpp"
 namespace BEbraEngine {
     class TransformFactory;
     class Transform : public AbstractComponent {
@@ -13,7 +14,7 @@ namespace BEbraEngine {
 
         static TransformFactory* factory;
 
-        std::shared_ptr<Buffer> buffer;
+        std::shared_ptr<RenderBuffer> buffer;
 
 
     private:

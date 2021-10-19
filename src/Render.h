@@ -1,19 +1,19 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "AbstractRenderSystem.hpp"
 namespace BEbraEngine {
     class RenderObject;
     class BaseVulkanRender;
     class GameObjectFactory;
-    class VulkanRender;
     class Render {
     private:
         friend class GameObjectFactory;
         std::vector<std::weak_ptr<RenderObject>> RenderObjects;
 
-        VulkanRender* render;
+        AbstractRender* render;
     public:
-        Render(VulkanRender* render);
+        Render(AbstractRender* render);
 
         void DrawFrame();
 

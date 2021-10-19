@@ -4,19 +4,27 @@
 #if defined(_WIN64) && defined(BEBRA_USE_GLFW)
 #include "DirectWindow.h"
 #include "DirectRender.hpp"
+#include "BaseVulkanRender.hpp"
 namespace BEbraEngine {
 
     struct DirectRender::Buffer : public RenderBuffer {
+        ID3D11DeviceContext* g_pImmediateContext;
         ID3D11Buffer* buf;
         size_t size;
+        void setData(void* data, size_t size, size_t offset) override {
+            g_pImmediateContext->UpdateSubresource(buf, 0, NULL, data, 0, 0);
+        }
     };
 
     void DirectRender::Create(BaseWindow* window) {
-        constexpr auto size = sizeof(glm::vec3);
         auto win = dynamic_cast<DirectWindow*>(window);
         g_hWnd = win->getHandle();
         InitDevice();
         InitResource();
+    }
+    void DirectRender::InitCamera(Camera* camera)
+    {
+        camera->cameraData = CreateStorageBuffer(sizeof(Matrix4) * 2);
     }
     RenderBuffer* DirectRender::CreateIndexBuffer(std::vector<uint32_t> indices)
     {
@@ -32,7 +40,7 @@ namespace BEbraEngine {
         ZeroMemory(&InitData, sizeof(InitData));
         InitData.pSysMem = indices.data();
         g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
-
+        buff->g_pImmediateContext = g_pImmediateContext;
         // Set vertex buffer
 //        UINT stride = sizeof(indices[0]);
 //        UINT offset = 0;
@@ -52,7 +60,23 @@ namespace BEbraEngine {
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
         g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
+        buff->g_pImmediateContext = g_pImmediateContext;
+        return buff;
+    }
+    RenderBuffer* DirectRender::CreateStorageBuffer(size_t size) {
 
+        auto buff = new Buffer();
+        D3D11_BUFFER_DESC bd;
+        ZeroMemory(&bd, sizeof(bd));
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = size;
+        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bd.CPUAccessFlags = 0;
+
+        D3D11_SUBRESOURCE_DATA InitData;
+        ZeroMemory(&InitData, sizeof(InitData));
+        g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
+        buff->g_pImmediateContext = g_pImmediateContext;
         return buff;
     }
     RenderBuffer* DirectRender::CreateVertexBuffer(std::vector<Vertex> vertices) {
@@ -69,11 +93,12 @@ namespace BEbraEngine {
         ZeroMemory(&InitData, sizeof(InitData));
         InitData.pSysMem = vertices.data();
         g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
-
+        
         // Set vertex buffer
         UINT stride = sizeof(vertices[0]);
         UINT offset = 0;
         g_pImmediateContext->IASetVertexBuffers(0, 1, &buff->buf, &stride, &offset);
+        buff->g_pImmediateContext = g_pImmediateContext;
         return buff;
 
     }
@@ -242,32 +267,33 @@ namespace BEbraEngine {
     HRESULT DirectRender::InitResource() {
         // Create vertex buffer
         HRESULT hr;
-        DirectX::XMFLOAT3 vertices[] =
-        {
-            DirectX::XMFLOAT3(0.0f, 0.5f, 0.5f),
-            DirectX::XMFLOAT3(0.5f, -0.5f, 0.5f),
-            DirectX::XMFLOAT3(-0.5f, -0.5f, 0.5f),
-        };
+       // DirectX::XMFLOAT3 vertices[] =
+      //  {
+      //      DirectX::XMFLOAT3(0.0f, 0.5f, 0.5f),
+     //       DirectX::XMFLOAT3(0.5f, -0.5f, 0.5f),
+     ///       DirectX::XMFLOAT3(-0.5f, -0.5f, 0.5f),
+     //   };
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
         bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(DirectX::XMFLOAT3) * 3;
+        bd.ByteWidth = sizeof(Vertex) * vertices.size();
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bd.CPUAccessFlags = 0;
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
-        InitData.pSysMem = vertices;
+        InitData.pSysMem = vertices.data();
         hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &g_pVertexBuffer);
         if (FAILED(hr))
             return hr;
 
         // Set vertex buffer
-        UINT stride = sizeof(DirectX::XMFLOAT3);
+        UINT stride = sizeof(Vertex);
         UINT offset = 0;
         g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 
         // Set primitive topology
         g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
         if (FAILED(hr))
             return hr;
 
@@ -282,13 +308,11 @@ namespace BEbraEngine {
         // Clear the back buffer 
         float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
         g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
-        UINT stride = sizeof(DirectX::XMFLOAT3);
-        UINT offset = 0;
-        g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+       // g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
         // Render a triangle
         g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
         g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
-        g_pImmediateContext->Draw(3, 0);
+        g_pImmediateContext->Draw(vertices.size(), 0);
 
         // Present the information rendered to the back buffer to the front buffer (the screen)
         g_pSwapChain->Present(0, 0);

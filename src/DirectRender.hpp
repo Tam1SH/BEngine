@@ -6,12 +6,14 @@
 #include "platform_window.hpp"
 #include "AbstractRenderSystem.hpp"
 #include <d3dcompiler.h>
-
+#include <list>
 #include "RenderBuffer.hpp"
+#include "RenderObject.h"
 #include "Vertex.h"
+#include "Camera.hpp"
 namespace BEbraEngine {
 	class DirectRender : public AbstractRender {
-    public:
+    private:
         HINSTANCE               g_hInst = NULL;
         HWND                    g_hWnd = NULL;
         D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
@@ -25,20 +27,28 @@ namespace BEbraEngine {
         ID3D11InputLayout* g_pVertexLayout = NULL;
         ID3D11Buffer* g_pVertexBuffer = NULL;
 
+        std::list<RenderObject*> objs;
+    private:
+        HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+        HRESULT InitDevice();
+        HRESULT InitResource();
+        void CleanupDevice();
+
+
     public:
 
 		void Create(BaseWindow* window) override;
 
-        HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
-        HRESULT InitDevice();
+        void InitCamera(Camera* alloced_camera) override;
         RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
         RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
         RenderBuffer* CreateUniformBuffer(size_t size) override;
-        HRESULT InitResource();
+
+        RenderBuffer* CreateStorageBuffer(size_t size);
+
 
         void Render();
 
-        void CleanupDevice();
 
         DirectRender();
         ~DirectRender();

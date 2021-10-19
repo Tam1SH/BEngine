@@ -108,10 +108,12 @@ namespace BEbraEngine {
     };
 
     class VulkanWindow;
+    class Camera;
     class BaseVulkanRender : public AbstractRender
     {
 
     public:
+        Camera* camera;
         void Create(BaseWindow* window) override;
 
         template<typename T>
@@ -119,9 +121,55 @@ namespace BEbraEngine {
 
         RenderBuffer* CreateUniformBuffer(size_t size) override;
 
-        RenderBuffer* BaseVulkanRender::CreateIndexBuffer(std::vector<uint32_t> indices) override;
+        RenderBuffer* CreateStorageBuffer(size_t size);
 
-        RenderBuffer* BaseVulkanRender::CreateVertexBuffer(std::vector<Vertex> vertices) override;
+        RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
+
+        RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
+
+        void InitCamera(Camera* alloced_camera) override;
+
+        void _recreateCameraSet() {
+            VkDescriptorSetLayout layout = CameraLayout;
+            VkDescriptorSetAllocateInfo allocInfo{};
+            allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+            allocInfo.descriptorPool = descriptorPool;
+            allocInfo.descriptorSetCount = 1;
+            allocInfo.pSetLayouts = &layout;
+            vkAllocateDescriptorSets(GetDevice(), &allocInfo, &setMainCamera);
+        }
+        void CreateCameraSet(RenderBuffer* buffer)
+        {
+            
+            VkDescriptorSetAllocateInfo allocInfo{};
+            allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+            allocInfo.descriptorPool = descriptorPool;
+            allocInfo.descriptorSetCount = 1;
+            allocInfo.pSetLayouts = &CameraLayout;
+            VkResult result;
+            if (result = vkAllocateDescriptorSets(GetDevice(), &allocInfo, &setMainCamera); result != VK_SUCCESS) {
+                throw std::runtime_error("ddd");
+            }
+
+
+            auto _buf = static_cast<Buffer*>(buffer);
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = _buf->self;
+            bufferInfo.offset = 0;
+            bufferInfo.range = sizeof(Matrix4) * 2;
+
+            std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
+
+            descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[0].dstSet = setMainCamera;
+            descriptorWrites[0].dstBinding = 0;
+            descriptorWrites[0].dstArrayElement = 0;
+            descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            descriptorWrites[0].descriptorCount = 1;
+            descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+            vkUpdateDescriptorSets(GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+        }
     public:
         struct QueueFamilyIndices {
             std::optional<uint32_t> graphicsFamily;
@@ -155,6 +203,8 @@ namespace BEbraEngine {
     public:
         VulkanWindow* window;
 
+
+        VkDescriptorSet setMainCamera;
 
         size_t COUNT_OF_OBJECTS = 0;
 

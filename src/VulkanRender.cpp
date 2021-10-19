@@ -151,7 +151,7 @@ namespace BEbraEngine {
             vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
             {
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &camera->set, 0, nullptr);
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
 
                 //TODO: оверхед, нахуя так делать? Надо избавиться от этого ебаного цикла и сделать единственный дескриптор для динамических объектов 
                 for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
@@ -181,7 +181,7 @@ namespace BEbraEngine {
 
     }
     void VulkanRender::OnRecreateSwapChain() {
-        camera->CreateCameraSet();
+        CreateCameraSet(camera->cameraData);
         for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
             auto object_ = *lock_object;
             if (object_.expired()) {

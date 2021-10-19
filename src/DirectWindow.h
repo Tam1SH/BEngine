@@ -4,6 +4,7 @@
 #include <memory>
 #include <d3d11.h>
 #include <d3dx11.h>
+#include "AbstractRenderSystem.hpp"
 #undef CreateWindow
 namespace BEbraEngine {
 	class DirectRender;
@@ -17,6 +18,7 @@ namespace BEbraEngine {
 		void CreateWindow(int w, int h, const std::string& title) override;
 		void onResizeCallback(int width, int height) override;
 		void onUpdate() override;
+		AbstractRender* getRender();
 		DirectWindow();
 		~DirectWindow();
 	};

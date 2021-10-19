@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
@@ -362,6 +362,7 @@
     <ClInclude Include="DirectRender.hpp" />
     <ClInclude Include="DirectWindow.h" />
     <ClInclude Include="Listener.hpp" />
+    <ClInclude Include="matrix.hpp" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="DebugUI.h" />
     <ClInclude Include="DescriptorPool.hpp" />

@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "Transform.hpp"
 #include "GameObject.hpp"
 #include "RigidBoby.hpp"
@@ -30,19 +31,13 @@ namespace BEbraEngine {
 
     void Transform::UpdatePosition(const glm::vec3& position)
     {
-        VkDeviceMemory& memory = buffer->memory;
-
         this->position = position;
-
 
         model = glm::mat4(1);
         model = glm::translate(model, this->position);
         model = glm::scale(model, scale);
 
-        void* data;
-        vkMapMemory(BaseVulkanRender::device, memory, 0, sizeof(glm::mat4), 0, &data);
-        memcpy(data, &model, sizeof(glm::mat4));
-        vkUnmapMemory(BaseVulkanRender::device, memory);
+        buffer->setData(&model, sizeof(glm::mat4), 0);
     }
 
     void Transform::SetPosition(const glm::vec3& position) noexcept

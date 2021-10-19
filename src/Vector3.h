@@ -1,6 +1,9 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "btBulletCollisionCommon.h"
+#ifdef _WIN64
+#include <DirectXMath.h>
+#endif
 namespace BEbraEngine {
 
 	class Vector3
@@ -53,6 +56,17 @@ namespace BEbraEngine {
 		operator btVector3() const noexcept {
 			return btVector3(x, y, z);
 		}
+#ifdef _WIN64
+		Vector3(const DirectX::XMFLOAT3& vec) {
+			x = vec.x;
+			y = vec.y;
+			z = vec.z;
+		}
+
+		operator DirectX::XMFLOAT3() const noexcept {
+			return DirectX::XMFLOAT3(x, y, z);
+		}
+#endif
 
 		Vector3 operator+(const Vector3& other) const noexcept {
 			glm::vec3 l = *this;
@@ -75,6 +89,18 @@ namespace BEbraEngine {
 		Vector3 operator*(float scalar) const noexcept {
 			glm::vec3 l = *this;
 			return Vector3(l * scalar);
+		}
+		Vector3& operator*=(const Vector3& other) noexcept {
+			*this = *this * other;
+			return *this;
+		}
+		Vector3& operator+=(const Vector3& other) noexcept {
+			*this = *this + other;
+			return *this;
+		}
+		Vector3& operator-=(const Vector3& other) noexcept {
+			*this = *this - other;
+			return *this;
 		}
 
 	};

@@ -3,13 +3,15 @@
 #include <memory>
 #include "AbstractComponent.hpp"
 #include "RenderObjectCreator.hpp"
+#include "RenderBuffer.hpp"
+//TODO: draw is bad bleat.
 namespace BEbraEngine {
     class Mesh1;
-    class Buffer;
     class Transform;
     class Texture;
     class RenderObject : public AbstractComponent {
     private:
+        friend class AbstractRender;
         friend class RenderObjectFactory;
 
         static RenderObjectFactory* factory;
@@ -22,7 +24,7 @@ namespace BEbraEngine {
 
         std::unique_ptr<Texture> texture;
 
-        std::shared_ptr<Buffer> matBuffer;
+        std::shared_ptr<RenderBuffer> matBuffer;
 
         VkPipelineLayout* layout;
 

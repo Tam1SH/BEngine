@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "Model.h"
+#include "AbstractRenderSystem.hpp"
 namespace BEbraEngine {
     class VkObject;
     class RenderObject;
@@ -17,30 +18,15 @@ namespace BEbraEngine {
         friend class RenderObject;
 
 
-        VulkanRender* render;
+        AbstractRender* render;
         ImageCreator* imgsCreator;
 
         std::mutex m;
     private:
 
-        template<typename T>
-        Buffer CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage, VkCommandBuffer& cmdBuffer);
-
-        template<typename T>
-        Buffer CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage);
-
         Texture CreateImage(Texture img);
 
-        Buffer CreateIndexBuffer(std::vector<uint32_t> indices, VkCommandBuffer& cmdBuffer);
 
-        Buffer CreateVertexBuffer(std::vector<Vertex> vertices, VkCommandBuffer& cmdBuffer);
-
-        Buffer CreateIndexBuffer(std::vector<uint32_t> indices);
-
-        Buffer CreateVertexBuffer(std::vector<Vertex> vertices);
-
-
-        void CreateSet(Buffer& uniformBuffer, VkDeviceSize size, Texture* texture, VkDescriptorSet& set);
     public:
         friend class Transform;
 
@@ -48,15 +34,11 @@ namespace BEbraEngine {
 
         void CreateObjectSet(RenderObject* obj);
 
-        Buffer* CreateUniformBuffer(VkDeviceSize size);
-
         void CreateStorageBuffer(VkDeviceSize size, Buffer& buffer);
 
-        RenderObjectFactory(VulkanRender* render);
+        RenderObjectFactory(AbstractRender* render);
 
         RenderObjectFactory() {}
-
-        void SetRender(VulkanRender* render) { this->render = render; }
 
         void SetImgsCreator(ImageCreator* Creator) { imgsCreator = Creator; }
 

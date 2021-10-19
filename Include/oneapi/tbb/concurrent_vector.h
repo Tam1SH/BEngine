@@ -16,6 +16,7 @@
 
 #ifndef __TBB_concurrent_vector_H
 #define __TBB_concurrent_vector_H
+#define NOMINMAX
 
 #include "detail/_namespace_injection.h"
 #include "detail/_utils.h"
@@ -28,7 +29,7 @@
 
 #include <algorithm>
 #include <utility> // std::move_if_noexcept
-#include <algorithm>
+
 #if __TBB_CPP20_COMPARISONS_PRESENT
 #include <compare>
 #endif
@@ -485,6 +486,7 @@ public:
     }
 
     size_type size() const noexcept {
+        
         return std::min(this->my_size.load(std::memory_order_acquire), capacity());
     }
 

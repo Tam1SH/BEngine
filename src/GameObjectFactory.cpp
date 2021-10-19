@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "GameObjectFactory.hpp"
 #include "TransformFactory.h"
 #include "RenderObjectCreator.hpp"
@@ -9,12 +10,13 @@
 #include "Render.h"
 #include "Physics.hpp"
 #include "WorkSpace.h"
+#include "AbstractRenderSystem.hpp"
 //TODO: пересмотреть инициализацию объектов полностью.
 namespace BEbraEngine {
-	GameObjectFactory::GameObjectFactory(std::shared_ptr<Render> render, std::shared_ptr<Physics> physics)
+	GameObjectFactory::GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics)
 		: render(render), physics(physics)
 	{
-		renderFactory = std::unique_ptr<RenderObjectFactory>(new RenderObjectFactory(render->render));
+		renderFactory = std::unique_ptr<RenderObjectFactory>(new RenderObjectFactory(render.get()));
 		transFactory = std::unique_ptr<TransformFactory>(new TransformFactory());
 
 		GameObject::SetFactory(this);
@@ -43,7 +45,7 @@ namespace BEbraEngine {
 		trans.setOrigin(btVector3(position.x, position.y, position.z));
 		rigidbody->GetRigidBody()->setWorldTransform(trans);
 
-		render->AddRenderObject(renderObj);
+		static_cast<VulkanRender*>(render.get())->AddObject(renderObj);
 		physics->AddObject(rigidbody);
 
 		return obj;

@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <memory>
-#include "Render.h"
+#include "AbstractRenderSystem.hpp"
 
 namespace BEbraEngine {
 	class GameObject;
@@ -19,7 +19,7 @@ namespace BEbraEngine {
 		friend class Render;
 		friend class Physics;
 
-		std::shared_ptr<Render> render;
+		std::shared_ptr<AbstractRender> render;
 		std::shared_ptr<Physics> physics;
 		std::shared_ptr<WorkSpace> workspace;
 
@@ -27,7 +27,7 @@ namespace BEbraEngine {
 		std::unique_ptr<RenderObjectFactory> renderFactory;
 
 	public:
-		GameObjectFactory(std::shared_ptr<Render> render, std::shared_ptr<Physics> physics);
+		GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics);
 
 		std::shared_ptr<GameObject> Create(glm::vec3 position);
 

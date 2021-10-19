@@ -25,7 +25,7 @@ TODO: подумать над реализацей:
 
 
 
-
+#define NOMINMAX
 #include "DebugUI.h"
 #include "Physics.hpp"
 #include "WorkSpace.h"
@@ -49,11 +49,13 @@ namespace BEbraEngine {
         std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace;
         std::unique_ptr<GameLogic> gameLogic;
-
+        std::unique_ptr<Camera> mainCamera;
 
     public:
         void Init() {
-            window = std::unique_ptr<VulkanWindow>(new VulkanWindow());
+            render = std::shared_ptr<VulkanRender>(new VulkanRender());
+            mainCamera = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
+            window = std::unique_ptr<VulkanWindow>(new VulkanWindow(render));
             window->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
             auto d = dynamic_cast<DirectWindow*>(window.get());
             if (!d) {
@@ -63,10 +65,12 @@ namespace BEbraEngine {
 
 
                    //  UId->SetWorkSpace(workspace);
-                auto render = static_cast<VulkanWindow*>(window.get())->GetRender();
+               // auto render = window->getRender();
+                render->InitCamera(mainCamera.get());
+                render->camera = mainCamera.get();
                 //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
 
-                gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render, workspace));
+                gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render.get(), workspace, mainCamera.get()));
                 window->attach(gameLogic.get());
             }
 

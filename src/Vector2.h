@@ -1,5 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
+#ifdef _WIN64
+#include <DirectXMath.h>
+#endif
 namespace BEbraEngine {
 
 	class Vector2
@@ -32,6 +35,16 @@ namespace BEbraEngine {
 		operator glm::vec2() const noexcept {
 			return glm::vec2(x, y);
 		}
+#ifdef _WIN64
+		Vector2(const DirectX::XMFLOAT2& vec) {
+			x = vec.x;
+			y = vec.y;
+		}
+
+		operator DirectX::XMFLOAT2() const noexcept {
+			return DirectX::XMFLOAT2(x, y);
+		}
+#endif
 
 		Vector2 operator+(const Vector2& other) const noexcept {
 			glm::vec2 l = *this;
@@ -55,6 +68,17 @@ namespace BEbraEngine {
 			glm::vec2 l = *this;
 			return Vector2(l * scalar);
 		}
-
+		Vector2& operator*=(const Vector2& other) noexcept {
+			*this = *this * other;
+			return *this;
+		}
+		Vector2& operator+=(const Vector2& other) noexcept {
+			*this = *this + other;
+			return *this;
+		}
+		Vector2& operator-=(const Vector2& other) noexcept {
+			*this = *this - other;
+			return *this;
+		}
 	};
 }

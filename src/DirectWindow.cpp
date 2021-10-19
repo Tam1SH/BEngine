@@ -30,6 +30,11 @@ namespace BEbraEngine {
 		render->Render();
 	}
 
+	AbstractRender* DirectWindow::getRender()
+	{
+		return render.get();
+	}
+
 	DirectWindow::DirectWindow()
 	{
 	}

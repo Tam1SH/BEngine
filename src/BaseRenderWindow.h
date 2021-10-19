@@ -2,7 +2,6 @@
 #include "platform_window.hpp"
 #include "Vector2.h"
 #include "Listener.hpp"
-
 #include <string>
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -37,7 +36,7 @@ namespace BEbraEngine {
 		virtual void CreateWindow(int w, int h, const std::string& title) = 0;
 		virtual void onResizeCallback(int width, int height) = 0;
 		virtual void onUpdate() = 0;
-
+		//virtual AbstractRender* getRender() = 0;
 
 		void update();
 		Vector2 GetWindowSize() const noexcept;

@@ -15,17 +15,17 @@ namespace BEbraEngine {
     //TODO: ListenerOnTick
     class GameLogic : public IListenerOnRender {
     private:
-        std::shared_ptr<Render> render;
+        std::shared_ptr<AbstractRender> render;
         std::shared_ptr<Physics> physics;
         std::shared_ptr<WorkSpace> workspace;
         std::shared_ptr<ScriptManager> scriptManager;
 
         std::unique_ptr<GameObjectFactory> objectFactory;
-        std::shared_ptr<Camera> camera;
+        Camera* camera;
         RenderObjectFactory creator;
     public:
 
-        GameLogic(VulkanRender* render, std::shared_ptr<WorkSpace> workspace);
+        GameLogic(AbstractRender* render, std::shared_ptr<WorkSpace> workspace, Camera* camera);
 
         void ScriptInit();
 

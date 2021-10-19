@@ -4,17 +4,17 @@
 #include "VulkanRender.h"
 //TODO: ты наху€ нужен?
 namespace BEbraEngine {
-    Render::Render(VulkanRender* render)
+    Render::Render(AbstractRender* render)
     {
-        this->render = render;
+        this->render = static_cast<VulkanRender*>(render);
     }
 
     void Render::DrawFrame()
     {
-        render->UpdateFrame();
+        static_cast<VulkanRender*>(render)->UpdateFrame();
     }
     void Render::AddRenderObject(std::weak_ptr<RenderObject> object)
     {
-        render->AddObject(object);
+        static_cast<VulkanRender*>(render)->AddObject(object);
     }
 }

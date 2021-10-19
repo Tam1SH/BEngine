@@ -24,9 +24,11 @@ namespace BEbraEngine {
 
     void RenderObject::Draw(VkCommandBuffer cmd)
     {
+        auto bufferVBO = static_cast<Buffer*>(MeshRenderer->VBO);
+        auto bufferEBO = static_cast<Buffer*>(MeshRenderer->EBO);
         VkDeviceSize offset[] = { 0 };
-        vkCmdBindVertexBuffers(cmd, 0, 1, &MeshRenderer->VBO.self, offset);
-        vkCmdBindIndexBuffer(cmd, MeshRenderer->EBO.self, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindVertexBuffers(cmd, 0, 1, &bufferVBO->self, offset);
+        vkCmdBindIndexBuffer(cmd, bufferEBO->self, 0, VK_INDEX_TYPE_UINT32);
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, *layout, 0, 1, descriptor, 0, nullptr);
         vkCmdDrawIndexed(cmd, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
     }

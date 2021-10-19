@@ -5,6 +5,7 @@
 #include <thread>
 #include "VulkanWindow.h"
 #include "VkBuffer.hpp"
+#include "Camera.hpp"
 namespace BEbraEngine {
 
     VkDevice BaseVulkanRender::device;
@@ -15,6 +16,11 @@ namespace BEbraEngine {
 
     BaseVulkanRender::QueueFamilyIndices BaseVulkanRender::FamilyIndices;
                                       
+    void BaseVulkanRender::InitCamera(Camera* alloced_camera) {
+        alloced_camera->cameraData = CreateStorageBuffer(sizeof(Matrix4) * 2);
+        CreateCameraSet(alloced_camera->cameraData);
+
+    }
     VkCommandPool BaseVulkanRender::CreateCommandPool()
     {
         VkCommandPool pool;
@@ -474,7 +480,7 @@ namespace BEbraEngine {
     void BaseVulkanRender::initRender()
     {
 
-        //std::system("C:/Users/ignat/source/repos/Game/Game/shaders/sh.bat");
+        std::system("C:/Users/ignat/source/repos/Game/Game/shaders/sh.bat");
         pickPhysicalDevice();
         createLogicalDevice();
         setupDebugMessenger();
@@ -1786,6 +1792,13 @@ namespace BEbraEngine {
     RenderBuffer* BaseVulkanRender::CreateIndexBuffer(std::vector<uint32_t> indices)
     {
         return CreateBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    }
+    RenderBuffer* BaseVulkanRender::CreateStorageBuffer(size_t size)
+    {
+        Buffer* buffer = new Buffer();
+        buffer->size = size;
+        _createBuffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer->self, buffer->memory);
+        return buffer;
     }
     RenderBuffer* BaseVulkanRender::CreateUniformBuffer(size_t size)
     {
