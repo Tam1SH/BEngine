@@ -28,10 +28,12 @@ namespace BEbraEngine {
     {
     private:
         struct VP {
-            alignas(16) Matrix4 view;
-            alignas(16) Matrix4 proj;
+            Matrix4 view;
+            Matrix4 proj;
+
+
         };
-        VP vp;
+
 
         float Yaw;
         float Pitch;
@@ -59,7 +61,7 @@ namespace BEbraEngine {
         Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
 
-        Matrix4 GetViewMatrix();
+        glm::mat4 GetViewMatrix();
         
         void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 

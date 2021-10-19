@@ -9,7 +9,7 @@ namespace BEbraEngine {
 
     void Physics::Update()
     {
-        dynamicsWorld->stepSimulation(Time::GetDeltaTime() * 1/5);
+        dynamicsWorld->stepSimulation(Time::GetDeltaTime() * 1/10);
         for (auto lock_body = bodies.begin(); lock_body != bodies.end();++lock_body) {
             if (lock_body->expired()) {
                 lock_body = bodies.erase(lock_body);
@@ -25,7 +25,7 @@ namespace BEbraEngine {
                 auto pos = glm::vec3(
                     vec.x(), vec.y(), vec.z()
                 );
-
+                std::cout << "POSITION OF OBJECT : " << " X: " << pos.x << " Y:" << pos.y << " Z:" << pos.z << std::endl;
                 body->transform->UpdatePosition(pos);
             }
 

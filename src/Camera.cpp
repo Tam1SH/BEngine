@@ -4,6 +4,7 @@
 #include "Input.hpp"
 #include "BaseVulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 namespace BEbraEngine {
 
     Camera::Camera(Vector3 position , Vector3 up , float yaw, float pitch)
@@ -26,12 +27,12 @@ namespace BEbraEngine {
         updateCameraVectors();
     }
 
-    Matrix4 Camera::GetViewMatrix()
+    glm::mat4 Camera::GetViewMatrix()
     {
-        return Matrix4(glm::lookAt(
-            static_cast<glm::vec3>(Position), 
-            static_cast<glm::vec3>(Position + Front), 
-            static_cast<glm::vec3>(Up)));
+        glm::vec3 _pos = Position;
+        glm::vec3 pos_f = Position + Front;
+        glm::vec3 up = Up;
+        return glm::lookAt(_pos, pos_f, up);
     }
 
     void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
@@ -101,10 +102,16 @@ namespace BEbraEngine {
 
     void Camera::Update()
     {
-        vp.proj = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 0.0001f, 10000.0f);
-        vp.proj[1].y *= -1;
-        vp.view = GetViewMatrix();
+        struct VP1 {
+            glm::mat4 pizda;
+            glm::mat4 pozda1;
+        };
+        VP1 vp;
+        vp.pizda = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 0.0001f, 10000.0f);
+        vp.pizda[1].y *= -1;
+        vp.pozda1 = GetViewMatrix();
         ProcessMouseMovement();
+        std::cout << "POSITION OF CAMERA" << " X:" << Position.x << " Y:" << Position.y << " Z:" << Position.z << std::endl;
         cameraData->setData(&vp, sizeof(Matrix4) * 2, 0);
     }
 

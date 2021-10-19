@@ -35,10 +35,11 @@ namespace BEbraEngine {
     void GameLogic::ScriptInit()
     {
         //scriptManager->LoadScripts();
-
-        for (int i = 0; i < 10; i++) {
-            GameObject::New(glm::vec3(i));
-        }
+        GameObject::New(glm::vec3(0));
+        GameObject::New(glm::vec3(20,0,0));
+        GameObject::New(glm::vec3(-20,0,0));
+        GameObject::New(glm::vec3(0,0,20));
+        GameObject::New(glm::vec3(0, 0, -20));
         //auto script = scriptManager->GetScriptByName(L"hello_world.js");
         //script->SetActive(true);
         //obj->AddComponent(script);

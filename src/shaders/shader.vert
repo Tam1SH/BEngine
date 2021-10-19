@@ -1,6 +1,6 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
-
+#extension GL_KHR_vulkan_glsl : enable
 layout(binding = 0) uniform UniformBufferObject {
     mat4 model;
 } ubo;
@@ -8,8 +8,9 @@ layout(binding = 0) uniform UniformBufferObject {
 
 
 layout(std140, set = 1, binding = 0) buffer CameraData {
-    mat4 view;
     mat4 proj;
+    mat4 view;
+
 } Camera;
 
 
@@ -24,9 +25,18 @@ layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 
 
+vec2 positions[3] = vec2[](
+    vec2(0.0, -0.5),
+    vec2(0.5, 0.5),
+    vec2(-0.5, 0.5)
+);
 
 void main() {
     gl_Position = Camera.proj * Camera.view * ubo.model * vec4(inPosition, 1.0);
     fragTexCoord = inTexCoord;
-    fragColor = Camera.view[0];
+    fragColor =  Camera.proj * Camera.view * ubo.model * vec4(inPosition, 1.0);
+        //gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
+    //fragTexCoord = inTexCoord;
+   // fragColor = Camera.proj[3];
+   // fragColor = Camera.proj[0] + Camera.proj[1] +  Camera.proj[2] +Camera.proj[3];
 }

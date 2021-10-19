@@ -23,7 +23,7 @@ namespace BEbraEngine {
     {
         void* _data;
         vkMapMemory(BaseVulkanRender::device, memory, 0, size, 0, &_data);
-        memcpy(_data, &data, size);
+        memcpy(_data, data, size);
         vkUnmapMemory(BaseVulkanRender::device, memory);
        /*
                void* _data;

@@ -1757,6 +1757,7 @@ namespace BEbraEngine {
 
     void BaseVulkanRender::Create(BaseWindow* window)
     {
+        std::system("C:/.BEbraEngine/src/shaders/sh.bat");
         this->window = dynamic_cast<VulkanWindow*>(window);
         auto size = this->window->GetDrawableSize();
         createInstance();
