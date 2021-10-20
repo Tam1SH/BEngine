@@ -3,7 +3,7 @@
 #include <list>
 #include <typeinfo>
 #include "GameObjectFactory.hpp"
-#include <glm/glm.hpp>
+#include "Vector3.h"
 #include <iostream>
 namespace BEbraEngine {
     class GameObjectFactory;
@@ -21,7 +21,7 @@ namespace BEbraEngine {
     public:
         static void SetFactory(GameObjectFactory* factory);
 
-        static std::shared_ptr<GameObject> New(glm::vec3 position = glm::vec3(0));
+        static std::shared_ptr<GameObject> New(Vector3& position = Vector3(0));
 
         static void Destroy(std::shared_ptr<GameObject> object);
 

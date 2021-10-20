@@ -3,35 +3,86 @@
 
 cbuffer ConstantBuffer : register(b1)
 {
-
-    matrix model;              
-    matrix View;               
-    matrix Projection;
+    float4x4 World;
 }
 
 cbuffer CameraData : register(b2) {
-    float4x4 view;
-    float4x4 proj;
+    float4x4 Projection;
+    float4x4 View;
+
 };
 
 
-struct VS_OUTPUT
+
+struct VS_INPUT
+
 {
+
+    float4 Pos : POSITION;
+
+    float4 Color : COLOR;
+
+};
+
+
+
+struct PS_INPUT
+
+{
+
     float4 Pos : SV_POSITION;
+
+    float4 Color : COLOR;
+
 };
 
-VS_OUTPUT VS( float4 Pos : POSITION )
+
+
+
+
+//--------------------------------------------------------------------------------------
+
+// Вершинный шейдер
+
+//--------------------------------------------------------------------------------------
+
+PS_INPUT VS(VS_INPUT input)
+
 {
-    VS_OUTPUT output = (VS_OUTPUT)0;
-    
-  //  output.Pos = CameraData.proj * CameraData.view * UniformBufferObject.model * float4(Pos, 1.0);
-    output.Pos = Pos;
+
+    PS_INPUT output = (PS_INPUT)0;
+
+
+  //  output.Pos = mul(World, input.Pos);
+
+    float4 test = mul(World, input.Pos);
+    float4x4 PV = mul(Projection, View);
+    test = mul(PV, test);
+
+
+    output.Pos = test;
+    output.Color = test;
+
+
+
     return output;
+
 }
 
 
 
-float4 PS(VS_OUTPUT input) : SV_Target
+
+
+//--------------------------------------------------------------------------------------
+
+// Пиксельный шейдер
+
+//--------------------------------------------------------------------------------------
+
+float4 PS(PS_INPUT input) : SV_Target
+
 {
-    return input.Pos;
+
+    return input.Color;
+
 }

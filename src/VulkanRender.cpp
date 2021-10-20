@@ -62,10 +62,6 @@ namespace BEbraEngine {
         //   camera.ProcessMouseMovement();
     }
 
-    void VulkanRender::AddObject(std::weak_ptr<RenderObject> object)
-    {
-        objects.push_back(object);
-    }
 
     void VulkanRender::OnUpdateData()
     {

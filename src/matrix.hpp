@@ -1,4 +1,5 @@
 #pragma once
+#define GLM_FORCE_XYZW_ONLY
 #include <glm/glm.hpp>
 #include <array>
 #include "Vector4.h"
@@ -8,7 +9,7 @@
 namespace BEbraEngine {
 	class Matrix4 {
 	private:
-		std::array<Vector4, 4> elements;
+		Vector4 elements[4];
 	public:
 		operator glm::mat4() {
 			auto _mat = glm::mat4();
@@ -22,16 +23,16 @@ namespace BEbraEngine {
 			return elements[i];
 		}
 #ifdef _WIN64
-		operator DirectX::XMMATRIX() {
+		 operator DirectX::XMMATRIX&() {
 			auto& v0 = elements[0];
 			auto& v1 = elements[1];
 			auto& v2 = elements[2];
 			auto& v3 = elements[3];
 			auto _mat = DirectX::XMMATRIX(
-				v0.x,v0.y, v0.z, v0.w,
-				v1.x, v1.y, v1.z, v1.w,
-				v2.x, v2.y, v2.z, v3.w,
-				v3.x, v3.y, v3.z, v3.w
+				v0.f[0],v0.f[1], v0.f[2], v0.f[3],
+				v1.f[0], v1.f[1], v1.f[2], v1.f[3],
+				v2.f[0], v2.f[1], v2.f[2], v3.f[3],
+				v3.f[0], v3.f[1], v3.f[2], v3.f[3]
 			);
 			return _mat;
 		}
@@ -43,6 +44,13 @@ namespace BEbraEngine {
 			elements[2] = mat[2];
 			elements[3] = mat[3];
 		}
+		operator glm::mat4& () {
+			return glm::mat4(
+				elements[0], 
+				elements[1], 
+				elements[2], 
+				elements[3]);
+		}
 		Matrix4 operator*(const Matrix4& other) {
 			const glm::mat4& pizda = *this;
 			//В чём смысл кастить? а мне похуй, по приколу
@@ -53,6 +61,17 @@ namespace BEbraEngine {
 		Vector4 operator*(const Vector4& other) {
 			const glm::mat4& pizda = *this;
 			return Vector4(pizda * other);
+		}
+		bool operator==(const Matrix4& other) noexcept {
+			if (this->elements[0] == other.elements[0]
+				&& this->elements[1] == other.elements[1]
+				&& this->elements[2] == other.elements[2]
+				&& this->elements[3] == other.elements[3])
+				return true;
+			return false;
+		}
+		bool operator!=(const Matrix4& other) noexcept {
+			return !(*this == other);
 		}
 	};
 }

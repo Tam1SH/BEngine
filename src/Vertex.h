@@ -4,14 +4,15 @@
 #include <vulkan/vulkan.h>
 #include "Vector3.h"
 #include "Vector2.h"
+#include "Vector4.h"
 namespace BEbraEngine {
     struct Vertex {
         Vector3 position;
-        Vector3 color;
+        Vector4 color;
         Vector2 texCoord;
-        Vector3 Normal;
-        Vector3 Tangent;
-        Vector3 Bitangent;
+        // Vector3 Normal;
+        //Vector3 Tangent;
+        //Vector3 Bitangent;
         static VkVertexInputBindingDescription getBindingDescription() {
             VkVertexInputBindingDescription bindingDescription{};
             bindingDescription.binding = 0;
@@ -21,8 +22,8 @@ namespace BEbraEngine {
             return bindingDescription;
         }
 
-        static std::array<VkVertexInputAttributeDescription, 6> getAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 6> attributeDescriptions{};
+        static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
+            std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
             attributeDescriptions[0].binding = 0;
             attributeDescriptions[0].location = 0;
@@ -31,14 +32,14 @@ namespace BEbraEngine {
 
             attributeDescriptions[1].binding = 0;
             attributeDescriptions[1].location = 1;
-            attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+            attributeDescriptions[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[1].offset = offsetof(Vertex, color);
 
             attributeDescriptions[2].binding = 0;
             attributeDescriptions[2].location = 2;
             attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
             attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
-
+            /*
             attributeDescriptions[3].binding = 0;
             attributeDescriptions[3].location = 3;
             attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -53,7 +54,7 @@ namespace BEbraEngine {
             attributeDescriptions[5].location = 5;
             attributeDescriptions[5].format = VK_FORMAT_R32G32B32_SFLOAT;
             attributeDescriptions[5].offset = offsetof(Vertex, Bitangent);
-
+            */
             return attributeDescriptions;
         }
     };

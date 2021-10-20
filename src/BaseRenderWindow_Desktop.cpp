@@ -40,9 +40,14 @@ namespace BEbraEngine {
 			listener->onUpdateFrame();
 		}
 	}
+	bool BaseWindow::isClose()
+	{
+		return glfwWindowShouldClose(handle);
+	}
 	void BaseWindow::update() {
 		
 		glfwPollEvents();
+		
 		onUpdate();
 		notifyOnUpdateFrame();
 	}

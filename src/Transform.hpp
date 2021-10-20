@@ -1,7 +1,8 @@
 #pragma once
 #include "AbstractComponent.hpp"
 #include <vulkan/vulkan.h>
-#include <glm/glm.hpp>
+#include "Vector3.h"
+#include "matrix.hpp"
 #include "VkBuffer.hpp"
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
@@ -18,30 +19,30 @@ namespace BEbraEngine {
 
 
     private:
-        glm::vec3 position;
+        Vector3 position;
 
-        glm::vec3 scale;
+        Vector3 scale;
 
-        glm::vec3 rotation;
+        Vector3 rotation;
 
-        glm::mat4 model;
+        Matrix4 model;
     private:
 
         static void SetFactory(TransformFactory* factory) noexcept;
 
-        Transform(const glm::vec3& position);
+        Transform(const Vector3& position);
 
     public:
 
-        static Transform* New(const glm::vec3& position = glm::vec3(0));
+        static Transform* New(const Vector3& position = Vector3(0));
 
-        void UpdatePosition(const glm::vec3& position);
+        void UpdatePosition(const Vector3& position);
 
-        void SetPosition(const glm::vec3& position) noexcept;
+        void SetPosition(const Vector3& position) noexcept;
 
-        void SetScale(const glm::vec3& scale) noexcept;
+        void SetScale(const Vector3& scale) noexcept;
 
-        glm::vec3 GetPosition() const noexcept;
+        Vector3 GetPosition() const noexcept;
 
         ~Transform() { };
     };

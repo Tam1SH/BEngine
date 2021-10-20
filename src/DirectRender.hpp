@@ -12,6 +12,7 @@
 #include "Vertex.h"
 #include "Camera.hpp"
 namespace BEbraEngine {
+    class DirectWindow;
 	class DirectRender : public AbstractRender {
     private:
         HINSTANCE               g_hInst = NULL;
@@ -27,18 +28,21 @@ namespace BEbraEngine {
         ID3D11InputLayout* g_pVertexLayout = NULL;
         ID3D11Buffer* g_pVertexBuffer = NULL;
 
-        std::list<RenderObject*> objs;
+        std::list<std::weak_ptr<RenderObject>> objects;
     private:
+
         HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
-        HRESULT InitDevice();
+        HRESULT InitDevice(DirectWindow* window);
         HRESULT InitResource();
         void CleanupDevice();
 
 
     public:
-
+        Camera* camera;
 		void Create(BaseWindow* window) override;
 
+
+        void AddObject(std::weak_ptr<RenderObject> object) override;
         void InitCamera(Camera* alloced_camera) override;
         RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
         RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;

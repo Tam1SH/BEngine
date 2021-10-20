@@ -213,6 +213,9 @@
     <ClCompile Include="VulkanRender.cpp">
       <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
+    <ClCompile Include="BaseRenderWindow.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.hpp">

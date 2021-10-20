@@ -17,7 +17,6 @@ namespace BEbraEngine {
 
         int countOfObject = 200;
 
-        std::list<std::weak_ptr<RenderObject>> objects;
 
         void SetDescriptorLayouts() override;
 
@@ -43,7 +42,6 @@ namespace BEbraEngine {
 
         void UpdateCamera();
 
-        void AddObject(std::weak_ptr<RenderObject> object);
     public:
 
         VulkanRender();

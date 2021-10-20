@@ -28,8 +28,8 @@ namespace BEbraEngine {
     {
     private:
         struct VP {
-            Matrix4 view;
             Matrix4 proj;
+            Matrix4 view;
 
 
         };

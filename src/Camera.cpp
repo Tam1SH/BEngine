@@ -1,9 +1,11 @@
 #pragma once
 #define NOMINMAX
+#define GLM_CONFIG_XYZW_ONLY
 #include "Camera.hpp"
 #include "Input.hpp"
 #include "BaseVulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <iostream>
 namespace BEbraEngine {
 
@@ -102,16 +104,14 @@ namespace BEbraEngine {
 
     void Camera::Update()
     {
-        struct VP1 {
-            glm::mat4 pizda;
-            glm::mat4 pozda1;
-        };
-        VP1 vp;
-        vp.pizda = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 0.0001f, 10000.0f);
-        vp.pizda[1].y *= -1;
-        vp.pozda1 = GetViewMatrix();
+
+        VP vp;
+        vp.proj = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 0.0001f, 10000.0f);
+        if(dynamic_cast<Buffer*>(cameraData))
+            vp.proj[1][1] *= -1;
+        vp.view = GetViewMatrix();
+
         ProcessMouseMovement();
-        std::cout << "POSITION OF CAMERA" << " X:" << Position.x << " Y:" << Position.y << " Z:" << Position.z << std::endl;
         cameraData->setData(&vp, sizeof(Matrix4) * 2, 0);
     }
 

@@ -16,7 +16,7 @@ namespace BEbraEngine {
 
 	class GameObjectFactory {
 	private:
-		friend class Render;
+		friend class AbstractRender;
 		friend class Physics;
 
 		std::shared_ptr<AbstractRender> render;

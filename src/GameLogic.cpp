@@ -7,6 +7,7 @@
 #include "VulkanRender.h"
 #include "Input.hpp"
 #include "Render.h"
+#include "Vector3.h"
 //TODO: занимается вообще всем нахуй.
 namespace BEbraEngine {
 
@@ -35,11 +36,11 @@ namespace BEbraEngine {
     void GameLogic::ScriptInit()
     {
         //scriptManager->LoadScripts();
-        GameObject::New(glm::vec3(0));
-        GameObject::New(glm::vec3(20,0,0));
-        GameObject::New(glm::vec3(-20,0,0));
-        GameObject::New(glm::vec3(0,0,20));
-        GameObject::New(glm::vec3(0, 0, -20));
+        GameObject::New(Vector3(0));
+        GameObject::New(Vector3(20,0,0));
+        GameObject::New(Vector3(-20,0,0));
+        GameObject::New(Vector3(0,0,20));
+        GameObject::New(Vector3(0, 0, -20));
         //auto script = scriptManager->GetScriptByName(L"hello_world.js");
         //script->SetActive(true);
         //obj->AddComponent(script);

@@ -11,7 +11,6 @@ namespace BEbraEngine {
     class Texture;
     class RenderObject : public AbstractComponent {
     private:
-        friend class AbstractRender;
         friend class RenderObjectFactory;
 
         static RenderObjectFactory* factory;
@@ -34,6 +33,7 @@ namespace BEbraEngine {
 
     public:
 
+        const RenderBuffer* getMatrixBuffer();
 
         static RenderObject* New(std::shared_ptr<Transform> transform);
 

@@ -10,14 +10,12 @@ namespace BEbraEngine {
 	void DirectWindow::CreateWindow(const Vector2& size, const std::string& title)
 	{
 		onCreateWindow(size, BaseWindow::DirectX, title);
-		render = std::make_unique<DirectRender>();
 		render->Create(this);
 	}
 
 	void DirectWindow::CreateWindow(int w, int h, const std::string& title)
 	{
 		onCreateWindow(w,h, BaseWindow::DirectX, title);
-		render = std::make_unique<DirectRender>();
 		render->Create(this);
 	}
 
@@ -30,14 +28,11 @@ namespace BEbraEngine {
 		render->Render();
 	}
 
-	AbstractRender* DirectWindow::getRender()
+	DirectWindow::DirectWindow(std::shared_ptr<DirectRender> render)
 	{
-		return render.get();
+		this->render = render;
 	}
 
-	DirectWindow::DirectWindow()
-	{
-	}
 
 	DirectWindow::~DirectWindow()
 	{

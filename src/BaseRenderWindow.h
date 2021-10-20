@@ -37,7 +37,7 @@ namespace BEbraEngine {
 		virtual void onResizeCallback(int width, int height) = 0;
 		virtual void onUpdate() = 0;
 		//virtual AbstractRender* getRender() = 0;
-
+		bool isClose();
 		void update();
 		Vector2 GetWindowSize() const noexcept;
 		void SetWindowSize(const Vector2& newSize) const noexcept;

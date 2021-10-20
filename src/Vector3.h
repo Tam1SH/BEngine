@@ -1,4 +1,5 @@
 #pragma once
+#define GLM_FORCE_XYZW_ONLY
 #include <glm/glm.hpp>
 #include "btBulletCollisionCommon.h"
 #ifdef _WIN64
@@ -49,7 +50,7 @@ namespace BEbraEngine {
 			z = 0;
 		}
 
-		operator glm::vec3() const noexcept {
+		operator glm::vec3&() const noexcept {
 			return glm::vec3(x, y, z);
 		}
 

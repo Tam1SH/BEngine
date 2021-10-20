@@ -20,7 +20,7 @@ namespace BEbraEngine {
         GameObject::factory = factory;
     }
 
-    std::shared_ptr<GameObject> GameObject::New(glm::vec3 position)
+    std::shared_ptr<GameObject> GameObject::New(Vector3& position)
     {
         return GameObject::factory->Create(position);
     }

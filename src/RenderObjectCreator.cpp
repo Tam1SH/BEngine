@@ -3,6 +3,7 @@
 #include "VulkanRender.h"
 #include "Mesh1.h"
 #include "Transform.hpp"
+#include "DirectRender.hpp"
 #include "RenderBuffer.hpp"
 //TODO: пересмотреть создания буфферов и создание граф. объекта.
 namespace BEbraEngine {
@@ -25,8 +26,8 @@ namespace BEbraEngine {
 
         obj->MeshRenderer->VBO = render->CreateVertexBuffer(vertices);
         obj->MeshRenderer->EBO = render->CreateIndexBuffer(indices);
-
-        obj->texture = std::unique_ptr<Texture>(imgsCreator->createEmptyTexture());
+        if(!dynamic_cast<DirectRender*>(render))
+            obj->texture = std::unique_ptr<Texture>(imgsCreator->createEmptyTexture());
         obj->matBuffer = std::shared_ptr<RenderBuffer>(render->CreateUniformBuffer(sizeof(glm::mat4)));
         obj->transform->buffer = obj->matBuffer;
         auto type_render = dynamic_cast<VulkanRender*>(render);

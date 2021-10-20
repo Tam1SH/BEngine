@@ -35,12 +35,14 @@ TODO: подумать над реализацей:
 #include "Vector2.h"
 #include "VulkanWindow.h"
 #include "DirectWindow.h"
+#include "DirectRender.hpp"
 #include "Input.hpp"
 namespace BEbraEngine {
 
     class Engine {
     public:
-        std::shared_ptr<VulkanRender> render;
+        std::shared_ptr<DirectRender> render;
+        std::shared_ptr<VulkanRender> render1;
         std::unique_ptr<Physics> physics;
 
       //  std::unique_ptr<DebugUI> UId;
@@ -49,38 +51,46 @@ namespace BEbraEngine {
         std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace;
         std::unique_ptr<GameLogic> gameLogic;
+        std::unique_ptr<GameLogic> gameLogic1;
         std::unique_ptr<Camera> mainCamera;
+        std::unique_ptr<Camera> mainCamera1;
 
     public:
         void Init() {
-            render = std::shared_ptr<VulkanRender>(new VulkanRender());
+            render1 = std::shared_ptr<VulkanRender>(new VulkanRender());
+            render = std::shared_ptr<DirectRender>(new DirectRender());
+            window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1));
+            window = std::unique_ptr<DirectWindow>(new DirectWindow(render));
+
+
+            mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
             mainCamera = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
-            window = std::unique_ptr<VulkanWindow>(new VulkanWindow(render));
             window->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-            auto d = dynamic_cast<DirectWindow*>(window.get());
-            if (!d) {
-                workspace = std::shared_ptr<WorkSpace>(new WorkSpace());
+            window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
+            workspace = std::shared_ptr<WorkSpace>(new WorkSpace());
 
-                //     UId = std::make_unique<DebugUI>();
+            //     UId = std::make_unique<DebugUI>();
 
 
-                   //  UId->SetWorkSpace(workspace);
-               // auto render = window->getRender();
-                render->InitCamera(mainCamera.get());
-                render->camera = mainCamera.get();
-                //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
+                //  UId->SetWorkSpace(workspace);
+            // auto render = window->getRender();
+            render->InitCamera(mainCamera.get());
+            render->camera = mainCamera.get();
+            render1->InitCamera(mainCamera1.get());
+            render1->camera = mainCamera1.get();
+            //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
 
-                gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render.get(), workspace, mainCamera.get()));
-                window->attach(gameLogic.get());
-            }
-
+            gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render.get(), workspace, mainCamera.get()));
+            gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1.get(), workspace, mainCamera1.get()));
+            window->attach(gameLogic.get());
+            window1->attach(gameLogic1.get());
 
         }
         void Start() {
 
             bool quit = false;
 
-            while (!quit) {
+            while (!window->isClose() || !window1->isClose()) {
                 Update();
 
             }
@@ -92,6 +102,7 @@ namespace BEbraEngine {
 
          //   UId->Prepare();
             window->update();
+            window1->update();
            // window1->update();
         }
 

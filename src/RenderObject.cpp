@@ -17,6 +17,11 @@ namespace BEbraEngine {
         std::cout << "RENDER OBJECT " << this << " CREATED" << std::endl;
     }
 
+    const RenderBuffer* RenderObject::getMatrixBuffer()
+    {
+        return matBuffer.get();
+    }
+
     RenderObject* RenderObject::New(std::shared_ptr<Transform> transform)
     {
         return factory->CreateObject(transform);

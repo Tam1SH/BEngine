@@ -111,8 +111,10 @@ namespace BEbraEngine {
     class Camera;
     class BaseVulkanRender : public AbstractRender
     {
-
+    protected:
+        std::list<std::weak_ptr<RenderObject>> objects;
     public:
+
         Camera* camera;
         void Create(BaseWindow* window) override;
 
@@ -126,6 +128,11 @@ namespace BEbraEngine {
         RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
 
         RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
+
+        void AddObject(std::weak_ptr<RenderObject> object) override
+        {
+            objects.push_back(object);
+        }
 
         void InitCamera(Camera* alloced_camera) override;
 

@@ -301,6 +301,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AudioSystem.cpp" />
+    <ClCompile Include="BaseRenderWindow.cpp" />
     <ClCompile Include="BaseRenderWindow_Mobile.cpp" />
     <ClCompile Include="BaseRenderWindow_Desktop.cpp" />
     <ClCompile Include="BaseVulkanRender.cpp" />

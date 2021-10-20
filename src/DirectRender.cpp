@@ -4,6 +4,7 @@
 #if defined(_WIN64) && defined(BEBRA_USE_GLFW)
 #include "DirectWindow.h"
 #include "DirectRender.hpp"
+#include "Camera.hpp"
 #include "BaseVulkanRender.hpp"
 namespace BEbraEngine {
 
@@ -11,16 +12,26 @@ namespace BEbraEngine {
         ID3D11DeviceContext* g_pImmediateContext;
         ID3D11Buffer* buf;
         size_t size;
+
         void setData(void* data, size_t size, size_t offset) override {
-            g_pImmediateContext->UpdateSubresource(buf, 0, NULL, data, 0, 0);
+            D3D11_MAPPED_SUBRESOURCE mappedResource;
+            ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+            g_pImmediateContext->Map(buf, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+            memcpy(mappedResource.pData, data, size);
+            g_pImmediateContext->Unmap(buf, 0);
+           // g_pImmediateContext->UpdateSubresource(buf, 0, NULL, data, 0, 0);
         }
     };
 
     void DirectRender::Create(BaseWindow* window) {
         auto win = dynamic_cast<DirectWindow*>(window);
         g_hWnd = win->getHandle();
-        InitDevice();
+        InitDevice(win);
         InitResource();
+    }
+    void DirectRender::AddObject(std::weak_ptr<RenderObject> object)
+    {
+        objects.push_back(object);
     }
     void DirectRender::InitCamera(Camera* camera)
     {
@@ -31,7 +42,7 @@ namespace BEbraEngine {
         auto buff = new Buffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
-        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.ByteWidth = sizeof(indices[0]) * indices.size();
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bd.CPUAccessFlags = 0;
@@ -52,14 +63,12 @@ namespace BEbraEngine {
         auto buff = new Buffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
-        bd.Usage = D3D11_USAGE_DEFAULT;
         bd.ByteWidth = size;
+        bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bd.CPUAccessFlags = 0;
-
-        D3D11_SUBRESOURCE_DATA InitData;
-        ZeroMemory(&InitData, sizeof(InitData));
-        g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        bd.MiscFlags = 0;
+        g_pd3dDevice->CreateBuffer(&bd, NULL, &buff->buf);
         buff->g_pImmediateContext = g_pImmediateContext;
         return buff;
     }
@@ -68,14 +77,12 @@ namespace BEbraEngine {
         auto buff = new Buffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
-        bd.Usage = D3D11_USAGE_DEFAULT;
         bd.ByteWidth = size;
+        bd.Usage = D3D11_USAGE_DYNAMIC;
         bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bd.CPUAccessFlags = 0;
-
-        D3D11_SUBRESOURCE_DATA InitData;
-        ZeroMemory(&InitData, sizeof(InitData));
-        g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        bd.MiscFlags = 0;
+        g_pd3dDevice->CreateBuffer(&bd, NULL, &buff->buf);
         buff->g_pImmediateContext = g_pImmediateContext;
         return buff;
     }
@@ -129,7 +136,7 @@ namespace BEbraEngine {
 
         return S_OK;
     }
-    HRESULT DirectRender::InitDevice()
+    HRESULT DirectRender::InitDevice(DirectWindow* window)
     { 
         HRESULT hr = S_OK;
 
@@ -229,6 +236,7 @@ namespace BEbraEngine {
         D3D11_INPUT_ELEMENT_DESC layout[] =
         {
             { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(Vector4), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
         UINT numElements = ARRAYSIZE(layout);
 
@@ -310,9 +318,20 @@ namespace BEbraEngine {
         g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
        // g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
         // Render a triangle
-        g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
-        g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
-        g_pImmediateContext->Draw(vertices.size(), 0);
+        auto buf = static_cast<Buffer*>(camera->cameraData);
+
+        
+
+
+        for (auto object : objects) {
+            const auto data = static_cast<const Buffer*>(object.lock()->getMatrixBuffer());
+            g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
+            g_pImmediateContext->VSSetConstantBuffers(1, 1, &data->buf);
+            g_pImmediateContext->VSSetConstantBuffers(2, 1, &buf->buf);
+            g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
+            g_pImmediateContext->Draw(vertices.size(), 0);
+        }
+
 
         // Present the information rendered to the back buffer to the front buffer (the screen)
         g_pSwapChain->Present(0, 0);

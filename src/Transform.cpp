@@ -15,43 +15,47 @@ namespace BEbraEngine {
         Transform::factory = factory;
     }
 
-    Transform* Transform::New(const glm::vec3& position)
+    Transform* Transform::New(const Vector3& position)
     {
         return factory->Create(position);
     }
 
-    Transform::Transform(const glm::vec3& position)
+    Transform::Transform(const Vector3& position)
     {
         std::cout << "TRANSFORM " << this << " CREATED" << std::endl;
         this->position = position;
-        scale = glm::vec3(1);
-        rotation = glm::vec3(1);
+        scale = Vector3(1);
+        rotation = Vector3(1);
         model = glm::mat4(1);
     }
 
-    void Transform::UpdatePosition(const glm::vec3& position)
+    void Transform::UpdatePosition(const Vector3& position)
     {
         this->position = position;
 
         model = glm::mat4(1);
-        model = glm::translate(model, this->position);
-        model = glm::scale(model, scale);
+        glm::mat4 _m = model;
+        glm::vec3 _s = scale;
+        glm::vec3 _p = position;
+        model = glm::translate(_m, _p);
+        glm::mat4 _m1 = model;
+        model = glm::scale(_m1, _s);
 
-        buffer->setData(&model, sizeof(glm::mat4), 0);
+        buffer->setData(&model, sizeof(Matrix4), 0);
     }
 
-    void Transform::SetPosition(const glm::vec3& position) noexcept
+    void Transform::SetPosition(const Vector3& position) noexcept
     {
         this->position = position;
     }
 
 
-    void Transform::SetScale(const glm::vec3& scale) noexcept
+    void Transform::SetScale(const Vector3& scale) noexcept
     {
         this->scale = scale;
     }
 
-    glm::vec3 Transform::GetPosition() const noexcept
+    Vector3 Transform::GetPosition() const noexcept
     {
         return position;
     }
