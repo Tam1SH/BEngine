@@ -54,7 +54,7 @@ namespace BEbraEngine {
 
     void GameLogic::Update()
     {
-        Time::UpdateTime();
+        
         
         if (Input::IsKeyPressed(KEY_CODE::KEY_A)) {
             camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());

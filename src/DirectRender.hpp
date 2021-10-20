@@ -26,8 +26,11 @@ namespace BEbraEngine {
         ID3D11VertexShader* g_pVertexShader = NULL;
         ID3D11PixelShader* g_pPixelShader = NULL;
         ID3D11InputLayout* g_pVertexLayout = NULL;
-        ID3D11Buffer* g_pVertexBuffer = NULL;
+        ID3D11Texture2D* g_pDepthStencil = NULL;             // Текстура буфера глубин
+        ID3D11DepthStencilView* g_pDepthStencilView = NULL;          // Объект вида, буфер глубин
 
+        ID3D11Buffer* g_pVertexBuffer = NULL;
+        ID3D11Buffer* indicesBuffer = NULL;
         std::list<std::weak_ptr<RenderObject>> objects;
     private:
 

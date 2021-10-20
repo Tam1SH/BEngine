@@ -42,11 +42,11 @@ namespace BEbraEngine {
         auto buff = new Buffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
-        bd.Usage = D3D11_USAGE_DYNAMIC;
+        bd.Usage = D3D11_USAGE_DEFAULT;
         bd.ByteWidth = sizeof(indices[0]) * indices.size();
-        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
         bd.CPUAccessFlags = 0;
-
+        buff->size = bd.ByteWidth;
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
         InitData.pSysMem = indices.data();
@@ -95,7 +95,7 @@ namespace BEbraEngine {
         bd.ByteWidth = sizeof(vertices[0]) * vertices.size();
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bd.CPUAccessFlags = 0;
-
+        buff->size = bd.ByteWidth;
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
         InitData.pSysMem = vertices.data();
@@ -191,7 +191,6 @@ namespace BEbraEngine {
         if (FAILED(hr))
             return hr;
 
-        // Create a render target view
         ID3D11Texture2D* pBackBuffer = NULL;
         hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
         if (FAILED(hr))
@@ -202,7 +201,37 @@ namespace BEbraEngine {
         if (FAILED(hr))
             return hr;
 
-        g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, NULL);
+
+        D3D11_TEXTURE2D_DESC descDepth; 
+        ZeroMemory(&descDepth, sizeof(descDepth));
+        descDepth.Width = width;            
+        descDepth.Height = height;    
+        descDepth.MipLevels = 1;            
+        descDepth.ArraySize = 1;
+        descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; 
+        descDepth.SampleDesc.Count = 1;
+        descDepth.SampleDesc.Quality = 0;
+        descDepth.Usage = D3D11_USAGE_DEFAULT;
+        descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;       
+        descDepth.CPUAccessFlags = 0;
+        descDepth.MiscFlags = 0;
+        hr = g_pd3dDevice->CreateTexture2D(&descDepth, NULL, &g_pDepthStencil);
+
+        if (FAILED(hr)) return hr;
+
+        D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;           
+        ZeroMemory(&descDSV, sizeof(descDSV));
+        descDSV.Format = descDepth.Format;
+        descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+        descDSV.Texture2D.MipSlice = 0;
+
+        hr = g_pd3dDevice->CreateDepthStencilView(g_pDepthStencil, &descDSV, &g_pDepthStencilView);
+
+        if (FAILED(hr)) return hr;
+
+
+
+        g_pImmediateContext->OMSetRenderTargets(2, &g_pRenderTargetView, g_pDepthStencilView);
 
         // Setup the viewport
         D3D11_VIEWPORT vp;
@@ -294,11 +323,13 @@ namespace BEbraEngine {
         if (FAILED(hr))
             return hr;
 
+        Buffer* vertbuf = dynamic_cast<Buffer*>(CreateVertexBuffer(vertices));
+        auto indicesbuf = dynamic_cast<Buffer*>(CreateIndexBuffer(indices));
         // Set vertex buffer
         UINT stride = sizeof(Vertex);
         UINT offset = 0;
-        g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-
+        g_pImmediateContext->IASetVertexBuffers(0, 1, &vertbuf->buf, &stride, &offset);
+        g_pImmediateContext->IASetIndexBuffer(indicesbuf->buf, DXGI_FORMAT_R32_UINT, 0);
         // Set primitive topology
         g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -314,8 +345,9 @@ namespace BEbraEngine {
     void DirectRender::Render()
     {
         // Clear the back buffer 
-        float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
+        float ClearColor[4] = { 1, 215 / 255.f, 230 / 255.f, 1.0f }; // red,green,blue,alpha
         g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
+        g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
        // g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
         // Render a triangle
         auto buf = static_cast<Buffer*>(camera->cameraData);
@@ -329,7 +361,7 @@ namespace BEbraEngine {
             g_pImmediateContext->VSSetConstantBuffers(1, 1, &data->buf);
             g_pImmediateContext->VSSetConstantBuffers(2, 1, &buf->buf);
             g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
-            g_pImmediateContext->Draw(vertices.size(), 0);
+            g_pImmediateContext->DrawIndexed(indices.size(),0, 0);
         }
 
 
@@ -348,6 +380,8 @@ namespace BEbraEngine {
         if (g_pVertexLayout) g_pVertexLayout->Release();
         if (g_pVertexShader) g_pVertexShader->Release();
         if (g_pPixelShader) g_pPixelShader->Release();
+        if (g_pDepthStencil) g_pDepthStencil->Release();
+        if (g_pDepthStencilView) g_pDepthStencilView->Release();
         if (g_pRenderTargetView) g_pRenderTargetView->Release();
         if (g_pSwapChain) g_pSwapChain->Release();
         if (g_pImmediateContext) g_pImmediateContext->Release();

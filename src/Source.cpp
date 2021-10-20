@@ -37,6 +37,7 @@ TODO: подумать над реализацей:
 #include "DirectWindow.h"
 #include "DirectRender.hpp"
 #include "Input.hpp"
+#include "Time.hpp"
 namespace BEbraEngine {
 
     class Engine {
@@ -50,6 +51,7 @@ namespace BEbraEngine {
         std::unique_ptr<BaseWindow> window;
         std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace;
+        std::shared_ptr<WorkSpace> workspace1;
         std::unique_ptr<GameLogic> gameLogic;
         std::unique_ptr<GameLogic> gameLogic1;
         std::unique_ptr<Camera> mainCamera;
@@ -57,40 +59,45 @@ namespace BEbraEngine {
 
     public:
         void Init() {
-            render1 = std::shared_ptr<VulkanRender>(new VulkanRender());
             render = std::shared_ptr<DirectRender>(new DirectRender());
-            window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1));
             window = std::unique_ptr<DirectWindow>(new DirectWindow(render));
-
-
-            mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
             mainCamera = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
             window->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-            window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
             workspace = std::shared_ptr<WorkSpace>(new WorkSpace());
+            render->InitCamera(mainCamera.get());
+            render->camera = mainCamera.get();
+            gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render.get(), workspace, mainCamera.get()));
+            window->attach(gameLogic.get());
+
+            render1 = std::shared_ptr<VulkanRender>(new VulkanRender());
+            window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1));
+            mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
+            window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
+            workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
+            render1->InitCamera(mainCamera1.get());
+            render1->camera = mainCamera1.get();
+            gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1.get(), workspace, mainCamera1.get()));
+            window1->attach(gameLogic1.get());
+            
+            
 
             //     UId = std::make_unique<DebugUI>();
 
 
                 //  UId->SetWorkSpace(workspace);
             // auto render = window->getRender();
-            render->InitCamera(mainCamera.get());
-            render->camera = mainCamera.get();
-            render1->InitCamera(mainCamera1.get());
-            render1->camera = mainCamera1.get();
+
             //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
 
-            gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render.get(), workspace, mainCamera.get()));
-            gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1.get(), workspace, mainCamera1.get()));
-            window->attach(gameLogic.get());
-            window1->attach(gameLogic1.get());
+
+
+
 
         }
         void Start() {
 
-            bool quit = false;
-
             while (!window->isClose() || !window1->isClose()) {
+                Time::UpdateTime();
                 Update();
 
             }
