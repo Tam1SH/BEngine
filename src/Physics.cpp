@@ -1,8 +1,10 @@
+#include "stdafx.h"
 #include "Physics.hpp"
 #include "RigidBoby.hpp"
 #include "GameObject.hpp"
 #include "Transform.hpp"
 #include "Time.hpp"
+
 //TODO: сделать так, чтобы физика параллельно обрабатывалась бл€ть(жаль производительность растЄт ниху€ не линейно). ѕерекомпилить с использованием TBB(пока только дл€ винды)
 namespace BEbraEngine {
 

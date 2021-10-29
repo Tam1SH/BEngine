@@ -4,13 +4,6 @@
 #include <vector>
 //TODO: этот хуй бесполезен, ну почти.
 class CommandPool {
-private:
-
-    static VkDevice device;
-
-    VkCommandPool pool;
-
-    int countBuffers;
 
 public:
     static void SetDevice(VkDevice device) {
@@ -62,5 +55,12 @@ public:
     ~CommandPool() {
         vkDestroyCommandPool(device, pool, 0);
     }
+private:
+
+    static VkDevice device;
+
+    VkCommandPool pool;
+
+    int countBuffers;
 };
 

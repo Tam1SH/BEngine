@@ -1,12 +1,15 @@
+#include "stdafx.h"
 #define NOMINMAX
 #include "Transform.hpp"
 #include "GameObject.hpp"
 #include "RigidBoby.hpp"
-#include "TransformFactory.h"
+#include "TransformFactory.hpp"
 #include "btBulletDynamicsCommon.h"
 #include "BaseVulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "VkBuffer.hpp"
+#include "RenderBuffer.hpp"
 namespace BEbraEngine {
     TransformFactory* Transform::factory;
 
@@ -41,7 +44,7 @@ namespace BEbraEngine {
         glm::mat4 _m1 = model;
         model = glm::scale(_m1, _s);
 
-        buffer->setData(&model, sizeof(Matrix4), 0);
+        buffer->setData(&model, sizeof(Matrix4), _buffer->offset);
     }
 
     void Transform::SetPosition(const Vector3& position) noexcept

@@ -1,14 +1,15 @@
-#include "GameLogic.h"
-#include "ScriptManager.h"
+#include "stdafx.h"
+#include "GameLogic.hpp"
+#include "ScriptManager.hpp"
 #include "GameObjectFactory.hpp"
 #include "Time.hpp"
 #include "Camera.hpp"
 #include "Physics.hpp"
-#include "VulkanRender.h"
+#include "VulkanRender.hpp"
 #include "Input.hpp"
-#include "Render.h"
-#include "Vector3.h"
-//TODO: занимается вообще всем нахуй.
+#include "Render.hpp"
+#include "Vector3.hpp"
+//TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 namespace BEbraEngine {
 
 
@@ -55,7 +56,7 @@ namespace BEbraEngine {
     void GameLogic::Update()
     {
         
-        
+        /*
         if (Input::IsKeyPressed(KEY_CODE::KEY_A)) {
             camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());
         }
@@ -68,7 +69,7 @@ namespace BEbraEngine {
         if (Input::IsKeyPressed(KEY_CODE::KEY_W)) {
             camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
         }
-
+        */
         camera->Update();
         scriptManager->RunScripts();
         physics->Update();

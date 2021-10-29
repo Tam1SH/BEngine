@@ -4,26 +4,26 @@
 #include <list>
 namespace BEbraEngine {
     class DebugUI;
-    class AbstractComponent {
+    class GameObjectComponent {
 
     private:
         friend class DebugUI;
 
-        AbstractComponent* parent_;
+        GameObjectComponent* parent_;
 
     protected:
         std::string name;
 
-        std::list<std::shared_ptr<AbstractComponent>> Components;
+        std::list<std::shared_ptr<GameObjectComponent>> Components;
 
     public:
 
-        virtual ~AbstractComponent() {}
+        virtual ~GameObjectComponent() {}
 
-        void SetParent(AbstractComponent* parent) {
+        void SetParent(GameObjectComponent* parent) {
             this->parent_ = parent;
         }
-        AbstractComponent* GetParent() const {
+        GameObjectComponent* GetParent() const {
             return this->parent_;
         }
 
@@ -43,7 +43,7 @@ namespace BEbraEngine {
             return Components.size();
         }
     protected:
-        virtual void _addComponent(std::shared_ptr<AbstractComponent> component) {}
-        virtual void _removeComponent(std::shared_ptr<AbstractComponent> component) {}
+        virtual void _addComponent(std::shared_ptr<GameObjectComponent> component) {}
+        virtual void _removeComponent(std::shared_ptr<GameObjectComponent> component) {}
     };
 }

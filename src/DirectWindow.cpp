@@ -1,4 +1,5 @@
-#include "DirectWindow.h"
+#include "stdafx.h"
+#include "DirectWindow.hpp"
 #include "DirectRender.hpp"
 #ifdef BEBRA_USE_GLFW
 namespace BEbraEngine {
@@ -10,12 +11,6 @@ namespace BEbraEngine {
 	void DirectWindow::CreateWindow(const Vector2& size, const std::string& title)
 	{
 		onCreateWindow(size, BaseWindow::DirectX, title);
-		render->Create(this);
-	}
-
-	void DirectWindow::CreateWindow(int w, int h, const std::string& title)
-	{
-		onCreateWindow(w,h, BaseWindow::DirectX, title);
 		render->Create(this);
 	}
 

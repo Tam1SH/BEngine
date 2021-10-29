@@ -1,15 +1,16 @@
-
+#include "stdafx.h"
 #include "GameObject.hpp"
+#include "GameObjectFactory.hpp"
 namespace BEbraEngine {
     GameObjectFactory* GameObject::factory;
 
-    void GameObject::_addComponent(std::shared_ptr<AbstractComponent> component)
+    void GameObject::_addComponent(std::shared_ptr<GameObjectComponent> component)
     {
         Components.push_back(component);
         component->SetParent(this);
     }
 
-    void GameObject::_removeComponent(std::shared_ptr<AbstractComponent> component)
+    void GameObject::_removeComponent(std::shared_ptr<GameObjectComponent> component)
     {
         Components.remove(component);
         component->SetParent(nullptr);
@@ -20,7 +21,7 @@ namespace BEbraEngine {
         GameObject::factory = factory;
     }
 
-    std::shared_ptr<GameObject> GameObject::New(Vector3& position)
+    std::shared_ptr<GameObject> GameObject::New(const Vector3& position)
     {
         return GameObject::factory->Create(position);
     }
@@ -35,7 +36,7 @@ namespace BEbraEngine {
         factory->Destroy(this);
     }
 
-    void GameObject::AddComponent(std::shared_ptr<AbstractComponent> component)
+    void GameObject::AddComponent(std::shared_ptr<GameObjectComponent> component)
     {
         _addComponent(component);
     }

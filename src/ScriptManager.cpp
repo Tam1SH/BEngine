@@ -1,8 +1,5 @@
-#include "ScriptManager.h"
-
-
-#include <string>
-
+#include "stdafx.h"
+#include "ScriptManager.hpp"
 
 #include "LuaEngine.hpp"
 //#include "PythonEngine.hpp"

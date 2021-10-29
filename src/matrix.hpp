@@ -2,23 +2,14 @@
 #define GLM_FORCE_XYZW_ONLY
 #include <glm/glm.hpp>
 #include <array>
-#include "Vector4.h"
+#include "Vector4.hpp"
 #ifdef _WIN64
 #include <DirectXMath.h>
 #endif
 namespace BEbraEngine {
 	class Matrix4 {
-	private:
-		Vector4 elements[4];
 	public:
-		operator glm::mat4() {
-			auto _mat = glm::mat4();
-			_mat[0] = elements[0];
-			_mat[1] = elements[1];
-			_mat[2] = elements[2];
-			_mat[3] = elements[3];
-			return _mat;
-		}
+
 		Vector4& operator[](size_t i) {
 			return elements[i];
 		}
@@ -44,7 +35,7 @@ namespace BEbraEngine {
 			elements[2] = mat[2];
 			elements[3] = mat[3];
 		}
-		operator glm::mat4& () {
+		operator glm::mat4 () {
 			return glm::mat4(
 				elements[0], 
 				elements[1], 
@@ -55,7 +46,7 @@ namespace BEbraEngine {
 			const glm::mat4& pizda = *this;
 			//В чём смысл кастить? а мне похуй, по приколу
 			glm::mat4 pizda1 = const_cast<Matrix4&>(other);
-			auto& pizda228_1337 = pizda * pizda1;
+			auto pizda228_1337 = pizda * pizda1;
 			return Matrix4(pizda228_1337);
 		}
 		Vector4 operator*(const Vector4& other) {
@@ -73,5 +64,7 @@ namespace BEbraEngine {
 		bool operator!=(const Matrix4& other) noexcept {
 			return !(*this == other);
 		}
+	private:
+		Vector4 elements[4];
 	};
 }

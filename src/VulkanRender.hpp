@@ -17,9 +17,6 @@ namespace BEbraEngine {
 
         int countOfObject = 200;
 
-
-        void SetDescriptorLayouts() override;
-
         void Init() override;
 
         typedef std::chrono::high_resolution_clock Clock;

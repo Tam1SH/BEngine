@@ -3,10 +3,13 @@
 #define CAMERA_H
 
 #include "AbstractComponent.hpp"
-#include "RenderBuffer.hpp"
 #include "matrix.hpp"
-#include "Vector3.h"
-//TODO: нарушает и S и D в солиде блять. Избавиться нахуй от признаков того, что это вообще рендериться.
+#include "Vector3.hpp"
+namespace BEbraEngine {
+    class RenderBuffer;
+
+}
+//TODO: ну, почти.
 namespace BEbraEngine {
         enum Camera_Movement {
         FORWARD,
@@ -24,26 +27,8 @@ namespace BEbraEngine {
     const float ZOOM = 45.0f;
 
    
-    class Camera : public AbstractComponent
+    class Camera : public GameObjectComponent
     {
-    private:
-        struct VP {
-            Matrix4 proj;
-            Matrix4 view;
-
-
-        };
-
-
-        float Yaw;
-        float Pitch;
-
-        float MovementSpeed;
-        float MouseSensitivity;
-        float Zoom;
-
-        float lastX;
-        float lastY;
     public:
         RenderBuffer* cameraData;
         
@@ -75,6 +60,24 @@ namespace BEbraEngine {
 
     private:
         void updateCameraVectors();
+    private:
+        struct VP {
+            Matrix4 proj;
+            Matrix4 imageView;
+
+
+        };
+
+
+        float Yaw;
+        float Pitch;
+
+        float MovementSpeed;
+        float MouseSensitivity;
+        float Zoom;
+
+        float lastX;
+        float lastY;
     };
 }
 #endif

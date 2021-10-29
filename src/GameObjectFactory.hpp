@@ -1,20 +1,36 @@
+
 #pragma once
 #include "AbstractComponent.hpp"
-
-#include <glm/glm.hpp>
-#include <memory>
+#include "stdafx.h"
 #include "AbstractRenderSystem.hpp"
-
+#include "Vector3.hpp"
 namespace BEbraEngine {
 	class GameObject;
 	class Physics;
 	class Render;
 	class TransformFactory;
-	class RenderObjectFactory;
+	class VulkanRenderObjectFactory;
 	class RigidBody;
 	class WorkSpace;
+}
+
+namespace BEbraEngine {
+
 
 	class GameObjectFactory {
+
+	public:
+		GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics);
+
+		std::shared_ptr<GameObject> Create(const Vector3& position);
+
+		void Destroy(GameObject* object);
+
+		void Destroy(std::shared_ptr<GameObject> object);
+
+		void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
+
+		~GameObjectFactory();
 	private:
 		friend class AbstractRender;
 		friend class Physics;
@@ -24,20 +40,7 @@ namespace BEbraEngine {
 		std::shared_ptr<WorkSpace> workspace;
 
 		std::unique_ptr<TransformFactory> transFactory;
-		std::unique_ptr<RenderObjectFactory> renderFactory;
-
-	public:
-		GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics);
-
-		std::shared_ptr<GameObject> Create(glm::vec3 position);
-
-		void Destroy(GameObject* object);
-
-		void Destroy(std::shared_ptr<GameObject> object);
-
-		void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
-
-		~GameObjectFactory();
+		std::unique_ptr<VulkanRenderObjectFactory> renderFactory;
 	};
 
 }

@@ -6,10 +6,6 @@
 //TODO: этот хуй может быть очень полезен, но в нЄм ниху€ нет.
 namespace BEbraEngine {
     class DescriptorPool {
-    private:
-        VkDescriptorPool pool;
-
-        int countDescriptors;
 
     public:
 
@@ -40,7 +36,11 @@ namespace BEbraEngine {
                 throw std::runtime_error("failed to create descriptor pool!");
             }
         }
+    private:
+        VkDescriptorPool pool;
 
+        int countDescriptors;
     };
+
 }
 

@@ -2,9 +2,9 @@
 #include <array>
 #include <glm/glm.hpp>
 #include <vulkan/vulkan.h>
-#include "Vector3.h"
-#include "Vector2.h"
-#include "Vector4.h"
+#include "Vector3.hpp"
+#include "Vector2.hpp"
+#include "Vector4.hpp"
 namespace BEbraEngine {
     struct Vertex {
         Vector3 position;

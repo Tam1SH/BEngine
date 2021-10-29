@@ -1,45 +1,64 @@
+#include "stdafx.h"
+#include "RenderObject.hpp"
 #include "RenderObjectCreator.hpp"
-#include "RenderObject.h"
-#include "VulkanRender.h"
-#include "Mesh1.h"
+#include "RenderObjectInfo.hpp"
+#include "VulkanRender.hpp"
+#include "ImageCreator.hpp"
+#include "Mesh1.hpp"
+#include "Image.hpp"
 #include "Transform.hpp"
 #include "DirectRender.hpp"
+#include "VkBuffer.hpp"
 #include "RenderBuffer.hpp"
-//TODO: пересмотреть создания буфферов и создание граф. объекта.
+#include "Vertex.hpp"
+#include "Image.hpp"
+#include "RenderObjectPool.hpp"
 namespace BEbraEngine {
 
 
-    Texture RenderObjectFactory::CreateImage(Texture img)
-    {
-        return img;
-    }
     
 
-    RenderObject* RenderObjectFactory::CreateObject(std::shared_ptr<Transform> transform)
+    RenderObject* VulkanRenderObjectFactory::create(VulkanRenderObjectInfo* info)
     {
-
         auto obj = new RenderObject();
         obj->name = "RenderObject";
-        obj->transform = transform;
-
+        
         obj->MeshRenderer = std::unique_ptr<Mesh1>(new Mesh1());
-
         obj->MeshRenderer->VBO = render->CreateVertexBuffer(vertices);
         obj->MeshRenderer->EBO = render->CreateIndexBuffer(indices);
-        if(!dynamic_cast<DirectRender*>(render))
-            obj->texture = std::unique_ptr<Texture>(imgsCreator->createEmptyTexture());
-        obj->matBuffer = std::shared_ptr<RenderBuffer>(render->CreateUniformBuffer(sizeof(glm::mat4)));
-        obj->transform->buffer = obj->matBuffer;
+        obj->texture = std::unique_ptr<Texture>(imgsCreator->createEmptyTexture());
+        obj->matBuffer = std::shared_ptr<RenderBuffer>(info->buffer);
+        obj->_matBuffer = std::shared_ptr<RenderBufferView>(info->bufferView);
+        obj->offset = info->offset;
         auto type_render = dynamic_cast<VulkanRender*>(render);
         if (type_render) {
-            obj->descriptor = new VkDescriptorSet();
+            VulkanDescriptorSetInfo setinfo{};
+            setinfo.sampler = obj->texture->sampler;
+            setinfo.imageView = obj->texture->imageView;
+            setinfo.buffer = static_cast<Buffer*>(info->buffer);
+            setinfo.offset = obj->offset;
+            setinfo.bufferView = info->bufferView;
+            obj->descriptor = type_render->CreateDescriptor(&setinfo);
             obj->layout = &type_render->pipelineLayout;
-
-            CreateObjectSet(obj);
         }
         return obj;
     }
-    void RenderObjectFactory::CreateObjectSet(RenderObject* obj)
+
+    RenderObject* VulkanRenderObjectFactory::CreateObject(std::shared_ptr<Transform> transform)
+    {
+        auto _obj = _pool->get();
+        if (_obj.has_value()) {
+            auto renderObject = _obj.value();
+            renderObject->transform = transform;
+            renderObject->transform->buffer = std::shared_ptr<RenderBuffer>(renderObject->matBuffer);
+            renderObject->transform->_buffer = renderObject->_matBuffer;
+            return renderObject;
+        }
+        else
+            throw std::exception();
+
+    }
+    void VulkanRenderObjectFactory::CreateObjectSet(RenderObject* obj)
     {
         auto _render = dynamic_cast<VulkanRender*>(render);
         VkDescriptorSetAllocateInfo allocInfo{};
@@ -47,14 +66,14 @@ namespace BEbraEngine {
         allocInfo.descriptorPool = _render->descriptorPool;
         allocInfo.descriptorSetCount = 1;
         allocInfo.pSetLayouts = &_render->ObjectLayout;
-        vkAllocateDescriptorSets(_render->GetDevice(), &allocInfo, obj->descriptor);
+        vkAllocateDescriptorSets(_render->GetDevice(), &allocInfo, &obj->descriptor);
         auto buffer = static_cast<Buffer*>(obj->matBuffer.get());
 
 
         VkDescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = buffer->self;
         bufferInfo.offset = 0;
-       bufferInfo.range = buffer->size;
+        bufferInfo.range = buffer->size;
 
         VkDescriptorImageInfo imageInfo{};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -64,7 +83,7 @@ namespace BEbraEngine {
         std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 
         descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptorWrites[0].dstSet = *obj->descriptor;
+        descriptorWrites[0].dstSet = obj->descriptor;
         descriptorWrites[0].dstBinding = 0;
         descriptorWrites[0].dstArrayElement = 0;
         descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -73,7 +92,7 @@ namespace BEbraEngine {
 
 
         descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptorWrites[1].dstSet = *obj->descriptor;
+        descriptorWrites[1].dstSet = obj->descriptor;
         descriptorWrites[1].dstBinding = 1;
         descriptorWrites[1].dstArrayElement = 0;
         descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -81,20 +100,15 @@ namespace BEbraEngine {
         descriptorWrites[1].pImageInfo = &imageInfo;
         vkUpdateDescriptorSets(_render->GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
-    void RenderObjectFactory::CreateStorageBuffer(VkDeviceSize size, Buffer& buffer)
-    {
-        auto _render = dynamic_cast<VulkanRender*>(render);
-        buffer.size = size;
-        _render->_createBuffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer.self, buffer.memory);
-    }
 
-    RenderObjectFactory::RenderObjectFactory(AbstractRender* render) : render(render)
+    VulkanRenderObjectFactory::VulkanRenderObjectFactory(AbstractRender* render) : render(render)
     {
         RenderObject::SetFactory(this);
-        imgsCreator = new ImageCreator(render);
-    }
 
-    void RenderObjectFactory::Update(RenderObject* obj) {
-        CreateObjectSet(obj);
+        _pool = std::make_unique<VulkanRenderObjectPool>();
+        _pool->setContext(render);
+        _pool->setFactory(this);
+        imgsCreator = new ImageCreator(render);
+        _pool->allocate(10);
     }
 }

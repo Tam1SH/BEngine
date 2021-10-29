@@ -1,13 +1,24 @@
+#include "stdafx.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "BaseVulkanRender.hpp"
 #include <iostream>
 #include <mutex>
 #include <thread>
-#include "VulkanWindow.h"
+#include "VulkanWindow.hpp"
 #include "VkBuffer.hpp"
 #include "Camera.hpp"
+#include "matrix.hpp"
+#include "Image.hpp"
+#include "DescriptorSetLayouts.hpp"
+#include "RenderBuffer.hpp"
+#include "RenderObjectInfo.hpp"
+#include "RenderObject.hpp"
 namespace BEbraEngine {
+    
+    static const char* vert = R"(
 
+
+)";
     VkDevice BaseVulkanRender::device;
 
     VkPhysicalDevice BaseVulkanRender::physicalDevice;
@@ -20,6 +31,60 @@ namespace BEbraEngine {
         alloced_camera->cameraData = CreateStorageBuffer(sizeof(Matrix4) * 2);
         CreateCameraSet(alloced_camera->cameraData);
 
+    }
+
+    void BaseVulkanRender::allocateObjectTransformsSet()
+    {
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = descriptorPool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = &ObjectLayout;
+        vkAllocateDescriptorSets(GetDevice(), &allocInfo, &objectTransforms);
+
+    }
+
+    void BaseVulkanRender::_recreateCameraSet()
+    {
+        VkDescriptorSetLayout layout = CameraLayout;
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = descriptorPool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = &layout;
+        vkAllocateDescriptorSets(GetDevice(), &allocInfo, &setMainCamera);
+    }
+    void BaseVulkanRender::CreateCameraSet(RenderBuffer* buffer)
+    {
+
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = descriptorPool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = &CameraLayout;
+        VkResult result;
+        if (result = vkAllocateDescriptorSets(GetDevice(), &allocInfo, &setMainCamera); result != VK_SUCCESS) {
+            throw std::runtime_error("ddd");
+        }
+
+
+        auto _buf = static_cast<Buffer*>(buffer);
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = _buf->self;
+        bufferInfo.offset = 0;
+        bufferInfo.range = _buf->size;
+
+        std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
+
+        descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[0].dstSet = setMainCamera;
+        descriptorWrites[0].dstBinding = 0;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+        vkUpdateDescriptorSets(GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
     VkCommandPool BaseVulkanRender::CreateCommandPool()
     {
@@ -269,10 +334,7 @@ namespace BEbraEngine {
         vkDestroyDescriptorSetLayout(device, ObjectLayout, nullptr);
         vkDestroyDescriptorSetLayout(device, ObjectWithoutTextureLayout, nullptr);
         vkDestroyDescriptorSetLayout(device, CameraLayout, nullptr);
-        auto layouts = DescriptorLayouts.GetLayouts();
-        for (int i = 0; i < layouts.size(); i++) {
-            vkDestroyDescriptorSetLayout(device, layouts[i].layout, 0);
-        }
+
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
             vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
@@ -1794,6 +1856,57 @@ namespace BEbraEngine {
     {
         return CreateBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
+    DescriptorSet BaseVulkanRender::CreateDescriptor(VulkanDescriptorSetInfo* info)
+    {
+        auto set = DescriptorSet();
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = descriptorPool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = &ObjectLayout;
+        vkAllocateDescriptorSets(GetDevice(), &allocInfo, set);
+
+        auto vkbuffer = static_cast<Buffer*>(info->bufferView->buffer);
+
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = vkbuffer->self;
+        bufferInfo.offset = info->bufferView->offset;
+        bufferInfo.range = vkbuffer->size;
+
+        VkDescriptorImageInfo imageInfo{};
+        imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        imageInfo.imageView = info->imageView;
+        imageInfo.sampler = info->sampler;
+
+        std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+
+        descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[0].dstSet = set;
+        descriptorWrites[0].dstBinding = 0;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+
+        descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[1].dstSet = set;
+        descriptorWrites[1].dstBinding = 1;
+        descriptorWrites[1].dstArrayElement = 0;
+        descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWrites[1].descriptorCount = 1;
+        descriptorWrites[1].pImageInfo = &imageInfo;
+        vkUpdateDescriptorSets(GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+
+        return set;
+    }
+    void BaseVulkanRender::DestroyBuffer(RenderBuffer* buffer)
+    {
+        auto vkBuffer = static_cast<Buffer*>(buffer);
+        vkDestroyBuffer(device, vkBuffer->self, 0);
+        vkFreeMemory(device, vkBuffer->memory, 0);
+        delete buffer;
+    }
     RenderBuffer* BaseVulkanRender::CreateStorageBuffer(size_t size)
     {
         Buffer* buffer = new Buffer();
@@ -1812,7 +1925,10 @@ namespace BEbraEngine {
     {
         return CreateBuffer(vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
-
+    void BaseVulkanRender::AddObject(std::weak_ptr<RenderObject> object)
+    {
+        objects.push_back(object);
+    }
     BaseVulkanRender::BaseVulkanRender() {}
 
     bool BaseVulkanRender::IsCreate()

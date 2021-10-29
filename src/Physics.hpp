@@ -4,10 +4,11 @@
 
 #include <memory>
 #include <list>
-
+namespace BEbraEngine {
+    class RigidBody;
+}
 namespace BEbraEngine {
 
-    class RigidBody;
     class Physics {
     private:
         friend class GameObjectFactory;

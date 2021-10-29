@@ -1,9 +1,7 @@
 #pragma once
-#include <vulkan/vulkan.h>
+#include "stdafx.h"
 #include <functional>
-#include <mutex>
 #include "CommandBuffer.hpp"
-#include <tbb.h>
 #include "BaseVulkanRender.hpp"
 namespace BEbraEngine {
     
@@ -27,6 +25,7 @@ namespace BEbraEngine {
         void OnCompletedPart(Callback func);
 
         void WriteAllBuffers();
+
     private:
 
         bool AllTasksCompleted();

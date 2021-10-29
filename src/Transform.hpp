@@ -1,23 +1,27 @@
 #pragma once
 #include "AbstractComponent.hpp"
 #include <vulkan/vulkan.h>
-#include "Vector3.h"
+#include "Vector3.hpp"
 #include "matrix.hpp"
-#include "VkBuffer.hpp"
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
     class TransformFactory;
-    class Transform : public AbstractComponent {
+    class Matrix4;
+
+}
+namespace BEbraEngine {
+
+    class Transform : public GameObjectComponent {
     private:
         friend class TransformFactory;
 
-        friend class RenderObjectFactory;
+        friend class VulkanRenderObjectFactory;
 
         static TransformFactory* factory;
 
         std::shared_ptr<RenderBuffer> buffer;
 
-
+        std::shared_ptr<RenderBufferView> _buffer;
     private:
         Vector3 position;
 

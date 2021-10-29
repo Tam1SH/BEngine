@@ -1,8 +1,10 @@
-
-
-#include "platform_window.hpp"
+#include "stdafx.h"
+#include "DirectWindow.hpp"
 #if defined(_WIN64) && defined(BEBRA_USE_GLFW)
-#include "DirectWindow.h"
+#include "RenderBuffer.hpp"
+#include "RenderObject.hpp"
+#include "Vertex.hpp"
+#include "Camera.hpp"
 #include "DirectRender.hpp"
 #include "Camera.hpp"
 #include "BaseVulkanRender.hpp"
@@ -52,10 +54,7 @@ namespace BEbraEngine {
         InitData.pSysMem = indices.data();
         g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
         buff->g_pImmediateContext = g_pImmediateContext;
-        // Set vertex buffer
-//        UINT stride = sizeof(indices[0]);
-//        UINT offset = 0;
- //       g_pImmediateContext->IASetIndexBuffer(0, 1, &buff->buf, &stride, &offset);
+
         return buff;
     }
     RenderBuffer* DirectRender::CreateUniformBuffer(size_t size) {

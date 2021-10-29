@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Input.hpp"
 #include <iostream>
 namespace BEbraEngine {
@@ -12,11 +13,11 @@ namespace BEbraEngine {
 
     int* Input::scroll_y = new int();
 
-    GLFWwindow* Input::window1;
+  //  GLFWwindow* Input::window1;
 
     SDL_Window* Input::window;
 
-
+/*
     void Input::mouse_callback(GLFWwindow* window, double xpos, double ypos)
     {
         *Input::mouse_x = xpos;
@@ -28,7 +29,7 @@ namespace BEbraEngine {
         *Input::scroll_y = yoffset;
     }
 
-
+*/
     void Input::SetKeyBoardState(const Uint8* state)
     {
         Input::state = state;
@@ -53,9 +54,9 @@ namespace BEbraEngine {
     {
         return *Input::mouse_y;
     }
-    void Input::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+ //  void Input::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
-    }
+ //   }
 
     void Input::SetWindow(SDL_Window* window)
     {
@@ -63,6 +64,7 @@ namespace BEbraEngine {
         Input::state = SDL_GetKeyboardState(NULL);
         Input::window = window;
     }
+    /*
     void Input::SetWindow(GLFWwindow* window)
     {
         Input::window1 = window;
@@ -71,7 +73,7 @@ namespace BEbraEngine {
         glfwSetKeyCallback(window, KeyCallback);
 
     }
-
+*/
 
     bool Input::IsKeyPressed(SDL_Scancode key)
     {
@@ -79,11 +81,12 @@ namespace BEbraEngine {
             return true;
         return false;
     }
-    bool Input::IsKeyPressed(KEY_CODE key)
+   /* bool Input::IsKeyPressed(KEY_CODE key)
     {
         
         if (glfwGetKey(window1, (int)key) == GLFW_PRESS)
              return true;
         return false;
     }
+    */
 }

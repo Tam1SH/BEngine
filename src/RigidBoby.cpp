@@ -1,8 +1,8 @@
-
+#include "stdafx.h"
 #include "RigidBoby.hpp"
 #include "Transform.hpp"
 #include "Physics.hpp"
-
+#include "Vector3.hpp"
 namespace BEbraEngine {
     Physics* RigidBody::physics;
 
@@ -45,7 +45,7 @@ namespace BEbraEngine {
     }
 
 
-    void RigidBody::SetPosition(const glm::vec3& position)
+    void RigidBody::SetPosition(const Vector3& position)
     {
         transform->UpdatePosition(position);
         ResetState();

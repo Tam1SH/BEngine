@@ -1,27 +1,23 @@
+
 #pragma once
 #include "AbstractComponent.hpp"
-#include <list>
+#include "stdafx.h"
 #include <typeinfo>
-#include "GameObjectFactory.hpp"
-#include "Vector3.h"
-#include <iostream>
+#include "Vector3.hpp"
+
 namespace BEbraEngine {
     class GameObjectFactory;
 
-    class GameObject : public AbstractComponent {
-    private:
-        static GameObjectFactory* factory;
+}
+namespace BEbraEngine {
+    class GameObjectFactory;
 
-    protected:
-
-        void _addComponent(std::shared_ptr<AbstractComponent> component) override;
-
-        void _removeComponent(std::shared_ptr<AbstractComponent> component) override;
+    class GameObject : public GameObjectComponent {
 
     public:
         static void SetFactory(GameObjectFactory* factory);
 
-        static std::shared_ptr<GameObject> New(Vector3& position = Vector3(0));
+        static std::shared_ptr<GameObject> New(const Vector3& position = Vector3(0));
 
         static void Destroy(std::shared_ptr<GameObject> object);
 
@@ -38,13 +34,22 @@ namespace BEbraEngine {
 
 
 
-        void AddComponent(std::shared_ptr<AbstractComponent> component);
+        void AddComponent(std::shared_ptr<GameObjectComponent> component);
 
         bool IsComposite() const override;
 
         GameObject();
 
         ~GameObject();
+
+    protected:
+
+        void _addComponent(std::shared_ptr<GameObjectComponent> component) override;
+
+        void _removeComponent(std::shared_ptr<GameObjectComponent> component) override;
+    private:
+        static GameObjectFactory* factory;
+
 
     };
 }

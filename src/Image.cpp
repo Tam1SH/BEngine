@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Image.hpp"
 #include "BaseVulkanRender.hpp"
 namespace BEbraEngine {
@@ -5,7 +6,7 @@ namespace BEbraEngine {
     {
         vkFreeMemory(BaseVulkanRender::device, memory, 0);
         vkDestroyImage(BaseVulkanRender::device, self, 0);
-        vkDestroyImageView(BaseVulkanRender::device, view, 0);
+        vkDestroyImageView(BaseVulkanRender::device, imageView, 0);
         vkDestroySampler(BaseVulkanRender::device, sampler, 0);
 
     }

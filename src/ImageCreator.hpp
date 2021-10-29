@@ -1,15 +1,14 @@
+
 #pragma once
+#include "stdafx.h"
 #include "BaseVulkanRender.hpp"
 #include <stb-master/stb_image.h>
 #include "Image.hpp"
 //#include <tbb.h>
-#include <iostream>
+
 //TODO: Сделать независимым от апи.
 namespace BEbraEngine {
     class ImageCreator {
-    private:
-        AbstractRender* render;
-        std::vector<Texture*> images;
     public:
 
         stbi_uc* loadImage(const std::string& path, int* texWidth, int* texHeight, int* texChannels) {
@@ -55,11 +54,11 @@ namespace BEbraEngine {
             image->picture = stbi_load(path.c_str(), &image->Width, &image->Height, &image->Channels, STBI_rgb_alpha);
             auto _render = static_cast<BaseVulkanRender*>(render);
             _render->createVkImage2(image->picture, image->Width, image->Height, image->self, image->memory, buffer);
-            auto view = _render->createImageView(image->self, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+            auto imageView = _render->createImageView(image->self, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
             _render->createTextureSampler(sampler);
             image->SetLoad(true);
-            image->view = view;
+            image->imageView = imageView;
             image->sampler = sampler;
 
             return image;
@@ -91,7 +90,7 @@ namespace BEbraEngine {
             stbi_image_free(pixels);
 
             _render->createVkImage(pixels, texWidth, texHeight, textureImage, textureImageMemory, imageSize, stagingBuffer);
-            auto view = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+            auto imageView = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
             _render->createTextureSampler(sampler);
 
@@ -100,7 +99,7 @@ namespace BEbraEngine {
 
 
             image->self = textureImage;
-            image->view = view;
+            image->imageView = imageView;
             image->sampler = sampler;
             image->memory = textureImageMemory;
             image->picture = pixels;
@@ -134,7 +133,7 @@ namespace BEbraEngine {
             stbi_image_free(pixels);
 
             _render->createVkImage(pixels, texWidth, texHeight, textureImage, textureImageMemory, imageSize, stagingBuffer);
-            auto view = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+            auto imageView = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
             _render->createTextureSampler(sampler);
 
@@ -143,7 +142,7 @@ namespace BEbraEngine {
 
 
             image->self = textureImage;
-            image->view = view;
+            image->imageView = imageView;
             image->sampler = sampler;
             image->memory = textureImageMemory;
             image->picture = pixels;
@@ -167,11 +166,11 @@ namespace BEbraEngine {
             pixels[2] = rand() % 256;
             auto _render = static_cast<BaseVulkanRender*>(render);
             _render->createVkImage2(pixels, texWidth, texHeight, textureImage, textureImageMemory, buffer);
-            auto view = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+            auto imageView = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
             _render->createTextureSampler(sampler);
             //stbi_image_free(pixels);
-            *image = Texture(textureImage, view, sampler, textureImageMemory);
+            *image = Texture(textureImage, imageView, sampler, textureImageMemory);
             image->Width = texWidth;
             image->Height = texHeight;
             return image;
@@ -182,10 +181,10 @@ namespace BEbraEngine {
             VkImage textureImage;
             auto _render = static_cast<BaseVulkanRender*>(render);
             //render->createVkImage(picture, texWidth, texHeight, textureImage, textureImageMemory);
-            auto view = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+            auto imageView = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
             _render->createTextureSampler(sampler);
-            img = Texture(textureImage, view, sampler, textureImageMemory);
+            img = Texture(textureImage, imageView, sampler, textureImageMemory);
             //stbi_image_free(picture);
 
         }
@@ -216,11 +215,11 @@ namespace BEbraEngine {
         void endUpdateImage(Texture& img) {
             auto _render = static_cast<BaseVulkanRender*>(render);
             _render->createVkImage1();
-            auto view = _render->createImageView(img.self, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+            auto imageView = _render->createImageView(img.self, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
             _render->createTextureSampler(sampler);
             img.sampler = sampler;
-            img.view = view;
+            img.imageView = imageView;
             //stbi_image_free(picture);
 
         }
@@ -239,5 +238,8 @@ namespace BEbraEngine {
         }
 
         ImageCreator(AbstractRender* render) : render(render) {}
+        private:
+            AbstractRender* render;
+            std::vector<Texture*> images;
     };
 }

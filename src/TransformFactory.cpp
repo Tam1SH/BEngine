@@ -1,4 +1,5 @@
-#include "TransformFactory.h"
+#include "stdafx.h"
+#include "TransformFactory.hpp"
 #include "Transform.hpp"
 namespace BEbraEngine {
     Transform* TransformFactory::Create(const glm::vec3& position)

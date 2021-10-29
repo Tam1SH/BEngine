@@ -1,4 +1,6 @@
-#ifdef __ANDROID__
+#include "stdafx.h"
+
+#ifdef __ANDROID__1
 #include "DebugUI.h"
 namespace BEbraEngine {
     
@@ -112,9 +114,9 @@ namespace BEbraEngine {
         this->workspace = workspace;
     }
 
-    AbstractComponent* selected;
+    GameObjectComponent* selected;
 
-    void DebugUI::TreeObjects(std::shared_ptr<AbstractComponent> component) {
+    void DebugUI::TreeObjects(std::shared_ptr<GameObjectComponent> component) {
         static int i;
 
         static int selection_mask = (1 << 2);

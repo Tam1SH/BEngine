@@ -1,3 +1,4 @@
+#include "stdafx.h"
 /*
 #include "JScriptEngine.hpp"
 #include "include/libplatform/libplatform.h"

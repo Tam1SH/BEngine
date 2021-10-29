@@ -14,15 +14,6 @@ namespace BEbraEngine {
                         //Я ебу как это отслеживать внутри буфера?
                         //Pending задаётся при отправки в очередь жыпию(GPU)
         };
-    private:
-
-        inline static BaseVulkanRender* _render;
-
-        inline static VkDevice device;
-
-        VkCommandBuffer buffer;
-
-        VkCommandPool _pool;
 
 
 
@@ -110,5 +101,14 @@ namespace BEbraEngine {
         VkCommandPool GetPool() {
             return _pool;
         }
+    private:
+
+        inline static BaseVulkanRender* _render;
+
+        inline static VkDevice device;
+
+        VkCommandBuffer buffer;
+
+        VkCommandPool _pool;
     };
 }

@@ -1,8 +1,8 @@
-#include <vulkan.h>
+#include "stdafx.h"
 
-#include "VulkanRender.h"
+#include "VulkanRender.hpp"
 
-#include "RenderObject.h"
+#include "RenderObject.hpp"
 
 #include "GameObject.hpp"
 #include "RigidBoby.hpp"
@@ -13,36 +13,7 @@
 #include "Transform.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 namespace BEbraEngine {
-    void VulkanRender::SetDescriptorLayouts()
-    {
-        DescriptorLayouts.Create(device);
-        std::vector<VkDescriptorSetLayoutBinding> CameraLayoutBinding{};
-        CameraLayoutBinding.resize(1);
-        CameraLayoutBinding[0].binding = 0;
-        CameraLayoutBinding[0].descriptorCount = 1;
-        CameraLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-        CameraLayoutBinding[0].pImmutableSamplers = nullptr;
-        CameraLayoutBinding[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-
-        std::vector<VkDescriptorSetLayoutBinding> uboLayoutBinding{};
-        uboLayoutBinding.resize(2);
-        uboLayoutBinding[0].binding = 0;
-        uboLayoutBinding[0].descriptorCount = 1;
-        uboLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        uboLayoutBinding[0].pImmutableSamplers = nullptr;
-        uboLayoutBinding[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-        uboLayoutBinding[1].binding = 1;
-        uboLayoutBinding[1].descriptorCount = 1;
-        uboLayoutBinding[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        uboLayoutBinding[1].pImmutableSamplers = nullptr;
-        uboLayoutBinding[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-        DescriptorLayouts.CreateLayout(CameraLayoutBinding);
-        DescriptorLayouts.CreateLayout(uboLayoutBinding);
-
-    }
+    
 
     void VulkanRender::Init() {
         ResizeDescriptorPool(countOfObject);
@@ -157,6 +128,7 @@ namespace BEbraEngine {
                     }
                     else {
                         auto object = lock_object->lock();
+                        
                         object->Draw(RenderBuffers[i]);
                     }
 

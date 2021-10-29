@@ -1,3 +1,4 @@
+#include "stdafx.h"
 /*
 #include "JSWrappers.hpp"
 #include "GameObject.hpp"

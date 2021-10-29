@@ -1,5 +1,5 @@
 #pragma once
-#include <vulkan/vulkan.h>
+#include "stdafx.h"
 #include "RenderBuffer.hpp"
 #include "BaseVulkanRender.hpp"
 //TODO: загрузка моделей и присваивание примитивов

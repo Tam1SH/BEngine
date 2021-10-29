@@ -2,13 +2,16 @@
 #include "AbstractComponent.hpp"
 #include "btBulletDynamicsCommon.h"
 #include <memory>
-#include <glm/glm.hpp>
-
-
 namespace BEbraEngine {
 	class Transform;
 	class Physics;
-	class RigidBody : public AbstractComponent
+	class Vector3;
+
+}
+
+namespace BEbraEngine {
+
+	class RigidBody : public GameObjectComponent
 	{
 	private:
 
@@ -41,7 +44,7 @@ namespace BEbraEngine {
 
 		void SetDynamic(bool isActive);
 
-		void SetPosition(const glm::vec3& position);
+		void SetPosition(const Vector3& position);
 
 		RigidBody();
 

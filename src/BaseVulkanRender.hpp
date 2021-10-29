@@ -1,23 +1,18 @@
 #pragma once
-
-#include "C:\.BEbraEngine\Include\stb-master\stb_image.h"
-#include <vulkan/vulkan.h>
-#include <vector>
-#include <string>
+#include "stdafx.h"
+#include "stb_image.h"
 #include <optional>
 #include <stdexcept>
 #include <array>
-#include <glm/glm.hpp>
 #include <fstream>
-#include "Image.hpp"
-#include "VkBuffer.hpp"
 #include <set>
 #include <oneapi/tbb.h>
-#include "DescriptorSetLayouts.hpp"
 #include <SDL_vulkan.h>
-#include "Vertex.h"
+#include "Vertex.hpp"
 #include "AbstractRenderSystem.hpp"
-#include "RenderBuffer.hpp"
+#include "VkBuffer.hpp"
+#include "DescriptorSet.hpp"
+
 #undef min
 #undef max
 
@@ -72,6 +67,15 @@ const std::vector<uint32_t> indices = {
     6, 4, 7
     
 };
+namespace BEbraEngine {
+    class Texture;
+    class Matrix4;
+    class VulkanWindow;
+    class Camera;
+    class VulkanDescriptorSetInfo;
+    //class Buffer;
+    //class DescriptorSetLayouts;
+}
 //TODO: само существование всей этой хуйни является анти-оопешной блять. 
 //Связанность с этим супер классом блять и всеми файлами которые трогают 
 //рендер(почти все) настолько сильна, как связанность хронического алкоголика с бутылкой.
@@ -107,8 +111,7 @@ namespace BEbraEngine {
 
     };
 
-    class VulkanWindow;
-    class Camera;
+
     class BaseVulkanRender : public AbstractRender
     {
     protected:
@@ -116,7 +119,12 @@ namespace BEbraEngine {
     public:
 
         Camera* camera;
+        
+        DescriptorSet CreateDescriptor(VulkanDescriptorSetInfo* info);
+
         void Create(BaseWindow* window) override;
+
+        void DestroyBuffer(RenderBuffer* buffer) override;
 
         template<typename T>
         RenderBuffer* CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage);
@@ -129,54 +137,15 @@ namespace BEbraEngine {
 
         RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
 
-        void AddObject(std::weak_ptr<RenderObject> object) override
-        {
-            objects.push_back(object);
-        }
+        void AddObject(std::weak_ptr<RenderObject> object) override;
 
         void InitCamera(Camera* alloced_camera) override;
 
-        void _recreateCameraSet() {
-            VkDescriptorSetLayout layout = CameraLayout;
-            VkDescriptorSetAllocateInfo allocInfo{};
-            allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            allocInfo.descriptorPool = descriptorPool;
-            allocInfo.descriptorSetCount = 1;
-            allocInfo.pSetLayouts = &layout;
-            vkAllocateDescriptorSets(GetDevice(), &allocInfo, &setMainCamera);
-        }
-        void CreateCameraSet(RenderBuffer* buffer)
-        {
-            
-            VkDescriptorSetAllocateInfo allocInfo{};
-            allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            allocInfo.descriptorPool = descriptorPool;
-            allocInfo.descriptorSetCount = 1;
-            allocInfo.pSetLayouts = &CameraLayout;
-            VkResult result;
-            if (result = vkAllocateDescriptorSets(GetDevice(), &allocInfo, &setMainCamera); result != VK_SUCCESS) {
-                throw std::runtime_error("ddd");
-            }
+        void _recreateCameraSet();
 
-
-            auto _buf = static_cast<Buffer*>(buffer);
-            VkDescriptorBufferInfo bufferInfo{};
-            bufferInfo.buffer = _buf->self;
-            bufferInfo.offset = 0;
-            bufferInfo.range = sizeof(Matrix4) * 2;
-
-            std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
-
-            descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            descriptorWrites[0].dstSet = setMainCamera;
-            descriptorWrites[0].dstBinding = 0;
-            descriptorWrites[0].dstArrayElement = 0;
-            descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-            descriptorWrites[0].descriptorCount = 1;
-            descriptorWrites[0].pBufferInfo = &bufferInfo;
-
-            vkUpdateDescriptorSets(GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
-        }
+        void CreateCameraSet(RenderBuffer* buffer);
+        
+        void allocateObjectTransformsSet();
     public:
         struct QueueFamilyIndices {
             std::optional<uint32_t> graphicsFamily;
@@ -210,14 +179,13 @@ namespace BEbraEngine {
     public:
         VulkanWindow* window;
 
+        VkDescriptorSet objectTransforms;
 
         VkDescriptorSet setMainCamera;
 
         size_t COUNT_OF_OBJECTS = 0;
 
         size_t MAX_COUNT_OF_OBJECTS = 5000;
-
-        DescriptorSetLayouts DescriptorLayouts;
 
         VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -298,8 +266,6 @@ namespace BEbraEngine {
         virtual void OnDrawFrame() = 0;
 
         virtual void OnUpdateData() = 0;
-
-        virtual void SetDescriptorLayouts() = 0;
 
         static Buffer CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage);
 

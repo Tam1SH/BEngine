@@ -1,20 +1,16 @@
 #pragma once
-#include "Vector2.h"
-#include "BaseRenderWindow.h"
-#include "VulkanRender.h"
-#include <memory>
+#include "stdafx.h"
+#include "Vector2.hpp"
+#include "BaseRenderWindow.hpp"
+#include "VulkanRender.hpp"
+
 #undef CreateWindow
 namespace BEbraEngine {
 
 	class VulkanWindow : public BaseWindow {
-	private:
-		std::shared_ptr<VulkanRender> render;
-
 	public:
 
 		void CreateWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
-
-		void CreateWindow(int w, int h, const std::string& title = "BEbraEngine") override;
 
 		VulkanWindow(std::shared_ptr<VulkanRender> render) { this->render = std::shared_ptr<VulkanRender>(render); }
 
@@ -29,6 +25,9 @@ namespace BEbraEngine {
 		void onUpdate() override;
 
 		~VulkanWindow();
+
+	private:
+		std::shared_ptr<VulkanRender> render;
 
 	};
 }

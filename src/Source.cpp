@@ -1,6 +1,6 @@
 //TODO: сделать бы так, чтобы при создании дескриптора его layout можно было бы 
 //по имени выбирать в классе DescriptorLayout или сувать туда структуру, которая 
-//соответствовало бы какому-нибудь из layout и возвращала бы его 
+//соответствовало бы какому-нибудь из layout и возвращала бы его(Думаю енам для всей этой поеботы сделать и не ебаться)
 // TODO: подумать над интерфейсом рендер объектов Draw(), т.к в вулкане эффективно было бы через глобальный дескриптор и буфер биндить данные для рендера.
 // TODO: сделать кластерный рендер
 // TODO: реализация меша для объектов рендера
@@ -17,6 +17,7 @@ TODO: подумать над реализацей:
  * сделать свой класс векторов чтобы потом не ебаться с разными векторами из разных либ(сделано)
  * ну и также для объектов рендера
  * присобачить Mono
+ * как-то вертеть данные с физики до рендера(какая-то хуйня реализована в Transform, но это крайне плохое решение)
 ****************************************************************************************
 Вывод: В общем подумать над абстрагированием основных элементов движка для возможной замены их реализации
 */
@@ -24,30 +25,34 @@ TODO: подумать над реализацей:
 
 
 
-
+#include "stdafx.h"
 #define NOMINMAX
-#include "DebugUI.h"
+//#include "GLWindow.h"
+//#include "GLRender.h"
+#include "BaseRenderWindow.hpp"
+#include "DebugUI.hpp"
 #include "Physics.hpp"
-#include "WorkSpace.h"
+#include "WorkSpace.hpp"
 
-#include "VulkanRender.h"
-#include "GameLogic.h"
-#include "Vector2.h"
-#include "VulkanWindow.h"
-#include "DirectWindow.h"
+#include "VulkanRender.hpp"
+#include "GameLogic.hpp"
+#include "Vector2.hpp"
+#include "VulkanWindow.hpp"
+#include "DirectWindow.hpp"
 #include "DirectRender.hpp"
 #include "Input.hpp"
 #include "Time.hpp"
+
 namespace BEbraEngine {
 
     class Engine {
     public:
-        std::shared_ptr<DirectRender> render;
+        //std::shared_ptr<DirectRender> render;
         std::shared_ptr<VulkanRender> render1;
         std::unique_ptr<Physics> physics;
 
-      //  std::unique_ptr<DebugUI> UId;
-        
+        //  std::unique_ptr<DebugUI> UId;
+
         std::unique_ptr<BaseWindow> window;
         std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace;
@@ -58,31 +63,27 @@ namespace BEbraEngine {
         std::unique_ptr<Camera> mainCamera1;
 
     public:
-        void Init() {
-            render = std::shared_ptr<DirectRender>(new DirectRender());
-            window = std::unique_ptr<DirectWindow>(new DirectWindow(render));
-            mainCamera = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
-            window->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-            workspace = std::shared_ptr<WorkSpace>(new WorkSpace());
-            render->InitCamera(mainCamera.get());
-            render->camera = mainCamera.get();
-            gameLogic = std::unique_ptr<GameLogic>(new GameLogic(render.get(), workspace, mainCamera.get()));
-            window->attach(gameLogic.get());
+        void Init(int i) {
+            if (i == 2) {
 
-            render1 = std::shared_ptr<VulkanRender>(new VulkanRender());
-            window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1));
-            mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
-            window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-            workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
-            render1->InitCamera(mainCamera1.get());
-            render1->camera = mainCamera1.get();
-            gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1.get(), workspace, mainCamera1.get()));
-            window1->attach(gameLogic1.get());
+                render1 = std::shared_ptr<VulkanRender>(new VulkanRender());
+                window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1));
+                mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
+                window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
+                workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
+                render1->InitCamera(mainCamera1.get());
+                render1->camera = mainCamera1.get();
+                gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1.get(), workspace1, mainCamera1.get()));
+                window1->attach(gameLogic1.get());
+                
+            }
+
+
             
             
 
             //     UId = std::make_unique<DebugUI>();
-
+            
 
                 //  UId->SetWorkSpace(workspace);
             // auto render = window->getRender();
@@ -96,21 +97,26 @@ namespace BEbraEngine {
         }
         void Start() {
 
-            while (!window->isClose() || !window1->isClose()) {
+            while (
+                ((window.get()) && !window->isClose())
+                || 
+                ((window1.get()) && !window1->isClose())) {
                 Time::UpdateTime();
                 Update();
 
             }
 
+
             //vkDeviceWaitIdle(VulkanRender::device);
 
         }
         void Update() {
-
-         //   UId->Prepare();
-            window->update();
-            window1->update();
-           // window1->update();
+            //   UId->Prepare();
+            if(window.get())
+                window->update();
+            if(window1.get())
+                window1->update();
+            // window1->update();
         }
 
         ~Engine() {
@@ -130,17 +136,11 @@ extern "C"
 #endif
 int main(int, char** argv)
 {
-
-
     BEbraEngine::Engine engine;
-    engine.Init();
+    engine.Init(2);
     engine.Start();
-    try {
 
-    }
-    catch(std::exception& e){
-        SDL_log(e.what());
-    }
     return 0;
 }
+
 

@@ -16,6 +16,9 @@ set(INCLUDE_PATH "${PROJECT_PATH}/Include")
 FILE(GLOB source_ ${PROJECT_PATH}/src/*.cpp)
 FILE(GLOB headers_ ${PROJECT_PATH}/src/*.hpp ${PROJECT_PATH}/src/*.h )
 
+
+
+
 set(SOURCE ${source_} )
 add_library(main SHARED ${PROJECT_PATH}/src/Source.cpp ${headers_})
 

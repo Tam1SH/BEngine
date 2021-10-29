@@ -1,19 +1,48 @@
 #pragma once
+#include "platform_window.hpp"
 #if defined(_WIN64) && defined(BEBRA_USE_GLFW)
+#include "AbstractRenderSystem.hpp"
+
 #include <d3d11.h>
 #include <d3dx11.h>
 #include <DirectXMath.h>
-#include "platform_window.hpp"
-#include "AbstractRenderSystem.hpp"
 #include <d3dcompiler.h>
 #include <list>
-#include "RenderBuffer.hpp"
-#include "RenderObject.h"
-#include "Vertex.h"
-#include "Camera.hpp"
+
+
+
 namespace BEbraEngine {
     class DirectWindow;
+    class Camera;
+    class RenderBuffer;
+    class Vertex;
+    class RenderObject;
+}
+namespace BEbraEngine {
+   
 	class DirectRender : public AbstractRender {
+    public:
+        Camera* camera;
+		void Create(BaseWindow* window) override;
+
+
+        void AddObject(std::weak_ptr<RenderObject> object) override;
+        void InitCamera(Camera* alloced_camera) override;
+        RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
+        RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
+        RenderBuffer* CreateUniformBuffer(size_t size) override;
+
+        RenderBuffer* CreateStorageBuffer(size_t size);
+
+
+        void Render();
+
+        DirectRender();
+        ~DirectRender();
+
+    private:
+        struct Buffer;
+        using wRenderObject = std::weak_ptr<RenderObject>;
     private:
         HINSTANCE               g_hInst = NULL;
         HWND                    g_hWnd = NULL;
@@ -40,27 +69,6 @@ namespace BEbraEngine {
         void CleanupDevice();
 
 
-    public:
-        Camera* camera;
-		void Create(BaseWindow* window) override;
-
-
-        void AddObject(std::weak_ptr<RenderObject> object) override;
-        void InitCamera(Camera* alloced_camera) override;
-        RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
-        RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
-        RenderBuffer* CreateUniformBuffer(size_t size) override;
-
-        RenderBuffer* CreateStorageBuffer(size_t size);
-
-
-        void Render();
-
-
-        DirectRender();
-        ~DirectRender();
-    private:
-        struct Buffer;
 	};
 }
 #endif

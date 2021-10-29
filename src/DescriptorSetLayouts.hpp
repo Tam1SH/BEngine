@@ -14,9 +14,6 @@ public:
 		std::vector<VkDescriptorSetLayoutBinding> info;
 		std::string name;
 	};
-private:
-	VkDevice device;
-	std::vector<DescriptorSetLayout> layouts;
 public:
 	std::unique_ptr<std::vector<VkDescriptorSetLayout>> Get() { 
 		auto ls = new std::vector<VkDescriptorSetLayout>();
@@ -57,6 +54,9 @@ public:
 			});
 	}
 
+private:
+	VkDevice device;
+	std::vector<DescriptorSetLayout> layouts;
 
 
 };

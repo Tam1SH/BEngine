@@ -1,49 +1,47 @@
 #pragma once
-#include "Image.hpp"
-#include "ImageCreator.hpp"
+#include "stdafx.h"
 #include "Transform.hpp"
-#include <mutex>
-#include <iostream>
-#include <vector>
-#include "Model.h"
-#include "AbstractRenderSystem.hpp"
+#include "Model.hpp"
+#include "IRenderObjectFactory.hpp"
+#include "RenderObjectPool.hpp"
 namespace BEbraEngine {
-    class VkObject;
-    class RenderObject;
+    class Buffer;
+    class AbstractRender;
     class VulkanRender;
-    class RenderObjectFactory
+    class Texture;
+    class ImageCreator;
+    class RenderObject;
+    class VulkanRenderObjectInfo;
+
+}
+namespace BEbraEngine {
+
+    class VulkanRenderObjectFactory : public IRenderObjectFactory
     {
     public:
 
         friend class RenderObject;
 
-
+        std::unique_ptr<VulkanRenderObjectPool> _pool;
         AbstractRender* render;
         ImageCreator* imgsCreator;
 
         std::mutex m;
-    private:
-
-        Texture CreateImage(Texture img);
-
 
     public:
         friend class Transform;
 
+        RenderObject* create(VulkanRenderObjectInfo* info) override;
+        
         RenderObject* CreateObject(std::shared_ptr<Transform> transform);
 
         void CreateObjectSet(RenderObject* obj);
 
-        void CreateStorageBuffer(VkDeviceSize size, Buffer& buffer);
-
-        RenderObjectFactory(AbstractRender* render);
-
-        RenderObjectFactory() {}
+        VulkanRenderObjectFactory(AbstractRender* render);
+        VulkanRenderObjectFactory() {}
 
         void SetImgsCreator(ImageCreator* Creator) { imgsCreator = Creator; }
 
-
-        void Update(RenderObject* obj);
 
      //   Model* CreateModel(std::string const& path) {
       //      return new Model(path);

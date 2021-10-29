@@ -1,10 +1,9 @@
 #pragma once
-#include <SDL.h>
-#include <glfw3.h>
+#include "stdafx.h"
 #include "platform_window.hpp"
 
 namespace BEbraEngine {
-    
+    /*
     enum class KEY_CODE {
         KEY_0 = GLFW_KEY_0,
         KEY_1 = GLFW_KEY_1,
@@ -76,28 +75,16 @@ namespace BEbraEngine {
         KEY_SPACE = GLFW_KEY_SPACE,
         KEY_RIGHT_SHIFT = GLFW_KEY_RIGHT_SHIFT
     };
+    */
     class Input {
-    public:
-        
-    private:
-
-        static const Uint8* state;
-
-        static int* scroll_x;
-
-        static int* scroll_y;
-
-        static SDL_Window* window;
-
-        static GLFWwindow* window1;
 
     private:
 
-        static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+       // static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
-        static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+       // static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-        static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+        //static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
     public:
 
@@ -117,15 +104,25 @@ namespace BEbraEngine {
 
         static void SetWindow(SDL_Window* window);
 
-        static void SetWindow(GLFWwindow* window);
+        //static void SetWindow(GLFWwindow* window);
 
         static bool IsKeyPressed(SDL_Scancode key);
 
-        static bool IsKeyPressed(KEY_CODE key);
+        //static bool IsKeyPressed(KEY_CODE key);
 
         Input();
 
         ~Input();
+    private:
 
+        static const Uint8* state;
+
+        static int* scroll_x;
+
+        static int* scroll_y;
+
+        static WindowHandle* window;
+
+        //static GLFWwindow* window1;
     };
 }

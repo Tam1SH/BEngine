@@ -1,7 +1,8 @@
-#include "Render.h"
-#include "RenderObject.h"
+#include "stdafx.h"
+#include "Render.hpp"
+#include "RenderObject.hpp"
 #include "BaseVulkanRender.hpp"
-#include "VulkanRender.h"
+#include "VulkanRender.hpp"
 //TODO: ты наху€ нужен?
 namespace BEbraEngine {
     Render::Render(AbstractRender* render)

@@ -19,9 +19,6 @@
     <Filter Include="Файлы заголовков\ImGui">
       <UniqueIdentifier>{cba1c011-0c14-48bf-a1e6-4daed914ee76}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\VulkanClasses">
-      <UniqueIdentifier>{919b718a-d5e0-4aac-b907-f899a61bf29f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\PhysicsClasses">
       <UniqueIdentifier>{26072a96-8552-4e48-8f9e-263887586f1d}</UniqueIdentifier>
     </Filter>
@@ -69,6 +66,18 @@
     </Filter>
     <Filter Include="Исходные файлы\RenderSystems\DirectX">
       <UniqueIdentifier>{c65fa002-3378-4dce-b7a7-e81809065673}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\RenderSystems">
+      <UniqueIdentifier>{781b191a-b72f-4440-80a8-d389e7f8e337}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\RenderSystems\VulkanClasses">
+      <UniqueIdentifier>{919b718a-d5e0-4aac-b907-f899a61bf29f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\RenderSystems\DirectX">
+      <UniqueIdentifier>{1f22cb16-113c-4b09-84e0-750db87fc90e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Interfaces">
+      <UniqueIdentifier>{32589960-c03a-4e69-ad6d-52e183f0f192}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -183,7 +192,7 @@
     <ClCompile Include="PythonScript.cpp">
       <Filter>Исходные файлы\Script\Python</Filter>
     </ClCompile>
-    <ClCompile Include="BaseRenderWindow_Mobile.cpp">
+    <ClCompile Include="BaseRenderWindow.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -198,23 +207,32 @@
     <ClCompile Include="Time.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanWindow.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseRenderWindow_Desktop.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="DirectRender.cpp">
       <Filter>Исходные файлы\RenderSystems\DirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectWindow.cpp">
-      <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="VulkanRender.cpp">
       <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
-    <ClCompile Include="BaseRenderWindow.cpp">
+    <ClCompile Include="DirectWindow.cpp">
+      <Filter>Исходные файлы\RenderSystems\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanWindow.cpp">
+      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderObjectPool.cpp">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectMediator.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="AbstractRenderSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorSet.cpp">
+      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -243,16 +261,16 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="CommandBuffer.hpp">
-      <Filter>Файлы заголовков\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
     <ClInclude Include="CommandPool.hpp">
-      <Filter>Файлы заголовков\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorPool.hpp">
-      <Filter>Файлы заголовков\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorSetLayouts.hpp">
-      <Filter>Файлы заголовков\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
     <ClInclude Include="RigidBoby.hpp">
       <Filter>Файлы заголовков\PhysicsClasses</Filter>
@@ -261,10 +279,7 @@
       <Filter>Файлы заголовков\PhysicsClasses</Filter>
     </ClInclude>
     <ClInclude Include="BaseVulkanRender.hpp">
-      <Filter>Файлы заголовков\VulkanClasses</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderWindow.hpp">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
     <ClInclude Include="AudioSystem.hpp">
       <Filter>Файлы заголовков</Filter>
@@ -302,47 +317,47 @@
     <ClInclude Include="FileSystem.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="BaseRenderWindow.h">
+    <ClInclude Include="BaseRenderWindow.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="DebugUI.h">
+    <ClInclude Include="DebugUI.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectFactory.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="TransformFactory.h">
+    <ClInclude Include="TransformFactory.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="Mesh.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="Model.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
+    <ClInclude Include="Vertex.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="RenderObject.h">
+    <ClInclude Include="RenderObject.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh1.h">
+    <ClInclude Include="Mesh1.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Render.h">
+    <ClInclude Include="Render.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Transform.hpp">
       <Filter>Файлы заголовков\PhysicsClasses</Filter>
     </ClInclude>
-    <ClInclude Include="WorkSpace.h">
+    <ClInclude Include="WorkSpace.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="VkBuffer.hpp">
-      <Filter>Файлы заголовков\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
-    <ClInclude Include="VulkanRender.h">
-      <Filter>Файлы заголовков\VulkanClasses</Filter>
+    <ClInclude Include="VulkanRender.hpp">
+      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
     <ClInclude Include="ICreatable.hpp">
       <Filter>Файлы заголовков\Abstraction</Filter>
@@ -350,7 +365,7 @@
     <ClInclude Include="AbstractComponent.hpp">
       <Filter>Файлы заголовков\Abstraction</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptManager.h">
+    <ClInclude Include="ScriptManager.hpp">
       <Filter>Файлы заголовков\Script</Filter>
     </ClInclude>
     <ClInclude Include="BaseScript.hpp">
@@ -362,35 +377,29 @@
     <ClInclude Include="JSWrappers.hpp">
       <Filter>Файлы заголовков\Script\JS</Filter>
     </ClInclude>
-    <ClInclude Include="GameLogic.h">
+    <ClInclude Include="GameLogic.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Vector4.h">
+    <ClInclude Include="Vector4.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="platform.h">
+    <ClInclude Include="platform.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Vector3.h">
+    <ClInclude Include="Vector3.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
+    <ClInclude Include="Vector2.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="VulkanWindow.h">
+    <ClInclude Include="VulkanWindow.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="platform_window.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="DirectWindow.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="AbstractRenderSystem.hpp">
       <Filter>Исходные файлы\RenderSystems</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectRender.hpp">
-      <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Listener.hpp">
       <Filter>Файлы заголовков</Filter>
@@ -400,6 +409,39 @@
     </ClInclude>
     <ClInclude Include="matrix.hpp">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectRender.hpp">
+      <Filter>Файлы заголовков\RenderSystems\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectWindow.hpp">
+      <Filter>Файлы заголовков\RenderSystems\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderObjectFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderObjectPool.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="IReusable.hpp">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderObjectInfo.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectMediator.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="MediatorComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderObjectPool.hpp">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorSet.hpp">
+      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -419,6 +461,7 @@
     <None Include="scripts\BEbraCore.js">
       <Filter>Файлы ресурсов\Scripts</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt">

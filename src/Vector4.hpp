@@ -142,12 +142,12 @@ namespace BEbraEngine {
 			return Vector4(l * scalar);
 		}
 		Vector4& operator*=(const Vector4& other) noexcept {
-			auto& xyu = *this * other;
+			auto xyu = *this * other;
 			*this = xyu;
 			return *this;
 		}
 		Vector4& operator*=(float other) noexcept {
-			auto& xyu = *this * other;
+			auto xyu = *this * other;
 			*this = xyu;
 			return *this;
 		}

@@ -1,21 +1,26 @@
+
 #pragma once
+#include "stdafx.h"
 #define NOMINMAX
-#define GLM_CONFIG_XYZW_ONLY
 #include "Camera.hpp"
 #include "Input.hpp"
 #include "BaseVulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>
+#include "RenderBuffer.hpp"
 namespace BEbraEngine {
 
     Camera::Camera(Vector3 position , Vector3 up , float yaw, float pitch)
-        : Front(Vector3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+        : MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     {
         Position = position;
         WorldUp = up;
         Yaw = yaw;
+        Front = Vector3(0, 0, -1);
         Pitch = pitch;
+        lastX = Input::GetX();
+        lastY = Input::GetY();
         updateCameraVectors();
     }
 
@@ -52,17 +57,8 @@ namespace BEbraEngine {
 
     void Camera::_move(float& x, float& y)
     {
-
-        static bool f = true;
-        if (f) {
-            lastX = Input::GetX();
-            lastY = Input::GetY();
-            f = false;
-        }
-
         x = Input::GetX() - lastX;
-        y = lastY - Input::GetY(); // перевернуто, так как y-координаты идут снизу вверх
-
+        y = lastY - Input::GetY(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅ y-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         lastX = Input::GetX();
         lastY = Input::GetY();
     }
@@ -78,7 +74,7 @@ namespace BEbraEngine {
         Yaw += xoffset;
         Pitch += yoffset;
 
-        // Убеждаемся, что когда тангаж выходит за пределы обзора, экран не переворачивается
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (constrainPitch)
         {
             if (Pitch > 89.0f)
@@ -87,7 +83,7 @@ namespace BEbraEngine {
                 Pitch = -89.0f;
         }
 
-        // Обновляем значения вектора-прямо, вектора-вправо и вектора-вверх, используя обновленные значения углов Эйлера
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         updateCameraVectors();
     }
 
@@ -107,8 +103,8 @@ namespace BEbraEngine {
 
         VP vp;
         vp.proj = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 0.0001f, 10000.0f);
-        vp.view = GetViewMatrix();
-        std::cout << Position.x << std::endl;
+        vp.imageView = GetViewMatrix();
+
         ProcessMouseMovement();
         cameraData->setData(&vp, sizeof(Matrix4) * 2, 0);
     }

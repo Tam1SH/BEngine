@@ -4,29 +4,21 @@
 #include "GameObject.hpp"
 //TODO: ну хуй знает, а есть толк от этого?
 namespace BEbraEngine {
-    class WorkSpace : public AbstractComponent {
-    protected:
-        void _addComponent(std::shared_ptr<AbstractComponent> component) override {
-
-            Components.push_back(component);
-        }
-        void _removeComponent(std::shared_ptr<AbstractComponent> component) override {
-            Components.remove(component);
-        }
+    class WorkSpace : public GameObjectComponent {
     public:
-        void AddComponent(std::shared_ptr<AbstractComponent> component) {
+        void AddComponent(std::shared_ptr<GameObjectComponent> component) {
             _addComponent(component);
             component->SetParent(this);
         }
-        void RemoveComponent(std::shared_ptr<AbstractComponent> component) {
+        void RemoveComponent(std::shared_ptr<GameObjectComponent> component) {
             _removeComponent(component);
             component->SetParent(nullptr);
         }
-        std::list<std::shared_ptr<AbstractComponent>>& GetList() {
+        std::list<std::shared_ptr<GameObjectComponent>>& GetList() {
             return Components;
         }
         std::shared_ptr<GameObject> FindObject(GameObject* object) {
-            auto _object = static_cast<AbstractComponent*>(object);
+            auto _object = static_cast<GameObjectComponent*>(object);
             for (auto component : Components) {
                 if (_object == component.get()) {
                     return std::static_pointer_cast<GameObject>(component);
@@ -35,7 +27,7 @@ namespace BEbraEngine {
 
             }
         }
-        std::shared_ptr<GameObject> FindObject(AbstractComponent* object) {
+        std::shared_ptr<GameObject> FindObject(GameObjectComponent* object) {
             for (auto component : Components) {
                 if (object == component.get()) {
                     return std::static_pointer_cast<GameObject>(component);
@@ -55,6 +47,14 @@ namespace BEbraEngine {
         }
         WorkSpace() {
             name = "Workspace";
+        }
+    protected:
+        void _addComponent(std::shared_ptr<GameObjectComponent> component) override {
+
+            Components.push_back(component);
+        }
+        void _removeComponent(std::shared_ptr<GameObjectComponent> component) override {
+            Components.remove(component);
         }
     };
 }

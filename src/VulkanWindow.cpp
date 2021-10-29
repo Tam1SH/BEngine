@@ -1,5 +1,6 @@
+#include "stdafx.h"
 #define NOMINMAX
-#include "VulkanWindow.h"
+#include "VulkanWindow.hpp"
 #include <memory>
 #undef CreateWindow
 
@@ -12,12 +13,6 @@ namespace BEbraEngine {
 		render->Create(this);
 	}
 
-	void VulkanWindow::CreateWindow(int w, int h, const std::string& title)
-	{
-		onCreateWindow(w, h, BaseWindow::SurfaceType::Vulkan, title);
-		//render = std::make_unique<VulkanRender>();
-		render->Create(this);
-	}
 
 
 	void VulkanWindow::onResizeCallback(int width, int height)

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Time.hpp"
 namespace BEbraEngine {
 	std::chrono::time_point<std::chrono::steady_clock> Time::lastFrame;
