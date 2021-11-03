@@ -10,7 +10,7 @@
 #include "BaseVulkanRender.hpp"
 namespace BEbraEngine {
 
-    struct DirectRender::Buffer : public RenderBuffer {
+    struct DirectRender::VulkanBuffer : public RenderBuffer {
         ID3D11DeviceContext* g_pImmediateContext;
         ID3D11Buffer* buf;
         size_t size;
@@ -41,7 +41,7 @@ namespace BEbraEngine {
     }
     RenderBuffer* DirectRender::CreateIndexBuffer(std::vector<uint32_t> indices)
     {
-        auto buff = new Buffer();
+        auto buff = new VulkanBuffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
         bd.Usage = D3D11_USAGE_DEFAULT;
@@ -59,7 +59,7 @@ namespace BEbraEngine {
     }
     RenderBuffer* DirectRender::CreateUniformBuffer(size_t size) {
 
-        auto buff = new Buffer();
+        auto buff = new VulkanBuffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
         bd.ByteWidth = size;
@@ -73,7 +73,7 @@ namespace BEbraEngine {
     }
     RenderBuffer* DirectRender::CreateStorageBuffer(size_t size) {
 
-        auto buff = new Buffer();
+        auto buff = new VulkanBuffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
         bd.ByteWidth = size;
@@ -87,7 +87,7 @@ namespace BEbraEngine {
     }
     RenderBuffer* DirectRender::CreateVertexBuffer(std::vector<Vertex> vertices) {
 
-        auto buff = new Buffer();
+        auto buff = new VulkanBuffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
         bd.Usage = D3D11_USAGE_DEFAULT;
@@ -322,8 +322,8 @@ namespace BEbraEngine {
         if (FAILED(hr))
             return hr;
 
-        Buffer* vertbuf = dynamic_cast<Buffer*>(CreateVertexBuffer(vertices));
-        auto indicesbuf = dynamic_cast<Buffer*>(CreateIndexBuffer(indices));
+        VulkanBuffer* vertbuf = dynamic_cast<VulkanBuffer*>(CreateVertexBuffer(vertices));
+        auto indicesbuf = dynamic_cast<VulkanBuffer*>(CreateIndexBuffer(indices));
         // Set vertex buffer
         UINT stride = sizeof(Vertex);
         UINT offset = 0;
@@ -349,13 +349,13 @@ namespace BEbraEngine {
         g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
        // g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
         // Render a triangle
-        auto buf = static_cast<Buffer*>(camera->cameraData);
+        auto buf = static_cast<VulkanBuffer*>(camera->cameraData);
 
         
 
 
         for (auto object : objects) {
-            const auto data = static_cast<const Buffer*>(object.lock()->getMatrixBuffer());
+            const auto data = static_cast<const VulkanBuffer*>(object.lock()->getMatrixBuffer());
             g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
             g_pImmediateContext->VSSetConstantBuffers(1, 1, &data->buf);
             g_pImmediateContext->VSSetConstantBuffers(2, 1, &buf->buf);

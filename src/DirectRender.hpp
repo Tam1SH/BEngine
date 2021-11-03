@@ -41,7 +41,7 @@ namespace BEbraEngine {
         ~DirectRender();
 
     private:
-        struct Buffer;
+        struct VulkanBuffer;
         using wRenderObject = std::weak_ptr<RenderObject>;
     private:
         HINSTANCE               g_hInst = NULL;

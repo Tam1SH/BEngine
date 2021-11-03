@@ -231,7 +231,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;$(SolutionDir)Include\GLFW</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;$(SolutionDir)Include\GLFW;$(SolutionDir)Include\assimp</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -309,6 +309,7 @@
     <ClCompile Include="BaseVulkanRender.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandPool.cpp" />
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="DebugUI.cpp" />
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="DescriptorSet.cpp" />
@@ -369,6 +370,7 @@
     <ClInclude Include="CommandBuffer.hpp" />
     <ClInclude Include="CommandPool.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="DescriptorSet.hpp" />
     <ClInclude Include="DirectRender.hpp" />
     <ClInclude Include="DirectWindow.hpp" />
@@ -411,7 +413,7 @@
     <ClInclude Include="RenderObject.hpp" />
     <ClInclude Include="RenderObjectCreator.hpp" />
     <ClInclude Include="IRenderObjectFactory.hpp" />
-    <ClInclude Include="RenderObjectInfo.hpp" />
+    <ClInclude Include="CreateInfoStructures.hpp" />
     <ClInclude Include="RenderObjectPool.hpp" />
     <ClInclude Include="RigidBoby.hpp" />
     <ClInclude Include="JScriptEngine.hpp" />

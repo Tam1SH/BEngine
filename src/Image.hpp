@@ -4,6 +4,7 @@
 #include "AbstractComponent.hpp"
 //TODO: Ну, понятно.
 namespace BEbraEngine {
+    
     class Texture : public GameObjectComponent {
     public:
         std::string path;
@@ -41,5 +42,16 @@ namespace BEbraEngine {
 
         ~Texture();
 
+    };
+    class VulkanTexture : public Texture {
+    public:
+        bool isLoad;
+        int width;
+        int height;
+
+        VkImage image;
+        VkImageView imageView;
+        VkSampler sampler;
+        VkDeviceMemory memory;
     };
 }

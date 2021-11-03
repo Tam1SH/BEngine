@@ -234,6 +234,9 @@
     <ClCompile Include="DescriptorSet.cpp">
       <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.hpp">
@@ -428,7 +431,7 @@
     <ClInclude Include="IReusable.hpp">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="RenderObjectInfo.hpp">
+    <ClInclude Include="CreateInfoStructures.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectMediator.h">
@@ -442,6 +445,9 @@
     </ClInclude>
     <ClInclude Include="DescriptorSet.hpp">
       <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

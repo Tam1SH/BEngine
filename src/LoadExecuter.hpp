@@ -6,7 +6,7 @@
 namespace BEbraEngine {
     
     
-    class LoadExecuter {
+    class VulkanAsyncExecuter {
     public:
 
         typedef std::function<void(CommandBuffer&)> Task;
@@ -14,7 +14,7 @@ namespace BEbraEngine {
         typedef std::function<void()> Callback;
     public:
 
-        LoadExecuter() { }
+        VulkanAsyncExecuter() { }
 
         void Create(VkDevice& device, BaseVulkanRender* render);
 

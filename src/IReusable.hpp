@@ -2,7 +2,6 @@
 class IReusable
 {
 public:
-
 	virtual void release() = 0;
 	virtual ~IReusable() {}
 };

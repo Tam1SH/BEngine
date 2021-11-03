@@ -11,14 +11,10 @@
 #include "Image.hpp"
 #include "DescriptorSetLayouts.hpp"
 #include "RenderBuffer.hpp"
-#include "RenderObjectInfo.hpp"
+#include "CreateInfoStructures.hpp"
 #include "RenderObject.hpp"
 namespace BEbraEngine {
     
-    static const char* vert = R"(
-
-
-)";
     VkDevice BaseVulkanRender::device;
 
     VkPhysicalDevice BaseVulkanRender::physicalDevice;
@@ -68,7 +64,7 @@ namespace BEbraEngine {
         }
 
 
-        auto _buf = static_cast<Buffer*>(buffer);
+        auto _buf = static_cast<VulkanBuffer*>(buffer);
         VkDescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = _buf->self;
         bufferInfo.offset = 0;
@@ -101,8 +97,8 @@ namespace BEbraEngine {
         return pool;
     }
 
-    Buffer BaseVulkanRender::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage) {
-        Buffer buffer{};
+    VulkanBuffer BaseVulkanRender::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage) {
+        VulkanBuffer buffer{};
         _createBuffer(size, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer.self, buffer.memory);
         return buffer;
 
@@ -542,7 +538,7 @@ namespace BEbraEngine {
     void BaseVulkanRender::initRender()
     {
 
-        std::system("C:/Users/ignat/source/repos/Game/Game/shaders/sh.bat");
+        std::system("C:/.BEbraEngine/src/shaders/shaders/sh.bat");
         pickPhysicalDevice();
         createLogicalDevice();
         setupDebugMessenger();
@@ -1866,7 +1862,7 @@ namespace BEbraEngine {
         allocInfo.pSetLayouts = &ObjectLayout;
         vkAllocateDescriptorSets(GetDevice(), &allocInfo, set);
 
-        auto vkbuffer = static_cast<Buffer*>(info->bufferView->buffer);
+        auto vkbuffer = static_cast<VulkanBuffer*>(info->bufferView->buffer);
 
         VkDescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = vkbuffer->self;
@@ -1902,21 +1898,21 @@ namespace BEbraEngine {
     }
     void BaseVulkanRender::DestroyBuffer(RenderBuffer* buffer)
     {
-        auto vkBuffer = static_cast<Buffer*>(buffer);
+        auto vkBuffer = static_cast<VulkanBuffer*>(buffer);
         vkDestroyBuffer(device, vkBuffer->self, 0);
         vkFreeMemory(device, vkBuffer->memory, 0);
         delete buffer;
     }
     RenderBuffer* BaseVulkanRender::CreateStorageBuffer(size_t size)
     {
-        Buffer* buffer = new Buffer();
+        VulkanBuffer* buffer = new VulkanBuffer();
         buffer->size = size;
         _createBuffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer->self, buffer->memory);
         return buffer;
     }
     RenderBuffer* BaseVulkanRender::CreateUniformBuffer(size_t size)
     {
-        Buffer* buffer = new Buffer();
+        VulkanBuffer* buffer = new VulkanBuffer();
         buffer->size = size;
         _createBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer->self, buffer->memory);
         return buffer;
@@ -1927,7 +1923,8 @@ namespace BEbraEngine {
     }
     void BaseVulkanRender::AddObject(std::weak_ptr<RenderObject> object)
     {
-        objects.push_back(object);
+        auto obj = std::dynamic_pointer_cast<VulkanRenderObject>(object.lock());
+        objects.push_back(obj);
     }
     BaseVulkanRender::BaseVulkanRender() {}
 

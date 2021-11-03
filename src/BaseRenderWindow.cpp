@@ -37,18 +37,14 @@ namespace BEbraEngine {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
-			
 			//    ImGui_ImplSDL2_ProcessEvent(&event);
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
 				auto size = GetWindowSize();
 				this->onResizeCallback(size.x,size.y);
 			}
-			if (event.type == SDL_WINDOWEVENT_CLOSE) {
-
+			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE) {
+				_isClose = true;
 			}
-			
-
-
 		}
 		onUpdate();
 		notifyOnUpdateFrame();
@@ -111,7 +107,7 @@ namespace BEbraEngine {
 	}
 
 	bool BaseWindow::isClose() {
-		return false;
+		return _isClose;
 	}
 
 	void BaseWindow::notifyOnUpdateFrame() {

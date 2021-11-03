@@ -48,6 +48,9 @@ namespace BEbraEngine {
         WorkSpace() {
             name = "Workspace";
         }
+        ~WorkSpace() {
+            RemoveAll();
+        }
     protected:
         void _addComponent(std::shared_ptr<GameObjectComponent> component) override {
 

@@ -51,7 +51,7 @@ namespace BEbraEngine {
 		WindowHandle* handle;
 		void onCreateWindow(const Vector2& size, const SurfaceType& type, const std::string& title);
 	private:
-		SurfaceType type;
+		bool _isClose;
 		std::list<IListenerOnRender*> R_L;
 		void _onCreateWindow(int w, int h, const SurfaceType& type, const char* title);
 	};

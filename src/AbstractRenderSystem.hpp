@@ -26,6 +26,7 @@ namespace BEbraEngine {
 		virtual void InitCamera(Camera* alloced_camera) = 0;
 		virtual void AddObject(std::weak_ptr<RenderObject> object) = 0;
 
+		virtual ~AbstractRender() {}
 	private:
 
 	};

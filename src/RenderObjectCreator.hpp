@@ -5,13 +5,14 @@
 #include "IRenderObjectFactory.hpp"
 #include "RenderObjectPool.hpp"
 namespace BEbraEngine {
-    class Buffer;
+    class VulkanBuffer;
     class AbstractRender;
     class VulkanRender;
     class Texture;
-    class ImageCreator;
+    class TextureFactory;
     class RenderObject;
-    class VulkanRenderObjectInfo;
+    class VulkanRenderObject;
+    class RenderObjectInfo;
 
 }
 namespace BEbraEngine {
@@ -23,25 +24,27 @@ namespace BEbraEngine {
         friend class RenderObject;
 
         std::unique_ptr<VulkanRenderObjectPool> _pool;
-        AbstractRender* render;
-        ImageCreator* imgsCreator;
+        std::shared_ptr<VulkanRender> render;
+        TextureFactory* imgsCreator;
 
         std::mutex m;
 
     public:
         friend class Transform;
 
-        RenderObject* create(VulkanRenderObjectInfo* info) override;
+        void BindTransform(RenderObject* object, Transform* transform) override;
         
-        RenderObject* CreateObject(std::shared_ptr<Transform> transform);
+        RenderObject* createObject();
 
-        void CreateObjectSet(RenderObject* obj);
+        void CreateObjectSet(VulkanRenderObject* obj);
 
-        VulkanRenderObjectFactory(AbstractRender* render);
-        VulkanRenderObjectFactory() {}
+        VulkanRenderObjectFactory(std::shared_ptr<VulkanRender> render);
+        ~VulkanRenderObjectFactory();
 
-        void SetImgsCreator(ImageCreator* Creator) { imgsCreator = Creator; }
+        void SetImgsCreator(TextureFactory* Creator) { imgsCreator = Creator; }
 
+    protected:
+        RenderObject* create(RenderObjectInfo* info) override;
 
      //   Model* CreateModel(std::string const& path) {
       //      return new Model(path);

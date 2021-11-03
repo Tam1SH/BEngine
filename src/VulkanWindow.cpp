@@ -9,7 +9,6 @@ namespace BEbraEngine {
 	void VulkanWindow::CreateWindow(const Vector2& size, const std::string& title)
 	{
 		onCreateWindow(size, BaseWindow::SurfaceType::Vulkan, title);
-		//render = std::make_unique<VulkanRender>();
 		render->Create(this);
 	}
 

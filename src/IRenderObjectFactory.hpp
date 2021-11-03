@@ -4,12 +4,17 @@
 //#include "RenderObject.hpp"
 namespace BEbraEngine {
 	class RenderObject;
-	class VulkanRenderObjectInfo;
+	class RenderObjectInfo;
+	class Transform;
 }
 
 namespace BEbraEngine {
 	class IRenderObjectFactory {
 	public:
-		virtual RenderObject* create(VulkanRenderObjectInfo* info) = 0;
+		virtual void BindTransform(RenderObject* object, Transform* transform) = 0;
+		//Интерфейс для пулов.
+		virtual RenderObject* create(RenderObjectInfo* info) = 0;
+	protected:
+
 	};
 }

@@ -8,7 +8,7 @@
 
 //TODO: Сделать независимым от апи.
 namespace BEbraEngine {
-    class ImageCreator {
+    class TextureFactory {
     public:
 
         stbi_uc* loadImage(const std::string& path, int* texWidth, int* texHeight, int* texChannels) {
@@ -73,7 +73,7 @@ namespace BEbraEngine {
             stbi_set_flip_vertically_on_load(true);
 
             stbi_uc* pixels = new unsigned char[1];
-            VkDeviceSize imageSize = texWidth * texHeight * 4;
+            VkDeviceSize imageSize = texWidth * texHeight * 4;   
 
             VkBuffer stagingBuffer;
             VkDeviceMemory stagingBufferMemory;
@@ -237,7 +237,7 @@ namespace BEbraEngine {
             }
         }
 
-        ImageCreator(AbstractRender* render) : render(render) {}
+        TextureFactory(AbstractRender* render) : render(render) {}
         private:
             AbstractRender* render;
             std::vector<Texture*> images;

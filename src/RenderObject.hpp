@@ -4,6 +4,7 @@
 #include "RenderObjectCreator.hpp"
 #include "RenderBuffer.hpp"
 #include "IReusable.hpp"
+#include "Model.hpp"
 //TODO: draw is bad bleat.
 namespace BEbraEngine {
     class Mesh1;
@@ -12,20 +13,27 @@ namespace BEbraEngine {
     class RenderObject : public GameObjectComponent, public IReusable {
     public:
 
-        void release() override;
-
-        const RenderBuffer* getMatrixBuffer();
-
-        static RenderObject* New(std::shared_ptr<Transform> transform);
-
-        void Draw(VkCommandBuffer cmd);
-
-        void Recreate();
-
-        ~RenderObject();
+        virtual ~RenderObject();
     public:
 
-        size_t offset;
+        std::unique_ptr<Mesh1> mesh;
+
+        std::unique_ptr<Texture> texture;
+
+        std::unique_ptr<Model> model;
+
+        std::shared_ptr<RenderBufferView> matrix;
+
+        RenderObject();
+    };
+
+    class VulkanRenderObject : public RenderObject {
+    public:
+        void release() override;
+
+        void recreate();
+    public:
+        void Draw(VkCommandBuffer cmd);
 
         friend class VulkanRenderObjectFactory;
 
@@ -33,22 +41,8 @@ namespace BEbraEngine {
 
         static void SetFactory(VulkanRenderObjectFactory* factory);
 
-        std::unique_ptr<Mesh1> MeshRenderer;
-
-        std::shared_ptr<Transform> transform;
-
-        std::unique_ptr<Texture> texture;
-
-        std::shared_ptr<RenderBuffer> matBuffer;
-
-        std::shared_ptr<RenderBufferView> _matBuffer;
-
         VkPipelineLayout* layout;
 
         VkDescriptorSet descriptor;
-
-        VkDescriptorSet _descriptor;
-
-        RenderObject();
     };
 }

@@ -12,9 +12,7 @@ namespace BEbraEngine {
 
 		void CreateWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
 
-		VulkanWindow(std::shared_ptr<VulkanRender> render) { this->render = std::shared_ptr<VulkanRender>(render); }
-
-		AbstractRender* getRender();
+		VulkanWindow(VulkanRender* render) { this->render = render; }
 
 		void onResizeCallback(int width, int height) override;
 
@@ -27,7 +25,7 @@ namespace BEbraEngine {
 		~VulkanWindow();
 
 	private:
-		std::shared_ptr<VulkanRender> render;
+		VulkanRender* render;
 
 	};
 }

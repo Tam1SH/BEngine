@@ -43,8 +43,7 @@ namespace BEbraEngine {
         model = glm::translate(_m, _p);
         glm::mat4 _m1 = model;
         model = glm::scale(_m1, _s);
-
-        buffer->setData(&model, sizeof(Matrix4), _buffer->offset);
+        buffer->setData(&model, sizeof(Matrix4));
     }
 
     void Transform::SetPosition(const Vector3& position) noexcept

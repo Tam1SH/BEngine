@@ -4,7 +4,7 @@
 //TODO: ну хуй знает, в принципе от этого может быть толк, но как минимум избавиться от вулкана.
 namespace BEbraEngine {
     
-    void LoadExecuter::Create(VkDevice& device, BaseVulkanRender* render)
+    void VulkanAsyncExecuter::Create(VkDevice& device, BaseVulkanRender* render)
     {
         this->render = render;
         CommandBuffer::SetDevice(device);
@@ -15,23 +15,24 @@ namespace BEbraEngine {
         maxTasks = taskPool.max_concurrency() / 2;
     }
 
-    void LoadExecuter::AddToQueue(Task func)
+    void VulkanAsyncExecuter::AddToQueue(Task func)
     {
         tasks.push(func);
         totalTasks++;
     }
 
-    void LoadExecuter::OnCompletedAll(Callback func)
+
+    void VulkanAsyncExecuter::OnCompletedAll(Callback func)
     {
         _OnCompletedAll = func;
     }
 
-    void LoadExecuter::OnCompletedPart(Callback func)
+    void VulkanAsyncExecuter::OnCompletedPart(Callback func)
     {
         _OnCompletedPart = func;
     }
 
-    void LoadExecuter::WriteAllBuffers()
+    void VulkanAsyncExecuter::WriteAllBuffers()
     {
         if (!tasks.empty()) {
             int count = std::min(totalTasks, maxTasks);
@@ -86,7 +87,7 @@ namespace BEbraEngine {
 
     }
 
-    bool LoadExecuter::AllTasksCompleted()
+    bool VulkanAsyncExecuter::AllTasksCompleted()
     {
         bool b1 = taskCompleted == maxTasks;
         bool b2 = taskCompleted == totalTasks;
@@ -95,7 +96,7 @@ namespace BEbraEngine {
         return false;
     }
 
-    void LoadExecuter::ExecuteAll()
+    void VulkanAsyncExecuter::ExecuteAll()
     {
         std::lock_guard g(m);
         std::vector<VkCommandBuffer> completedBuffers;
@@ -124,7 +125,7 @@ namespace BEbraEngine {
         //});
     }
 
-    VkCommandBuffer LoadExecuter::CreateBuffer()
+    VkCommandBuffer VulkanAsyncExecuter::CreateBuffer()
     {
         VkCommandBuffer buffer;
         VkCommandBufferAllocateInfo info{};

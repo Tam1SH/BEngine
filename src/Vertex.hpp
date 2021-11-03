@@ -10,7 +10,7 @@ namespace BEbraEngine {
         Vector3 position;
         Vector4 color;
         Vector2 texCoord;
-        // Vector3 Normal;
+        Vector3 Normal;
         //Vector3 Tangent;
         //Vector3 Bitangent;
         static VkVertexInputBindingDescription getBindingDescription() {
@@ -22,8 +22,9 @@ namespace BEbraEngine {
             return bindingDescription;
         }
 
-        static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
+        static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions() {
+            std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
+            attributeDescriptions.resize(4);
 
             attributeDescriptions[0].binding = 0;
             attributeDescriptions[0].location = 0;
@@ -39,12 +40,12 @@ namespace BEbraEngine {
             attributeDescriptions[2].location = 2;
             attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
             attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
-            /*
+            
             attributeDescriptions[3].binding = 0;
             attributeDescriptions[3].location = 3;
             attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
             attributeDescriptions[3].offset = offsetof(Vertex, Normal);
-
+            /*
             attributeDescriptions[4].binding = 0;
             attributeDescriptions[4].location = 4;
             attributeDescriptions[4].format = VK_FORMAT_R32G32B32_SFLOAT;

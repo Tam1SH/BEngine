@@ -13,8 +13,8 @@ namespace BEbraEngine {
 		Mesh1(RenderBuffer* VBO, RenderBuffer* EBO) : VBO(VBO), EBO(EBO) {}
 
 		~Mesh1() {
-			//VBO.Destroy();
-			//EBO.Destroy();
+			VBO->Destroy();
+			EBO->Destroy();
 		}
 	};
 

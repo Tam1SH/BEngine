@@ -17,7 +17,7 @@ namespace BEbraEngine {
 	GameObjectFactory::GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics)
 		: render(render), physics(physics)
 	{
-		renderFactory = std::unique_ptr<VulkanRenderObjectFactory>(new VulkanRenderObjectFactory(render.get()));
+		renderFactory = std::unique_ptr<VulkanRenderObjectFactory>(new VulkanRenderObjectFactory(std::static_pointer_cast<VulkanRender>(render)));
 		transFactory = std::unique_ptr<TransformFactory>(new TransformFactory());
 
 		GameObject::SetFactory(this);
@@ -32,8 +32,10 @@ namespace BEbraEngine {
 
 
 		auto transform = std::shared_ptr<Transform>(Transform::New());
-		auto renderObj = std::shared_ptr<RenderObject>(RenderObject::New(transform));
+		auto renderObj = std::shared_ptr<RenderObject>(renderFactory->createObject());
 		auto rigidbody = std::shared_ptr<RigidBody>(new RigidBody());
+
+		renderFactory->BindTransform(renderObj.get(), transform.get());
 
 		rigidbody->SetTransform(transform);
 

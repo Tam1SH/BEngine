@@ -19,7 +19,7 @@ namespace BEbraEngine {
     class GameLogic : public IListenerOnRender {
     public:
 
-        GameLogic(AbstractRender* render, std::shared_ptr<WorkSpace> workspace, Camera* camera);
+        GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera);
 
         void ScriptInit();
 
@@ -37,6 +37,5 @@ namespace BEbraEngine {
 
         std::unique_ptr<GameObjectFactory> objectFactory;
         Camera* camera;
-        VulkanRenderObjectFactory creator;
     };
 }

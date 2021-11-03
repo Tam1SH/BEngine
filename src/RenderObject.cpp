@@ -6,51 +6,52 @@
 #include "VkBuffer.hpp"
 #include "RenderObjectCreator.hpp"
 namespace BEbraEngine {
-    VulkanRenderObjectFactory* RenderObject::factory;
-
-    void RenderObject::SetFactory(VulkanRenderObjectFactory* factory)
+    /*
+    
+        void RenderObject::SetFactory(VulkanRenderObjectFactory* factory)
     {
         RenderObject::factory = factory;
     }
+    
+        RenderObject* RenderObject::New(std::shared_ptr<Transform> transform)
+    {
+        return factory->createObject(transform);
+    }
+    */
 
     RenderObject::RenderObject()
     {
         std::cout << "RENDER OBJECT " << this << " CREATED" << std::endl;
     }
 
-    void RenderObject::release()
+    RenderObject::~RenderObject()
+    {
+        std::cout << "RENDER OBJECT " << this << " DESTROYED" << std::endl;
+    }
+
+    VulkanRenderObjectFactory* VulkanRenderObject::factory;
+
+    void VulkanRenderObject::release()
     {
     }
 
-    const RenderBuffer* RenderObject::getMatrixBuffer()
+    void VulkanRenderObject::recreate()
     {
-        return matBuffer.get();
+        factory->CreateObjectSet(this);
     }
-
-    RenderObject* RenderObject::New(std::shared_ptr<Transform> transform)
+    void VulkanRenderObject::Draw(VkCommandBuffer cmd)
     {
-        return factory->CreateObject(transform);
-    }
-
-    void RenderObject::Draw(VkCommandBuffer cmd)
-    {
-        auto bufferVBO = static_cast<Buffer*>(MeshRenderer->VBO);
-        auto bufferEBO = static_cast<Buffer*>(MeshRenderer->EBO);
+        auto bufferVBO = static_cast<VulkanBuffer*>(mesh->VBO);
+        auto bufferEBO = static_cast<VulkanBuffer*>(mesh->EBO);
         VkDeviceSize offset[] = { 0 };
         vkCmdBindVertexBuffers(cmd, 0, 1, &bufferVBO->self, offset);
         vkCmdBindIndexBuffer(cmd, bufferEBO->self, 0, VK_INDEX_TYPE_UINT32);
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, *layout, 0, 1, &descriptor, 0, nullptr);
-        vkCmdDrawIndexed(cmd, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+        
+        vkCmdDrawIndexed(cmd, static_cast<uint32_t>(model->meshes[0].indices.size()), 1, 0, 0, 0);
     }
-
-    void RenderObject::Recreate()
+    void VulkanRenderObject::SetFactory(VulkanRenderObjectFactory* factory)
     {
-        factory->CreateObjectSet(this);
-    }
-
-    RenderObject::~RenderObject()
-    {
-        delete descriptor;
-        std::cout << "RENDER OBJECT " << this << " DESTROYED" << std::endl;
+        VulkanRenderObject::factory = factory;
     }
 }

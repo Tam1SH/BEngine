@@ -158,7 +158,7 @@ namespace BEbraEngine {
 
             }
             else {
-                object_.lock()->Recreate();
+                object_.lock()->recreate();
             }
 
         }

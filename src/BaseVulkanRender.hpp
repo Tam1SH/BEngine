@@ -12,7 +12,7 @@
 #include "AbstractRenderSystem.hpp"
 #include "VkBuffer.hpp"
 #include "DescriptorSet.hpp"
-
+#include "RenderObject.hpp"
 #undef min
 #undef max
 
@@ -115,7 +115,7 @@ namespace BEbraEngine {
     class BaseVulkanRender : public AbstractRender
     {
     protected:
-        std::list<std::weak_ptr<RenderObject>> objects;
+        std::list<std::weak_ptr<VulkanRenderObject>> objects;
     public:
 
         Camera* camera;
@@ -267,7 +267,7 @@ namespace BEbraEngine {
 
         virtual void OnUpdateData() = 0;
 
-        static Buffer CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage);
+        static VulkanBuffer CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage);
 
         void AddBufferToQueue(VkCommandBuffer buffer);
 
@@ -416,7 +416,7 @@ namespace BEbraEngine {
     template<typename T>
     inline RenderBuffer* BaseVulkanRender::CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage)
     {
-        Buffer* buffer = new Buffer();
+        VulkanBuffer* buffer = new VulkanBuffer();
         VkDeviceSize bufferSize = sizeof(data[0]) * data.size();
         buffer->size = bufferSize;
         VkBuffer stagingBuffer;

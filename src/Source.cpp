@@ -11,13 +11,15 @@
 TODO: подумать над реализацей:
 ****************************************************************************************
  * воркспейса и вообще, хорошая ли это затея разделять эту сущность на редактор и логику
- * абстрагировать доступ к рендеру, т.к их будет как минимум 2
+ * абстрагировать доступ к рендеру, т.к их будет как минимум 2(около этого сделано)
  * сделать абстрактные классы для окна т.к я хуй знает что я буду делать и вообще охото на пк юзать GLFW (сделано) 
- * также и для физики так как возможно я буду и другой физ. движок прикручивать
+ * также и для физики так как возможно я буду и другой физ. движок прикручивать(есть смысл?)
  * сделать свой класс векторов чтобы потом не ебаться с разными векторами из разных либ(сделано)
  * ну и также для объектов рендера
  * присобачить Mono
  * как-то вертеть данные с физики до рендера(какая-то хуйня реализована в Transform, но это крайне плохое решение)
+ * реализовать каким-то хуем папочку в ведроиде, откуда данные таксать буду
+ * сделать разные интерфейсы для выделение объектов из пулов и уникальных объектов,а также для их рендеринга.
 ****************************************************************************************
 Вывод: В общем подумать над абстрагированием основных элементов движка для возможной замены их реализации
 */
@@ -51,8 +53,6 @@ namespace BEbraEngine {
         std::shared_ptr<VulkanRender> render1;
         std::unique_ptr<Physics> physics;
 
-        //  std::unique_ptr<DebugUI> UId;
-
         std::unique_ptr<BaseWindow> window;
         std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace;
@@ -66,14 +66,14 @@ namespace BEbraEngine {
         void Init(int i) {
             if (i == 2) {
 
-                render1 = std::shared_ptr<VulkanRender>(new VulkanRender());
-                window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1));
-                mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
+                render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
+                window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
                 window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
+                mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
                 workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
                 render1->InitCamera(mainCamera1.get());
                 render1->camera = mainCamera1.get();
-                gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1.get(), workspace1, mainCamera1.get()));
+                gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get()));
                 window1->attach(gameLogic1.get());
                 
             }
@@ -97,10 +97,7 @@ namespace BEbraEngine {
         }
         void Start() {
 
-            while (
-                ((window.get()) && !window->isClose())
-                || 
-                ((window1.get()) && !window1->isClose())) {
+            while (window1.get() && !window1->isClose()) {
                 Time::UpdateTime();
                 Update();
 
@@ -120,6 +117,7 @@ namespace BEbraEngine {
         }
 
         ~Engine() {
+
           //  UId->Destroy();
         }
     };
@@ -136,8 +134,10 @@ extern "C"
 #endif
 int main(int, char** argv)
 {
-    BEbraEngine::Engine engine;
-    engine.Init(2);
+   // while (true) {
+        BEbraEngine::Engine engine;
+        engine.Init(2);
+  //  }
     engine.Start();
 
     return 0;

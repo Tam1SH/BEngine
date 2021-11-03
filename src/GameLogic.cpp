@@ -13,7 +13,7 @@
 namespace BEbraEngine {
 
 
-    GameLogic::GameLogic(AbstractRender* render, std::shared_ptr<WorkSpace> workspace, Camera* camera)
+    GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera)
     {
         scriptManager = std::shared_ptr<ScriptManager>(new ScriptManager());
         this->workspace = workspace;
@@ -24,12 +24,6 @@ namespace BEbraEngine {
         scriptManager->SetWorkSpace(workspace);
         this->camera = camera;
 
-       // camera->SetRender(render);
-       // creator.render = render;
-       // creator.CreateStorageBuffer(sizeof(glm::mat4) * 2, camera->buffer);
-       // camera->CreateCameraSet();
-       // render->camera = camera.get();
-
 
         ScriptInit();
     }
@@ -38,10 +32,7 @@ namespace BEbraEngine {
     {
         //scriptManager->LoadScripts();
         GameObject::New(Vector3(0));
-        GameObject::New(Vector3(20,0,0));
-        GameObject::New(Vector3(-20,0,0));
-        GameObject::New(Vector3(0,0,20));
-        GameObject::New(Vector3(0, 0, -20));
+        //GameObject::New(Vector3(1));
         //auto script = scriptManager->GetScriptByName(L"hello_world.js");
         //script->SetActive(true);
         //obj->AddComponent(script);
@@ -56,7 +47,7 @@ namespace BEbraEngine {
     void GameLogic::Update()
     {
         
-        /*
+        
         if (Input::IsKeyPressed(KEY_CODE::KEY_A)) {
             camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());
         }
@@ -69,7 +60,7 @@ namespace BEbraEngine {
         if (Input::IsKeyPressed(KEY_CODE::KEY_W)) {
             camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
         }
-        */
+        
         camera->Update();
         scriptManager->RunScripts();
         physics->Update();
@@ -77,7 +68,6 @@ namespace BEbraEngine {
 
     GameLogic::~GameLogic()
     {
-        scriptManager.reset();
-        workspace->RemoveAll();
+        //scriptManager.reset();
     }
 }

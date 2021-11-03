@@ -1,5 +1,5 @@
 #pragma once
-/*
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -10,12 +10,11 @@
 #include <string>
 #include <fstream>
 #include <vector>
-
+#include <optional>
 #include "Image.hpp"
-#include "Vertex.h"
+#include "Vertex.hpp"
 namespace BEbraEngine {
-    class ImageCreator;
-
+    class TextureFactory;
     class Mesh {
     public:
         std::vector<Vertex> vertices;
@@ -28,10 +27,10 @@ namespace BEbraEngine {
     class Model
     {
     private:
-        static ImageCreator* creator;
+        static TextureFactory* creator;
 
     public:
-        static void SetCreator(ImageCreator* creator) {
+        static void SetCreator(TextureFactory* creator) {
             Model::creator = creator;
         }
         static Model* New();
@@ -43,7 +42,7 @@ namespace BEbraEngine {
 
         // Конструктор в качестве аргумента использует путь к 3D-модели
         Model(std::string const& path, bool gamma = false);
-
+        Model() {}
         // Отрисовываем модель, а значит и все её меши
         void Draw();
 
@@ -61,5 +60,20 @@ namespace BEbraEngine {
         std::vector<Texture*> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
     };
 
+    class MeshFactory {
+    public:
+        std::optional<Model*> create(const std::string& path);
+    private:
+        // Рекурсивная обработка узла. Обрабатываем каждый отдельный меш, расположенный в узле, и повторяем этот процесс для своих дочерних углов (если таковы вообще имеются)
+        void processNode(Model* model, aiNode* node, const aiScene* scene);
+
+        Mesh processMesh(Model* model, aiMesh* mesh, const aiScene* scene);
+
+        // Проверяем все текстуры материалов заданного типа и загружам текстуры, если они еще не были загружены.
+        // Необходимая информация возвращается в виде структуры Texture
+        std::vector<Texture*> loadMaterialTextures(Model* model, aiMaterial* mat, aiTextureType type, std::string typeName);
+
+        TextureFactory* _textureFactory;
+
+    };
 }
-*/

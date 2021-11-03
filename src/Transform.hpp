@@ -19,9 +19,6 @@ namespace BEbraEngine {
 
         static TransformFactory* factory;
 
-        std::shared_ptr<RenderBuffer> buffer;
-
-        std::shared_ptr<RenderBufferView> _buffer;
     private:
         Vector3 position;
 
@@ -37,6 +34,8 @@ namespace BEbraEngine {
         Transform(const Vector3& position);
 
     public:
+
+        std::shared_ptr<RenderBufferView> buffer;
 
         static Transform* New(const Vector3& position = Vector3(0));
 

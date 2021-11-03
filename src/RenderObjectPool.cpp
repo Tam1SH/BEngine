@@ -8,7 +8,7 @@
 #include "AbstractRenderSystem.hpp"
 #include "Vertex.hpp"
 #include "matrix.hpp"
-#include "RenderObjectInfo.hpp"
+#include "CreateInfoStructures.hpp"
 #include "IRenderObjectFactory.hpp"
 namespace BEbraEngine {
 	void VulkanRenderObjectPool::allocate(size_t count)
@@ -27,10 +27,7 @@ namespace BEbraEngine {
 			bufferView->buffer = _bufferTransforms;
 			bufferView->offset = offsets[i];
 
-			VulkanRenderObjectInfo info{};
-			info.offset = offsets[i];
-			info.size = sizeof(Matrix4);
-			info.buffer = _bufferTransforms;
+			RenderObjectInfo info{};
 			info.bufferView = bufferView;
 			_pool.push(_factory->create(&info));
 		}
@@ -60,5 +57,6 @@ namespace BEbraEngine {
 
 	VulkanRenderObjectPool::~VulkanRenderObjectPool()
 	{
+		_bufferTransforms->Destroy();
 	}
 }
