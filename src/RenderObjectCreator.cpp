@@ -22,11 +22,17 @@ namespace BEbraEngine {
 
         auto obj = new VulkanRenderObject();
         obj->name = "RenderObject";
-        
-        obj->mesh = std::unique_ptr<Mesh1>(new Mesh1());
+       
         obj->model = std::unique_ptr<Model>(factory.create("C:/.BEbraEngine/src/Models/BOX_NAXYU.fbx").value());
-        obj->mesh->VBO = render->CreateVertexBuffer(obj->model->meshes[0].vertices);
-        obj->mesh->EBO = render->CreateIndexBuffer(obj->model->meshes[0].indices);
+
+        auto vertices_view = new RenderBufferView();
+        vertices_view->buffer = render->CreateVertexBuffer(obj->model->meshes[0].vertices);
+        obj->model->meshes[0].vertices_view = vertices_view;
+        auto indices_view = new RenderBufferView();
+        indices_view->buffer = render->CreateIndexBuffer(obj->model->meshes[0].indices);
+        obj->model->meshes[0].indices_view = indices_view;
+
+
         obj->texture = std::unique_ptr<Texture>(imgsCreator->createEmptyTexture());
         obj->matrix = std::shared_ptr<RenderBufferView>(info->bufferView);
 
@@ -40,6 +46,26 @@ namespace BEbraEngine {
         return obj;
     }
 
+    Light* VulkanRenderObjectFactory::create(const Vector3& color)
+    {
+        auto light = new VulkanLight();
+        light->setColor(color);
+        
+        auto view = new RenderBufferView();
+        view->buffer = render->CreateUniformBuffer(sizeof(Vector4) * 2);
+        view->availableRange = sizeof(Vector4) * 2;
+        auto info = LightInfo();
+        info.bufferView = view;
+        light->data = std::shared_ptr<RenderBufferView>(view);
+        light->LightSet = render->CreateDescriptor(&info);
+        light->layout = &render->pipelineLayout;
+        return light;
+    }
+
+    void VulkanRenderObjectFactory::BindTransform(Light* light, Transform* transform)
+    {
+        light->transform = transform;
+    }
     void VulkanRenderObjectFactory::BindTransform(RenderObject* object, Transform* transform)
     {
         transform->buffer = object->matrix;

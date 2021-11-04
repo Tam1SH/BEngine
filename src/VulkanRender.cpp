@@ -9,7 +9,7 @@
 //#include "imgui.h"
 //#include "imgui_impl_sdl.h"
 //#include "imgui_impl_vulkan.h"
-
+#include "CreateInfoStructures.hpp"
 #include "Transform.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 namespace BEbraEngine {
@@ -118,9 +118,10 @@ namespace BEbraEngine {
             vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
             {
+                light.lock()->update();
                 vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &light.lock()->LightSet, 0, 0);
 
-                //TODO: оверхед, нахуя так делать? Надо избавиться от этого ебаного цикла и сделать единственный дескриптор для динамических объектов 
                 for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
                     if (lock_object->expired()) {
                         lock_object = objects.erase(lock_object);
@@ -149,6 +150,11 @@ namespace BEbraEngine {
 
     }
     void VulkanRender::OnRecreateSwapChain() {
+        auto& dec = light.lock()->LightSet;
+        auto info = LightInfo();
+        info.bufferView = light.lock()->data.get();
+
+        light.lock()->LightSet = CreateDescriptor(&info);
         CreateCameraSet(camera->cameraData);
         for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
             auto object_ = *lock_object;

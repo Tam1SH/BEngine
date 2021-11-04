@@ -107,6 +107,8 @@ namespace BEbraEngine {
 
         ProcessMouseMovement();
         cameraData->setData(&vp, sizeof(Matrix4) * 2, 0);
+        Vector4 pos = static_cast<glm::vec3>(Position);
+        cameraData->setData(&pos, sizeof(Vector4), sizeof(Matrix4) * 2);
     }
 
     void Camera::updateCameraVectors()

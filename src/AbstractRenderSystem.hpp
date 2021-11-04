@@ -1,14 +1,13 @@
 #pragma once
 #include <vector>
 #include "IRenderObjectFactory.hpp"
+#include "RenderObject.hpp"
 //TODO: хуй знает, использовать это как интерфейс для классов либо как полноценный класс, только скрывая реализацию граф. апи
 namespace BEbraEngine {
 	class RenderBuffer;
 	class Vertex;
 	class Camera;
 	class BaseWindow;
-	class RenderObject;
-
 }
 namespace BEbraEngine {
 	class RenderObject;
@@ -25,6 +24,7 @@ namespace BEbraEngine {
 		//TODO: сомнительная хуйня
 		virtual void InitCamera(Camera* alloced_camera) = 0;
 		virtual void AddObject(std::weak_ptr<RenderObject> object) = 0;
+		virtual void addLight(std::weak_ptr<Light> light) = 0;
 
 		virtual ~AbstractRender() {}
 	private:

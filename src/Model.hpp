@@ -13,6 +13,7 @@
 #include <optional>
 #include "Image.hpp"
 #include "Vertex.hpp"
+#include "RenderBuffer.hpp"
 namespace BEbraEngine {
     class TextureFactory;
     class Mesh {
@@ -20,6 +21,8 @@ namespace BEbraEngine {
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
         std::vector<Texture*> textures;
+        RenderBufferView* vertices_view;
+        RenderBufferView* indices_view;
         Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::vector<Texture*> textures)
             : vertices(vertices), indices(indices), textures(textures) {}
         Mesh() {}

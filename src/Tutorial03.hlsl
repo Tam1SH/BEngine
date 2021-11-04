@@ -15,7 +15,6 @@ cbuffer CameraData : register(b2) {
 
 
 struct VS_INPUT
-
 {
 
     float4 Pos : POSITION;

@@ -41,17 +41,34 @@ namespace BEbraEngine {
     }
     void VulkanRenderObject::Draw(VkCommandBuffer cmd)
     {
-        auto bufferVBO = static_cast<VulkanBuffer*>(mesh->VBO);
-        auto bufferEBO = static_cast<VulkanBuffer*>(mesh->EBO);
+        auto bufferVBOview = model->meshes[0].vertices_view;
+        auto bufferEBOview = model->meshes[0].indices_view;
+        auto VBO = static_cast<VulkanBuffer*>(bufferVBOview->buffer);
+        auto EBO = static_cast<VulkanBuffer*>(bufferEBOview->buffer);
         VkDeviceSize offset[] = { 0 };
-        vkCmdBindVertexBuffers(cmd, 0, 1, &bufferVBO->self, offset);
-        vkCmdBindIndexBuffer(cmd, bufferEBO->self, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindVertexBuffers(cmd, 0, 1, &VBO->self, offset);
+        vkCmdBindIndexBuffer(cmd, EBO->self, 0, VK_INDEX_TYPE_UINT32);
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, *layout, 0, 1, &descriptor, 0, nullptr);
-        
+
         vkCmdDrawIndexed(cmd, static_cast<uint32_t>(model->meshes[0].indices.size()), 1, 0, 0, 0);
     }
     void VulkanRenderObject::SetFactory(VulkanRenderObjectFactory* factory)
     {
         VulkanRenderObject::factory = factory;
+    }
+    void VulkanLight::Draw(VkCommandBuffer cmd)
+    {
+        /*
+        auto bufferVBOview = model->meshes[0].vertices_view;
+        auto bufferEBOview = model->meshes[0].indices_view;
+        auto VBO = static_cast<VulkanBuffer*>(bufferVBOview->buffer);
+        auto EBO = static_cast<VulkanBuffer*>(bufferEBOview->buffer);
+        VkDeviceSize offset[] = { 0 };
+        vkCmdBindVertexBuffers(cmd, 0, 1, &VBO->self, offset);
+        vkCmdBindIndexBuffer(cmd, EBO->self, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, *layout, 0, 1, ObjectSet, 0, nullptr);
+        vkCmdDrawIndexed(cmd, static_cast<uint32_t>(model->meshes[0].indices.size()), 1, 0, 0, 0);
+        */
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, *layout, 0, 2, &LightSet, 0, nullptr);
     }
 }

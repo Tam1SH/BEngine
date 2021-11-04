@@ -7,3 +7,4 @@
 #include <SDL.h>
 #include <mutex>
 #include <tbb.h>
+#include <optional>

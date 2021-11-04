@@ -53,6 +53,11 @@ namespace BEbraEngine {
 		return obj;
 	}
 
+	std::shared_ptr<Light> GameObjectFactory::createLight(const Vector3& position)
+	{
+		return std::shared_ptr<Light>(renderFactory->create(Vector3(1)));
+	}
+
 	void GameObjectFactory::Destroy(GameObject* object)
 	{
 	}

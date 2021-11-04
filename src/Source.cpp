@@ -1,7 +1,6 @@
 //TODO: сделать бы так, чтобы при создании дескриптора его layout можно было бы 
 //по имени выбирать в классе DescriptorLayout или сувать туда структуру, которая 
 //соответствовало бы какому-нибудь из layout и возвращала бы его(Думаю енам для всей этой поеботы сделать и не ебаться)
-// TODO: подумать над интерфейсом рендер объектов Draw(), т.к в вулкане эффективно было бы через глобальный дескриптор и буфер биндить данные для рендера.
 // TODO: сделать кластерный рендер
 // TODO: реализация меша для объектов рендера
 //TODO: заюзать для лайаутов хеш таблицу
@@ -51,7 +50,6 @@ namespace BEbraEngine {
     public:
         //std::shared_ptr<DirectRender> render;
         std::shared_ptr<VulkanRender> render1;
-        std::unique_ptr<Physics> physics;
 
         std::unique_ptr<BaseWindow> window;
         std::unique_ptr<BaseWindow> window1;

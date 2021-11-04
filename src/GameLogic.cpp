@@ -32,6 +32,11 @@ namespace BEbraEngine {
     {
         //scriptManager->LoadScripts();
         GameObject::New(Vector3(0));
+        auto obj = GameObject::New(Vector3(3));
+        auto light = std::shared_ptr<Light>(objectFactory->createLight(Vector3(2)));
+        light->transform = obj->GetComponent<Transform>();
+        obj->AddComponent(light);
+        render->addLight(light);
         //GameObject::New(Vector3(1));
         //auto script = scriptManager->GetScriptByName(L"hello_world.js");
         //script->SetActive(true);

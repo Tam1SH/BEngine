@@ -73,6 +73,7 @@ namespace BEbraEngine {
     class VulkanWindow;
     class Camera;
     class VulkanDescriptorSetInfo;
+    class LightInfo;
     //class Buffer;
     //class DescriptorSetLayouts;
 }
@@ -116,6 +117,7 @@ namespace BEbraEngine {
     {
     protected:
         std::list<std::weak_ptr<VulkanRenderObject>> objects;
+        std::weak_ptr<VulkanLight> light;
     public:
 
         Camera* camera;
@@ -135,9 +137,13 @@ namespace BEbraEngine {
 
         RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
 
+        DescriptorSet CreateDescriptor(LightInfo* info);
+
         RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
 
         void AddObject(std::weak_ptr<RenderObject> object) override;
+
+        void addLight(std::weak_ptr<Light> light) override;
 
         void InitCamera(Camera* alloced_camera) override;
 
@@ -223,6 +229,8 @@ namespace BEbraEngine {
         VkDescriptorSetLayout ObjectLayout;
 
         VkDescriptorSetLayout CameraLayout;
+
+        VkDescriptorSetLayout LightLayout;
 
         VkPipelineLayout pipelineLayout;
 
@@ -332,8 +340,12 @@ namespace BEbraEngine {
 
         void createInstance();
 
-        void initRender();
-
+    public:
+        enum class Layout {
+            ObjectLayout,
+            CameraLayout,
+            LightLayout
+        };
     private:
 
         void cleanupSwapChain();
@@ -367,7 +379,7 @@ namespace BEbraEngine {
 
         void createObjectDescriptorSetLayout();
 
-        void createObjectWithoutTextureLayout();
+        void createLightDescriptorSetLayout();
 
         void createCameraDescriptorSetLayout();
 

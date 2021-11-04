@@ -535,38 +535,6 @@ namespace BEbraEngine {
         }
     }
 
-    void BaseVulkanRender::initRender()
-    {
-
-        std::system("C:/.BEbraEngine/src/shaders/shaders/sh.bat");
-        pickPhysicalDevice();
-        createLogicalDevice();
-        setupDebugMessenger();
-      //  createSwapChain();
-        createDepthResources();
-        createImageViews();
-    
-        createRenderPass();
-    
-        //SetDescriptorLayouts();
-        createObjectDescriptorSetLayout();
-        createCameraDescriptorSetLayout();
-        createGraphicsPipeline();
-       // createLineGraphicsPipeline();
-        createFramebuffers();
-        createCommandPool();
-
-        createDescriptorPool();
-        createCopyCmdBuffer();
-        createCmdBuffers();
-        createSyncObjects();
-    
-        isCreate = true;
-        FamilyIndices = findQueueFamilies(physicalDevice);
-
-
-    }
-
     void BaseVulkanRender::createInstance()
     {
         if (enableValidationLayers && !checkValidationLayerSupport()) {
@@ -1149,12 +1117,12 @@ namespace BEbraEngine {
         colorBlending.blendConstants[3] = 0.0f;
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-        //ObjectLayout
-        VkDescriptorSetLayout layouts[] = { ObjectLayout, CameraLayout };
+
+        VkDescriptorSetLayout layouts[] = { ObjectLayout, CameraLayout, LightLayout };
 
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.pNext = nullptr;
-        pipelineLayoutInfo.setLayoutCount = 2;
+        pipelineLayoutInfo.setLayoutCount = 3;
         pipelineLayoutInfo.pSetLayouts = layouts;
         if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create pipeline layout!");
@@ -1273,26 +1241,26 @@ namespace BEbraEngine {
         }
 
     }
-    void BaseVulkanRender::createObjectWithoutTextureLayout()
+
+    void BaseVulkanRender::createLightDescriptorSetLayout()
     {
-        std::array<VkDescriptorSetLayoutBinding, 2> uboLayoutBinding{};
-        uboLayoutBinding[0].binding = 0;
-        uboLayoutBinding[0].descriptorCount = 1;
-        uboLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        uboLayoutBinding[0].pImmutableSamplers = nullptr;
-        uboLayoutBinding[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+        std::array<VkDescriptorSetLayoutBinding, 1> LightLayoutBinding{};
+        LightLayoutBinding[0].binding = 0;
+        LightLayoutBinding[0].descriptorCount = 1;
+        LightLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        LightLayoutBinding[0].pImmutableSamplers = nullptr;
+        LightLayoutBinding[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 
-        std::array<VkDescriptorSetLayoutBinding, 2> bindings = uboLayoutBinding;
+        std::array<VkDescriptorSetLayoutBinding, 1> bindings = LightLayoutBinding;
         VkDescriptorSetLayoutCreateInfo layoutInfo{};
         layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
         layoutInfo.pBindings = bindings.data();
 
-        if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &ObjectWithoutTextureLayout) != VK_SUCCESS) {
+        if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &LightLayout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create descriptor set layout!");
         }
-
     }
 
     void BaseVulkanRender::createCameraDescriptorSetLayout()
@@ -1832,6 +1800,7 @@ namespace BEbraEngine {
         //SetDescriptorLayouts();
         createObjectDescriptorSetLayout();
         createCameraDescriptorSetLayout();
+        createLightDescriptorSetLayout();
         createGraphicsPipeline();
         // createLineGraphicsPipeline();
         createFramebuffers();
@@ -1851,6 +1820,38 @@ namespace BEbraEngine {
     RenderBuffer* BaseVulkanRender::CreateIndexBuffer(std::vector<uint32_t> indices)
     {
         return CreateBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    }
+
+    DescriptorSet BaseVulkanRender::CreateDescriptor(LightInfo* info)
+    {
+        auto set = DescriptorSet();
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = descriptorPool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = &LightLayout;
+        vkAllocateDescriptorSets(GetDevice(), &allocInfo, set);
+
+        auto vkbuffer = static_cast<VulkanBuffer*>(info->bufferView->buffer);
+
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = vkbuffer->self;
+        bufferInfo.offset = info->bufferView->offset;
+        bufferInfo.range = vkbuffer->size;
+
+        std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
+
+        descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[0].dstSet = set;
+        descriptorWrites[0].dstBinding = 0;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+        vkUpdateDescriptorSets(GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+
+        return set;
     }
     DescriptorSet BaseVulkanRender::CreateDescriptor(VulkanDescriptorSetInfo* info)
     {
@@ -1925,6 +1926,10 @@ namespace BEbraEngine {
     {
         auto obj = std::dynamic_pointer_cast<VulkanRenderObject>(object.lock());
         objects.push_back(obj);
+    }
+    void BaseVulkanRender::addLight(std::weak_ptr<Light> light)
+    {
+        this->light = std::static_pointer_cast<VulkanLight>(light.lock());
     }
     BaseVulkanRender::BaseVulkanRender() {}
 

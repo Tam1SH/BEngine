@@ -40,6 +40,10 @@ namespace BEbraEngine {
     {
         _addComponent(component);
     }
+    void GameObject::removeComponent(std::shared_ptr<GameObjectComponent> component)
+    {
+        _removeComponent(component);
+    }
 
     bool GameObject::IsComposite() const
     {

@@ -13,7 +13,7 @@ namespace BEbraEngine {
     class RenderObject;
     class VulkanRenderObject;
     class RenderObjectInfo;
-
+    class LightInfo;
 }
 namespace BEbraEngine {
 
@@ -32,7 +32,13 @@ namespace BEbraEngine {
     public:
         friend class Transform;
 
+        void BindTransform(Light* light, Transform* transform);
+
         void BindTransform(RenderObject* object, Transform* transform) override;
+
+        RenderObject* create(RenderObjectInfo* info) override;
+
+        Light* create(const Vector3& color) override;
         
         RenderObject* createObject();
 
@@ -44,7 +50,7 @@ namespace BEbraEngine {
         void SetImgsCreator(TextureFactory* Creator) { imgsCreator = Creator; }
 
     protected:
-        RenderObject* create(RenderObjectInfo* info) override;
+
 
      //   Model* CreateModel(std::string const& path) {
       //      return new Model(path);

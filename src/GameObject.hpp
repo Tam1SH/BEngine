@@ -36,6 +36,8 @@ namespace BEbraEngine {
 
         void AddComponent(std::shared_ptr<GameObjectComponent> component);
 
+        void removeComponent(std::shared_ptr<GameObjectComponent> component);
+
         bool IsComposite() const override;
 
         GameObject();
