@@ -12,12 +12,13 @@
 #include "Physics.hpp"
 #include "WorkSpace.hpp"
 #include "AbstractRenderSystem.hpp"
-//TODO: пересмотреть инициализацию объектов полностью.
 namespace BEbraEngine {
 	GameObjectFactory::GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics)
 		: render(render), physics(physics)
 	{
-		renderFactory = std::unique_ptr<VulkanRenderObjectFactory>(new VulkanRenderObjectFactory(std::static_pointer_cast<VulkanRender>(render)));
+
+		renderFactory = render->getRenderObjectFactory();
+		renderFactory->setContext(render);
 		transFactory = std::unique_ptr<TransformFactory>(new TransformFactory());
 
 		GameObject::SetFactory(this);
@@ -28,10 +29,10 @@ namespace BEbraEngine {
 		auto name = obj->GetName();
 
 		obj->SetName(name + std::to_string(workspace->GetSize()));
-		workspace->AddComponent(obj);
+		workspace->addComponent(obj);
 
 
-		auto transform = std::shared_ptr<Transform>(Transform::New());
+		auto transform = std::shared_ptr<Transform>(Transform::New(position));
 		auto renderObj = std::shared_ptr<RenderObject>(renderFactory->createObject());
 		auto rigidbody = std::shared_ptr<RigidBody>(new RigidBody());
 
@@ -39,9 +40,9 @@ namespace BEbraEngine {
 
 		rigidbody->SetTransform(transform);
 
-		obj->AddComponent(renderObj);
-		obj->AddComponent(rigidbody);
-		obj->AddComponent(transform);
+		obj->addComponent(renderObj);
+		obj->addComponent(rigidbody);
+		obj->addComponent(transform);
 
 		btTransform trans;
 		trans.setIdentity();
@@ -55,7 +56,17 @@ namespace BEbraEngine {
 
 	std::shared_ptr<Light> GameObjectFactory::createLight(const Vector3& position)
 	{
-		return std::shared_ptr<Light>(renderFactory->create(Vector3(1)));
+		auto transform = std::shared_ptr<Transform>(Transform::New(position));
+		auto light = std::shared_ptr<Light>(renderFactory->createLight(Vector3(1), position));
+		light->addComponent(transform);
+
+		auto name = light->GetName();
+
+		light->SetName(name + std::to_string(workspace->GetSize()));
+		workspace->addComponent(light);
+		renderFactory->BindTransform(light.get(), transform.get());
+		render->addLight(light);
+		return light;
 	}
 
 	void GameObjectFactory::Destroy(GameObject* object)

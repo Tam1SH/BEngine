@@ -42,7 +42,7 @@ namespace BEbraEngine {
 		std::shared_ptr<WorkSpace> workspace;
 
 		std::unique_ptr<TransformFactory> transFactory;
-		std::unique_ptr<VulkanRenderObjectFactory> renderFactory;
+		std::shared_ptr<IRenderObjectFactory> renderFactory;
 	};
 
 }

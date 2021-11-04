@@ -32,23 +32,12 @@ namespace BEbraEngine {
             throw std::exception();
         }
 
-
-
-        void AddComponent(std::shared_ptr<GameObjectComponent> component);
-
-        void removeComponent(std::shared_ptr<GameObjectComponent> component);
-
         bool IsComposite() const override;
 
         GameObject();
 
         ~GameObject();
 
-    protected:
-
-        void _addComponent(std::shared_ptr<GameObjectComponent> component) override;
-
-        void _removeComponent(std::shared_ptr<GameObjectComponent> component) override;
     private:
         static GameObjectFactory* factory;
 

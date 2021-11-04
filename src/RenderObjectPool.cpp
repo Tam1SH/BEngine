@@ -14,22 +14,17 @@ namespace BEbraEngine {
 	void VulkanRenderObjectPool::allocate(size_t count)
 	{
 		auto new_size = count;
-		_poolCheckIsFree.resize(new_size, true);
-		_sets.resize(new_size);
-		offsets.resize(new_size);
-		for (int i = 0; i < offsets.size(); i++) {
-			offsets[i] = i * sizeof(Matrix4);
-		}
-		_bufferTransforms = _render->CreateUniformBuffer(sizeof(Matrix4) * new_size);
+
+		_bufferTransforms = _render->CreateUniformBuffer((sizeof(Matrix4) + sizeof(Vector4)) * new_size);
 		for (int i = 0; i < new_size; i++) {
 			auto bufferView = new RenderBufferView();
-			bufferView->availableRange = sizeof(Matrix4);
+			bufferView->availableRange = sizeof(Matrix4) + sizeof(Vector4);
 			bufferView->buffer = _bufferTransforms;
-			bufferView->offset = offsets[i];
+			bufferView->offset = i * (sizeof(Matrix4) + sizeof(Vector4));
 
 			RenderObjectInfo info{};
 			info.bufferView = bufferView;
-			_pool.push(_factory->create(&info));
+			//_pool.push(_factory->createObject(&info));
 		}
 	}
 	std::optional<RenderObject*> VulkanRenderObjectPool::get()

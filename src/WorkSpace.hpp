@@ -6,14 +6,7 @@
 namespace BEbraEngine {
     class WorkSpace : public GameObjectComponent {
     public:
-        void AddComponent(std::shared_ptr<GameObjectComponent> component) {
-            _addComponent(component);
-            component->SetParent(this);
-        }
-        void RemoveComponent(std::shared_ptr<GameObjectComponent> component) {
-            _removeComponent(component);
-            component->SetParent(nullptr);
-        }
+
         std::list<std::shared_ptr<GameObjectComponent>>& GetList() {
             return Components;
         }
@@ -50,14 +43,6 @@ namespace BEbraEngine {
         }
         ~WorkSpace() {
             RemoveAll();
-        }
-    protected:
-        void _addComponent(std::shared_ptr<GameObjectComponent> component) override {
-
-            Components.push_back(component);
-        }
-        void _removeComponent(std::shared_ptr<GameObjectComponent> component) override {
-            Components.remove(component);
         }
     };
 }

@@ -103,7 +103,7 @@ namespace BEbraEngine {
 
         VP vp;
         vp.proj = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 0.0001f, 10000.0f);
-        vp.imageView = GetViewMatrix();
+        vp.view = GetViewMatrix();
 
         ProcessMouseMovement();
         cameraData->setData(&vp, sizeof(Matrix4) * 2, 0);

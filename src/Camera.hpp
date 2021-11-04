@@ -63,7 +63,7 @@ namespace BEbraEngine {
     private:
         struct VP {
             Matrix4 proj;
-            Matrix4 imageView;
+            Matrix4 view;
 
 
         };

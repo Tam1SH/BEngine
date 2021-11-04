@@ -116,6 +116,7 @@ namespace BEbraEngine {
     class BaseVulkanRender : public AbstractRender
     {
     protected:
+        std::shared_ptr<IRenderObjectFactory> factory;
         std::list<std::weak_ptr<VulkanRenderObject>> objects;
         std::weak_ptr<VulkanLight> light;
     public:
@@ -147,9 +148,18 @@ namespace BEbraEngine {
 
         void InitCamera(Camera* alloced_camera) override;
 
+        AbstractRender::Type getType() override {
+            return AbstractRender::Type::Vulkan;
+        }
+        std::shared_ptr<IRenderObjectFactory> getRenderObjectFactory() override {
+            return factory;
+        }
+
         void _recreateCameraSet();
 
         void CreateCameraSet(RenderBuffer* buffer);
+
+
         
         void allocateObjectTransformsSet();
     public:

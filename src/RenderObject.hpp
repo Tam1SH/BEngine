@@ -12,6 +12,11 @@ namespace BEbraEngine {
     class Texture;
     class RenderObject : public GameObjectComponent, public IReusable {
     public:
+        struct ShaderData {
+            Matrix4 model;
+            alignas(16) Vector3 color;
+        };
+    public:
 
         virtual ~RenderObject();
     public:
@@ -67,6 +72,7 @@ namespace BEbraEngine {
         Vector3& getColor() {
             return color;
         }
+        Light() { name = "Light"; }
     private:
         Vector3 color;
     };

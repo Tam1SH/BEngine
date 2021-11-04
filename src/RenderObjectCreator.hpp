@@ -21,40 +21,31 @@ namespace BEbraEngine {
     {
     public:
 
-        friend class RenderObject;
-
         std::unique_ptr<VulkanRenderObjectPool> _pool;
         std::shared_ptr<VulkanRender> render;
         TextureFactory* imgsCreator;
 
-        std::mutex m;
-
     public:
         friend class Transform;
 
-        void BindTransform(Light* light, Transform* transform);
+        void BindTransform(Light* light, Transform* transform) override;
 
         void BindTransform(RenderObject* object, Transform* transform) override;
 
-        RenderObject* create(RenderObjectInfo* info) override;
+        RenderObject* createObject() override;
 
-        Light* create(const Vector3& color) override;
-        
-        RenderObject* createObject();
+        Light* createLight(const Vector3& color, const Vector3& position) override;
+
+        void setContext(std::shared_ptr<AbstractRender> render) override;
+       
 
         void CreateObjectSet(VulkanRenderObject* obj);
 
-        VulkanRenderObjectFactory(std::shared_ptr<VulkanRender> render);
+        VulkanRenderObjectFactory() {}
         ~VulkanRenderObjectFactory();
 
         void SetImgsCreator(TextureFactory* Creator) { imgsCreator = Creator; }
 
-    protected:
-
-
-     //   Model* CreateModel(std::string const& path) {
-      //      return new Model(path);
-      //  }
     };
 }
 

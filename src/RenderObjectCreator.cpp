@@ -16,8 +16,11 @@
 #include "Debug.h"
 namespace BEbraEngine {
 
-    RenderObject* VulkanRenderObjectFactory::create(RenderObjectInfo* info)
+    RenderObject* VulkanRenderObjectFactory::createObject()
     {
+        auto object_view = new RenderBufferView();
+        object_view->buffer = render->CreateUniformBuffer(sizeof(Matrix4) + sizeof(Vector4));
+        object_view->availableRange = sizeof(Matrix4) + sizeof(Vector4);
         auto factory = MeshFactory();
 
         auto obj = new VulkanRenderObject();
@@ -34,19 +37,20 @@ namespace BEbraEngine {
 
 
         obj->texture = std::unique_ptr<Texture>(imgsCreator->createEmptyTexture());
-        obj->matrix = std::shared_ptr<RenderBufferView>(info->bufferView);
-
+        obj->matrix = std::shared_ptr<RenderBufferView>(object_view);
+        auto vec = Vector3(0.2, 0.4, 0.3);
+        obj->matrix->setData(&vec, sizeof(Vector4), sizeof(Matrix4));
         VulkanDescriptorSetInfo setinfo{};
         setinfo.sampler = obj->texture->sampler;
         setinfo.imageView = obj->texture->imageView;
-        setinfo.bufferView = info->bufferView;
+        setinfo.bufferView = object_view;
 
         obj->descriptor = render->CreateDescriptor(&setinfo);
         obj->layout = &render->pipelineLayout;
         return obj;
     }
 
-    Light* VulkanRenderObjectFactory::create(const Vector3& color)
+    Light* VulkanRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)
     {
         auto light = new VulkanLight();
         light->setColor(color);
@@ -62,38 +66,13 @@ namespace BEbraEngine {
         return light;
     }
 
-    void VulkanRenderObjectFactory::BindTransform(Light* light, Transform* transform)
+    void VulkanRenderObjectFactory::setContext(std::shared_ptr<AbstractRender> render)
     {
-        light->transform = transform;
-    }
-    void VulkanRenderObjectFactory::BindTransform(RenderObject* object, Transform* transform)
-    {
-        transform->buffer = object->matrix;
-    }
-
-    RenderObject* VulkanRenderObjectFactory::createObject()
-    {
-        auto _obj = _pool->get();
-        if (_obj.has_value()) {
-            auto renderObject = _obj.value();
-            return renderObject;
+        this->render = std::dynamic_pointer_cast<VulkanRender>(render);
+        if (!this->render.get()) {
+            Debug::Log("Render turned out not to be suitable.");
         }
-        else {
-            Debug::Log("Pool is empty");
-            throw std::exception();
-        }
-    }
-    void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)
-    {
-        VulkanDescriptorSetInfo setinfo{};
-        setinfo.sampler = obj->texture->sampler;
-        setinfo.imageView = obj->texture->imageView;
-        setinfo.bufferView = obj->matrix.get();
-        obj->descriptor = render->CreateDescriptor(&setinfo);
-    }
 
-    VulkanRenderObjectFactory::VulkanRenderObjectFactory(std::shared_ptr<VulkanRender> render) : render(render)
-    {
         VulkanRenderObject::SetFactory(this);
         imgsCreator = new TextureFactory(render.get());
 
@@ -103,6 +82,25 @@ namespace BEbraEngine {
 
         _pool->allocate(10);
     }
+
+    void VulkanRenderObjectFactory::BindTransform(Light* light, Transform* transform)
+    {
+        light->transform = transform;
+    }
+    void VulkanRenderObjectFactory::BindTransform(RenderObject* object, Transform* transform)
+    {
+        transform->buffer = object->matrix;
+    }
+
+    void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)
+    {
+        VulkanDescriptorSetInfo setinfo{};
+        setinfo.sampler = obj->texture->sampler;
+        setinfo.imageView = obj->texture->imageView;
+        setinfo.bufferView = obj->matrix.get();
+        obj->descriptor = render->CreateDescriptor(&setinfo);
+    }
+
     VulkanRenderObjectFactory::~VulkanRenderObjectFactory()
     {
     }

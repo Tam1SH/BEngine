@@ -67,7 +67,7 @@ namespace BEbraEngine {
                 render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
                 window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
                 window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-                mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(0, 1, 10)));
+                mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(2)));
                 workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
                 render1->InitCamera(mainCamera1.get());
                 render1->camera = mainCamera1.get();

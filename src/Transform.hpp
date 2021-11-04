@@ -31,9 +31,11 @@ namespace BEbraEngine {
 
         static void SetFactory(TransformFactory* factory) noexcept;
 
-        Transform(const Vector3& position);
+
 
     public:
+
+        Transform(const Vector3& position);
 
         std::shared_ptr<RenderBufferView> buffer;
 

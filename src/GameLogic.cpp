@@ -12,7 +12,7 @@
 //TODO: ���������� ������ ���� �����.
 namespace BEbraEngine {
 
-
+    std::shared_ptr<Light> light;
     GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera)
     {
         scriptManager = std::shared_ptr<ScriptManager>(new ScriptManager());
@@ -30,18 +30,8 @@ namespace BEbraEngine {
 
     void GameLogic::ScriptInit()
     {
-        //scriptManager->LoadScripts();
-        GameObject::New(Vector3(0));
-        auto obj = GameObject::New(Vector3(3));
-        auto light = std::shared_ptr<Light>(objectFactory->createLight(Vector3(2)));
-        light->transform = obj->GetComponent<Transform>();
-        obj->AddComponent(light);
-        render->addLight(light);
-        //GameObject::New(Vector3(1));
-        //auto script = scriptManager->GetScriptByName(L"hello_world.js");
-        //script->SetActive(true);
-        //obj->AddComponent(script);
-        //scriptManager->InitScripts();
+        auto obj = GameObject::New(Vector3(100,0,0));
+        light = objectFactory->createLight(Vector3(0));
     }
 
     void GameLogic::onUpdateFrame()
@@ -65,7 +55,12 @@ namespace BEbraEngine {
         if (Input::IsKeyPressed(KEY_CODE::KEY_W)) {
             camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
         }
-        
+        auto pos = camera->Position;
+        pos.y -= 1;
+        if (Input::IsKeyPressed(KEY_CODE::KEY_E)) {
+            light->transform->SetPosition(camera->Position);
+        }
+
         camera->Update();
         scriptManager->RunScripts();
         physics->Update();

@@ -18,6 +18,15 @@ namespace BEbraEngine {
 
     public:
 
+        virtual void addComponent(std::shared_ptr<GameObjectComponent> component) {
+            Components.push_back(component);
+            component->SetParent(this);
+        }
+        virtual void removeComponent(std::shared_ptr<GameObjectComponent> component) {
+            Components.remove(component);
+            component->SetParent(this);
+        }
+
         virtual ~GameObjectComponent() {}
 
         void SetParent(GameObjectComponent* parent) {
@@ -42,8 +51,5 @@ namespace BEbraEngine {
         int GetSize() {
             return Components.size();
         }
-    protected:
-        virtual void _addComponent(std::shared_ptr<GameObjectComponent> component) {}
-        virtual void _removeComponent(std::shared_ptr<GameObjectComponent> component) {}
     };
 }

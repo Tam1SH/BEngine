@@ -4,17 +4,6 @@
 namespace BEbraEngine {
     GameObjectFactory* GameObject::factory;
 
-    void GameObject::_addComponent(std::shared_ptr<GameObjectComponent> component)
-    {
-        Components.push_back(component);
-        component->SetParent(this);
-    }
-
-    void GameObject::_removeComponent(std::shared_ptr<GameObjectComponent> component)
-    {
-        Components.remove(component);
-        component->SetParent(nullptr);
-    }
 
     void GameObject::SetFactory(GameObjectFactory* factory)
     {
@@ -36,14 +25,6 @@ namespace BEbraEngine {
         factory->Destroy(this);
     }
 
-    void GameObject::AddComponent(std::shared_ptr<GameObjectComponent> component)
-    {
-        _addComponent(component);
-    }
-    void GameObject::removeComponent(std::shared_ptr<GameObjectComponent> component)
-    {
-        _removeComponent(component);
-    }
 
     bool GameObject::IsComposite() const
     {
