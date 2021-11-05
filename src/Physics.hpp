@@ -31,9 +31,9 @@ namespace BEbraEngine {
         std::list<std::weak_ptr<RigidBody>> bodies;
     public:
         void Update();
-        //TODO: нормально?
-        btDiscreteDynamicsWorld* GetDynamicsWorld();
 
+        void addRigidBody(btRigidBody* body);
+        void removeRigidBody(btRigidBody* body);
         void AddObject(std::weak_ptr<RigidBody> body);
 
         Physics();

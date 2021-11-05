@@ -6,7 +6,7 @@
 #include "matrix.hpp"
 #include "Vector3.hpp"
 namespace BEbraEngine {
-    class RenderBuffer;
+    class RenderBufferView;
 
 }
 //TODO: ну, почти.
@@ -30,7 +30,7 @@ namespace BEbraEngine {
     class Camera : public GameObjectComponent
     {
     public:
-        RenderBuffer* cameraData;
+        RenderBufferView* cameraData;
         
         Vector3 Position;
         Vector3 Front;
@@ -61,10 +61,10 @@ namespace BEbraEngine {
     private:
         void updateCameraVectors();
     private:
-        struct VP {
+        struct ShaderData {
             Matrix4 proj;
             Matrix4 view;
-
+            alignas(16) Vector3 position;
 
         };
 

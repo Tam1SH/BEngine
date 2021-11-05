@@ -54,7 +54,7 @@ namespace BEbraEngine {
 
     RigidBody::RigidBody()
     {
-        shape = new btSphereShape(btScalar(1.));
+        auto shape = new btSphereShape(btScalar(1.));
         linearFactor = btVector3(1, 1, 1);
         AngularFactor = btVector3(1, 1, 1);
         btScalar mass(1.f);
@@ -76,12 +76,11 @@ namespace BEbraEngine {
         body = new btRigidBody(rbInfo);
 
         name = "RigidBody";
-        physics->GetDynamicsWorld()->addRigidBody(body);
+        physics->addRigidBody(body);
     }
 
     RigidBody::~RigidBody()
     {
-        physics->GetDynamicsWorld()->removeRigidBody(body);
-        delete shape;
+        physics->removeRigidBody(body);
     }
 }

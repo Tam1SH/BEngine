@@ -21,8 +21,6 @@ namespace BEbraEngine {
 
 		btRigidBody* body;
 
-		btCollisionShape* shape;
-
 		std::shared_ptr<Transform> transform;
 
 		btVector3 linearFactor;

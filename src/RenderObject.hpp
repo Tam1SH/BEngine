@@ -78,8 +78,6 @@ namespace BEbraEngine {
     };
     class VulkanLight : public Light {
     public:
-        void Draw(VkCommandBuffer cmd);
-
         VkPipelineLayout* layout;
 
         VkDescriptorSet LightSet;

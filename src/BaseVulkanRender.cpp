@@ -24,8 +24,11 @@ namespace BEbraEngine {
     BaseVulkanRender::QueueFamilyIndices BaseVulkanRender::FamilyIndices;
                                       
     void BaseVulkanRender::InitCamera(Camera* alloced_camera) {
-        alloced_camera->cameraData = CreateStorageBuffer(sizeof(Matrix4) * 2);
-        CreateCameraSet(alloced_camera->cameraData);
+        auto view = new RenderBufferView();
+        view->buffer = CreateStorageBuffer(sizeof(Matrix4) * 2 + sizeof(Vector4));
+        view->availableRange = sizeof(Matrix4) * 2 + sizeof(Vector4);
+        alloced_camera->cameraData = view;
+        CreateCameraSet(alloced_camera->cameraData->buffer);
 
     }
 

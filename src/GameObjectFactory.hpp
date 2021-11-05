@@ -34,7 +34,6 @@ namespace BEbraEngine {
 
 		~GameObjectFactory();
 	private:
-		friend class AbstractRender;
 		friend class Physics;
 
 		std::shared_ptr<AbstractRender> render;

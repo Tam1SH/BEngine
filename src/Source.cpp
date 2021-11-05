@@ -50,7 +50,7 @@ namespace BEbraEngine {
     public:
         //std::shared_ptr<DirectRender> render;
         std::shared_ptr<VulkanRender> render1;
-
+        std::shared_ptr<Physics> physics;
         std::unique_ptr<BaseWindow> window;
         std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace;
@@ -63,15 +63,15 @@ namespace BEbraEngine {
     public:
         void Init(int i) {
             if (i == 2) {
-
+                physics = std::shared_ptr<Physics>(new Physics());
                 render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
                 window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
                 window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-                mainCamera1 = std::unique_ptr<Camera>(new Camera(glm::vec3(2)));
+                mainCamera1 = std::unique_ptr<Camera>(new Camera(Vector3(2)));
                 workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
                 render1->InitCamera(mainCamera1.get());
                 render1->camera = mainCamera1.get();
-                gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get()));
+                gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get(), physics));
                 window1->attach(gameLogic1.get());
                 
             }

@@ -32,9 +32,13 @@ namespace BEbraEngine {
 
         }
     }
-    btDiscreteDynamicsWorld* Physics::GetDynamicsWorld()
+    void Physics::addRigidBody(btRigidBody* body)
     {
-        return dynamicsWorld;
+        dynamicsWorld->addRigidBody(body);
+    }
+    void Physics::removeRigidBody(btRigidBody* body)
+    {
+        dynamicsWorld->removeRigidBody(body);
     }
     void Physics::AddObject(std::weak_ptr<RigidBody> body)
     {
@@ -51,12 +55,12 @@ namespace BEbraEngine {
     }
     Physics::~Physics()
     {
-
+        this;
         delete collisionConfiguration;
         delete dispatcher;
         delete solver;
         delete overlappingPairCache;
-        delete dynamicsWorld;
+        //delete dynamicsWorld;
 
     }
 }

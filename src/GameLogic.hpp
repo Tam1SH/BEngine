@@ -19,7 +19,7 @@ namespace BEbraEngine {
     class GameLogic : public IListenerOnRender {
     public:
 
-        GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera);
+        GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera, std::shared_ptr<Physics> physics);
 
         void ScriptInit();
 

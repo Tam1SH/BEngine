@@ -101,14 +101,12 @@ namespace BEbraEngine {
     void Camera::Update()
     {
 
-        VP vp;
+        ShaderData vp;
         vp.proj = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 0.0001f, 10000.0f);
         vp.view = GetViewMatrix();
-
+        vp.position = static_cast<glm::vec3>(Position);
         ProcessMouseMovement();
-        cameraData->setData(&vp, sizeof(Matrix4) * 2, 0);
-        Vector4 pos = static_cast<glm::vec3>(Position);
-        cameraData->setData(&pos, sizeof(Vector4), sizeof(Matrix4) * 2);
+        cameraData->setData(&vp, sizeof(ShaderData));
     }
 
     void Camera::updateCameraVectors()

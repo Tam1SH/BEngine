@@ -13,12 +13,12 @@
 namespace BEbraEngine {
 
     std::shared_ptr<Light> light;
-    GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera)
+    GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera, std::shared_ptr<Physics> physics)
     {
         scriptManager = std::shared_ptr<ScriptManager>(new ScriptManager());
         this->workspace = workspace;
+        this->physics = physics;
         this->render = std::shared_ptr<AbstractRender>(render);
-        physics = std::shared_ptr<Physics>(new Physics());
         objectFactory = std::unique_ptr<GameObjectFactory>(new GameObjectFactory(this->render, physics));
         objectFactory->SetWorkSpace(workspace);
         scriptManager->SetWorkSpace(workspace);
@@ -30,7 +30,7 @@ namespace BEbraEngine {
 
     void GameLogic::ScriptInit()
     {
-        auto obj = GameObject::New(Vector3(100,0,0));
+        auto obj = GameObject::New(Vector3(1,0,0));
         light = objectFactory->createLight(Vector3(0));
     }
 
@@ -41,8 +41,6 @@ namespace BEbraEngine {
 
     void GameLogic::Update()
     {
-        
-        
         if (Input::IsKeyPressed(KEY_CODE::KEY_A)) {
             camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());
         }
@@ -55,8 +53,6 @@ namespace BEbraEngine {
         if (Input::IsKeyPressed(KEY_CODE::KEY_W)) {
             camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
         }
-        auto pos = camera->Position;
-        pos.y -= 1;
         if (Input::IsKeyPressed(KEY_CODE::KEY_E)) {
             light->transform->SetPosition(camera->Position);
         }

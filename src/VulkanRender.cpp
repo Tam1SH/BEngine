@@ -155,7 +155,7 @@ namespace BEbraEngine {
         info.bufferView = light.lock()->data.get();
 
         light.lock()->LightSet = CreateDescriptor(&info);
-        CreateCameraSet(camera->cameraData);
+        CreateCameraSet(camera->cameraData->buffer);
         for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
             auto object_ = *lock_object;
             if (object_.expired()) {
