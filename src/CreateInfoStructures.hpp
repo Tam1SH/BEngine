@@ -1,13 +1,14 @@
+#pragma once
 #include "stdafx.h"
 #include "RenderBuffer.hpp"
-#include "VkBuffer.hpp"
-#include "Vector3.hpp"
+
 namespace BEbraEngine {
 
-	class LightInfo {
+	class LightDescriptorInfo {
 	public:
 		RenderBufferView* bufferView;
 	};
+
 	class RenderObjectInfo {
 	public:
 		RenderBufferView* bufferView;
@@ -18,5 +19,9 @@ namespace BEbraEngine {
 		RenderBufferView* bufferView;
 		VkSampler sampler;
 		VkImageView imageView;
+	};
+	class VulkanDescriptorPoolInfo {
+	public:
+		std::vector<VkDescriptorPoolSize> types;
 	};
 }

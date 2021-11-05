@@ -36,7 +36,7 @@ namespace BEbraEngine {
         pool_info.maxSets = 1000 * IM_ARRAYSIZE(pool_sizes);
         pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
         pool_info.pPoolSizes = pool_sizes;
-        VkResult err = vkCreateDescriptorPool(BaseVulkanRender::device, &pool_info, 0, &imguiPool);
+        VkResult err = vkCreateDescriptorPool(VulkanRender::device, &pool_info, 0, &imguiPool);
         check_vk_result(err);
     }
 
@@ -44,10 +44,10 @@ namespace BEbraEngine {
     {
 
         // Use any command queue
-        VkCommandPool command_pool = BaseVulkanRender::CreateCommandPool();
-        VkCommandBuffer command_buffer = BaseVulkanRender::createCmdBuffer(command_pool);
+        VkCommandPool command_pool = VulkanRender::CreateCommandPool();
+        VkCommandBuffer command_buffer = VulkanRender::createCmdBuffer(command_pool);
 
-        VkResult err = vkResetCommandPool(BaseVulkanRender::device, command_pool, 0);
+        VkResult err = vkResetCommandPool(VulkanRender::device, command_pool, 0);
         check_vk_result(err);
         VkCommandBufferBeginInfo begin_info = {};
         begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -66,15 +66,15 @@ namespace BEbraEngine {
         err = vkQueueSubmit(render->graphicsQueue, 1, &end_info, VK_NULL_HANDLE);
         check_vk_result(err);
 
-        err = vkDeviceWaitIdle(BaseVulkanRender::device);
+        err = vkDeviceWaitIdle(VulkanRender::device);
         check_vk_result(err);
         ImGui_ImplVulkan_DestroyFontUploadObjects();
-        vkFreeCommandBuffers(BaseVulkanRender::device, command_pool, 1, &command_buffer);
-        vkDestroyCommandPool(BaseVulkanRender::device, command_pool, 0);
+        vkFreeCommandBuffers(VulkanRender::device, command_pool, 1, &command_buffer);
+        vkDestroyCommandPool(VulkanRender::device, command_pool, 0);
 
     }
 
-    void DebugUI::Create(BaseVulkanRender* render, VulkanWindow* window)
+    void DebugUI::Create(VulkanRender* render, VulkanWindow* window)
     {
         _createPool();
         this->render = render;
@@ -235,7 +235,7 @@ namespace BEbraEngine {
 
     void DebugUI::Destroy()
     {
-        vkDestroyDescriptorPool(BaseVulkanRender::device, imguiPool, 0);
+        vkDestroyDescriptorPool(VulkanRender::device, imguiPool, 0);
         ImGui_ImplVulkan_Shutdown();
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext();

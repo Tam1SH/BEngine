@@ -4,6 +4,7 @@
 #include "Model.hpp"
 #include "IRenderObjectFactory.hpp"
 #include "RenderObjectPool.hpp"
+#include "MeshFactory.hpp"
 namespace BEbraEngine {
     class VulkanBuffer;
     class AbstractRender;
@@ -13,7 +14,6 @@ namespace BEbraEngine {
     class RenderObject;
     class VulkanRenderObject;
     class RenderObjectInfo;
-    class LightInfo;
 }
 namespace BEbraEngine {
 
@@ -23,7 +23,8 @@ namespace BEbraEngine {
 
         std::unique_ptr<VulkanRenderObjectPool> _pool;
         std::shared_ptr<VulkanRender> render;
-        TextureFactory* imgsCreator;
+        TextureFactory* textureFactory;
+        std::unique_ptr<MeshFactory> meshFactory;
 
     public:
         friend class Transform;
@@ -38,13 +39,14 @@ namespace BEbraEngine {
 
         void setContext(std::shared_ptr<AbstractRender> render) override;
        
+        void destroyObject(RenderObject* object) override;
 
         void CreateObjectSet(VulkanRenderObject* obj);
 
-        VulkanRenderObjectFactory() {}
+        VulkanRenderObjectFactory();
         ~VulkanRenderObjectFactory();
 
-        void SetImgsCreator(TextureFactory* Creator) { imgsCreator = Creator; }
+        void SetImgsCreator(TextureFactory* Creator) { textureFactory = Creator; }
 
     };
 }

@@ -23,11 +23,12 @@ namespace BEbraEngine {
 
         std::unique_ptr<Texture> texture;
 
-        std::unique_ptr<Model> model;
+        std::shared_ptr<Model> model;
 
         std::shared_ptr<RenderBufferView> matrix;
 
         RenderObject();
+    private:
     };
 
     class VulkanRenderObject : public RenderObject {
@@ -35,6 +36,8 @@ namespace BEbraEngine {
         void release() override;
 
         void recreate();
+
+        ~VulkanRenderObject();
     public:
         void Draw(VkCommandBuffer cmd);
 

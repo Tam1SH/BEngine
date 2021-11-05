@@ -16,7 +16,7 @@ namespace BEbraEngine {
 
         VulkanAsyncExecuter() { }
 
-        void Create(VkDevice& device, BaseVulkanRender* render);
+        void Create(VkDevice& device, VulkanRender* render);
 
         void AddToQueue(Task func);
 
@@ -50,7 +50,7 @@ namespace BEbraEngine {
 
         tbb::task_arena taskPool;
 
-        BaseVulkanRender* render;
+        VulkanRender* render;
 
         Callback _OnCompletedAll;
         Callback _OnCompletedPart;

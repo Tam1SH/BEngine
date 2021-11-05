@@ -7,7 +7,7 @@
 #include "btBulletDynamicsCommon.h"
 #include "BaseVulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
-
+#include<glm/gtc/quaternion.hpp>
 #include "VkBuffer.hpp"
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
@@ -29,21 +29,23 @@ namespace BEbraEngine {
         this->position = position;
         scale = Vector3(1);
         rotation = Vector3(1);
-        model = glm::mat4(1);
     }
 
-    void Transform::UpdatePosition(const Vector3& position)
+    void Transform::UpdatePosition(const Vector3& position, const Vector4& quat)
     {
         this->position = position;
 
-        model = glm::mat4(1);
-        glm::mat4 _m = model;
+        auto model = glm::mat4(1);
         glm::vec3 _s = scale;
         glm::vec3 _p = position;
-        glm::mat4 _m1 = model;
-        model = glm::scale(_m1, _s);
-        model = glm::translate(_m, _p);
-        buffer->setData(&_m, sizeof(Matrix4));
+        quartion.x = quat.f[0];
+        quartion.y = quat.f[1];
+        quartion.z = quat.f[2];
+        quartion.w = quat.f[3];
+        model = glm::translate(model, _p);
+        model = glm::scale(model, _s);
+        model *= glm::toMat4(quartion);
+        buffer->setData(&model, sizeof(Matrix4));
     }
 
     void Transform::SetPosition(const Vector3& position) noexcept

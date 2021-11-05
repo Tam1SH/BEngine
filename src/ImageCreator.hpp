@@ -1,7 +1,7 @@
 
 #pragma once
 #include "stdafx.h"
-#include "BaseVulkanRender.hpp"
+#include "VulkanRender.hpp"
 #include <stb-master/stb_image.h>
 #include "Image.hpp"
 //#include <tbb.h>
@@ -52,7 +52,7 @@ namespace BEbraEngine {
             stbi_set_flip_vertically_on_load(true);
             //images.push_back(image);
             image->picture = stbi_load(path.c_str(), &image->Width, &image->Height, &image->Channels, STBI_rgb_alpha);
-            auto _render = static_cast<BaseVulkanRender*>(render);
+            auto _render = static_cast<VulkanRender*>(render);
             _render->createVkImage2(image->picture, image->Width, image->Height, image->self, image->memory, buffer);
             auto imageView = _render->createImageView(image->self, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
@@ -77,7 +77,7 @@ namespace BEbraEngine {
 
             VkBuffer stagingBuffer;
             VkDeviceMemory stagingBufferMemory;
-            auto _render = static_cast<BaseVulkanRender*>(render);
+            auto _render = static_cast<VulkanRender*>(render);
 
             _render->_createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
@@ -94,8 +94,8 @@ namespace BEbraEngine {
             VkSampler sampler;
             _render->createTextureSampler(sampler);
 
-            vkDestroyBuffer(BaseVulkanRender::device, stagingBuffer, 0);
-            vkFreeMemory(BaseVulkanRender::device, stagingBufferMemory, 0);
+            vkDestroyBuffer(VulkanRender::device, stagingBuffer, 0);
+            vkFreeMemory(VulkanRender::device, stagingBufferMemory, 0);
 
 
             image->self = textureImage;
@@ -121,7 +121,7 @@ namespace BEbraEngine {
 
             VkBuffer stagingBuffer;
             VkDeviceMemory stagingBufferMemory;
-            auto _render = static_cast<BaseVulkanRender*>(render);
+            auto _render = static_cast<VulkanRender*>(render);
             _render->_createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
             void* data;
@@ -137,8 +137,8 @@ namespace BEbraEngine {
             VkSampler sampler;
             _render->createTextureSampler(sampler);
 
-            vkDestroyBuffer(BaseVulkanRender::device, stagingBuffer, 0);
-            vkFreeMemory(BaseVulkanRender::device, stagingBufferMemory, 0);
+            vkDestroyBuffer(VulkanRender::device, stagingBuffer, 0);
+            vkFreeMemory(VulkanRender::device, stagingBufferMemory, 0);
 
 
             image->self = textureImage;
@@ -164,7 +164,7 @@ namespace BEbraEngine {
             pixels[0] = rand() % 256;
             pixels[1] = rand() % 256;
             pixels[2] = rand() % 256;
-            auto _render = static_cast<BaseVulkanRender*>(render);
+            auto _render = static_cast<VulkanRender*>(render);
             _render->createVkImage2(pixels, texWidth, texHeight, textureImage, textureImageMemory, buffer);
             auto imageView = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
@@ -179,7 +179,7 @@ namespace BEbraEngine {
             Texture imgcopy;
             VkDeviceMemory textureImageMemory;
             VkImage textureImage;
-            auto _render = static_cast<BaseVulkanRender*>(render);
+            auto _render = static_cast<VulkanRender*>(render);
             //render->createVkImage(picture, texWidth, texHeight, textureImage, textureImageMemory);
             auto imageView = _render->createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;
@@ -190,7 +190,7 @@ namespace BEbraEngine {
         }
         void startUpdateImage(Texture& img, stbi_uc* picture, int texWidth, int texHeight, int texChannels) {
             VkDeviceSize imageSize = texWidth * texHeight * 4;
-            auto _render = static_cast<BaseVulkanRender*>(render);
+            auto _render = static_cast<VulkanRender*>(render);
             _render->_createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, img.buf, img.memory);
 
             void* data;
@@ -213,7 +213,7 @@ namespace BEbraEngine {
             //
         }
         void endUpdateImage(Texture& img) {
-            auto _render = static_cast<BaseVulkanRender*>(render);
+            auto _render = static_cast<VulkanRender*>(render);
             _render->createVkImage1();
             auto imageView = _render->createImageView(img.self, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
             VkSampler sampler;

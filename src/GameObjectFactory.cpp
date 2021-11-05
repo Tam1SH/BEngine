@@ -8,7 +8,6 @@
 #include "RenderObject.hpp"
 #include "Transform.hpp"
 #include "VulkanRender.hpp"
-#include "Render.hpp"
 #include "Physics.hpp"
 #include "WorkSpace.hpp"
 #include "AbstractRenderSystem.hpp"
@@ -29,7 +28,7 @@ namespace BEbraEngine {
 		auto name = obj->GetName();
 
 		obj->SetName(name + std::to_string(workspace->GetSize()));
-		workspace->addComponent(obj);
+		//workspace->addComponent(obj);
 
 
 		auto transform = std::shared_ptr<Transform>(Transform::New(position));

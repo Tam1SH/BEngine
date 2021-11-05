@@ -14,7 +14,7 @@ namespace BEbraEngine {
     private:
         friend class AbstractComponent;
 
-        BaseVulkanRender* render;
+        VulkanRender* render;
 
         VulkanWindow* window;
 
@@ -29,7 +29,7 @@ namespace BEbraEngine {
     public:
         void UploadFonts();
 
-        void Create(BaseVulkanRender* render, VulkanWindow* window);
+        void Create(VulkanRender* render, VulkanWindow* window);
 
         void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
 

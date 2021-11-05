@@ -19,7 +19,7 @@ namespace BEbraEngine {
 
     public:
 
-        static void SetRender(BaseVulkanRender* render) {
+        static void SetRender(VulkanRender* render) {
             _render = render;
         }
 
@@ -103,7 +103,7 @@ namespace BEbraEngine {
         }
     private:
 
-        inline static BaseVulkanRender* _render;
+        inline static VulkanRender* _render;
 
         inline static VkDevice device;
 

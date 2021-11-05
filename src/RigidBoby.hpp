@@ -44,6 +44,8 @@ namespace BEbraEngine {
 
 		void SetPosition(const Vector3& position);
 
+		void applyImpulse(const Vector3& force, const Vector3& direction);
+
 		RigidBody();
 
 		~RigidBody();

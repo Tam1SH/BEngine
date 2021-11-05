@@ -4,10 +4,11 @@
 namespace BEbraEngine {
     Texture::~Texture()
     {
-        vkFreeMemory(BaseVulkanRender::device, memory, 0);
-        vkDestroyImage(BaseVulkanRender::device, self, 0);
-        vkDestroyImageView(BaseVulkanRender::device, imageView, 0);
-        vkDestroySampler(BaseVulkanRender::device, sampler, 0);
+        this;
+        vkFreeMemory(VulkanRender::device, memory, 0);
+        vkDestroyImage(VulkanRender::device, self, 0);
+        vkDestroyImageView(VulkanRender::device, imageView, 0);
+        vkDestroySampler(VulkanRender::device, sampler, 0);
 
     }
 }

@@ -23,19 +23,18 @@ TODO: подумать над реализацей:
 Вывод: В общем подумать над абстрагированием основных элементов движка для возможной замены их реализации
 */
 
-
-
-
 #include "stdafx.h"
+
+
 #define NOMINMAX
 //#include "GLWindow.h"
 //#include "GLRender.h"
+#include "CreateInfoStructures.hpp"
 #include "BaseRenderWindow.hpp"
 #include "DebugUI.hpp"
 #include "Physics.hpp"
 #include "WorkSpace.hpp"
 
-#include "VulkanRender.hpp"
 #include "GameLogic.hpp"
 #include "Vector2.hpp"
 #include "VulkanWindow.hpp"
@@ -43,7 +42,7 @@ TODO: подумать над реализацей:
 #include "DirectRender.hpp"
 #include "Input.hpp"
 #include "Time.hpp"
-
+#include "Camera.hpp"
 namespace BEbraEngine {
 
     class Engine {
@@ -122,11 +121,12 @@ namespace BEbraEngine {
 }
 
 
+
+
+
 #ifndef __ANDROID__
 #undef main
 #endif
-
-
 #ifdef __cplusplus
 extern "C"
 #endif
@@ -142,3 +142,75 @@ int main(int, char** argv)
 }
 
 
+
+/*
+#include <iostream>
+#include <mono/jit/jit.h>
+#include <mono/metadata/exception.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/class.h>
+#include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-config.h>
+ #include <exception>
+ //#include <direct.h>
+
+
+
+
+#ifdef __cplusplus
+extern "C"
+#endif
+int main()
+{
+    //std::cout << "Hello World!\n"; 
+    //  Print this path
+    //std::cout << _getcwd(nullptr, 0);
+        
+    MonoDomain * domain;
+    //const char *csharp_dll = "../csharp/bin/debug/csharp.dll";
+    const char* csharp_dll = "C:/.BEbraEngine/src/scripts/BEbraEngine/bin/Debug/BEbraEngine.dll";
+    try
+    {
+        
+    //  JIT initialization
+        mono_set_dirs("C:/Program Files/Mono/lib", "C:/Program Files/Mono/etc");
+        domain = mono_jit_init("BEbraEngine");
+    //  Load an assembly
+        MonoAssembly * assembly = mono_domain_assembly_open(domain, csharp_dll);
+        MonoImage * image = mono_assembly_get_image(assembly);
+    //  Get MonoClass
+        MonoClass * mono_class = mono_class_from_name(image, "BEbraEngine", "BindingTest");
+    //  Acquisition method
+        //MonoMethodDesc *method_desc = mono_method_desc_new("csharp.BindingTest:Main()", true);
+        MonoMethodDesc * method_desc = mono_method_desc_new("csharp.BindingTest:sayhello()", true);
+        MonoMethod * method = mono_method_desc_search_in_class(method_desc, mono_class);
+        mono_method_desc_free(method_desc);
+    //  Call the method
+        //mono_raise_exception(mono_get_exception_index_out_of_range());
+        MonoObject* pException = NULL;
+        
+        // this method will cause an exception in c#, something like null exception
+        MonoObject* pResult = mono_runtime_invoke(method, NULL, NULL, &pException);
+
+        char* szResult = NULL;
+        if (pException == NULL)
+        {
+            szResult = mono_string_to_utf8((MonoString*)pResult);
+        }
+        else
+        {
+            MonoString * pMsg = mono_object_to_string(pException, NULL);
+            szResult = mono_string_to_utf8(pMsg);
+            //szResult = "Mono throwed an Exception!";
+        }
+        if(szResult)
+        std::cout << szResult << std::endl;
+    //  JIT release
+        mono_jit_cleanup(domain);
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what();
+    }
+}
+*/

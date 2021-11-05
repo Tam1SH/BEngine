@@ -4,7 +4,6 @@
 #include "RenderObject.hpp"
 //TODO: хуй знает, использовать это как интерфейс для классов либо как полноценный класс, только скрывая реализацию граф. апи
 namespace BEbraEngine {
-	class RenderBuffer;
 	class Vertex;
 	class Camera;
 	class BaseWindow;

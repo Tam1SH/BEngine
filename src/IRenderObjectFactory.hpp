@@ -6,7 +6,6 @@ namespace BEbraEngine {
 	class RenderObjectInfo;
 	class Transform;
 	class Light;
-	class LightInfo;
 	class Vector3;
 	class AbstractRender;
 }
@@ -26,5 +25,6 @@ namespace BEbraEngine {
 
 		virtual void setContext(std::shared_ptr<AbstractRender> render) = 0;
 
+		virtual void destroyObject(RenderObject* object) = 0;
 	};
 }

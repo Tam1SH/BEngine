@@ -4,7 +4,7 @@
 #include "GameObject.hpp"
 #include "Transform.hpp"
 #include "Time.hpp"
-
+#include "Vector4.hpp"
 //TODO: сделать так, чтобы физика параллельно обрабатывалась бл€ть(жаль производительность растЄт ниху€ не линейно). ѕерекомпилить с использованием TBB(пока только дл€ винды)
 namespace BEbraEngine {
 
@@ -22,12 +22,13 @@ namespace BEbraEngine {
                 btTransform trans;
 
                 body->body->getMotionState()->getWorldTransform(trans);
-
+                auto quat = trans.getRotation();
+                Vector4 quaat = quat;
                 auto vec = trans.getOrigin();
                 auto pos = glm::vec3(
                     vec.x(), vec.y(), vec.z()
                 );
-                body->transform->UpdatePosition(pos);
+                body->transform->UpdatePosition(pos, quaat);
             }
 
         }
@@ -47,20 +48,14 @@ namespace BEbraEngine {
     Physics::Physics()
     {
         RigidBody::SetPhysics(this);
-        collisionConfiguration = new btDefaultCollisionConfiguration();
-        dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        overlappingPairCache = new btDbvtBroadphase();
-        solver = new btSequentialImpulseConstraintSolver();
-        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+        collisionConfiguration = std::unique_ptr<btDefaultCollisionConfiguration>(new btDefaultCollisionConfiguration());
+        dispatcher = std::unique_ptr<btCollisionDispatcher>(new btCollisionDispatcher(collisionConfiguration.get()));
+        overlappingPairCache = std::unique_ptr<btDbvtBroadphase>(new btDbvtBroadphase());
+        solver = std::unique_ptr<btSequentialImpulseConstraintSolver>(new btSequentialImpulseConstraintSolver());
+        dynamicsWorld = std::unique_ptr<btDiscreteDynamicsWorld>(
+            new btDiscreteDynamicsWorld(dispatcher.get(), overlappingPairCache.get(), solver.get(), collisionConfiguration.get()));
     }
     Physics::~Physics()
     {
-        this;
-        delete collisionConfiguration;
-        delete dispatcher;
-        delete solver;
-        delete overlappingPairCache;
-        //delete dynamicsWorld;
-
     }
 }

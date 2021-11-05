@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "RenderObject.hpp"
-#include "Mesh1.hpp"
 #include "Transform.hpp"
 #include "Image.hpp"
 #include "VkBuffer.hpp"
@@ -15,6 +14,9 @@ namespace BEbraEngine {
     RenderObject::~RenderObject()
     {
         std::cout << "RENDER OBJECT " << this << " DESTROYED" << std::endl;
+        matrix->buffer->Destroy();
+        
+
     }
 
     VulkanRenderObjectFactory* VulkanRenderObject::factory;
@@ -26,6 +28,10 @@ namespace BEbraEngine {
     void VulkanRenderObject::recreate()
     {
         factory->CreateObjectSet(this);
+    }
+    VulkanRenderObject::~VulkanRenderObject()
+    {
+        factory->destroyObject(this);
     }
     void VulkanRenderObject::Draw(VkCommandBuffer cmd)
     {

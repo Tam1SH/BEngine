@@ -25,6 +25,8 @@ namespace BEbraEngine {
 
         void onUpdateFrame() override;
 
+        void FixedUpdate();
+
         void Update();
 
         ~GameLogic();

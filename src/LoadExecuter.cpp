@@ -4,7 +4,7 @@
 //TODO: ну хуй знает, в принципе от этого может быть толк, но как минимум избавиться от вулкана.
 namespace BEbraEngine {
     
-    void VulkanAsyncExecuter::Create(VkDevice& device, BaseVulkanRender* render)
+    void VulkanAsyncExecuter::Create(VkDevice& device, VulkanRender* render)
     {
         this->render = render;
         CommandBuffer::SetDevice(device);

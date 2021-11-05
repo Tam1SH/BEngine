@@ -1,30 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
-  <Class Name="BEbraEngine::Mesh1" Collapsed="true">
-    <Position X="0.5" Y="0.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAIAAAAAAAAAAAAAAEACA=</HashCode>
-      <FileName>Mesh1.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="BEbraEngine::Transform" Collapsed="true">
     <Position X="8" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAACAgACAAAACAIAQCAAAAAgAAAABAAgAIAIA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Transform.hpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BEbraEngine::Texture" Collapsed="true">
     <Position X="0.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAiBIAAkAEAAAJCAEAQABAAAAAAAQIBgAIAEAA=</HashCode>
+      <HashCode>AAAAAAAiBIAAkEEAAAJCAEAQABAAAAAAAAIBgAIAEAA=</HashCode>
       <FileName>Image.hpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BEbraEngine::RenderObject" Collapsed="true">
     <Position X="10.25" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgEAAAgAiBIAAACAAAAAAAEAgAAAAALCAAAAAA=</HashCode>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAACAAAAAAAgAAAAAIAAAIAAA=</HashCode>
       <FileName>RenderObject.hpp</FileName>
     </TypeIdentifier>
   </Class>
@@ -38,7 +31,7 @@
   <Class Name="BEbraEngine::AbstractRender" Collapsed="true">
     <Position X="5.5" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAACAAAAgAAAAABAABAEAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>AbstractRenderSystem.hpp</FileName>
     </TypeIdentifier>
   </Class>

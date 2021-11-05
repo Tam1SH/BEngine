@@ -6,8 +6,8 @@ namespace BEbraEngine {
 
     void VulkanBuffer::Destroy()
     {
-        vkFreeMemory(BaseVulkanRender::device, memory, 0);
-        vkDestroyBuffer(BaseVulkanRender::device, self, 0);
+        vkFreeMemory(VulkanRender::device, memory, 0);
+        vkDestroyBuffer(VulkanRender::device, self, 0);
         memory = 0;
         self = 0;
     }
@@ -19,8 +19,8 @@ namespace BEbraEngine {
     void VulkanBuffer::setData(void* data, size_t size, size_t offset)
     {
         void* _data;
-        vkMapMemory(BaseVulkanRender::device, memory, offset, size, 0, &_data);
+        vkMapMemory(VulkanRender::device, memory, offset, size, 0, &_data);
         memcpy(_data, data, size);
-        vkUnmapMemory(BaseVulkanRender::device, memory);
+        vkUnmapMemory(VulkanRender::device, memory);
     }
 }

@@ -120,7 +120,7 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Исходные файлы\PhysicsClasses</Filter>
     </ClCompile>
-    <ClCompile Include="BaseVulkanRender.cpp">
+    <ClCompile Include="VulkanRender.cpp">
       <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
     <ClCompile Include="AudioSystem.cpp">
@@ -147,9 +147,6 @@
     <ClCompile Include="TransformFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -157,12 +154,6 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="RenderObject.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh1.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Render.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="WorkSpace.cpp">
@@ -210,9 +201,6 @@
     <ClCompile Include="DirectRender.cpp">
       <Filter>Исходные файлы\RenderSystems\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanRender.cpp">
-      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
-    </ClCompile>
     <ClCompile Include="DirectWindow.cpp">
       <Filter>Исходные файлы\RenderSystems\DirectX</Filter>
     </ClCompile>
@@ -235,6 +223,12 @@
       <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshFactory.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="IRenderObjectFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -281,7 +275,7 @@
     <ClInclude Include="Physics.hpp">
       <Filter>Файлы заголовков\PhysicsClasses</Filter>
     </ClInclude>
-    <ClInclude Include="BaseVulkanRender.hpp">
+    <ClInclude Include="VulkanRender.hpp">
       <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
     <ClInclude Include="AudioSystem.hpp">
@@ -332,9 +326,6 @@
     <ClInclude Include="TransformFactory.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Model.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -344,12 +335,6 @@
     <ClInclude Include="RenderObject.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh1.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Render.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Transform.hpp">
       <Filter>Файлы заголовков\PhysicsClasses</Filter>
     </ClInclude>
@@ -357,9 +342,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="VkBuffer.hpp">
-      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanRender.hpp">
       <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
     </ClInclude>
     <ClInclude Include="ICreatable.hpp">
@@ -449,9 +431,11 @@
     <ClInclude Include="Debug.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="MeshFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="scripts\hello_world.js">
       <Filter>Файлы ресурсов\Scripts</Filter>
     </None>

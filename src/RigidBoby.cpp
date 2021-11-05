@@ -47,14 +47,19 @@ namespace BEbraEngine {
 
     void RigidBody::SetPosition(const Vector3& position)
     {
-        transform->UpdatePosition(position);
+        transform->UpdatePosition(position, Vector4(0.f));
         ResetState();
 
     }
 
+    void RigidBody::applyImpulse(const Vector3& force, const Vector3& direction)
+    {
+        body->applyImpulse(force, direction);
+    }
+
     RigidBody::RigidBody()
     {
-        auto shape = new btSphereShape(btScalar(1.));
+        auto shape = new btBoxShape(Vector3(1.));
         linearFactor = btVector3(1, 1, 1);
         AngularFactor = btVector3(1, 1, 1);
         btScalar mass(1.f);

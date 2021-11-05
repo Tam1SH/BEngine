@@ -4,6 +4,7 @@
 #include "Vector3.hpp"
 #include "matrix.hpp"
 #include "RenderBuffer.hpp"
+#include <glm/gtx/quaternion.hpp>
 namespace BEbraEngine {
     class TransformFactory;
     class Matrix4;
@@ -20,13 +21,14 @@ namespace BEbraEngine {
         static TransformFactory* factory;
 
     private:
+
+        glm::quat quartion;
+
         Vector3 position;
 
         Vector3 scale;
 
         Vector3 rotation;
-
-        Matrix4 model;
     private:
 
         static void SetFactory(TransformFactory* factory) noexcept;
@@ -41,7 +43,7 @@ namespace BEbraEngine {
 
         static Transform* New(const Vector3& position = Vector3(0));
 
-        void UpdatePosition(const Vector3& position);
+        void UpdatePosition(const Vector3& position, const Vector4& quat);
 
         void SetPosition(const Vector3& position) noexcept;
 
