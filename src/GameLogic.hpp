@@ -3,6 +3,7 @@
 #include "RenderObjectCreator.hpp"
 #include "Listener.hpp"
 #include "GameObject.hpp"
+#include "RenderObject.hpp"
 #include <queue>
 namespace BEbraEngine {
     class VulkanRender;
@@ -15,7 +16,7 @@ namespace BEbraEngine {
     class Time;
 }
 namespace BEbraEngine {
-
+    //TODO: полигон блять для испытаний(делай скрипты)
     //TODO: ListenerOnTick
     class GameLogic : public IListenerOnRender {
     public:
@@ -43,9 +44,11 @@ namespace BEbraEngine {
         std::unique_ptr<GameObjectFactory> objectFactory;
         Camera* camera;
 
-        std::shared_ptr<Light> light;
+        std::shared_ptr<PointLight> light;
+        std::shared_ptr<DirLight> globalLight;
         std::shared_ptr<GameObject> object;
         std::queue<std::shared_ptr<GameObject>> objects;
         Vector3 scale;
+        Vector3 rotate;
     };
 }

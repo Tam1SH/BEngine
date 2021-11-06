@@ -28,7 +28,8 @@ namespace BEbraEngine {
 		//TODO: сомнительная хуйня
 		virtual void InitCamera(Camera* alloced_camera) = 0;
 		virtual void AddObject(std::weak_ptr<RenderObject> object) = 0;
-		virtual void addLight(std::weak_ptr<Light> light) = 0;
+		virtual void addLight(std::weak_ptr<PointLight> light) = 0;
+		virtual void addGlobalLight(std::weak_ptr<DirLight> globalLight) = 0;
 
 		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
 		virtual Type getType() = 0;

@@ -90,6 +90,7 @@ namespace BEbraEngine {
         std::unique_ptr<VulkanRenderObjectFactory> factory;
         std::list<std::weak_ptr<VulkanRenderObject>> objects;
         std::weak_ptr<VulkanLight> light;
+        std::weak_ptr<VulkanDirLight> globalLight;
     public:
 
         Camera* camera;
@@ -111,7 +112,7 @@ namespace BEbraEngine {
 
         void AddObject(std::weak_ptr<RenderObject> object) override;
 
-        void addLight(std::weak_ptr<Light> light) override;
+        void addLight(std::weak_ptr<PointLight> light) override;
 
         void InitCamera(Camera* alloced_camera) override;
 
@@ -119,19 +120,26 @@ namespace BEbraEngine {
 
         IRenderObjectFactory* getRenderObjectFactory() override { return factory.get(); }
 
+        void addGlobalLight(std::weak_ptr<DirLight> globalLight) override;
+
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
 
         VkDescriptorSet createDescriptor(LightDescriptorInfo* info);
 
         void createDescriptor(RenderBuffer* buffer);
 
-        void freeDescriptor(VkDescriptorSet set);
+        void freeDescriptor(VulkanRenderObject* set);
+
+        void freeDescriptor(VulkanDirLight* set);
+
+        void freeDescriptor(VulkanLight* set);
 
     public:
         enum class DescriptorLayout {
-            ObjectLayout,
-            CameraLayout,
-            LightLayout
+            Object,
+            Camera,
+            LightPoint,
+            DirLight
         };
         struct QueueFamilyIndices {
             std::optional<uint32_t> graphicsFamily;
@@ -244,12 +252,6 @@ namespace BEbraEngine {
 
 
         size_t currentFrame = 0;
-
-        bool isCreate;
-
-        bool framebufferResized = false;
-
-        bool IsCreate();
 
         VkQueue GetGraphicsQueue();
 

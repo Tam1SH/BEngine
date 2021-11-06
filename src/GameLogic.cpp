@@ -36,6 +36,8 @@ namespace BEbraEngine {
         object->GetComponent<Collider>()->setSize(Vector3(100, 1, 100));
         object->GetComponent<Transform>()->SetScale(Vector3(100, 1, 100));
         light = objectFactory->createLight(Vector3(0));
+        globalLight = objectFactory->createDirLight(Vector3(0,-0.5f,0));
+        rotate = Vector3(0, -0.5f, 0);
     }
 
     void GameLogic::onUpdateFrame()
@@ -47,54 +49,31 @@ namespace BEbraEngine {
             objects.pop();
     }
     void GameLogic::FixedUpdate() {
+
         if (Input::IsKeyPressed(KEY_CODE::KEY_R)) {
             auto obj = GameObject::New(camera->Position + (camera->Front * 5.f));
             obj->GetComponent<RigidBody>()->applyImpulse(camera->Front * 50.f, camera->Front);
+            auto random_color = Vector3(
+                (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
+            );
+            obj->GetComponent<RenderObject>()->setColor(random_color);
             objects.push(obj);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_T)) {
             clearObjects();
+
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_E)) {
             light->transform->SetPosition(camera->Position);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_1)) {
-            scale.x += 1;
-            auto transform = object->GetComponent<Transform>();
-            transform->SetScale(scale);
+
+            rotate.y = 0.5f;
+            globalLight->setDirection(rotate);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_2)) {
-            scale.y += 1;
-            auto transform = object->GetComponent<Transform>();
-            transform->SetScale(scale);
-        }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_3)) {
-            scale.z += 1;
-            auto transform = object->GetComponent<Transform>();
-            transform->SetScale(scale);
-
-        }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_4)) {
-            scale.x -= 1;
-            auto transform = object->GetComponent<Transform>();
-            transform->SetScale(scale);
-        }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_5)) {
-            scale.y -= 1;
-            auto transform = object->GetComponent<Transform>();
-            transform->SetScale(scale);
-        }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_6)) {
-            scale.z -= 1;
-            auto transform = object->GetComponent<Transform>();
-            transform->SetScale(scale);
-
-        }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_7)) {
-            scale = Vector3(1);
-            auto transform = object->GetComponent<Transform>();
-            transform->SetScale(scale);
-
+            rotate.y = -0.5f;
+            globalLight->setDirection(rotate);
         }
 
     }

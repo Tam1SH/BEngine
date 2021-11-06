@@ -29,13 +29,15 @@ namespace BEbraEngine {
     public:
         friend class Transform;
 
-        void BindTransform(Light* light, Transform* transform) override;
+        void BindTransform(PointLight* light, Transform* transform) override;
 
         void BindTransform(RenderObject* object, Transform* transform) override;
 
         RenderObject* createObject() override;
 
-        Light* createLight(const Vector3& color, const Vector3& position) override;
+        PointLight* createLight(const Vector3& color, const Vector3& position) override;
+
+        DirLight* createDirLight(const Vector3& color, const Vector3& direction) override;
 
         void setContext(AbstractRender* render) override;
        

@@ -41,13 +41,14 @@ namespace BEbraEngine {
         auto indices_view = new RenderBufferView();
         indices_view->buffer = render->CreateIndexBuffer(default_models["BOX"]->meshes[0].indices);
         default_models["BOX"]->meshes[0].indices_view = indices_view;
+
         default_models["SPHERE"] = std::shared_ptr<Model>(create("C:/.BEbraEngine/src/Models/Sphere.fbx").value());
         vertices_view = new RenderBufferView();
-        vertices_view->buffer = render->CreateVertexBuffer(default_models["BOX"]->meshes[0].vertices);
-        default_models["BOX"]->meshes[0].vertices_view = vertices_view;
+        vertices_view->buffer = render->CreateVertexBuffer(default_models["SPHERE"]->meshes[0].vertices);
+        default_models["SPHERE"]->meshes[0].vertices_view = vertices_view;
         indices_view = new RenderBufferView();
-        indices_view->buffer = render->CreateIndexBuffer(default_models["BOX"]->meshes[0].indices);
-        default_models["BOX"]->meshes[0].indices_view = indices_view;
+        indices_view->buffer = render->CreateIndexBuffer(default_models["SPHERE"]->meshes[0].indices);
+        default_models["SPHERE"]->meshes[0].indices_view = indices_view;
     }
     void MeshFactory::processNode(Model* model, aiNode* node, const aiScene* scene, const std::string& path)
     {

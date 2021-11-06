@@ -11,7 +11,13 @@ namespace BEbraEngine {
 	};
 	class LightDescriptorInfo {
 	public:
+		enum class Type {
+			Point,
+			Direction
+		};
+	public:
 		RenderBufferView* bufferView;
+		Type type;
 	};
 
 	class RenderObjectInfo {

@@ -26,7 +26,10 @@ namespace BEbraEngine {
         std::shared_ptr<Model> model;
 
         std::shared_ptr<RenderBufferView> matrix;
-
+        void setColor(const Vector3& color) {
+            auto color_ = color;
+            matrix->setData(&color_, sizeof(Vector4), sizeof(Matrix4));
+        }
         RenderObject();
     private:
     };
@@ -52,37 +55,111 @@ namespace BEbraEngine {
         VkDescriptorSet descriptor;
     };
 
-    class Light : public GameObjectComponent {
+
+    class PointLight : public GameObjectComponent {
     public:
         struct ShaderData {
             alignas(16) Vector3 position;
-            alignas(16) Vector3 color;
+
+            //компоненты света
+            alignas(16) Vector3 ambient;
+            alignas(16) Vector3 diffuse;
+            alignas(16) Vector3 specular;
+
+            alignas(4) float constant;
+            alignas(4) float linear;
+            alignas(4) float quadratic;
         };
     public:
-        std::unique_ptr<Model> model;
         std::shared_ptr<RenderBufferView> data;
+
         Transform* transform;
+
         void setColor(const Vector3& color) {
 
             this->color = color;
         }
+
         void update() {
             ShaderData data1;
             data1.position = transform->GetPosition();
-            data1.color = color;
+            data1.ambient = color;
+            data1.diffuse = color;
+            data1.specular = color;
+            data1.constant = 1.f;
+            data1.linear = 0.35f;
+            data1.quadratic = 1.8f;
             data->setData(&data1, sizeof(ShaderData));
         }
         Vector3& getColor() {
             return color;
         }
-        Light() { name = "Light"; }
+        PointLight() { name = "Light"; }
+        virtual ~PointLight() {}
     private:
         Vector3 color;
     };
-    class VulkanLight : public Light {
+
+
+    class DirLight : public GameObjectComponent {
+    public:
+        struct ShaderData {
+            alignas(16) Vector3 direction;
+
+            //компоненты света
+            alignas(16) Vector3 ambient;
+            alignas(16) Vector3 diffuse;
+            alignas(16) Vector3 specular;
+
+        };
+
+
+
+    public:
+        std::shared_ptr<RenderBufferView> data;
+
+        Transform* transform;
+        void setColor(const Vector3& color) {
+
+            this->color = color;
+        }
+        void setDirection(const Vector3& direction) {
+            this->direction = direction;
+        }
+        void update() {
+            ShaderData data1;
+            data1.direction = direction;
+            data1.ambient = color;
+            data1.diffuse = color;
+            data1.specular = color;
+            data->setData(&data1, sizeof(ShaderData));
+        }
+        Vector3& getDirection() {
+            return direction;
+        }
+        Vector3& getColor() {
+            return color;
+        }
+        DirLight() { name = "DirectionLight"; }
+        virtual ~DirLight() {}
+
+    private:
+        Vector3 color;
+        Vector3 direction;
+    };
+
+    class VulkanLight : public PointLight {
     public:
         VkPipelineLayout* layout;
 
-        VkDescriptorSet LightSet;
+        VkDescriptorSet descriptor;
+    };
+
+    class VulkanDirLight : public DirLight {
+    public:
+        VkPipelineLayout* layout;
+
+        VkDescriptorSet descriptor;
+        ~VulkanDirLight() {}
     };
 }

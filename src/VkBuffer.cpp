@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "VkBuffer.hpp"
-#include "BaseVulkanRender.hpp"
+#include "VulkanRender.hpp"
 //TODO: сделать не зависимым от граф. апи.
 namespace BEbraEngine {
 

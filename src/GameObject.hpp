@@ -26,8 +26,9 @@ namespace BEbraEngine {
         template<typename T>
         T* GetComponent() {
             for (auto component : Components) {
-                if (typeid(*component.get()) == typeid(T))
+                if (dynamic_cast<T*>(component.get())) {
                     return static_cast<T*>(component.get());
+                }
             }
             throw std::exception();
         }

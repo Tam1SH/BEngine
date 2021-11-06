@@ -26,7 +26,9 @@ namespace BEbraEngine {
 
 		std::shared_ptr<GameObject> Create(const Vector3& position);
 
-		std::shared_ptr<Light> createLight(const Vector3& position);
+		std::shared_ptr<PointLight> createLight(const Vector3& position);
+
+		std::shared_ptr<DirLight> createDirLight(const Vector3& direction);
 
 		void Destroy(GameObject* object);
 

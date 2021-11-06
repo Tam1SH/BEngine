@@ -188,12 +188,26 @@ namespace BEbraEngine {
         createPools();
         recreateRenderObjects();
     }
+
     void VulkanRender::recreateRenderObjects() {
-        auto& dec = light.lock()->LightSet;
+
+        auto& dec = light.lock()->descriptor;
         auto info = LightDescriptorInfo();
         info.bufferView = light.lock()->data.get();
+        info.type = LightDescriptorInfo::Type::Point;
 
-        light.lock()->LightSet = createDescriptor(&info);
+        freeDescriptor(light.lock().get());
+        light.lock()->descriptor = createDescriptor(&info);
+
+
+        auto& dec1 = globalLight.lock()->descriptor;
+        auto info1 = LightDescriptorInfo();
+        info1.bufferView = globalLight.lock()->data.get();
+        info1.type = LightDescriptorInfo::Type::Direction;
+
+        freeDescriptor(globalLight.lock().get());
+        globalLight.lock()->descriptor = createDescriptor(&info1);
+
         createDescriptor(camera->cameraData->buffer);
         for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
             auto object_ = *lock_object;
@@ -304,7 +318,7 @@ namespace BEbraEngine {
 
             light.types.resize(1);
             poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            poolSize.descriptorCount = 1;
+            poolSize.descriptorCount = 3;
             light.types[0] = poolSize;
 
 
@@ -325,7 +339,7 @@ namespace BEbraEngine {
 
         lightPool.reset();
         lightPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(light));
-        lightPool->allocate(1);
+        lightPool->allocate(3);
 
 
 
@@ -1038,12 +1052,13 @@ namespace BEbraEngine {
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 
         VkDescriptorSetLayout layouts[] = { 
-            this->layouts[DescriptorLayout::ObjectLayout], 
-            this->layouts[DescriptorLayout::CameraLayout], 
-            this->layouts[DescriptorLayout::LightLayout] };
+            this->layouts[DescriptorLayout::Object], 
+            this->layouts[DescriptorLayout::Camera], 
+            this->layouts[DescriptorLayout::LightPoint],
+            this->layouts[DescriptorLayout::DirLight] };
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.pNext = nullptr;
-        pipelineLayoutInfo.setLayoutCount = 3;
+        pipelineLayoutInfo.setLayoutCount = 4;
         pipelineLayoutInfo.pSetLayouts = layouts;
         if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create pipeline layout!");
@@ -1161,13 +1176,15 @@ namespace BEbraEngine {
         if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &layout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create descriptor set layout!");
         }
-        layouts[DescriptorLayout::ObjectLayout] = layout;
+        layouts[DescriptorLayout::Object] = layout;
 
     }
 
     void VulkanRender::createLightDescriptorSetLayout()
     {
-        VkDescriptorSetLayout layout;
+        VkDescriptorSetLayout layoutPoint;
+        VkDescriptorSetLayout layoutDirection;
+
         std::array<VkDescriptorSetLayoutBinding, 1> LightLayoutBinding{};
         LightLayoutBinding[0].binding = 0;
         LightLayoutBinding[0].descriptorCount = 1;
@@ -1182,10 +1199,11 @@ namespace BEbraEngine {
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
         layoutInfo.pBindings = bindings.data();
 
-        if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &layout) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create descriptor set layout!");
-        }
-        layouts[DescriptorLayout::LightLayout] = layout;
+        vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &layoutPoint);
+        vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &layoutDirection);
+
+        layouts[DescriptorLayout::LightPoint] = layoutPoint;
+        layouts[DescriptorLayout::DirLight] = layoutDirection;
     }
 
     void VulkanRender::createCameraDescriptorSetLayout()
@@ -1208,7 +1226,7 @@ namespace BEbraEngine {
         if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &layout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create descriptor set layout!");
         }
-        layouts[DescriptorLayout::CameraLayout] = layout;
+        layouts[DescriptorLayout::Camera] = layout;
     }
 
     void VulkanRender::createSyncObjects()
@@ -1456,7 +1474,9 @@ namespace BEbraEngine {
 
             {
                 light.lock()->update();
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &light.lock()->LightSet, 0, 0);
+                globalLight.lock()->update();
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLight.lock()->descriptor, 0, 0);
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &light.lock()->descriptor, 0, 0);
                 vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
 
                 for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
@@ -1795,8 +1815,6 @@ namespace BEbraEngine {
         createCopyCmdBuffer();
         createCmdBuffers();
         createSyncObjects();
-
-        isCreate = true;
         FamilyIndices = findQueueFamilies(physicalDevice);
 
         createPools();
@@ -1811,13 +1829,23 @@ namespace BEbraEngine {
     VkDescriptorSet VulkanRender::createDescriptor(LightDescriptorInfo* info)
     {
         auto pool = lightPool.get();
-        auto set = VkDescriptorSet();
-        VkDescriptorSetAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.descriptorPool = *pool;
-        allocInfo.descriptorSetCount = 1;
-        allocInfo.pSetLayouts = &layouts[DescriptorLayout::LightLayout];
-        vkAllocateDescriptorSets(GetDevice(), &allocInfo, &set);
+        VkDescriptorSet set;
+        auto opt_set = lightPool->get();
+        if (false) {
+            set = opt_set.value();
+        }
+        else {
+            set = VkDescriptorSet();
+            VkDescriptorSetAllocateInfo allocInfo{};
+            allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+            allocInfo.descriptorPool = *pool;
+            allocInfo.descriptorSetCount = 1;
+            if(info->type == LightDescriptorInfo::Type::Point)
+                allocInfo.pSetLayouts = &layouts[DescriptorLayout::LightPoint];
+            if (info->type == LightDescriptorInfo::Type::Direction)
+                allocInfo.pSetLayouts = &layouts[DescriptorLayout::DirLight];
+            vkAllocateDescriptorSets(GetDevice(), &allocInfo, &set);
+        }
 
         auto vkbuffer = static_cast<VulkanBuffer*>(info->bufferView->buffer);
 
@@ -1847,7 +1875,7 @@ namespace BEbraEngine {
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         allocInfo.descriptorPool = *pool;
         allocInfo.descriptorSetCount = 1;
-        allocInfo.pSetLayouts = &layouts[DescriptorLayout::CameraLayout];
+        allocInfo.pSetLayouts = &layouts[DescriptorLayout::Camera];
         VkResult result;
         if (result = vkAllocateDescriptorSets(GetDevice(), &allocInfo, &setMainCamera); result != VK_SUCCESS) {
             throw std::runtime_error("ddd");
@@ -1872,6 +1900,10 @@ namespace BEbraEngine {
 
         vkUpdateDescriptorSets(GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
+    void VulkanRender::addGlobalLight(std::weak_ptr<DirLight> globalLight)
+    {
+        this->globalLight = std::static_pointer_cast<VulkanDirLight>(globalLight.lock());
+    }
     VkDescriptorSet VulkanRender::createDescriptor(VulkanDescriptorSetInfo* info)
     {
         auto pool = RenderObjectPool.get();
@@ -1886,7 +1918,7 @@ namespace BEbraEngine {
             allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
             allocInfo.descriptorPool = *pool;
             allocInfo.descriptorSetCount = 1;
-            allocInfo.pSetLayouts = &layouts[DescriptorLayout::ObjectLayout];
+            allocInfo.pSetLayouts = &layouts[DescriptorLayout::Object];
             vkAllocateDescriptorSets(GetDevice(), &allocInfo, &set);
         }
 
@@ -1924,9 +1956,17 @@ namespace BEbraEngine {
 
         return set;
     }
-    void VulkanRender::freeDescriptor(VkDescriptorSet set)
+    void VulkanRender::freeDescriptor(VulkanRenderObject* set)
     {
-        RenderObjectPool->free(set);
+        RenderObjectPool->free(set->descriptor);
+    }
+    void VulkanRender::freeDescriptor(VulkanDirLight* set)
+    {
+        lightPool->free(set->descriptor);
+    }
+    void VulkanRender::freeDescriptor(VulkanLight* set)
+    {
+        lightPool->free(set->descriptor);
     }
     void VulkanRender::DestroyBuffer(RenderBuffer* buffer)
     {
@@ -1958,14 +1998,11 @@ namespace BEbraEngine {
         auto obj = std::dynamic_pointer_cast<VulkanRenderObject>(object.lock());
         objects.push_back(obj);
     }
-    void VulkanRender::addLight(std::weak_ptr<Light> light)
+    void VulkanRender::addLight(std::weak_ptr<PointLight> light)
     {
         this->light = std::static_pointer_cast<VulkanLight>(light.lock());
     }
     VulkanRender::VulkanRender() {}
 
-    bool VulkanRender::IsCreate()
-    {
-        return isCreate;
-    }
+
 }

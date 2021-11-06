@@ -41,18 +41,38 @@ namespace BEbraEngine {
         return obj;
     }
 
-    Light* VulkanRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)
+    PointLight* VulkanRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)
     {
         auto light = new VulkanLight();
         light->setColor(color);
         
         auto view = new RenderBufferView();
-        view->buffer = render->CreateUniformBuffer(sizeof(Vector4) * 2);
-        view->availableRange = sizeof(Vector4) * 2;
+        view->buffer = render->CreateUniformBuffer(sizeof(PointLight::ShaderData));
+        view->availableRange = sizeof(PointLight::ShaderData);
         auto info = LightDescriptorInfo();
         info.bufferView = view;
+        info.type = LightDescriptorInfo::Type::Point;
         light->data = std::shared_ptr<RenderBufferView>(view);
-        light->LightSet = render->createDescriptor(&info);
+        light->descriptor = render->createDescriptor(&info);
+        light->layout = &render->pipelineLayout;
+        return light;
+    }
+
+    DirLight* VulkanRenderObjectFactory::createDirLight(const Vector3& color, const Vector3& direction)
+    {
+        auto light = new VulkanDirLight();
+        light->setColor(color);
+        light->setDirection(direction);
+
+        auto view = new RenderBufferView();
+        view->buffer = render->CreateUniformBuffer(sizeof(PointLight::ShaderData));
+        view->availableRange = sizeof(PointLight::ShaderData);
+        auto info = LightDescriptorInfo();
+        info.bufferView = view;
+        info.type = LightDescriptorInfo::Type::Direction;
+
+        light->data = std::shared_ptr<RenderBufferView>(view);
+        light->descriptor = render->createDescriptor(&info);
         light->layout = &render->pipelineLayout;
         return light;
     }
@@ -73,10 +93,10 @@ namespace BEbraEngine {
 
     void VulkanRenderObjectFactory::destroyObject(RenderObject* object)
     {
-        render->freeDescriptor(static_cast<VulkanRenderObject*>(object)->descriptor);
+        render->freeDescriptor(static_cast<VulkanRenderObject*>(object));
     }
 
-    void VulkanRenderObjectFactory::BindTransform(Light* light, Transform* transform)
+    void VulkanRenderObjectFactory::BindTransform(PointLight* light, Transform* transform)
     {
         light->transform = transform;
     }

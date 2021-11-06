@@ -57,10 +57,10 @@ namespace BEbraEngine {
 		return obj;
 	}
 
-	std::shared_ptr<Light> GameObjectFactory::createLight(const Vector3& position)
+	std::shared_ptr<PointLight> GameObjectFactory::createLight(const Vector3& position)
 	{
 		auto transform = std::shared_ptr<Transform>(Transform::New(position));
-		auto light = std::shared_ptr<Light>(renderFactory->createLight(Vector3(1), position));
+		auto light = std::shared_ptr<PointLight>(renderFactory->createLight(Vector3(1), position));
 		light->addComponent(transform);
 
 		auto name = light->GetName();
@@ -69,6 +69,19 @@ namespace BEbraEngine {
 		workspace->addComponent(light);
 		renderFactory->BindTransform(light.get(), transform.get());
 		render->addLight(light);
+		return light;
+	}
+
+	std::shared_ptr<DirLight> GameObjectFactory::createDirLight(const Vector3& direction)
+	{
+		auto light = std::shared_ptr<DirLight>(renderFactory->createDirLight(Vector3(0.1f), direction));
+
+		auto name = light->GetName();
+
+		light->SetName(name + std::to_string(workspace->GetSize()));
+		workspace->addComponent(light);
+
+		render->addGlobalLight(light);
 		return light;
 	}
 
