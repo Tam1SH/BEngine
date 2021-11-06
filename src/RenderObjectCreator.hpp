@@ -22,7 +22,7 @@ namespace BEbraEngine {
     public:
 
         std::unique_ptr<VulkanRenderObjectPool> _pool;
-        std::shared_ptr<VulkanRender> render;
+        VulkanRender* render;
         TextureFactory* textureFactory;
         std::unique_ptr<MeshFactory> meshFactory;
 
@@ -37,7 +37,7 @@ namespace BEbraEngine {
 
         Light* createLight(const Vector3& color, const Vector3& position) override;
 
-        void setContext(std::shared_ptr<AbstractRender> render) override;
+        void setContext(AbstractRender* render) override;
        
         void destroyObject(RenderObject* object) override;
 

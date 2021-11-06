@@ -2,7 +2,8 @@
 #include "stdafx.h"
 #include "RenderObjectCreator.hpp"
 #include "Listener.hpp"
-
+#include "GameObject.hpp"
+#include <queue>
 namespace BEbraEngine {
     class VulkanRender;
     class WorkSpace;
@@ -25,6 +26,8 @@ namespace BEbraEngine {
 
         void onUpdateFrame() override;
 
+        void clearObjects();
+
         void FixedUpdate();
 
         void Update();
@@ -39,5 +42,10 @@ namespace BEbraEngine {
 
         std::unique_ptr<GameObjectFactory> objectFactory;
         Camera* camera;
+
+        std::shared_ptr<Light> light;
+        std::shared_ptr<GameObject> object;
+        std::queue<std::shared_ptr<GameObject>> objects;
+        Vector3 scale;
     };
 }

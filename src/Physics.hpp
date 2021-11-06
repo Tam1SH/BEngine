@@ -1,9 +1,10 @@
 #pragma once
+#include "stdafx.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
+#include "ColliderFactory.hpp"
+#include "RigidBodyFactory.hpp"
 
-#include <memory>
-#include <list>
 namespace BEbraEngine {
     class RigidBody;
 }
@@ -11,8 +12,6 @@ namespace BEbraEngine {
 
     class Physics {
     private:
-        friend class GameObjectFactory;
-
 
         std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
 
@@ -27,11 +26,16 @@ namespace BEbraEngine {
 
         std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 
-    private:
         std::list<std::weak_ptr<RigidBody>> bodies;
-    public:
-        void Update();
 
+        std::unique_ptr<ColliderFactory> colliderFactory;
+
+        std::unique_ptr<RigidBodyFactory> rigidBodyFactory;
+    public:
+
+        void Update();
+        ColliderFactory* getColliderFactory() { return colliderFactory.get(); }
+        RigidBodyFactory* getRigidBodyFactory() { return rigidBodyFactory.get(); }
         void addRigidBody(btRigidBody* body);
         void removeRigidBody(btRigidBody* body);
         void AddObject(std::weak_ptr<RigidBody> body);

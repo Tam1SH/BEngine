@@ -1,4 +1,5 @@
 #pragma once
+
 #include "stdafx.h"
 #include "stb_image.h"
 #include <optional>
@@ -86,7 +87,7 @@ namespace BEbraEngine {
     class VulkanRender : public AbstractRender
     {
     protected:
-        std::shared_ptr<VulkanRenderObjectFactory> factory;
+        std::unique_ptr<VulkanRenderObjectFactory> factory;
         std::list<std::weak_ptr<VulkanRenderObject>> objects;
         std::weak_ptr<VulkanLight> light;
     public:
@@ -116,7 +117,7 @@ namespace BEbraEngine {
 
         AbstractRender::Type getType() override { return AbstractRender::Type::Vulkan; }
 
-        std::shared_ptr<IRenderObjectFactory> getRenderObjectFactory() override { return factory; }
+        IRenderObjectFactory* getRenderObjectFactory() override { return factory.get(); }
 
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
 

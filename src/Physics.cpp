@@ -54,6 +54,9 @@ namespace BEbraEngine {
         solver = std::unique_ptr<btSequentialImpulseConstraintSolver>(new btSequentialImpulseConstraintSolver());
         dynamicsWorld = std::unique_ptr<btDiscreteDynamicsWorld>(
             new btDiscreteDynamicsWorld(dispatcher.get(), overlappingPairCache.get(), solver.get(), collisionConfiguration.get()));
+
+        colliderFactory = std::unique_ptr<ColliderFactory>(new ColliderFactory(this));
+        rigidBodyFactory = std::unique_ptr<RigidBodyFactory>(new RigidBodyFactory(this));
     }
     Physics::~Physics()
     {

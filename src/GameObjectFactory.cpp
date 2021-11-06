@@ -17,7 +17,10 @@ namespace BEbraEngine {
 	{
 
 		renderFactory = render->getRenderObjectFactory();
-		renderFactory->setContext(render);
+		renderFactory->setContext(render.get());
+
+		colliderFactory = physics->getColliderFactory();
+		rigidBodyFactory = physics->getRigidBodyFactory();
 		transFactory = std::unique_ptr<TransformFactory>(new TransformFactory());
 
 		GameObject::SetFactory(this);
@@ -29,11 +32,12 @@ namespace BEbraEngine {
 
 		obj->SetName(name + std::to_string(workspace->GetSize()));
 		//workspace->addComponent(obj);
-
-
+		ColliderInfo info;
+		info.scale = Vector3(1);
+		auto collider = std::shared_ptr<Collider>(colliderFactory->create(&info));
 		auto transform = std::shared_ptr<Transform>(Transform::New(position));
 		auto renderObj = std::shared_ptr<RenderObject>(renderFactory->createObject());
-		auto rigidbody = std::shared_ptr<RigidBody>(new RigidBody());
+		auto rigidbody = std::shared_ptr<RigidBody>(rigidBodyFactory->create(collider.get()));
 
 		renderFactory->BindTransform(renderObj.get(), transform.get());
 
@@ -42,7 +46,7 @@ namespace BEbraEngine {
 		obj->addComponent(renderObj);
 		obj->addComponent(rigidbody);
 		obj->addComponent(transform);
-
+		obj->addComponent(collider);
 		btTransform trans;
 		trans.setIdentity();
 		trans.setOrigin(btVector3(position.x, position.y, position.z));

@@ -57,18 +57,15 @@ namespace BEbraEngine {
         return light;
     }
 
-    void VulkanRenderObjectFactory::setContext(std::shared_ptr<AbstractRender> render)
+    void VulkanRenderObjectFactory::setContext(AbstractRender* render)
     {
-        this->render = std::dynamic_pointer_cast<VulkanRender>(render);
-        if (!this->render.get()) {
-            Debug::Log("Render turned out not to be suitable.");
-        }
+        this->render = dynamic_cast<VulkanRender*>(render);
 
         VulkanRenderObject::SetFactory(this);
-        textureFactory = new TextureFactory(render.get());
+        textureFactory = new TextureFactory(render);
 
         _pool = std::make_unique<VulkanRenderObjectPool>();
-        _pool->setContext(render.get());
+        _pool->setContext(render);
         _pool->setFactory(this);
         meshFactory = std::unique_ptr<MeshFactory>(new MeshFactory(render));
         _pool->allocate(10);

@@ -3,6 +3,8 @@
 #include "AbstractComponent.hpp"
 #include "stdafx.h"
 #include "AbstractRenderSystem.hpp"
+#include "ColliderFactory.hpp"
+#include "RigidBodyFactory.hpp"
 #include "Vector3.hpp"
 namespace BEbraEngine {
 	class GameObject;
@@ -41,7 +43,9 @@ namespace BEbraEngine {
 		std::shared_ptr<WorkSpace> workspace;
 
 		std::unique_ptr<TransformFactory> transFactory;
-		std::shared_ptr<IRenderObjectFactory> renderFactory;
+		IRenderObjectFactory* renderFactory;
+		ColliderFactory* colliderFactory;
+		RigidBodyFactory* rigidBodyFactory;
 	};
 
 }

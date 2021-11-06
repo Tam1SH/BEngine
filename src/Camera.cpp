@@ -4,7 +4,7 @@
 #define NOMINMAX
 #include "Camera.hpp"
 #include "Input.hpp"
-#include "BaseVulkanRender.hpp"
+#include "VulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>
@@ -102,7 +102,7 @@ namespace BEbraEngine {
     {
 
         ShaderData vp;
-        vp.proj = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 0.0001f, 10000.0f);
+        vp.proj = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 1.f, 10000.0f);
         vp.view = GetViewMatrix();
         vp.position = static_cast<glm::vec3>(Position);
         ProcessMouseMovement();

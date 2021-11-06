@@ -23,7 +23,7 @@ namespace BEbraEngine {
 
 		virtual Light* createLight(const Vector3& color, const Vector3& position) = 0;
 
-		virtual void setContext(std::shared_ptr<AbstractRender> render) = 0;
+		virtual void setContext(AbstractRender* render) = 0;
 
 		virtual void destroyObject(RenderObject* object) = 0;
 	};

@@ -30,7 +30,7 @@ namespace BEbraEngine {
 		virtual void AddObject(std::weak_ptr<RenderObject> object) = 0;
 		virtual void addLight(std::weak_ptr<Light> light) = 0;
 
-		virtual std::shared_ptr<IRenderObjectFactory> getRenderObjectFactory() = 0;
+		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
 		virtual Type getType() = 0;
 		virtual ~AbstractRender() {}
 	};

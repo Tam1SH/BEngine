@@ -306,6 +306,9 @@
     <ClCompile Include="AbstractRenderSystem.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="BaseRenderWindow.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderFactory.cpp" />
+    <ClCompile Include="RigidBodyFactory.cpp" />
     <ClCompile Include="VulkanRender.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandPool.cpp" />
@@ -364,6 +367,9 @@
     <ClInclude Include="BaseRenderWindow.hpp" />
     <ClInclude Include="BaseScript.hpp" />
     <ClInclude Include="BaseScriptEngine.hpp" />
+    <ClInclude Include="Collider.hpp" />
+    <ClInclude Include="ColliderFactory.hpp" />
+    <ClInclude Include="RigidBodyFactory.hpp" />
     <ClInclude Include="VulkanRender.hpp" />
     <ClInclude Include="CommandBuffer.hpp" />
     <ClInclude Include="CommandPool.hpp" />
@@ -427,7 +433,6 @@
     <ClInclude Include="WorkSpace.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
     <None Include="scripts\BEbraCore.js" />
     <None Include="scripts\hello_world.js" />
     <None Include="shaders\shader.frag" />

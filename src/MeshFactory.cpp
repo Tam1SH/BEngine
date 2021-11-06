@@ -28,7 +28,7 @@ namespace BEbraEngine {
     {
         return default_models[name];
     }
-    MeshFactory::MeshFactory(std::shared_ptr<AbstractRender> render) { 
+    MeshFactory::MeshFactory(AbstractRender* render) { 
         this->render = render;
         downloadDefaultModels(); 
     }

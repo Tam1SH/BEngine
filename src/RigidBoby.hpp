@@ -13,7 +13,7 @@ namespace BEbraEngine {
 
 	class RigidBody : public GameObjectComponent
 	{
-	private:
+	public:
 
 		friend class Physics;
 

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameLogic.hpp"
 #include "ScriptManager.hpp"
+#include "Collider.hpp"
 #include "GameObjectFactory.hpp"
 #include "Time.hpp"
 #include "Camera.hpp"
@@ -12,10 +13,6 @@
 //TODO: ���������� ������ ���� �����.
 namespace BEbraEngine {
 
-    std::shared_ptr<Light> light;
-    std::shared_ptr<GameObject> object;
-    std::queue<std::shared_ptr<GameObject>> objects;
-    Vector3 scale;
 
     GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera, std::shared_ptr<Physics> physics)
     {
@@ -34,8 +31,10 @@ namespace BEbraEngine {
 
     void GameLogic::ScriptInit()
     {
-        object = GameObject::New(Vector3(1,0,0));
+        object = GameObject::New(Vector3(0,0,0));
         object->GetComponent<RigidBody>()->SetDynamic(false);
+        object->GetComponent<Collider>()->setSize(Vector3(100, 1, 100));
+        object->GetComponent<Transform>()->SetScale(Vector3(100, 1, 100));
         light = objectFactory->createLight(Vector3(0));
     }
 
@@ -43,7 +42,7 @@ namespace BEbraEngine {
     {
         Update();
     }
-    static void clearObjects() {
+    void GameLogic::clearObjects() {
         if(!objects.empty())
             objects.pop();
     }
@@ -101,17 +100,21 @@ namespace BEbraEngine {
     }
     void GameLogic::Update()
     {
+        float speed = 1;
+        if (Input::IsKeyPressed(KEY_CODE::KEY_LEFT_SHIFT)) {
+            speed = 20;
+        }
         if (Input::IsKeyPressed(KEY_CODE::KEY_A)) {
-            camera->ProcessKeyboard(LEFT, Time::GetDeltaTime());
+            camera->ProcessKeyboard(LEFT, Time::GetDeltaTime() * speed);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_D)) {
-            camera->ProcessKeyboard(RIGHT, Time::GetDeltaTime());
+            camera->ProcessKeyboard(RIGHT, Time::GetDeltaTime() * speed);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_S)) {
-            camera->ProcessKeyboard(BACKWARD, Time::GetDeltaTime());
+            camera->ProcessKeyboard(BACKWARD, Time::GetDeltaTime()* speed);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_W)) {
-            camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime());
+            camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime()* speed);
         }
         static float time = 0;
         time += Time::GetDeltaTime();
