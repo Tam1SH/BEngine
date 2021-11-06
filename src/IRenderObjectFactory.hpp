@@ -10,8 +10,6 @@ namespace BEbraEngine {
 	class DirLight;
 	class AbstractRender;
 }
-template<class T>
-class std::shared_ptr;
 
 namespace BEbraEngine {
 	class IRenderObjectFactory {

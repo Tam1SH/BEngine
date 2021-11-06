@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+//#include "C:/.BEbraEngine/Include/stb-master/stb_image.h"
 #include "stb_image.h"
 #include <optional>
 #include <stdexcept>

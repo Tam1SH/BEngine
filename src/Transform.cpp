@@ -23,9 +23,20 @@ namespace BEbraEngine {
         return factory->Create(position);
     }
 
+    Matrix4 Transform::getMatrix()
+    {
+        auto model = glm::mat4(1);
+        glm::vec3 _s = scale;
+        glm::vec3 _p = position;
+        model = glm::translate(model, _p);
+        model = glm::scale(model, _s);
+        model *= glm::toMat4(quartion);
+
+        return Matrix4(model);
+    }
+
     Transform::Transform(const Vector3& position)
     {
-        std::cout << "TRANSFORM " << this << " CREATED" << std::endl;
         this->position = position;
         scale = Vector3(1);
         rotation = Vector3(1);
@@ -38,14 +49,14 @@ namespace BEbraEngine {
         auto model = glm::mat4(1);
         glm::vec3 _s = scale;
         glm::vec3 _p = position;
-        quartion.x = quat.f[0];
-        quartion.y = quat.f[1];
-        quartion.z = quat.f[2];
-        quartion.w = quat.f[3];
-        model = glm::translate(model, _p);
-        model = glm::scale(model, _s);
-        model *= glm::toMat4(quartion);
-        buffer->setData(&model, sizeof(Matrix4));
+        quartion.x = quat.x;
+        quartion.y = quat.y;
+        quartion.z = quat.z;
+        quartion.w = quat.w;
+        //model = glm::translate(model, _p);
+        //model = glm::scale(model, _s);
+        //model *= glm::toMat4(quartion);
+        //buffer->setData(&model, sizeof(Matrix4));
     }
 
     void Transform::SetPosition(const Vector3& position) noexcept

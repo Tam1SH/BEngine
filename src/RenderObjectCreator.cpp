@@ -19,8 +19,8 @@ namespace BEbraEngine {
     RenderObject* VulkanRenderObjectFactory::createObject()
     {
         auto object_view = new RenderBufferView();
-        object_view->buffer = render->CreateUniformBuffer(sizeof(Matrix4) + sizeof(Vector4));
-        object_view->availableRange = sizeof(Matrix4) + sizeof(Vector4);
+        object_view->buffer = render->CreateUniformBuffer(sizeof(RenderObject::ShaderData));
+        object_view->availableRange = sizeof(RenderObject::ShaderData);
 
         auto obj = new VulkanRenderObject();
         obj->name = "RenderObject";
@@ -29,8 +29,8 @@ namespace BEbraEngine {
 
         obj->texture = std::unique_ptr<Texture>(textureFactory->createEmptyTexture());
         obj->matrix = std::shared_ptr<RenderBufferView>(object_view);
-        auto vec = Vector3(0.2, 0.4, 0.3);
-        obj->matrix->setData(&vec, sizeof(Vector4), sizeof(Matrix4));
+
+        obj->setColor(Vector3(0.2f, 0.4f, 0.3f));
         VulkanDescriptorSetInfo setinfo{};
         setinfo.sampler = obj->texture->sampler;
         setinfo.imageView = obj->texture->imageView;
@@ -102,7 +102,7 @@ namespace BEbraEngine {
     }
     void VulkanRenderObjectFactory::BindTransform(RenderObject* object, Transform* transform)
     {
-        transform->buffer = object->matrix;
+        object->transform = transform;
     }
 
     void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)

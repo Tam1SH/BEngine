@@ -46,8 +46,9 @@ namespace BEbraEngine {
 				_isClose = true;
 			}
 		}
-		onUpdate();
 		notifyOnUpdateFrame();
+		onUpdate();
+
 	}
 	void BaseWindow::_onCreateWindow(int w, int h, const SurfaceType& type, const char* title)
 	{
@@ -61,6 +62,7 @@ namespace BEbraEngine {
 	}
 	void BaseWindow::onCreateWindow(const Vector2& size, const SurfaceType& type, const std::string& title = "BEbraEngine")
 	{
+		_isClose = false;
 		_onCreateWindow(size.x, size.y, type, title.c_str());
 	}
 

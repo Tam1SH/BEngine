@@ -23,7 +23,12 @@ namespace BEbraEngine {
 
                 body->body->getMotionState()->getWorldTransform(trans);
                 auto quat = trans.getRotation();
-                Vector4 quaat = quat;
+                Vector4 quaat;
+                quaat.x = quat.x();
+                quaat.y = quat.y();
+                quaat.z = quat.z();
+                quaat.w = quat.w();
+
                 auto vec = trans.getOrigin();
                 auto pos = glm::vec3(
                     vec.x(), vec.y(), vec.z()

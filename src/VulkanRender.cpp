@@ -1486,7 +1486,7 @@ namespace BEbraEngine {
                     }
                     else {
                         auto object = lock_object->lock();
-
+                        object->update();
                         object->Draw(RenderBuffers[i]);
                     }
 

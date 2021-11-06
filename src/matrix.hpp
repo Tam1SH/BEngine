@@ -20,10 +20,10 @@ namespace BEbraEngine {
 			auto& v2 = elements[2];
 			auto& v3 = elements[3];
 			auto _mat = DirectX::XMMATRIX(
-				v0.f[0],v0.f[1], v0.f[2], v0.f[3],
-				v1.f[0], v1.f[1], v1.f[2], v1.f[3],
-				v2.f[0], v2.f[1], v2.f[2], v3.f[3],
-				v3.f[0], v3.f[1], v3.f[2], v3.f[3]
+				v0.x,v0.y, v0.z, v0.w,
+				v1.x, v1.y, v1.z, v1.w,
+				v2.x, v2.y, v2.z, v2.w,
+				v3.x, v3.y, v3.z, v3.w
 			);
 			return _mat;
 		}
@@ -34,6 +34,12 @@ namespace BEbraEngine {
 			elements[1] = mat[1];
 			elements[2] = mat[2];
 			elements[3] = mat[3];
+		}
+		Matrix4(size_t all) {
+			elements[0] = Vector4(all);
+			elements[1] = Vector4(all);
+			elements[2] = Vector4(all);
+			elements[3] = Vector4(all);
 		}
 		operator glm::mat4 () {
 			return glm::mat4(

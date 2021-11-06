@@ -5,15 +5,19 @@
 #include "VkBuffer.hpp"
 #include "RenderObjectCreator.hpp"
 namespace BEbraEngine {
-
+    void RenderObject::update()
+    {
+        ShaderData data;
+        data.model = transform->getMatrix();
+        data.color = color;
+        matrix->setData(&data, sizeof(ShaderData));
+    }
     RenderObject::RenderObject()
     {
-        std::cout << "RENDER OBJECT " << this << " CREATED" << std::endl;
     }
 
     RenderObject::~RenderObject()
     {
-        std::cout << "RENDER OBJECT " << this << " DESTROYED" << std::endl;
         matrix->buffer->Destroy();
         
 

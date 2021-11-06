@@ -26,12 +26,22 @@ namespace BEbraEngine {
         std::shared_ptr<Model> model;
 
         std::shared_ptr<RenderBufferView> matrix;
-        void setColor(const Vector3& color) {
-            auto color_ = color;
-            matrix->setData(&color_, sizeof(Vector4), sizeof(Matrix4));
-        }
+
+        Transform* transform;
+
+        void update();
+
         RenderObject();
+
+        void setColor(const Vector3& color) {
+
+            this->color = color;
+        }
+        Vector3& getColor() {
+            return color;
+        }
     private:
+        Vector3 color;
     };
 
     class VulkanRenderObject : public RenderObject {
@@ -79,7 +89,9 @@ namespace BEbraEngine {
 
             this->color = color;
         }
-
+        Vector3& getColor() {
+            return color;
+        }
         void update() {
             ShaderData data1;
             data1.position = transform->GetPosition();
@@ -91,9 +103,7 @@ namespace BEbraEngine {
             data1.quadratic = 1.8f;
             data->setData(&data1, sizeof(ShaderData));
         }
-        Vector3& getColor() {
-            return color;
-        }
+
         PointLight() { name = "Light"; }
         virtual ~PointLight() {}
     private:

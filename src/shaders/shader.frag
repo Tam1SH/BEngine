@@ -108,9 +108,10 @@ void main() {
     // Этап №3: Прожектор
     //result += CalcSpotLight(norm, viewDir);    
     
-    vec4 FragColor = vec4(result * objectColor, 1.0);
+    vec4 FragColor = vec4(result * objectColor,1.0f);
 
     outColor = texture(texSampler, fragTexCoord) * FragColor; 
+   // outColor = FragColor; 
 }
 
 // Вычисляем цвет при использовании точечного источника света

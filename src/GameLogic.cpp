@@ -52,11 +52,12 @@ namespace BEbraEngine {
 
         if (Input::IsKeyPressed(KEY_CODE::KEY_R)) {
             auto obj = GameObject::New(camera->Position + (camera->Front * 5.f));
-            obj->GetComponent<RigidBody>()->applyImpulse(camera->Front * 50.f, camera->Front);
-            auto random_color = Vector3(
-                (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
+            obj->GetComponent<RigidBody>()->applyImpulse(camera->Front * 1.f, camera->Front);
+            Vector3 random_color = Vector3(
+                0.4f, 0.2f, 0.3f
             );
-            obj->GetComponent<RenderObject>()->setColor(random_color);
+            auto renderobj = obj->GetComponent<RenderObject>();
+            //renderobj->setColor(random_color);
             objects.push(obj);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_T)) {

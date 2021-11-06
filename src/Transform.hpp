@@ -7,7 +7,6 @@
 #include <glm/gtx/quaternion.hpp>
 namespace BEbraEngine {
     class TransformFactory;
-    class Matrix4;
 
 }
 namespace BEbraEngine {
@@ -29,6 +28,8 @@ namespace BEbraEngine {
         Vector3 scale;
 
         Vector3 rotation;
+    
+        Matrix4 getBasis;
     private:
 
         static void SetFactory(TransformFactory* factory) noexcept;
@@ -36,6 +37,8 @@ namespace BEbraEngine {
 
 
     public:
+
+        Matrix4 getMatrix();
 
         Transform(const Vector3& position);
 

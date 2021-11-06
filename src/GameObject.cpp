@@ -34,13 +34,11 @@ namespace BEbraEngine {
     GameObject::GameObject()
     {
         name = "GameObject";
-        std::cout << "GAMEOBJECT CREATED " << this << std::endl;
     }
 
     GameObject::~GameObject()
     {
 
-        std::cout << "GAMEOBJECT DESTROYED " << this << std::endl;
         factory->Destroy(this);
     }
 }
