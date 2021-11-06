@@ -26,7 +26,6 @@ namespace BEbraEngine {
         obj->name = "RenderObject";
         obj->model = meshFactory->getDefaultModel("BOX");
 
-
         obj->texture = std::unique_ptr<Texture>(textureFactory->createEmptyTexture());
         obj->matrix = std::shared_ptr<RenderBufferView>(object_view);
 
@@ -47,14 +46,18 @@ namespace BEbraEngine {
         light->setColor(color);
         
         auto view = new RenderBufferView();
-        view->buffer = render->CreateUniformBuffer(sizeof(PointLight::ShaderData));
-        view->availableRange = sizeof(PointLight::ShaderData);
+        view->buffer = storage;
+        view->availableRange = sizeof(PointLight::ShaderData) * 100;
+        view->offset = sizeof(PointLight::ShaderData) * current_offset;
+        current_offset++;
         auto info = LightDescriptorInfo();
         info.bufferView = view;
-        info.type = LightDescriptorInfo::Type::Point;
+        info.type = LightDescriptorInfo::Type::Direction;
+
         light->data = std::shared_ptr<RenderBufferView>(view);
-        light->descriptor = render->createDescriptor(&info);
+        light->descriptor = set;
         light->layout = &render->pipelineLayout;
+
         return light;
     }
 
@@ -65,7 +68,7 @@ namespace BEbraEngine {
         light->setDirection(direction);
 
         auto view = new RenderBufferView();
-        view->buffer = render->CreateUniformBuffer(sizeof(PointLight::ShaderData));
+        view->buffer = render->CreateStorageBuffer(sizeof(PointLight::ShaderData));
         view->availableRange = sizeof(PointLight::ShaderData);
         auto info = LightDescriptorInfo();
         info.bufferView = view;
@@ -89,6 +92,16 @@ namespace BEbraEngine {
         _pool->setFactory(this);
         meshFactory = std::unique_ptr<MeshFactory>(new MeshFactory(render));
         _pool->allocate(10);
+        storage = this->render->CreateStorageBuffer(sizeof(PointLight::ShaderData) * 100);
+        auto view = RenderBufferView();
+        view.buffer = storage;
+        view.availableRange = sizeof(PointLight::ShaderData) * 100;
+        view.offset = 0;
+        auto info = LightDescriptorInfo();
+        info.bufferView = &view;
+        info.type = LightDescriptorInfo::Type::Direction;
+
+        set = this->render->createDescriptor(&info);
     }
 
     void VulkanRenderObjectFactory::destroyObject(RenderObject* object)

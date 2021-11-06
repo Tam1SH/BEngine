@@ -35,8 +35,9 @@ namespace BEbraEngine {
         object->GetComponent<RigidBody>()->SetDynamic(false);
         object->GetComponent<Collider>()->setSize(Vector3(100, 1, 100));
         object->GetComponent<Transform>()->SetScale(Vector3(100, 1, 100));
-        light = objectFactory->createLight(Vector3(0));
         globalLight = objectFactory->createDirLight(Vector3(0,-0.5f,0));
+        auto light = objectFactory->createLight(camera->Position);
+        lights.push(light);
         rotate = Vector3(0, -0.5f, 0);
     }
 
@@ -54,18 +55,27 @@ namespace BEbraEngine {
             auto obj = GameObject::New(camera->Position + (camera->Front * 5.f));
             obj->GetComponent<RigidBody>()->applyImpulse(camera->Front * 1.f, camera->Front);
             Vector3 random_color = Vector3(
-                0.4f, 0.2f, 0.3f
+                (rand() % 255) / 255.f
             );
             auto renderobj = obj->GetComponent<RenderObject>();
-            //renderobj->setColor(random_color);
+            renderobj->setColor(random_color);
             objects.push(obj);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_T)) {
             clearObjects();
 
         }
+        if (Input::IsKeyPressed(KEY_CODE::KEY_Q)) {
+            if (!lights.empty())
+                lights.pop();
+        }
         if (Input::IsKeyPressed(KEY_CODE::KEY_E)) {
-            light->transform->SetPosition(camera->Position);
+            auto light = objectFactory->createLight(camera->Position);
+            Vector3 random_color = Vector3(
+                (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
+            );
+            light->setColor(random_color);
+            lights.push(light);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_1)) {
 

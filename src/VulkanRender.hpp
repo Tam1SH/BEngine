@@ -90,7 +90,7 @@ namespace BEbraEngine {
     protected:
         std::unique_ptr<VulkanRenderObjectFactory> factory;
         std::list<std::weak_ptr<VulkanRenderObject>> objects;
-        std::weak_ptr<VulkanLight> light;
+        std::list<std::weak_ptr<VulkanLight>> lights;
         std::weak_ptr<VulkanDirLight> globalLight;
     public:
 
@@ -181,6 +181,8 @@ namespace BEbraEngine {
         size_t COUNT_OF_OBJECTS = 0;
 
         size_t MAX_COUNT_OF_OBJECTS = 5000;
+
+        size_t MAX_COUNT_OF_LIGHTS = 100;
 
         VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -385,7 +387,6 @@ namespace BEbraEngine {
         bool isDeviceSuitable(VkPhysicalDevice device);
 
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-
 
         std::vector<const char*> getRequiredExtensions();
 

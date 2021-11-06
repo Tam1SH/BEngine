@@ -49,7 +49,10 @@ namespace BEbraEngine {
         ~VulkanRenderObjectFactory();
 
         void SetImgsCreator(TextureFactory* Creator) { textureFactory = Creator; }
-
+    private:
+        RenderBuffer* storage;
+        VkDescriptorSet set;
+        size_t current_offset{};
     };
 }
 

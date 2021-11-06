@@ -191,15 +191,6 @@ namespace BEbraEngine {
 
     void VulkanRender::recreateRenderObjects() {
 
-        auto& dec = light.lock()->descriptor;
-        auto info = LightDescriptorInfo();
-        info.bufferView = light.lock()->data.get();
-        info.type = LightDescriptorInfo::Type::Point;
-
-        freeDescriptor(light.lock().get());
-        light.lock()->descriptor = createDescriptor(&info);
-
-
         auto& dec1 = globalLight.lock()->descriptor;
         auto info1 = LightDescriptorInfo();
         info1.bufferView = globalLight.lock()->data.get();
@@ -209,6 +200,26 @@ namespace BEbraEngine {
         globalLight.lock()->descriptor = createDescriptor(&info1);
 
         createDescriptor(camera->cameraData->buffer);
+
+        for (auto lock_light = lights.begin(); lock_light != lights.end(); ++lock_light) {
+            auto light_ = *lock_light;
+            if (light_.expired()) {
+                lock_light = lights.erase(lock_light);
+                --lock_light;
+
+            }
+            else {
+
+                auto& dec = light_.lock()->descriptor;
+                auto info = LightDescriptorInfo();
+                info.bufferView = light_.lock()->data.get();
+                info.type = LightDescriptorInfo::Type::Point;
+
+                freeDescriptor(light_.lock().get());
+                light_.lock()->descriptor = createDescriptor(&info);
+            }
+
+        }
         for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
             auto object_ = *lock_object;
             if (object_.expired()) {
@@ -317,8 +328,8 @@ namespace BEbraEngine {
 
 
             light.types.resize(1);
-            poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            poolSize.descriptorCount = 3;
+            poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            poolSize.descriptorCount = MAX_COUNT_OF_LIGHTS;
             light.types[0] = poolSize;
 
 
@@ -339,11 +350,8 @@ namespace BEbraEngine {
 
         lightPool.reset();
         lightPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(light));
-        lightPool->allocate(3);
+        lightPool->allocate(MAX_COUNT_OF_LIGHTS);
 
-
-
-        ResizeDescriptorPool(200);
     }
 
     void VulkanRender::cleanupSwapChain()
@@ -1051,6 +1059,13 @@ namespace BEbraEngine {
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 
+
+        VkPushConstantRange push_constant;
+        push_constant.offset = 0;
+        push_constant.size = sizeof(int);
+        push_constant.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+
         VkDescriptorSetLayout layouts[] = { 
             this->layouts[DescriptorLayout::Object], 
             this->layouts[DescriptorLayout::Camera], 
@@ -1060,6 +1075,9 @@ namespace BEbraEngine {
         pipelineLayoutInfo.pNext = nullptr;
         pipelineLayoutInfo.setLayoutCount = 4;
         pipelineLayoutInfo.pSetLayouts = layouts;
+        pipelineLayoutInfo.pPushConstantRanges = &push_constant;
+        pipelineLayoutInfo.pushConstantRangeCount = 1;
+
         if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create pipeline layout!");
         }
@@ -1184,11 +1202,10 @@ namespace BEbraEngine {
     {
         VkDescriptorSetLayout layoutPoint;
         VkDescriptorSetLayout layoutDirection;
-
         std::array<VkDescriptorSetLayoutBinding, 1> LightLayoutBinding{};
         LightLayoutBinding[0].binding = 0;
         LightLayoutBinding[0].descriptorCount = 1;
-        LightLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        LightLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         LightLayoutBinding[0].pImmutableSamplers = nullptr;
         LightLayoutBinding[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
@@ -1471,14 +1488,30 @@ namespace BEbraEngine {
 
             vkCmdBeginRenderPass(RenderBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-
+            int count = lights.size();
+            vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(int), &count);
             {
-                light.lock()->update();
                 globalLight.lock()->update();
                 vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLight.lock()->descriptor, 0, 0);
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &light.lock()->descriptor, 0, 0);
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &lights.begin()->lock()->descriptor, 0, nullptr);
                 vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
+                
+                int j = 0; 
+                for (auto lock_light = lights.begin(); lock_light != lights.end(); ++lock_light) {
 
+                    if (lock_light->expired()) {
+                        lock_light = lights.erase(lock_light);
+                        --lock_light;
+                        j--;
+                    }
+                    else {
+                        auto light = lock_light->lock();
+                        light->update();
+                       // vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &light->descriptor, 0, 0);
+                    }
+                    j++;
+                }
+                
                 for (auto lock_object = objects.begin(); lock_object != objects.end(); ++lock_object) {
                     if (lock_object->expired()) {
                         lock_object = objects.erase(lock_object);
@@ -1860,7 +1893,8 @@ namespace BEbraEngine {
         descriptorWrites[0].dstSet = set;
         descriptorWrites[0].dstBinding = 0;
         descriptorWrites[0].dstArrayElement = 0;
-        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+
         descriptorWrites[0].descriptorCount = 1;
         descriptorWrites[0].pBufferInfo = &bufferInfo;
 
@@ -2000,7 +2034,7 @@ namespace BEbraEngine {
     }
     void VulkanRender::addLight(std::weak_ptr<PointLight> light)
     {
-        this->light = std::static_pointer_cast<VulkanLight>(light.lock());
+        lights.push_back(std::static_pointer_cast<VulkanLight>(light.lock()));
     }
     VulkanRender::VulkanRender() {}
 

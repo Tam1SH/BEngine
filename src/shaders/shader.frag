@@ -1,6 +1,7 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+/*
 layout(std140, set = 2, binding = 0) uniform PointLightData {
 
     vec3 position;
@@ -14,8 +15,8 @@ layout(std140, set = 2, binding = 0) uniform PointLightData {
     float quadratic;
 
 } PointLight;
-
-layout(std140, set = 3, binding = 0) uniform DirLightData {
+*/
+layout(std140, set = 3, binding = 0) buffer DirLightData {
 
     vec3 direction;
 	
@@ -58,12 +59,10 @@ layout(location = 5) in vec3 objectColor;
 layout(location = 0) out vec4 outColor;
 
 
-vec3 CalcDirLight(vec3 normal, vec3 viewDir);
-vec3 CalcPointLight(vec3 normal, vec3 viewDir);
 //vec3 CalcSpotLight(vec3 normal, vec3 viewDir);
 
 
-/*
+
 struct _PointLight {
 
     vec3 position;
@@ -78,11 +77,18 @@ struct _PointLight {
 
 };
 
-layout(std140,set = 5, binding = 0) readonly buffer lightsBuffer {
+layout( push_constant ) uniform constants {
+    int count_lights;
+};
+
+layout(std140, set = 2, binding = 0) readonly buffer lightsBuffer {
 
 	_PointLight lights[];
 } lights;
-*/
+
+
+vec3 CalcDirLight(vec3 normal, vec3 viewDir);
+vec3 CalcPointLight(_PointLight pLight, vec3 normal, vec3 viewDir);
 
 void main() {
 
@@ -100,38 +106,38 @@ void main() {
     // Этап №1: Направленное освещение
     vec3 result = vec3(0);
     result = CalcDirLight(norm, viewDir);
-	
     // Этап №2: Точечные источники света
-    for(int i = 0; i < 1; i++)
-        result += CalcPointLight(norm, viewDir);  
+    for(int i = 0; i < count_lights; i++) {
+     result += CalcPointLight(lights.lights[i], norm, viewDir);  
+    }
 		
     // Этап №3: Прожектор
     //result += CalcSpotLight(norm, viewDir);    
     
     vec4 FragColor = vec4(result * objectColor,1.0f);
 
-    outColor = texture(texSampler, fragTexCoord) * FragColor; 
-   // outColor = FragColor; 
+   // outColor = texture(texSampler, fragTexCoord) * FragColor; 
+    outColor = FragColor; 
 }
 
 // Вычисляем цвет при использовании точечного источника света
-vec3 CalcPointLight(vec3 normal, vec3 viewDir)
+vec3 CalcPointLight(_PointLight pLight, vec3 normal, vec3 viewDir)
 {
-    vec3 lightDir = normalize(PointLight.position - fragPosition);
+    vec3 lightDir = normalize(pLight.position - fragPosition);
 
     float diff = max(dot(normal, lightDir), 0.0);
 
     float ambientStrength = 0.01;
-    vec3 ambient = PointLight.ambient * ambientStrength;
+    vec3 ambient = pLight.ambient * ambientStrength;
 
-    vec3 diffuse = diff * PointLight.diffuse;
+    vec3 diffuse = diff * pLight.diffuse;
     float specularStrength = 0.5f;
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * PointLight.specular; 
+    vec3 specular = specularStrength * spec * pLight.specular; 
     
-    float distance = length(PointLight.position - fragPosition);
-    float attenuation = 1.0 / (PointLight.constant + PointLight.linear * distance + PointLight.quadratic * (distance * distance));    
+    float distance = length(pLight.position - fragPosition);
+    float attenuation = 1.0 / (pLight.constant + pLight.linear * distance + pLight.quadratic * (distance * distance));    
 
     ambient *= attenuation;  
     diffuse *= attenuation;

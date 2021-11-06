@@ -99,8 +99,8 @@ namespace BEbraEngine {
             data1.diffuse = color;
             data1.specular = color;
             data1.constant = 1.f;
-            data1.linear = 0.35f;
-            data1.quadratic = 1.8f;
+            data1.linear = 0.022f;
+            data1.quadratic = 0.0019f;
             data->setData(&data1, sizeof(ShaderData));
         }
 
