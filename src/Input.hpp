@@ -80,6 +80,7 @@ namespace BEbraEngine {
     class Input {
 
     public:
+        friend class BaseWindow;
 
         static int* mouse_x;
 
@@ -99,12 +100,16 @@ namespace BEbraEngine {
 
         static bool IsKeyPressed(KEY_CODE key);
 
+        static bool isKeyReleased(KEY_CODE key);
+
         Input();
 
         ~Input();
     private:
 
         static const Uint8* state;
+
+        static const Uint8* old_state;
 
         static int* scroll_x;
 

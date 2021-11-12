@@ -26,13 +26,13 @@ namespace BEbraEngine {
 		void Create(BaseWindow* window) override;
 
 
-        void AddObject(std::weak_ptr<RenderObject> object) override;
+        void addObject(std::weak_ptr<RenderObject> object) override;
         void InitCamera(Camera* alloced_camera) override;
-        RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
-        RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
-        RenderBuffer* CreateUniformBuffer(size_t size) override;
+        RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices) override;
+        RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices) override;
+        RenderBuffer* createUniformBuffer(size_t size) override;
 
-        RenderBuffer* CreateStorageBuffer(size_t size);
+        RenderBuffer* createStorageBuffer(size_t size);
 
 
         void Render();

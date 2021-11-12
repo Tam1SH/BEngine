@@ -4,12 +4,11 @@
 //TODO: ну хуй знает, в принципе от этого может быть толк, но как минимум избавиться от вулкана.
 namespace BEbraEngine {
     
+    /*
     void VulkanAsyncExecuter::Create(VkDevice& device, VulkanRender* render)
     {
         this->render = render;
-        CommandBuffer::SetDevice(device);
         this->device = device;
-        CommandBuffer::SetRender(render);
         _pool = render->CreateCommandPool();
         
         maxTasks = taskPool.max_concurrency() / 2;
@@ -34,6 +33,7 @@ namespace BEbraEngine {
 
     void VulkanAsyncExecuter::WriteAllBuffers()
     {
+    
         if (!tasks.empty()) {
             int count = std::min(totalTasks, maxTasks);
             for (int i = 0; i < count; i++) {
@@ -84,7 +84,7 @@ namespace BEbraEngine {
 
             }
         }
-
+        
     }
 
     bool VulkanAsyncExecuter::AllTasksCompleted()
@@ -102,10 +102,12 @@ namespace BEbraEngine {
         std::vector<VkCommandBuffer> completedBuffers;
         int count = RecordedBuffers.unsafe_size();
         for (int i = 0; i < count; i++) {
+            
             CommandBuffer buf;
             RecordedBuffers.try_pop(buf);
             completedBuffers.push_back(buf);
             RecordedBuffers.push(buf);
+            
         }
 
         for (auto& buffer : completedBuffers) {
@@ -125,7 +127,7 @@ namespace BEbraEngine {
         //});
     }
 
-    VkCommandBuffer VulkanAsyncExecuter::CreateBuffer()
+    VkCommandBuffer VulkanAsyncExecuter::createBuffer()
     {
         VkCommandBuffer buffer;
         VkCommandBufferAllocateInfo info{};
@@ -140,5 +142,6 @@ namespace BEbraEngine {
         return buffer;
 
     }
+    */
     
 }

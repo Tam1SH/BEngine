@@ -2,7 +2,7 @@
 #define NOMINMAX
 #include "GameObjectFactory.hpp"
 #include "TransformFactory.hpp"
-#include "RenderObjectCreator.hpp"
+#include "RenderObjectFactory.hpp"
 #include "GameObject.hpp"
 #include "RigidBoby.hpp"
 #include "RenderObject.hpp"
@@ -23,9 +23,8 @@ namespace BEbraEngine {
 		rigidBodyFactory = physics->getRigidBodyFactory();
 		transFactory = std::unique_ptr<TransformFactory>(new TransformFactory());
 
-		GameObject::SetFactory(this);
 	}
-	std::shared_ptr<GameObject> GameObjectFactory::Create(const Vector3& position)
+	std::shared_ptr<GameObject> GameObjectFactory::create(const Vector3& position)
 	{
 		auto obj = std::shared_ptr<GameObject>(new GameObject());
 		auto name = obj->GetName();
@@ -34,12 +33,14 @@ namespace BEbraEngine {
 		//workspace->addComponent(obj);
 		ColliderInfo info;
 		info.scale = Vector3(1);
+		info.position = position;
+
 		auto collider = std::shared_ptr<Collider>(colliderFactory->create(&info));
 		auto transform = std::shared_ptr<Transform>(Transform::New(position));
 		auto renderObj = std::shared_ptr<RenderObject>(renderFactory->createObject());
 		auto rigidbody = std::shared_ptr<RigidBody>(rigidBodyFactory->create(collider.get()));
 
-		renderFactory->BindTransform(renderObj.get(), transform.get());
+		renderFactory->BindTransform(renderObj, transform);
 
 		rigidbody->SetTransform(transform);
 
@@ -51,8 +52,8 @@ namespace BEbraEngine {
 		trans.setIdentity();
 		trans.setOrigin(btVector3(position.x, position.y, position.z));
 		rigidbody->GetRigidBody()->setWorldTransform(trans);
-		render->AddObject(renderObj);
-		physics->AddObject(rigidbody);
+		render->addObject(renderObj);
+		physics->addObject(rigidbody);
 
 		return obj;
 	}
@@ -66,8 +67,8 @@ namespace BEbraEngine {
 		auto name = light->GetName();
 
 		light->SetName(name + std::to_string(workspace->GetSize()));
-		workspace->addComponent(light);
-		renderFactory->BindTransform(light.get(), transform.get());
+		//workspace->addComponent(light);
+		renderFactory->BindTransform(light, transform);
 		render->addLight(light);
 		return light;
 	}
@@ -87,6 +88,7 @@ namespace BEbraEngine {
 
 	void GameObjectFactory::Destroy(GameObject* object)
 	{
+		renderFactory->destroyObject(object->GetComponent<RenderObject>());
 	}
 
 	void GameObjectFactory::Destroy(std::shared_ptr<GameObject> object)
@@ -94,6 +96,7 @@ namespace BEbraEngine {
 		auto begin = workspace->GetList().begin();
 		auto end = workspace->GetList().end();
 
+		/*
 		if (workspace->GetSize() != 0) {
 			workspace->GetList().erase(
 				std::remove_if(begin, end,
@@ -106,6 +109,8 @@ namespace BEbraEngine {
 					})
 			);
 		}
+		*/
+		renderFactory->destroyObject(object->GetComponent<RenderObject>());
 	}
 
 	void GameObjectFactory::SetWorkSpace(std::shared_ptr<WorkSpace> workspace)

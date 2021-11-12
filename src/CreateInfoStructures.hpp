@@ -7,6 +7,8 @@ namespace BEbraEngine {
 	class ColliderInfo {
 	public:
 		Vector3 scale;
+		Vector3 position;
+		int type;
 
 	};
 	class LightDescriptorInfo {

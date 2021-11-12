@@ -1,5 +1,5 @@
 #include "platform.hpp"
 
 #define BEBRA_USE_SDL
-#include <SDL.h>
+#include <SDL/SDL.h>
 typedef SDL_Window WindowHandle;

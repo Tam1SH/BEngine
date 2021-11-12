@@ -11,17 +11,16 @@ namespace BEbraEngine {
 	class ScriptManager
 	{
 	private:
-		std::map<std::wstring, std::shared_ptr<IScriptFactory>> engines;
-		std::map<std::wstring, std::shared_ptr<BaseScript>> scripts;
+		std::map<std::string, std::shared_ptr<BaseScriptEngine>> engines;
+		std::map<std::string, std::shared_ptr<BaseScript>> scripts;
 
 		std::shared_ptr<WorkSpace> workspace;
 	private:
-		//void AddScript(const std::filesystem::path& path, const wchar_t* engineName);
 
 	public:
 		void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
 
-		std::shared_ptr<BaseScript> GetScriptByName(std::wstring name);
+		std::shared_ptr<BaseScript> GetScriptByName(std::string name);
 
 		void RunScripts();
 

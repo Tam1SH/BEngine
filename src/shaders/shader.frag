@@ -16,7 +16,7 @@ layout(std140, set = 2, binding = 0) uniform PointLightData {
 
 } PointLight;
 */
-layout(std140, set = 3, binding = 0) buffer DirLightData {
+layout(std140, set = 3, binding = 0) readonly buffer DirLightData {
 
     vec3 direction;
 	
@@ -108,8 +108,9 @@ void main() {
     result = CalcDirLight(norm, viewDir);
     // Этап №2: Точечные источники света
     for(int i = 0; i < count_lights; i++) {
-     result += CalcPointLight(lights.lights[i], norm, viewDir);  
+        result += CalcPointLight(lights.lights[i], norm, viewDir);  
     }
+
 		
     // Этап №3: Прожектор
     //result += CalcSpotLight(norm, viewDir);    

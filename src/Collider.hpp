@@ -1,6 +1,6 @@
 #pragma once
 #include "AbstractComponent.hpp"
-#include "btBulletCollisionCommon.h"
+#include <Physics/btBulletCollisionCommon.h>
 #include "Vector3.hpp"
 namespace BEbraEngine {
 
@@ -16,7 +16,7 @@ namespace BEbraEngine {
 	public:
 		btCollisionObject* get() { return _collider.get(); }
 
-		void setSize(const Vector3& size) {
+		void setScale(const Vector3& size) {
 			this->size = size;
 			_collider->getCollisionShape()->setLocalScaling(size);
 		}

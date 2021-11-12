@@ -2,35 +2,29 @@
 #include "stdafx.h"
 #include "IRenderObjectPool.hpp"
 #include <optional>
+
+
 namespace BEbraEngine {
-	class RenderObject;
-	class AbstractRender;
-	class RenderBuffer;
-	class IRenderObjectFactory;
+	class VulkanRender;
 }
 namespace BEbraEngine {
 
-
 	class VulkanRenderObjectPool : public IRenderObjectPool {
 	public:
-		using RenderObjects = tbb::concurrent_queue<RenderObject*>;
-	public:
-		void allocate(size_t count) override;
-		void free(RenderObject* obj) override;
+		void allocate(size_t count, size_t sizeofData, AbstractRender::TypeBuffer type) override;
+		void deallocate(size_t count) override;
+		void free(std::weak_ptr<RenderBufferView> obj) override;
 		void setContext(AbstractRender* render) override;
-		void setFactory(IRenderObjectFactory* factory) override;
-		std::optional<RenderObject*> get() override;
-
+		RenderBuffer* getBuffer() override { return _buffer; }
+		size_t getCount() override;
+		std::optional<std::weak_ptr<RenderBufferView>> get() override;
 		~VulkanRenderObjectPool();
 	public:
-		RenderBuffer* _bufferTransforms;
-		AbstractRender* _render;
-		IRenderObjectFactory* _factory;
-		RenderObjects _pool;
-		std::vector<bool> _poolCheckIsFree;
-		std::vector<VkDescriptorSet> _sets;
-		std::vector<uint32_t> offsets;
-		std::mutex mutex_get;
+		RenderBuffer* _buffer;
+		tbb::concurrent_queue<std::shared_ptr<RenderBufferView>> _pool;
+		tbb::concurrent_hash_map<size_t, std::shared_ptr<RenderBufferView>> used_items;
+		VulkanRender* _render;
+		size_t totalCount;
 	};
 }
 

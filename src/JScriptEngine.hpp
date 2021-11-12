@@ -6,7 +6,7 @@
 #include <memory>
 #include <v8.h>
 namespace BEbraEngine {
-    class JScriptEngine : public IScriptFactory
+    class JScriptEngine : public BaseScriptEngine
     {
     private:
         friend class JScript;

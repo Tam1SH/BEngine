@@ -34,9 +34,11 @@ namespace BEbraEngine {
 		SDL_SetWindowSize(handle, newSize.x, newSize.y);
 	}
 	void BaseWindow::update() {
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
+
 			//    ImGui_ImplSDL2_ProcessEvent(&event);
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
 				auto size = GetWindowSize();
@@ -48,6 +50,7 @@ namespace BEbraEngine {
 		}
 		notifyOnUpdateFrame();
 		onUpdate();
+		Input::state = SDL_GetKeyboardState(NULL);
 
 	}
 	void BaseWindow::_onCreateWindow(int w, int h, const SurfaceType& type, const char* title)

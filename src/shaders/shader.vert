@@ -1,10 +1,5 @@
 #version 450
-layout(std140, set = 0,  binding = 0) uniform GameObjectData {
-    mat4 model;
-    vec3 color;
-} object;
-
-
+#extension GL_ARB_shader_draw_parameters : enable
 
 layout(std140, set = 1, binding = 0) buffer CameraData {
     mat4 proj;
@@ -12,6 +7,14 @@ layout(std140, set = 1, binding = 0) buffer CameraData {
     vec3 position;
 } Camera;
 
+struct gameObject {
+    mat4 model;
+    vec3 color;
+};
+
+layout(std140, set = 0, binding = 0) readonly buffer objectBuffer {
+	gameObject objects[];
+} objects;
 
 
 layout(location = 0) in vec3 inPosition;
@@ -27,14 +30,14 @@ layout(location = 4) out vec3 cameraPosition;
 layout(location = 5) out vec3 objectColor;
 
 void main() {
-    gl_Position = Camera.proj * Camera.view * object.model * vec4(inPosition, 1.0);
-    fragPosition = vec3(object.model * vec4(inPosition, 1.0));
-    fNormal = mat3(transpose(inverse(object.model))) * normal;
+    gl_Position = Camera.proj * Camera.view * objects.objects[gl_BaseInstanceARB].model * vec4(inPosition, 1.0);
+    fragPosition = vec3(objects.objects[gl_BaseInstanceARB].model * vec4(inPosition, 1.0));
+    fNormal = mat3(transpose(inverse(objects.objects[gl_BaseInstanceARB].model))) * normal;
 
     fragColor = Camera.position;
     fragTexCoord = inTexCoord;
     cameraPosition = Camera.position;
-    objectColor = object.color;
+    objectColor = objects.objects[gl_BaseInstanceARB].color;
 
 
 }

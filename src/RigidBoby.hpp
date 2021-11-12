@@ -1,6 +1,6 @@
 #pragma once
 #include "AbstractComponent.hpp"
-#include "btBulletDynamicsCommon.h"
+#include <Physics/btBulletDynamicsCommon.h>
 #include <memory>
 namespace BEbraEngine {
 	class Transform;

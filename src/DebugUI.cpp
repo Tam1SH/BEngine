@@ -45,7 +45,7 @@ namespace BEbraEngine {
 
         // Use any command queue
         VkCommandPool command_pool = VulkanRender::CreateCommandPool();
-        VkCommandBuffer command_buffer = VulkanRender::createCmdBuffer(command_pool);
+        VkCommandBuffer command_buffer = VulkanRender::createCommandBuffer(command_pool);
 
         VkResult err = vkResetCommandPool(VulkanRender::device, command_pool, 0);
         check_vk_result(err);
@@ -198,7 +198,7 @@ namespace BEbraEngine {
                 ImGui::SetNextWindowSize(ImVec2(size.x / 5.0f, size.y));
                 ImGui::Begin("Tree", 0, ImGuiWindowFlags_NoResize
                     | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
-                // Create a window called "Hello, world!" and append into it.
+                // ñreate a window called "Hello, world!" and append into it.
                 TreeObjects(workspace);
 
 

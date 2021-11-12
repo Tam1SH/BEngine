@@ -1,4 +1,3 @@
-
 #pragma once
 #include "AbstractComponent.hpp"
 #include "stdafx.h"
@@ -13,16 +12,7 @@ namespace BEbraEngine {
     class GameObjectFactory;
 
     class GameObject : public GameObjectComponent {
-
     public:
-        static void SetFactory(GameObjectFactory* factory);
-
-        static std::shared_ptr<GameObject> New(const Vector3& position = Vector3(0));
-
-        static void Destroy(std::shared_ptr<GameObject> object);
-
-        void Destroy();
-
         template<typename T>
         T* GetComponent() {
             for (auto component : Components) {
@@ -33,15 +23,23 @@ namespace BEbraEngine {
             throw std::exception();
         }
 
+        template<typename T>
+        std::optional<T*> getComponent() {
+            for (auto component : Components) {
+                if (dynamic_cast<T*>(component.get())) {
+                    return std::optional<T*>(
+                        static_cast<T*>(component.get())
+                        );
+                }
+            }
+            return std::optional<T*>();
+        }
+
         bool IsComposite() const override;
 
         GameObject();
 
         ~GameObject();
-
-    private:
-        static GameObjectFactory* factory;
-
 
     };
 }

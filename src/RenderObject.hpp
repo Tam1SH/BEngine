@@ -1,13 +1,16 @@
 #pragma once
 #include "stdafx.h"
 #include "AbstractComponent.hpp"
-#include "RenderObjectCreator.hpp"
 #include "RenderBuffer.hpp"
 #include "IReusable.hpp"
 #include "Model.hpp"
+#include "matrix.hpp"
+namespace BEbraEngine {
+    class VulkanRenderObjectFactory;
+}
+
 //TODO: draw is bad bleat.
 namespace BEbraEngine {
-    class Mesh1;
     class Transform;
     class Texture;
     class RenderObject : public GameObjectComponent, public IReusable {
@@ -18,20 +21,20 @@ namespace BEbraEngine {
         };
     public:
 
-        virtual ~RenderObject();
+        virtual ~RenderObject() {}
     public:
-
+        //TODO: useless;
         std::unique_ptr<Texture> texture;
 
         std::shared_ptr<Model> model;
 
-        std::shared_ptr<RenderBufferView> matrix;
+        std::weak_ptr<RenderBufferView> matrix;
 
-        Transform* transform;
+        std::weak_ptr<Transform> transform;
 
         void update();
 
-        RenderObject();
+        RenderObject() {}
 
         void setColor(const Vector3& color) {
 
@@ -48,17 +51,9 @@ namespace BEbraEngine {
     public:
         void release() override;
 
-        void recreate();
-
-        ~VulkanRenderObject();
+        ~VulkanRenderObject() {}
     public:
         void Draw(VkCommandBuffer cmd);
-
-        friend class VulkanRenderObjectFactory;
-
-        static VulkanRenderObjectFactory* factory;
-
-        static void SetFactory(VulkanRenderObjectFactory* factory);
 
         VkPipelineLayout* layout;
 
@@ -81,9 +76,9 @@ namespace BEbraEngine {
             alignas(4) float quadratic;
         };
     public:
-        std::shared_ptr<RenderBufferView> data;
+        std::weak_ptr<RenderBufferView> data;
 
-        Transform* transform;
+        std::weak_ptr<Transform> transform;
 
         void setColor(const Vector3& color) {
 
@@ -92,17 +87,8 @@ namespace BEbraEngine {
         Vector3& getColor() {
             return color;
         }
-        void update() {
-            ShaderData data1;
-            data1.position = transform->GetPosition();
-            data1.ambient = color;
-            data1.diffuse = color;
-            data1.specular = color;
-            data1.constant = 1.f;
-            data1.linear = 0.022f;
-            data1.quadratic = 0.0019f;
-            data->setData(&data1, sizeof(ShaderData));
-        }
+        void update();
+
 
         PointLight() { name = "Light"; }
         virtual ~PointLight() {}
@@ -126,9 +112,8 @@ namespace BEbraEngine {
 
 
     public:
-        std::shared_ptr<RenderBufferView> data;
+        std::weak_ptr<RenderBufferView> data;
 
-        Transform* transform;
         void setColor(const Vector3& color) {
 
             this->color = color;
@@ -138,11 +123,16 @@ namespace BEbraEngine {
         }
         void update() {
             ShaderData data1;
-            data1.direction = direction;
-            data1.ambient = color;
-            data1.diffuse = color;
-            data1.specular = color;
-            data->setData(&data1, sizeof(ShaderData));
+            if (!data.expired()) {
+                data1.direction = direction;
+                data1.ambient = color;
+                data1.diffuse = color;
+                data1.specular = color;
+                data.lock()->setData(&data1, sizeof(ShaderData));
+            }
+            else
+                Debug::Log(GetName() + " has invalid data");
+
         }
         Vector3& getDirection() {
             return direction;
@@ -160,14 +150,12 @@ namespace BEbraEngine {
 
     class VulkanLight : public PointLight {
     public:
-        VkPipelineLayout* layout;
 
         VkDescriptorSet descriptor;
     };
 
     class VulkanDirLight : public DirLight {
     public:
-        VkPipelineLayout* layout;
 
         VkDescriptorSet descriptor;
         ~VulkanDirLight() {}

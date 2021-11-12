@@ -1,0 +1,153 @@
+#include "stdafx.h"
+#include "RenderObject.hpp"
+#include "RenderObjectFactory.hpp"
+#include "CreateInfoStructures.hpp"
+#include "VulkanRender.hpp"
+#include "ImageCreator.hpp"
+#include "Image.hpp"
+#include "Transform.hpp"
+#include "DirectRender.hpp"
+#include "VkBuffer.hpp"
+#include "RenderBuffer.hpp"
+#include "Vertex.hpp"
+#include "Image.hpp"
+#include "RenderObjectPool.hpp"
+#include "Debug.h"
+#include "MeshFactory.hpp"
+
+namespace BEbraEngine {
+
+    RenderObject* VulkanRenderObjectFactory::createObject()
+    {
+        auto maybe_object_view = _poolofObjects->get();
+        std::shared_ptr<RenderBufferView> object_view;
+        if (maybe_object_view.has_value()) {
+            object_view = maybe_object_view.value().lock();
+        }
+        auto obj = new VulkanRenderObject();
+        obj->SetName("RenderObject");
+        obj->model = meshFactory->getDefaultModel("SPHERE");
+
+        obj->texture = std::unique_ptr<Texture>(textureFactory->createEmptyTexture());
+        obj->matrix = object_view;
+
+        obj->setColor(Vector3(0.2f, 0.4f, 0.3f));
+        VulkanDescriptorSetInfo setinfo{};
+        setinfo.sampler = obj->texture->sampler;
+        setinfo.imageView = obj->texture->imageView;
+        setinfo.bufferView = object_view.get();
+
+        obj->descriptor = render->createDescriptor(&setinfo);
+        obj->layout = &render->pipelineLayout;
+        return obj;
+    }
+
+    PointLight* VulkanRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)
+    {
+        auto maybe_object_view = _poolofPointLights->get();
+        std::shared_ptr<RenderBufferView> object_view;
+        if (maybe_object_view.has_value()) {
+            object_view = maybe_object_view.value().lock();
+        }
+
+        auto light = new VulkanLight();
+        light->setColor(color);
+        std::cout << "range: " << object_view->availableRange << std::endl;
+        std::cout << "offset: " << object_view->offset << std::endl;
+        std::cout << "buffer: " << object_view->buffer << std::endl;
+        light->data = object_view;
+        light->descriptor = set;
+
+        return light;
+    }
+
+    DirLight* VulkanRenderObjectFactory::createDirLight(const Vector3& color, const Vector3& direction)
+    {
+        auto maybe_light_view = _poolofDirLights->get();
+        std::shared_ptr<RenderBufferView> view;
+
+        if (maybe_light_view.has_value()) {
+            view = maybe_light_view.value().lock();
+        }
+
+        auto light = new VulkanDirLight();
+        light->setColor(color);
+        light->setDirection(direction);
+
+
+        auto info = LightDescriptorInfo();
+        info.bufferView = view.get();
+        info.type = LightDescriptorInfo::Type::Direction;
+
+        light->data = view;
+        light->descriptor = render->createDescriptor(&info);
+        return light;
+    }
+
+    void VulkanRenderObjectFactory::setContext(AbstractRender* render)
+    {
+        this->render = dynamic_cast<VulkanRender*>(render);
+
+        textureFactory = new TextureFactory(render);
+
+        _poolofObjects = std::make_unique<VulkanRenderObjectPool>();
+        _poolofObjects->setContext(render);
+        _poolofObjects->setUsage(IRenderObjectPool::Usage::SeparateOneBuffer);
+        _poolofObjects->allocate(500, sizeof(RenderObject::ShaderData) * 500, AbstractRender::TypeBuffer::Storage);
+
+        _poolofDirLights = std::make_unique<VulkanRenderObjectPool>();
+        _poolofDirLights->setContext(render);
+        _poolofDirLights->allocate(1, sizeof(DirLight::ShaderData), AbstractRender::TypeBuffer::Storage);
+
+        _poolofPointLights = std::make_unique<VulkanRenderObjectPool>();
+        _poolofPointLights->setContext(render);
+        _poolofPointLights->setUsage(IRenderObjectPool::Usage::SeparateOneBuffer);
+        _poolofPointLights->allocate(100, sizeof(PointLight::ShaderData) * 100, AbstractRender::TypeBuffer::Storage);
+
+
+        meshFactory = std::unique_ptr<MeshFactory>(new MeshFactory(render));
+
+
+        auto v =  RenderBufferView();
+        v.buffer = _poolofPointLights->getBuffer();
+        v.availableRange = sizeof(PointLight::ShaderData) * 100;
+
+        auto info = LightDescriptorInfo();
+        info.bufferView = &v;
+        info.type = LightDescriptorInfo::Type::Point;
+        set = this->render->createDescriptor(&info);
+    }
+
+    void VulkanRenderObjectFactory::destroyObject(RenderObject* object)
+    {
+        auto obj = static_cast<VulkanRenderObject*>(object); 
+        render->freeDescriptor(obj);
+        _poolofObjects->free(obj->matrix);
+    }
+
+    void VulkanRenderObjectFactory::BindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform)
+    {
+        light->transform = transform;
+    }
+    void VulkanRenderObjectFactory::BindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform)
+    {
+        object->transform = transform;
+    }
+
+    void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)
+    {
+        VulkanDescriptorSetInfo setinfo{};
+        setinfo.sampler = obj->texture->sampler;
+        setinfo.imageView = obj->texture->imageView;
+        setinfo.bufferView = obj->matrix.lock().get();
+        obj->descriptor = render->createDescriptor(&setinfo);
+    }
+
+    VulkanRenderObjectFactory::VulkanRenderObjectFactory()
+    {
+    }
+
+    VulkanRenderObjectFactory::~VulkanRenderObjectFactory()
+    {
+    }
+}

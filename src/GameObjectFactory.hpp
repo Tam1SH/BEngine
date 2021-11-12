@@ -6,6 +6,7 @@
 #include "ColliderFactory.hpp"
 #include "RigidBodyFactory.hpp"
 #include "Vector3.hpp"
+#include "IProxyGameObjectFactory.hpp"
 namespace BEbraEngine {
 	class GameObject;
 	class Physics;
@@ -19,16 +20,16 @@ namespace BEbraEngine {
 namespace BEbraEngine {
 
 
-	class GameObjectFactory {
+	class GameObjectFactory: public IProxyGameObjectFactory {
 
 	public:
 		GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics);
 
-		std::shared_ptr<GameObject> Create(const Vector3& position);
+		std::shared_ptr<GameObject> create(const Vector3& position) override;
 
-		std::shared_ptr<PointLight> createLight(const Vector3& position);
+		std::shared_ptr<PointLight> createLight(const Vector3& position) override;
 
-		std::shared_ptr<DirLight> createDirLight(const Vector3& direction);
+		std::shared_ptr<DirLight> createDirLight(const Vector3& direction) override;
 
 		void Destroy(GameObject* object);
 

@@ -21,7 +21,7 @@ namespace BEbraEngine {
 	{
 		ScriptManager::workspace = workspace;
 	}
-	std::shared_ptr<BaseScript> ScriptManager::GetScriptByName(std::wstring name)
+	std::shared_ptr<BaseScript> ScriptManager::GetScriptByName(std::string name)
 	{
 		return scripts[name];
 	}
@@ -66,8 +66,8 @@ namespace BEbraEngine {
 		//std::string st{ s.begin(), s.end() };
 
 
-		//engines[LUA] = std::shared_ptr<IScriptFactory>(new LuaEngine());
-		//engines[JAVASCRIPT] = std::shared_ptr<IScriptFactory>(
+		//engines[LUA] = std::shared_ptr<BaseScriptEngine>(new LuaEngine());
+		//engines[JAVASCRIPT] = std::shared_ptr<BaseScriptEngine>(
 			//new JScriptEngine(const_cast<char*>(st.c_str())));
 
 

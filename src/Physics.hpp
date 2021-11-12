@@ -1,7 +1,9 @@
 #pragma once
 #include "stdafx.h"
-#include "btBulletCollisionCommon.h"
-#include "btBulletDynamicsCommon.h"
+
+#include <Physics/btBulletCollisionCommon.h>
+#include <Physics/btBulletDynamicsCommon.h>
+
 #include "ColliderFactory.hpp"
 #include "RigidBodyFactory.hpp"
 
@@ -12,12 +14,11 @@ namespace BEbraEngine {
 
     class Physics {
     private:
-
+        
         std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
 
         ///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
         std::unique_ptr<btCollisionDispatcher> dispatcher;
-
         ///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
         std::unique_ptr<btBroadphaseInterface> overlappingPairCache;
 
@@ -38,7 +39,7 @@ namespace BEbraEngine {
         RigidBodyFactory* getRigidBodyFactory() { return rigidBodyFactory.get(); }
         void addRigidBody(btRigidBody* body);
         void removeRigidBody(btRigidBody* body);
-        void AddObject(std::weak_ptr<RigidBody> body);
+        void addObject(std::weak_ptr<RigidBody> body);
 
         Physics();
 

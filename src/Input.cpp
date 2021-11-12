@@ -7,6 +7,8 @@ namespace BEbraEngine {
 
     const uint8_t* Input::state;
 
+    const uint8_t* Input::old_state;
+
     int* Input::mouse_y = new int();
 
     int* Input::scroll_x = new int();
@@ -46,11 +48,19 @@ namespace BEbraEngine {
         return false;
     }
 
+    bool Input::isKeyReleased(KEY_CODE key)
+    {
+        if (Input::state[(int)key])
+            return true;
+        return false;
+    }
+
     void Input::SetWindow(WindowHandle* window)
     {
         
         SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
         Input::state = SDL_GetKeyboardState(NULL);
+        Input::old_state = SDL_GetKeyboardState(NULL);
         Input::window = window;
     }
 

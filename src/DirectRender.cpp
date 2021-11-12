@@ -31,15 +31,15 @@ namespace BEbraEngine {
         InitDevice(win);
         InitResource();
     }
-    void DirectRender::AddObject(std::weak_ptr<RenderObject> object)
+    void DirectRender::addObject(std::weak_ptr<RenderObject> object)
     {
         objects.push_back(object);
     }
     void DirectRender::InitCamera(Camera* camera)
     {
-        camera->cameraData = CreateStorageBuffer(sizeof(Matrix4) * 2);
+        camera->cameraData = createStorageBuffer(sizeof(Matrix4) * 2);
     }
-    RenderBuffer* DirectRender::CreateIndexBuffer(std::vector<uint32_t> indices)
+    RenderBuffer* DirectRender::createIndexBuffer(std::vector<uint32_t> indices)
     {
         auto buff = new VulkanBuffer();
         D3D11_BUFFER_DESC bd;
@@ -52,26 +52,12 @@ namespace BEbraEngine {
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
         InitData.pSysMem = indices.data();
-        g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
+        g_pd3dDevice->createBuffer(&bd, &InitData, &buff->buf);
         buff->g_pImmediateContext = g_pImmediateContext;
 
         return buff;
     }
-    RenderBuffer* DirectRender::CreateUniformBuffer(size_t size) {
-
-        auto buff = new VulkanBuffer();
-        D3D11_BUFFER_DESC bd;
-        ZeroMemory(&bd, sizeof(bd));
-        bd.ByteWidth = size;
-        bd.Usage = D3D11_USAGE_DYNAMIC;
-        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        bd.MiscFlags = 0;
-        g_pd3dDevice->CreateBuffer(&bd, NULL, &buff->buf);
-        buff->g_pImmediateContext = g_pImmediateContext;
-        return buff;
-    }
-    RenderBuffer* DirectRender::CreateStorageBuffer(size_t size) {
+    RenderBuffer* DirectRender::createUniformBuffer(size_t size) {
 
         auto buff = new VulkanBuffer();
         D3D11_BUFFER_DESC bd;
@@ -81,11 +67,25 @@ namespace BEbraEngine {
         bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         bd.MiscFlags = 0;
-        g_pd3dDevice->CreateBuffer(&bd, NULL, &buff->buf);
+        g_pd3dDevice->createBuffer(&bd, NULL, &buff->buf);
         buff->g_pImmediateContext = g_pImmediateContext;
         return buff;
     }
-    RenderBuffer* DirectRender::CreateVertexBuffer(std::vector<Vertex> vertices) {
+    RenderBuffer* DirectRender::createStorageBuffer(size_t size) {
+
+        auto buff = new VulkanBuffer();
+        D3D11_BUFFER_DESC bd;
+        ZeroMemory(&bd, sizeof(bd));
+        bd.ByteWidth = size;
+        bd.Usage = D3D11_USAGE_DYNAMIC;
+        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        bd.MiscFlags = 0;
+        g_pd3dDevice->createBuffer(&bd, NULL, &buff->buf);
+        buff->g_pImmediateContext = g_pImmediateContext;
+        return buff;
+    }
+    RenderBuffer* DirectRender::createVertexBuffer(std::vector<Vertex> vertices) {
 
         auto buff = new VulkanBuffer();
         D3D11_BUFFER_DESC bd;
@@ -98,7 +98,7 @@ namespace BEbraEngine {
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
         InitData.pSysMem = vertices.data();
-        g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
+        g_pd3dDevice->createBuffer(&bd, &InitData, &buff->buf);
         
         // Set vertex buffer
         UINT stride = sizeof(vertices[0]);
@@ -252,7 +252,7 @@ namespace BEbraEngine {
             return hr;
         }
 
-        // Create the vertex shader
+        // ñreate the vertex shader
         hr = g_pd3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, &g_pVertexShader);
         if (FAILED(hr))
         {
@@ -268,7 +268,7 @@ namespace BEbraEngine {
         };
         UINT numElements = ARRAYSIZE(layout);
 
-        // Create the input layout
+        // ñreate the input layout
         hr = g_pd3dDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
             pVSBlob->GetBufferSize(), &g_pVertexLayout);
         pVSBlob->Release();
@@ -287,7 +287,7 @@ namespace BEbraEngine {
             return hr;
         }
 
-        // Create the pixel shader
+        // ñreate the pixel shader
         hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &g_pPixelShader);
         pPSBlob->Release();
         if (FAILED(hr))
@@ -301,7 +301,7 @@ namespace BEbraEngine {
 
 
     HRESULT DirectRender::InitResource() {
-        // Create vertex buffer
+        // ñreate vertex buffer
         HRESULT hr;
        // DirectX::XMFLOAT3 vertices[] =
       //  {
@@ -318,12 +318,12 @@ namespace BEbraEngine {
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
         InitData.pSysMem = vertices.data();
-        hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &g_pVertexBuffer);
+        hr = g_pd3dDevice->createBuffer(&bd, &InitData, &g_pVertexBuffer);
         if (FAILED(hr))
             return hr;
 
-        VulkanBuffer* vertbuf = dynamic_cast<VulkanBuffer*>(CreateVertexBuffer(vertices));
-        auto indicesbuf = dynamic_cast<VulkanBuffer*>(CreateIndexBuffer(indices));
+        VulkanBuffer* vertbuf = dynamic_cast<VulkanBuffer*>(createVertexBuffer(vertices));
+        auto indicesbuf = dynamic_cast<VulkanBuffer*>(createIndexBuffer(indices));
         // Set vertex buffer
         UINT stride = sizeof(Vertex);
         UINT offset = 0;
@@ -500,7 +500,7 @@ namespace BEbraEngine {
             if (FAILED(hr))
                 return hr;
 
-            // Create a render target view
+            // ñreate a render target view
             ID3D11Texture2D* pBackBuffer = NULL;
             hr = g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
             if (FAILED(hr))
@@ -533,7 +533,7 @@ namespace BEbraEngine {
                 return hr;
             }
 
-            // Create the vertex shader
+            // ñreate the vertex shader
             hr = g_pd3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, &g_pVertexShader);
             if (FAILED(hr))
             {
@@ -548,7 +548,7 @@ namespace BEbraEngine {
             };
             UINT numElements = ARRAYSIZE(layout);
 
-            // Create the input layout
+            // ñreate the input layout
             hr = g_pd3dDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
                 pVSBlob->GetBufferSize(), &g_pVertexLayout);
             pVSBlob->Release();
@@ -568,13 +568,13 @@ namespace BEbraEngine {
                 return hr;
             }
 
-            // Create the pixel shader
+            // ñreate the pixel shader
             hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &g_pPixelShader);
             pPSBlob->Release();
             if (FAILED(hr))
                 return hr;
 
-            // Create vertex buffer
+            // ñreate vertex buffer
             SimpleVertex vertices[] =
             {
                 XMFLOAT3(0.0f, 0.5f, 0.5f),
@@ -590,7 +590,7 @@ namespace BEbraEngine {
             D3D11_SUBRESOURCE_DATA InitData;
             ZeroMemory(&InitData, sizeof(InitData));
             InitData.pSysMem = vertices;
-            hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &g_pVertexBuffer);
+            hr = g_pd3dDevice->createBuffer(&bd, &InitData, &g_pVertexBuffer);
             if (FAILED(hr))
                 return hr;
 

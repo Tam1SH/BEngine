@@ -10,48 +10,98 @@
 #include "matrix.hpp"
 #include "CreateInfoStructures.hpp"
 #include "IRenderObjectFactory.hpp"
+#include "RenderObject.hpp"
+#include "VulkanRender.hpp"
 namespace BEbraEngine {
-	void VulkanRenderObjectPool::allocate(size_t count)
+	void VulkanRenderObjectPool::allocate(size_t count, size_t sizeofData, AbstractRender::TypeBuffer type)
 	{
-		auto new_size = count;
+		size_t 	new_size = totalCount + count;;
 
-		_bufferTransforms = _render->CreateUniformBuffer((sizeof(Matrix4) + sizeof(Vector4)) * new_size);
-		for (int i = 0; i < new_size; i++) {
-			auto bufferView = new RenderBufferView();
-			bufferView->availableRange = sizeof(Matrix4) + sizeof(Vector4);
-			bufferView->buffer = _bufferTransforms;
-			bufferView->offset = i * (sizeof(Matrix4) + sizeof(Vector4));
+		size_t alignsizeofData = 0;
 
-			RenderObjectInfo info{};
-			info.bufferView = bufferView;
-			//_pool.push(_factory->createObject(&info));
+		if (type == AbstractRender::TypeBuffer::Uniform) {
+
+			if (_usage == IRenderObjectPool::Usage::Default) {
+				alignsizeofData = _render->pad_uniform_buffer_size(sizeofData);
+				_buffer = _render->createUniformBuffer(alignsizeofData * new_size);
+			}
+
+			if (_usage == IRenderObjectPool::Usage::SeparateOneBuffer) {
+				alignsizeofData = _render->pad_storage_buffer_size(sizeofData / count);
+				_buffer = _render->createUniformBuffer(sizeofData);
+
+			}
+
 		}
+		if (type == AbstractRender::TypeBuffer::Storage)
+		{
+			
+			if (_usage == IRenderObjectPool::Usage::Default) {
+				alignsizeofData = _render->pad_storage_buffer_size(sizeofData);
+				_buffer = _render->createStorageBuffer(alignsizeofData * new_size);
+			}
+				
+			if (_usage == IRenderObjectPool::Usage::SeparateOneBuffer) {
+				alignsizeofData = _render->pad_storage_buffer_size(sizeofData / count);
+				_buffer = _render->createStorageBuffer(sizeofData);
+			}
+
+		}
+
+		
+		for (int i = totalCount; i < new_size; i++) {
+			auto bufferView = new RenderBufferView();
+			bufferView->availableRange = alignsizeofData;
+			bufferView->buffer = _buffer;
+			bufferView->offset = i * alignsizeofData;
+			_pool.emplace(std::shared_ptr<RenderBufferView>(bufferView));
+		}
+
+		totalCount += count;
 	}
-	std::optional<RenderObject*> VulkanRenderObjectPool::get()
+	void VulkanRenderObjectPool::deallocate(size_t count) {
+		for (int i = 0; i < count; i++) {
+			std::shared_ptr<RenderBufferView> pizda;
+			_pool.try_pop(pizda);
+
+		}
+		totalCount -= count;
+	}
+	std::optional<std::weak_ptr<RenderBufferView>> VulkanRenderObjectPool::get()
 	{
-		RenderObject* out;
+
+		std::shared_ptr<RenderBufferView> out;
+
 		_pool.try_pop(out);
-		auto opt_out = std::make_optional(out);
+		used_items.emplace(std::make_pair(out->offset, out));
+
+		auto opt_out = std::make_optional(std::weak_ptr<RenderBufferView>(out));
 		return opt_out;
 	}
 
-	void VulkanRenderObjectPool::free(RenderObject* obj)
+	void VulkanRenderObjectPool::free(std::weak_ptr<RenderBufferView> obj)
 	{
-		_pool.push(obj);
+		if (!obj.expired()) {
+			auto shared = obj.lock();
+			used_items.erase(shared->offset);
+			_pool.push(shared);
+			
+		}
 	}
 
 	void VulkanRenderObjectPool::setContext(AbstractRender* render)
 	{
-		_render = render;
+		_render = static_cast<VulkanRender*>(render);
 	}
 
-	void VulkanRenderObjectPool::setFactory(IRenderObjectFactory* factory)
+	size_t VulkanRenderObjectPool::getCount()
 	{
-		_factory = factory;
+		return _pool.unsafe_size();
 	}
+
 
 	VulkanRenderObjectPool::~VulkanRenderObjectPool()
 	{
-		_bufferTransforms->Destroy();
+		_buffer->Destroy();
 	}
 }

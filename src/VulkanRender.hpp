@@ -101,17 +101,17 @@ namespace BEbraEngine {
         void DestroyBuffer(RenderBuffer* buffer) override;
 
         template<typename T>
-        RenderBuffer* CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage);
+        RenderBuffer* createBuffer(std::vector<T>& data, VkBufferUsageFlags usage);
 
-        RenderBuffer* CreateUniformBuffer(size_t size) override;
+        RenderBuffer* createUniformBuffer(size_t size) override;
 
-        RenderBuffer* CreateStorageBuffer(size_t size);
+        RenderBuffer* createStorageBuffer(size_t size) override;
 
-        RenderBuffer* CreateIndexBuffer(std::vector<uint32_t> indices) override;
+        RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices) override;
 
-        RenderBuffer* CreateVertexBuffer(std::vector<Vertex> vertices) override;
+        RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices) override;
 
-        void AddObject(std::weak_ptr<RenderObject> object) override;
+        void addObject(std::weak_ptr<RenderObject> object) override;
 
         void addLight(std::weak_ptr<PointLight> light) override;
 
@@ -119,7 +119,7 @@ namespace BEbraEngine {
 
         AbstractRender::Type getType() override { return AbstractRender::Type::Vulkan; }
 
-        IRenderObjectFactory* getRenderObjectFactory() override { return factory.get(); }
+        IRenderObjectFactory* getRenderObjectFactory() override;
 
         void addGlobalLight(std::weak_ptr<DirLight> globalLight) override;
 
@@ -178,8 +178,6 @@ namespace BEbraEngine {
 
         VkDescriptorSet setMainCamera;
 
-        size_t COUNT_OF_OBJECTS = 0;
-
         size_t MAX_COUNT_OF_OBJECTS = 5000;
 
         size_t MAX_COUNT_OF_LIGHTS = 100;
@@ -212,8 +210,6 @@ namespace BEbraEngine {
         std::vector<VkFramebuffer> swapChainFramebuffers;
 
         VkRenderPass renderPass;
-
-        VkDescriptorPool descriptorPool;
 
         std::unique_ptr<DescriptorPool> RenderObjectPool;
 
@@ -258,8 +254,6 @@ namespace BEbraEngine {
 
         VkQueue GetGraphicsQueue();
 
-        static VulkanBuffer CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage);
-
         void AddBufferToQueue(VkCommandBuffer buffer);
 
         VkFence* GetCurrentFence();
@@ -276,7 +270,7 @@ namespace BEbraEngine {
 
         bool hasStencilComponent(VkFormat format);
 
-        void ResizeDescriptorPool(unsigned int count);
+        size_t pad_storage_buffer_size(size_t originalSize);
 
         size_t pad_uniform_buffer_size(size_t originalSize);
 
@@ -317,9 +311,9 @@ namespace BEbraEngine {
 
         static VkCommandPool CreateCommandPool();
 
-        VkCommandBuffer createCmdBuffer();
+        VkCommandBuffer createCommandBuffer();
 
-        static VkCommandBuffer createCmdBuffer(VkCommandPool pool);
+        static VkCommandBuffer createCommandBuffer(VkCommandPool pool);
 
         void UpdateFrame();
 
@@ -354,7 +348,6 @@ namespace BEbraEngine {
 
         void createCommandPool();
 
-        void createDescriptorPool();
 
         void createObjectDescriptorSetLayout();
 
@@ -404,7 +397,7 @@ namespace BEbraEngine {
 
 
     template<typename T>
-    inline RenderBuffer* VulkanRender::CreateBuffer(std::vector<T>& data, VkBufferUsageFlags usage)
+    inline RenderBuffer* VulkanRender::createBuffer(std::vector<T>& data, VkBufferUsageFlags usage)
     {
         VulkanBuffer* buffer = new VulkanBuffer();
         VkDeviceSize bufferSize = sizeof(data[0]) * data.size();

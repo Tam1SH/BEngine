@@ -46,7 +46,7 @@ namespace BEbraEngine {
     {
         dynamicsWorld->removeRigidBody(body);
     }
-    void Physics::AddObject(std::weak_ptr<RigidBody> body)
+    void Physics::addObject(std::weak_ptr<RigidBody> body)
     {
         bodies.push_back(body);
     }

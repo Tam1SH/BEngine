@@ -20,18 +20,11 @@ namespace BEbraEngine {
     class VulkanRenderObjectFactory : public IRenderObjectFactory
     {
     public:
-
-        std::unique_ptr<VulkanRenderObjectPool> _pool;
-        VulkanRender* render;
-        TextureFactory* textureFactory;
-        std::unique_ptr<MeshFactory> meshFactory;
-
-    public:
         friend class Transform;
 
-        void BindTransform(PointLight* light, Transform* transform) override;
+        void BindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform) override;
 
-        void BindTransform(RenderObject* object, Transform* transform) override;
+        void BindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) override;
 
         RenderObject* createObject() override;
 
@@ -50,9 +43,17 @@ namespace BEbraEngine {
 
         void SetImgsCreator(TextureFactory* Creator) { textureFactory = Creator; }
     private:
-        RenderBuffer* storage;
+        std::unique_ptr<VulkanRenderObjectPool> _poolofObjects;
+        std::unique_ptr<VulkanRenderObjectPool> _poolofPointLights;
+        std::unique_ptr<VulkanRenderObjectPool> _poolofDirLights;
+
+        std::shared_ptr<RenderBufferView> storage;
+
         VkDescriptorSet set;
-        size_t current_offset{};
+
+        VulkanRender* render;
+        TextureFactory* textureFactory;
+        std::unique_ptr<MeshFactory> meshFactory;
     };
 }
 

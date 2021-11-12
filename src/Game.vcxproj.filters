@@ -34,26 +34,8 @@
     <Filter Include="Файлы заголовков\Script">
       <UniqueIdentifier>{f6273014-3d0a-44b9-9607-f5a4b4ac9082}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\Script\JS">
-      <UniqueIdentifier>{7ff9cb5c-ccb5-41eb-8a6c-9e1fb9979d50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\Script\Python">
-      <UniqueIdentifier>{24faed5e-61d7-407b-b6df-49a9d20b1a6e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\Script\Lua">
-      <UniqueIdentifier>{feecce18-8267-4437-bc1a-a7b0bda1d809}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\Script">
       <UniqueIdentifier>{c9bd4021-c189-4f9a-97f9-663ca6037685}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Исходные файлы\Script\JS">
-      <UniqueIdentifier>{3ba4967a-5eb4-4740-b55c-989415c90bae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Исходные файлы\Script\Lua">
-      <UniqueIdentifier>{24bfbf8e-1efd-4b21-b258-d6e11b7507e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Исходные файлы\Script\Python">
-      <UniqueIdentifier>{12e87be4-e1eb-4ea7-92d0-94d89d67cccd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Файлы заголовков\Abstraction">
       <UniqueIdentifier>{a6d67411-7f10-4012-80ef-207c56d69606}</UniqueIdentifier>
@@ -93,7 +75,7 @@
     <ClCompile Include="LoadExecuter.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="RenderObjectCreator.cpp">
+    <ClCompile Include="RenderObjectFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
@@ -162,35 +144,11 @@
     <ClCompile Include="ScriptManager.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="JScript.cpp">
-      <Filter>Исходные файлы\Script\JS</Filter>
-    </ClCompile>
-    <ClCompile Include="LuaEngine.cpp">
-      <Filter>Исходные файлы\Script\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="LuaScript.cpp">
-      <Filter>Исходные файлы\Script\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptEngine.cpp">
-      <Filter>Исходные файлы\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="JScriptEngine.cpp">
-      <Filter>Исходные файлы\Script\JS</Filter>
-    </ClCompile>
-    <ClCompile Include="PythonEngine.cpp">
-      <Filter>Исходные файлы\Script\Python</Filter>
-    </ClCompile>
-    <ClCompile Include="PythonScript.cpp">
-      <Filter>Исходные файлы\Script\Python</Filter>
-    </ClCompile>
     <ClCompile Include="BaseRenderWindow.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="JSWrappers.cpp">
-      <Filter>Исходные файлы\Script\JS</Filter>
     </ClCompile>
     <ClCompile Include="GameLogic.cpp">
       <Filter>Исходные файлы</Filter>
@@ -240,6 +198,12 @@
     <ClCompile Include="RigidBodyFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptObjectFactory.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandBuffer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.hpp">
@@ -260,7 +224,7 @@
     <ClInclude Include="GameObject.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="RenderObjectCreator.hpp">
+    <ClInclude Include="RenderObjectFactory.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Pipeline.hpp">
@@ -301,24 +265,6 @@
     </ClInclude>
     <ClInclude Include="IScript.hpp">
       <Filter>Файлы заголовков\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="JScript.hpp">
-      <Filter>Файлы заголовков\Script\JS</Filter>
-    </ClInclude>
-    <ClInclude Include="JScriptEngine.hpp">
-      <Filter>Файлы заголовков\Script\JS</Filter>
-    </ClInclude>
-    <ClInclude Include="PythonEngine.hpp">
-      <Filter>Файлы заголовков\Script\Python</Filter>
-    </ClInclude>
-    <ClInclude Include="PythonScript.hpp">
-      <Filter>Файлы заголовков\Script\Python</Filter>
-    </ClInclude>
-    <ClInclude Include="LuaEngine.hpp">
-      <Filter>Файлы заголовков\Script\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="LuaScript.hpp">
-      <Filter>Файлы заголовков\Script\Lua</Filter>
     </ClInclude>
     <ClInclude Include="FileSystem.hpp">
       <Filter>Файлы заголовков</Filter>
@@ -367,9 +313,6 @@
     </ClInclude>
     <ClInclude Include="Time.hpp">
       <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="JSWrappers.hpp">
-      <Filter>Файлы заголовков\Script\JS</Filter>
     </ClInclude>
     <ClInclude Include="GameLogic.hpp">
       <Filter>Файлы заголовков</Filter>
@@ -450,6 +393,15 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="RigidBodyFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="IDraweable.hpp">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IProxyGameObjectFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptObjectFactory.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

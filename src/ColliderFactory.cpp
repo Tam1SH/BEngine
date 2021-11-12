@@ -8,10 +8,15 @@ namespace BEbraEngine {
 	Collider* ColliderFactory::create(ColliderInfo* info)
 	{
 		auto col = new Collider();
+		btCollisionShape* shape;
 		col->_collider = std::unique_ptr<btCollisionObject>(new btCollisionObject());
-		btCollisionShape* shape = new btBoxShape(Vector3(1.));
+		if (static_cast<glm::vec3>(info->position) == static_cast<glm::vec3>(Vector3(0, 0, 0)))
+			shape = new btBoxShape(Vector3(1.));
+		else 
+			shape = new btSphereShape(1.);
+
 		setShape(col, shape);
-		col->setSize(info->scale);
+		col->setScale(info->scale);
 		return col;
 	}
 

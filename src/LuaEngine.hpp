@@ -4,7 +4,7 @@
 class lua_State;
 namespace BEbraEngine {
 
-    class LuaEngine : public IScriptFactory
+    class LuaEngine : public BaseScriptEngine
     {
     private:
         void CreateGlobalContext(lua_State* L);

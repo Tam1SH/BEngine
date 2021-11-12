@@ -1,13 +1,10 @@
 #pragma once
+#include "stdafx.h"
 #include "BaseScript.hpp"
-#include <string>
-#include <fstream>
-//#include <filesystem>
-//Вся эта хуйня похожа на абстрактую фабрику
-//TODO: бля надо скрипты и на плюсах писать а то чё я бебра?
-//бля а реально фабрика
+
+
 namespace BEbraEngine {
-    class IScriptFactory {
+    class BaseScriptEngine {
     public:
         virtual BaseScript* CreateScript(std::string code) = 0;
         //TODO: string bad идея для этого ( как и весь алгоритм)

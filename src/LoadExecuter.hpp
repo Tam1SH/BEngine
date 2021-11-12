@@ -4,7 +4,7 @@
 #include "CommandBuffer.hpp"
 #include "VulkanRender.hpp"
 namespace BEbraEngine {
-    
+    /*
     
     class VulkanAsyncExecuter {
     public:
@@ -32,7 +32,7 @@ namespace BEbraEngine {
 
         void ExecuteAll();
 
-        VkCommandBuffer CreateBuffer();
+        VkCommandBuffer createBuffer();
 
     private:
         std::mutex m;
@@ -55,6 +55,7 @@ namespace BEbraEngine {
         Callback _OnCompletedAll;
         Callback _OnCompletedPart;
     };
+    */
     
 
 }

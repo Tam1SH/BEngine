@@ -9,14 +9,15 @@ namespace BEbraEngine {
 	class Vector3;
 	class DirLight;
 	class AbstractRender;
+	class IRenderObjectPool;
 }
 
 namespace BEbraEngine {
 	class IRenderObjectFactory {
 	public:
-		virtual void BindTransform(PointLight* light, Transform* transform) = 0;
+		virtual void BindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform) = 0;
 
-		virtual void BindTransform(RenderObject* object, Transform* transform) = 0;
+		virtual void BindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) = 0;
 
 		virtual RenderObject* createObject() = 0;
 
@@ -27,5 +28,6 @@ namespace BEbraEngine {
 		virtual void setContext(AbstractRender* render) = 0;
 
 		virtual void destroyObject(RenderObject* object) = 0;
+
 	};
 }

@@ -3,40 +3,26 @@
 #include "Transform.hpp"
 #include "Image.hpp"
 #include "VkBuffer.hpp"
-#include "RenderObjectCreator.hpp"
+#include "RenderObjectFactory.hpp"
 namespace BEbraEngine {
     void RenderObject::update()
     {
         ShaderData data;
-        data.model = transform->getMatrix();
-        data.color = color;
-        matrix->setData(&data, sizeof(ShaderData));
+        if (!transform.expired() && !matrix.expired()) {
+            data.model = transform.lock()->getMatrix();
+            data.color = color;
+            matrix.lock()->setData(&data, sizeof(ShaderData));
+        }
+        else
+            Debug::Log(GetName() + " has invalid data");
     }
-    RenderObject::RenderObject()
-    {
-    }
-
-    RenderObject::~RenderObject()
-    {
-        matrix->buffer->Destroy();
-        
-
-    }
-
-    VulkanRenderObjectFactory* VulkanRenderObject::factory;
 
     void VulkanRenderObject::release()
     {
+        transform.reset();
+        matrix.reset();
     }
 
-    void VulkanRenderObject::recreate()
-    {
-        factory->CreateObjectSet(this);
-    }
-    VulkanRenderObject::~VulkanRenderObject()
-    {
-        factory->destroyObject(this);
-    }
     void VulkanRenderObject::Draw(VkCommandBuffer cmd)
     {
         auto bufferVBOview = model->meshes[0].vertices_view;
@@ -47,11 +33,23 @@ namespace BEbraEngine {
         vkCmdBindVertexBuffers(cmd, 0, 1, &VBO->self, offset);
         vkCmdBindIndexBuffer(cmd, EBO->self, 0, VK_INDEX_TYPE_UINT32);
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, *layout, 0, 1, &descriptor, 0, nullptr);
-
         vkCmdDrawIndexed(cmd, static_cast<uint32_t>(model->meshes[0].indices.size()), 1, 0, 0, 0);
     }
-    void VulkanRenderObject::SetFactory(VulkanRenderObjectFactory* factory)
+
+    void PointLight::update()
     {
-        VulkanRenderObject::factory = factory;
+        ShaderData _data;
+        if (!transform.expired() && !data.expired()) {
+            _data.position = transform.lock()->GetPosition();
+            _data.ambient = color;
+            _data.diffuse = color;
+            _data.specular = color;
+            _data.constant = 1.f;
+            _data.linear = 0.022f;
+            _data.quadratic = 0.0019f;
+            data.lock()->setData(&_data, sizeof(ShaderData));
+        }
+        else
+            Debug::Log(GetName() + " has invalid data");
     }
 }
