@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #define NOMINMAX
 #include "VulkanWindow.hpp"
-#include <memory>
+#include "VulkanRender.hpp"
 #undef CreateWindow
 
 namespace BEbraEngine {
@@ -12,12 +12,17 @@ namespace BEbraEngine {
 		render->Create(this);
 	}
 
+	VulkanWindow::VulkanWindow(AbstractRender* render)
+	{
+		this->render = static_cast<VulkanRender*>(render);
+	}
+
 
 
 	void VulkanWindow::onResizeCallback(int width, int height)
 	{
 		render->recreateSwapChain(width, height);
-		render->UpdateFrame();
+		render->drawFrame();
 	}
 
 	Vector2 VulkanWindow::GetDrawableSize()
@@ -29,8 +34,6 @@ namespace BEbraEngine {
 
 	void VulkanWindow::onUpdate()
 	{
-
-		render->UpdateFrame();
 	}
 
 	VulkanWindow::~VulkanWindow()

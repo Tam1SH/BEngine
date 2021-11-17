@@ -4,7 +4,7 @@
 #include "BaseRenderWindow.hpp"
 #include <d3d11.h>
 #include <d3dx11.h>
-#include "AbstractRenderSystem.hpp"
+#include "AbstractRender.hpp"
 #undef CreateWindow
 namespace BEbraEngine {
 	class DirectRender;

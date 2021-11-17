@@ -11,7 +11,7 @@
 #include <oneapi/tbb.h>
 #include <SDL_vulkan.h>
 #include "Vertex.hpp"
-#include "AbstractRenderSystem.hpp"
+#include "AbstractRender.hpp"
 #include "CreateInfoStructures.hpp"
 #include "VkBuffer.hpp"
 #include "DescriptorSet.hpp"
@@ -43,44 +43,11 @@ const std::vector<const char*> deviceExtensions = {
 
 const int MAX_FRAMES_IN_FLIGHT = 3;
 
-const std::vector<BEbraEngine::Vertex> vertices = {
-
-    
-    
-    {{-1,1,-1},{},{0.0f, 1.0f}},
-    {{1,1,-1},{},{1.0f, 1.0f}},
-    {{1,-1,-1},{},{1.0f, 0.0f}},
-    {{-1,-1,-1},{},{0.0f, 0.0f}},
-    {{-1,1,1},{},{1.0f, 0.0f}},
-    {{1,1,1},{},{0.0f, 0.0f}},
-    {{1,-1,1},{},{0.0f, 1.0f}},
-    {{-1,-1,1},{},{1.0f, 1.0f}}
-   
-};
-
-const std::vector<uint32_t> indices = {
-  
-    0, 1, 2,
-    0, 2, 3,
-    2, 1, 5,
-    2, 5, 6,
-    3, 2, 6,
-    3, 6, 7,
-    0, 3, 7,
-    0, 7, 4,
-    1, 0, 4,
-    1, 4, 5,
-    6, 5, 4,
-    6, 4, 7
-    
-};
 namespace BEbraEngine {
     class Texture;
     class Matrix4;
     class VulkanWindow;
     class Camera;
-    //class Buffer;
-    //class DescriptorSetLayouts;
 }
 
 namespace BEbraEngine {
@@ -107,9 +74,13 @@ namespace BEbraEngine {
 
         RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices) override;
 
-        void addObject(std::weak_ptr<RenderObject> object) override;
+        void addObject(std::shared_ptr<RenderObject> object) override;
 
-        void addLight(std::weak_ptr<PointLight> light) override;
+        void addLight(std::shared_ptr<PointLight> light) override;
+
+        void removeObject(std::shared_ptr<RenderObject> object) override;
+
+        void removeLight(std::shared_ptr<PointLight> light) override;
 
         void InitCamera(Camera* alloced_camera) override;
 
@@ -117,7 +88,9 @@ namespace BEbraEngine {
 
         IRenderObjectFactory* getRenderObjectFactory() override;
 
-        void addGlobalLight(std::weak_ptr<DirLight> globalLight) override;
+        void addGlobalLight(std::shared_ptr<DirLight> globalLight) override;
+
+        void drawFrame() override;
 
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
 
@@ -131,7 +104,7 @@ namespace BEbraEngine {
 
         void freeDescriptor(VulkanLight* set);
 
-
+ 
 
     public:
         enum class DescriptorLayout {
@@ -170,12 +143,18 @@ namespace BEbraEngine {
 
         static QueueFamilyIndices FamilyIndices;
 
-    protected:
+    
+    private:
         std::unique_ptr<VulkanRenderObjectFactory> factory;
-        std::list<std::weak_ptr<VulkanRenderObject>> objects;
-        std::list<std::weak_ptr<VulkanLight>> lights;
+        std::list<std::shared_ptr<VulkanRenderObject>> objects;
+        std::list<std::shared_ptr<VulkanLight>> lights;
         std::weak_ptr<VulkanDirLight> globalLight;
 
+        tbb::concurrent_queue<std::shared_ptr<VulkanRenderObject>> queueAddObject;
+        tbb::concurrent_queue<std::shared_ptr<VulkanRenderObject>> queueDeleterObject;
+
+        tbb::concurrent_queue<std::shared_ptr<VulkanLight>> queueAddLight;
+        tbb::concurrent_queue<std::shared_ptr<VulkanLight>> queueDeleterLight;
     public:
         VulkanWindow* window;
 
@@ -326,10 +305,7 @@ namespace BEbraEngine {
 
         static VkCommandBuffer createCommandBuffer(VkCommandPool pool);
 
-        void UpdateFrame();
-
         void createInstance();
-    private:
 
         int getCurrentThreadIndex();
 
@@ -406,6 +382,8 @@ namespace BEbraEngine {
 
         void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
         static void WriteDataOnBuffer(VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size);
+
+
 };
 
 

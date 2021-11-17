@@ -1,10 +1,8 @@
-
-#ifndef CAMERA_H
-#define CAMERA_H
-
+#pragma once
 #include "AbstractComponent.hpp"
 #include "matrix.hpp"
 #include "Vector3.hpp"
+#include "Vector2.hpp"
 namespace BEbraEngine {
     class RenderBufferView;
 
@@ -40,10 +38,7 @@ namespace BEbraEngine {
 
         Camera() {}
         ~Camera();
-        Camera(Vector3 position = Vector3(0.0f, 0.0f, 0.0f), Vector3 up = Vector3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
-
-        
-        Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
+        Camera(Vector2 size, Vector3 position = Vector3(0.0f, 0.0f, 0.0f), Vector3 up = Vector3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 
 
         glm::mat4 GetViewMatrix();
@@ -58,6 +53,7 @@ namespace BEbraEngine {
 
         void Update();
 
+        void resize(Vector2 newSize);
     private:
         void updateCameraVectors();
     private:
@@ -78,6 +74,7 @@ namespace BEbraEngine {
 
         float lastX;
         float lastY;
+
+        Vector2 rectViewport;
     };
 }
-#endif

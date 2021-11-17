@@ -24,7 +24,7 @@ namespace BEbraEngine {
         // Необходимая информация возвращается в виде структуры Texture
         std::vector<Texture*> loadMaterialTextures(Model* model, aiMaterial* mat, aiTextureType type, std::string typeName, const std::string& path);
 
-        TextureFactory* _textureFactory;
+        VulkanTextureFactory* _textureFactory;
 
         AbstractRender* render;
 

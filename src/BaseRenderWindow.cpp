@@ -21,14 +21,6 @@ namespace BEbraEngine {
 		SDL_Vulkan_GetInstanceExtensions(handle, &count, extensions.data() + additional_extension_count);
 		return extensions;
 	}
-	void BaseWindow::attach(IListenerOnRender* listener)
-	{
-		R_L.push_back(listener);
-	}
-	void BaseWindow::detach(IListenerOnRender* listener)
-	{
-		std::remove(R_L.begin(), R_L.end(), listener);
-	}
 	void BaseWindow::SetWindowSize(const Vector2& newSize) const noexcept
 	{
 		SDL_SetWindowSize(handle, newSize.x, newSize.y);
@@ -48,20 +40,7 @@ namespace BEbraEngine {
 				_isClose = true;
 			}
 		}
-		tbb::flow::graph g;
-		tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
-		tbb::flow::continue_node< tbb::flow::continue_msg >
-			h(g, [&](const tbb::flow::continue_msg&) { 	notifyOnUpdateFrame(); });
 
-		tbb::flow::continue_node< tbb::flow::continue_msg >
-			w(g, [&](const tbb::flow::continue_msg&) { onUpdate(); });
-
-		tbb::flow::make_edge(input, w);
-		tbb::flow::make_edge(input, h);
-		input.try_put(tbb::flow::continue_msg());
-		g.wait_for_all();
-
-		
 		Input::state = SDL_GetKeyboardState(NULL);
 
 	}
@@ -127,11 +106,7 @@ namespace BEbraEngine {
 		return _isClose;
 	}
 
-	void BaseWindow::notifyOnUpdateFrame() {
-		for (auto listener : R_L) {
-			listener->onUpdateFrame();
-		}
-	}
+
 
 }
 #endif

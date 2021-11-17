@@ -326,9 +326,8 @@
     <ClCompile Include="GameObjectFactory.cpp" />
     <ClCompile Include="GameObjectMediator.cpp" />
     <ClCompile Include="Image.cpp" />
-    <ClCompile Include="ImageCreator.cpp" />
+    <ClCompile Include="VulkanTextureFactory.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="IRenderObjectFactory.cpp" />
     <ClCompile Include="LoadExecuter.cpp" />
     <ClCompile Include="MeshFactory.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -340,7 +339,7 @@
     <ClCompile Include="RenderObjectPool.cpp" />
     <ClCompile Include="RigidBoby.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -355,7 +354,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbstractComponent.hpp" />
-    <ClInclude Include="AbstractRenderSystem.hpp" />
+    <ClInclude Include="AbstractRender.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BaseRenderWindow.hpp" />
     <ClInclude Include="BaseScript.hpp" />
@@ -391,7 +390,7 @@
     <ClInclude Include="GameObjectFactory.hpp" />
     <ClInclude Include="ICreatable.hpp" />
     <ClInclude Include="Image.hpp" />
-    <ClInclude Include="ImageCreator.hpp" />
+    <ClInclude Include="VulkanTextureFactory.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="IScript.hpp" />
     <ClInclude Include="IScriptObject.hpp" />

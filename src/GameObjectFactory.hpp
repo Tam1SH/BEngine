@@ -2,7 +2,7 @@
 #pragma once
 #include "AbstractComponent.hpp"
 #include "stdafx.h"
-#include "AbstractRenderSystem.hpp"
+#include "AbstractRender.hpp"
 #include "ColliderFactory.hpp"
 #include "RigidBodyFactory.hpp"
 #include "Vector3.hpp"
@@ -35,7 +35,7 @@ namespace BEbraEngine {
 
 		void destroyObject(std::shared_ptr<GameObject> object);
 
-		void destroyPointLight(PointLight* light) override;
+		void destroyPointLight(std::shared_ptr<PointLight> light) override;
 
 		void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
 

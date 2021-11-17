@@ -2,9 +2,12 @@
 #include "stdafx.h"
 #include "Vector2.hpp"
 #include "BaseRenderWindow.hpp"
-#include "VulkanRender.hpp"
+#include "AbstractRender.hpp"
 
 #undef CreateWindow
+namespace BEbraEngine {
+	class VulkanRender;
+}
 namespace BEbraEngine {
 
 	class VulkanWindow : public BaseWindow {
@@ -12,7 +15,7 @@ namespace BEbraEngine {
 
 		void CreateWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
 
-		VulkanWindow(VulkanRender* render) { this->render = render; }
+		VulkanWindow(AbstractRender* render);
 
 		void onResizeCallback(int width, int height) override;
 

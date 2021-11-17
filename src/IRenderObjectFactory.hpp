@@ -27,9 +27,9 @@ namespace BEbraEngine {
 
 		virtual void setContext(AbstractRender* render) = 0;
 
-		virtual void destroyObject(RenderObject* object) = 0;
+		virtual void destroyObject(std::shared_ptr<RenderObject> object) = 0;
 
-		virtual void destroyPointLight(PointLight* light) = 0;
+		virtual void destroyPointLight(std::shared_ptr<PointLight> light) = 0;
 
 	};
 }

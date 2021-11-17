@@ -25,14 +25,12 @@ namespace BEbraEngine {
     //TODO: полигон блять для испытаний(делай скрипты)
     //TODO: Идиотская затея была делать IListener
     
-    class GameLogic : public IListenerOnRender {
+    class GameLogic {
     public:
 
         GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera, std::shared_ptr<Physics> physics);
 
         void ScriptInit();
-
-        void onUpdateFrame() override;
 
         void clearObjects();
 
@@ -44,7 +42,7 @@ namespace BEbraEngine {
 
     private:
         std::shared_ptr<AbstractRender> render;
-        std::shared_ptr<Physics> physics;
+       
         std::shared_ptr<WorkSpace> workspace;
         //Depresed)
         std::unique_ptr<GameObjectFactory> objectFactory;

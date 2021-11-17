@@ -10,7 +10,7 @@
 #include "VulkanRender.hpp"
 #include "Physics.hpp"
 #include "WorkSpace.hpp"
-#include "AbstractRenderSystem.hpp"
+#include "AbstractRender.hpp"
 namespace BEbraEngine {
 	GameObjectFactory::GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics)
 		: render(render), physics(physics)
@@ -53,7 +53,7 @@ namespace BEbraEngine {
 		trans.setOrigin(btVector3(position.x, position.y, position.z));
 		rigidbody->GetRigidBody()->setWorldTransform(trans);
 		render->addObject(renderObj);
-		physics->addObject(rigidbody);
+		physics->addRigidBody(rigidbody);
 
 		return obj;
 	}
@@ -90,7 +90,8 @@ namespace BEbraEngine {
 
 	void GameObjectFactory::destroyObject(GameObject* object)
 	{
-		renderFactory->destroyObject(object->getComponent<RenderObject>().get());
+		renderFactory->destroyObject(object->getComponent<RenderObject>());
+		physics->removeRigidBody(object->getComponent<RigidBody>());
 	}
 
 	void GameObjectFactory::destroyObject(std::shared_ptr<GameObject> object)
@@ -112,10 +113,12 @@ namespace BEbraEngine {
 			);
 		}
 		*/
-		renderFactory->destroyObject(object->getComponent<RenderObject>().get());
+		renderFactory->destroyObject(object->getComponent<RenderObject>());
+		physics->removeRigidBody(object->getComponent<RigidBody>());
+		render->removeObject(object->getComponent<RenderObject>());
 	}
 
-	void GameObjectFactory::destroyPointLight(PointLight* light)
+	void GameObjectFactory::destroyPointLight(std::shared_ptr<PointLight> light)
 	{
 		light->release();
 		renderFactory->destroyPointLight(light);

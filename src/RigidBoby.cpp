@@ -63,6 +63,5 @@ namespace BEbraEngine {
 
     RigidBody::~RigidBody()
     {
-        physics->removeRigidBody(body);
     }
 }

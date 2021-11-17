@@ -5,7 +5,7 @@
 #include "tbb/blocked_range.h"
 #include "Camera.hpp"
 #include "BaseRenderWindow.hpp"
-#include "AbstractRenderSystem.hpp"
+#include "AbstractRender.hpp"
 #include "Vertex.hpp"
 #include "matrix.hpp"
 #include "CreateInfoStructures.hpp"
@@ -23,12 +23,12 @@ namespace BEbraEngine {
 
 			if (_usage == IRenderObjectPool::Usage::Default) {
 				alignsizeofData = _render->pad_uniform_buffer_size(sizeofData);
-				_buffer = _render->createUniformBuffer(alignsizeofData * new_size);
+				_buffer = std::shared_ptr<RenderBuffer>(_render->createUniformBuffer(alignsizeofData * new_size));
 			}
 
 			if (_usage == IRenderObjectPool::Usage::SeparateOneBuffer) {
 				alignsizeofData = _render->pad_storage_buffer_size(sizeofData / count);
-				_buffer = _render->createUniformBuffer(sizeofData);
+				_buffer = std::shared_ptr<RenderBuffer>(_render->createUniformBuffer(sizeofData));
 
 			}
 
@@ -38,12 +38,12 @@ namespace BEbraEngine {
 			
 			if (_usage == IRenderObjectPool::Usage::Default) {
 				alignsizeofData = _render->pad_storage_buffer_size(sizeofData);
-				_buffer = _render->createStorageBuffer(alignsizeofData * new_size);
+				_buffer = std::shared_ptr<RenderBuffer>(_render->createStorageBuffer(alignsizeofData * new_size));
 			}
 				
 			if (_usage == IRenderObjectPool::Usage::SeparateOneBuffer) {
 				alignsizeofData = _render->pad_storage_buffer_size(sizeofData / count);
-				_buffer = _render->createStorageBuffer(sizeofData);
+				_buffer = std::shared_ptr<RenderBuffer>(_render->createStorageBuffer(sizeofData));
 			}
 
 		}
@@ -52,7 +52,7 @@ namespace BEbraEngine {
 		for (int i = totalCount; i < new_size; i++) {
 			auto bufferView = new RenderBufferView();
 			bufferView->availableRange = alignsizeofData;
-			bufferView->buffer = _buffer;
+			bufferView->buffer = std::shared_ptr<RenderBuffer>(_buffer);
 			bufferView->offset = i * alignsizeofData;
 			_pool.emplace(std::shared_ptr<RenderBufferView>(bufferView));
 		}

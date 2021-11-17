@@ -22,7 +22,7 @@ namespace BEbraEngine {
 
 		virtual void destroyObject(std::shared_ptr<GameObject> object) = 0;
 
-		virtual void destroyPointLight(PointLight* light) = 0;
+		virtual void destroyPointLight(std::shared_ptr<PointLight> light) = 0;
 
 		virtual ~IProxyGameObjectFactory() {}
 	};

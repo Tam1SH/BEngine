@@ -16,7 +16,6 @@ namespace BEbraEngine {
     GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera, std::shared_ptr<Physics> physics)
     {
         this->workspace = workspace;
-        this->physics = physics;
         this->render = std::shared_ptr<AbstractRender>(render);
         objectFactory = std::unique_ptr<GameObjectFactory>(new GameObjectFactory(this->render, physics));
         objectFactory->SetWorkSpace(workspace);
@@ -40,19 +39,15 @@ namespace BEbraEngine {
         rotate = Vector3(0, -0.5f, 0);
     }
 
-    void GameLogic::onUpdateFrame()
-    {
-        Update();
-    }
-    void GameLogic::clearObjects() {
-        if (!objects.empty()) {
 
-            //objects.pop();
+    void GameLogic::clearObjects() {
+        if (!objects.empty() && objects.size() != 1) {
+
             std::shared_ptr<GameObject> obj;
-            obj = objects.front();
+            obj = objects.back();
             objectFactory->destroyObject(obj);
             objects.remove(obj);
-            //std::cout << "TotalCount" << static_cast<VulkanRenderObjectFactory*>(objectFactory->renderFactory)->_poolofObjects->getCount() << std::endl;
+            obj.reset();
 
         }
 
@@ -77,7 +72,7 @@ namespace BEbraEngine {
             {
                 std::shared_ptr<PointLight> light1;
                 light1 = lights.front();
-                objectFactory->destroyPointLight(light1.get());
+                objectFactory->destroyPointLight(light1);
                 light1.reset();
                 lights.remove(light1);
             }
@@ -132,7 +127,6 @@ namespace BEbraEngine {
             time = 0;
         }
 
-        physics->Update();
         camera->Update();
         //scriptManager->RunScripts();
 

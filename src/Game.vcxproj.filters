@@ -19,12 +19,6 @@
     <Filter Include="Файлы заголовков\ImGui">
       <UniqueIdentifier>{cba1c011-0c14-48bf-a1e6-4daed914ee76}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\PhysicsClasses">
-      <UniqueIdentifier>{26072a96-8552-4e48-8f9e-263887586f1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\PhysicsClasses">
-      <UniqueIdentifier>{5f6bc11f-f81d-4498-bc1f-1a5ff96e8551}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Файлы ресурсов\Shaders">
       <UniqueIdentifier>{d044d852-6e83-4ea8-bfa2-0775703f031a}</UniqueIdentifier>
     </Filter>
@@ -40,36 +34,39 @@
     <Filter Include="Файлы заголовков\Abstraction">
       <UniqueIdentifier>{a6d67411-7f10-4012-80ef-207c56d69606}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\RenderSystems">
-      <UniqueIdentifier>{9983e18b-45e6-482e-b604-88740bfd248e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Исходные файлы\RenderSystems\VulkanClasses">
-      <UniqueIdentifier>{29ba9f6d-5663-483a-a828-ed4045c26232}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Исходные файлы\RenderSystems\DirectX">
-      <UniqueIdentifier>{c65fa002-3378-4dce-b7a7-e81809065673}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\RenderSystems">
-      <UniqueIdentifier>{781b191a-b72f-4440-80a8-d389e7f8e337}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\RenderSystems\VulkanClasses">
-      <UniqueIdentifier>{919b718a-d5e0-4aac-b907-f899a61bf29f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\RenderSystems\DirectX">
-      <UniqueIdentifier>{1f22cb16-113c-4b09-84e0-750db87fc90e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Файлы заголовков\Interfaces">
       <UniqueIdentifier>{32589960-c03a-4e69-ad6d-52e183f0f192}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\Physics">
+      <UniqueIdentifier>{26072a96-8552-4e48-8f9e-263887586f1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Renders">
+      <UniqueIdentifier>{9983e18b-45e6-482e-b604-88740bfd248e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Renders\Vulkan">
+      <UniqueIdentifier>{29ba9f6d-5663-483a-a828-ed4045c26232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Renders\DirectX">
+      <UniqueIdentifier>{c65fa002-3378-4dce-b7a7-e81809065673}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Render">
+      <UniqueIdentifier>{781b191a-b72f-4440-80a8-d389e7f8e337}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Render\Vulkan">
+      <UniqueIdentifier>{919b718a-d5e0-4aac-b907-f899a61bf29f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Render\DirectX">
+      <UniqueIdentifier>{1f22cb16-113c-4b09-84e0-750db87fc90e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Physics">
+      <UniqueIdentifier>{5f6bc11f-f81d-4498-bc1f-1a5ff96e8551}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageCreator.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="LoadExecuter.cpp">
@@ -85,25 +82,25 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="DescriptorPool.cpp">
-      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
+      <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="CommandPool.cpp">
-      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
+      <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="DescriptorSetLayout.cpp">
-      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
+      <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="Physics.cpp">
-      <Filter>Исходные файлы\PhysicsClasses</Filter>
+      <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
     <ClCompile Include="RigidBoby.cpp">
-      <Filter>Исходные файлы\PhysicsClasses</Filter>
+      <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
-      <Filter>Исходные файлы\PhysicsClasses</Filter>
+      <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
     <ClCompile Include="VulkanRender.cpp">
-      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
+      <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="AudioSystem.cpp">
       <Filter>Исходные файлы</Filter>
@@ -157,13 +154,13 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="DirectRender.cpp">
-      <Filter>Исходные файлы\RenderSystems\DirectX</Filter>
+      <Filter>Исходные файлы\Renders\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="DirectWindow.cpp">
-      <Filter>Исходные файлы\RenderSystems\DirectX</Filter>
+      <Filter>Исходные файлы\Renders\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="VulkanWindow.cpp">
-      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
+      <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="RenderObjectPool.cpp">
       <Filter>Исходные файлы</Filter>
@@ -178,15 +175,12 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="DescriptorSet.cpp">
-      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
+      <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="MeshFactory.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="IRenderObjectFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Collider.cpp">
@@ -202,7 +196,10 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="CommandBuffer.cpp">
-      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
+      <Filter>Исходные файлы\Renders\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanTextureFactory.cpp">
+      <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,9 +210,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Image.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageCreator.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="LoadExecuter.hpp">
@@ -231,25 +225,25 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="CommandBuffer.hpp">
-      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="CommandPool.hpp">
-      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorPool.hpp">
-      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorSetLayouts.hpp">
-      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="RigidBoby.hpp">
-      <Filter>Файлы заголовков\PhysicsClasses</Filter>
+      <Filter>Файлы заголовков\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Physics.hpp">
-      <Filter>Файлы заголовков\PhysicsClasses</Filter>
+      <Filter>Файлы заголовков\Physics</Filter>
     </ClInclude>
     <ClInclude Include="VulkanRender.hpp">
-      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="AudioSystem.hpp">
       <Filter>Файлы заголовков</Filter>
@@ -291,13 +285,13 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Transform.hpp">
-      <Filter>Файлы заголовков\PhysicsClasses</Filter>
+      <Filter>Файлы заголовков\Physics</Filter>
     </ClInclude>
     <ClInclude Include="WorkSpace.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="VkBuffer.hpp">
-      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="ICreatable.hpp">
       <Filter>Файлы заголовков\Abstraction</Filter>
@@ -335,8 +329,8 @@
     <ClInclude Include="platform_window.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="AbstractRenderSystem.hpp">
-      <Filter>Исходные файлы\RenderSystems</Filter>
+    <ClInclude Include="AbstractRender.hpp">
+      <Filter>Исходные файлы\Renders</Filter>
     </ClInclude>
     <ClInclude Include="Listener.hpp">
       <Filter>Файлы заголовков</Filter>
@@ -348,13 +342,10 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="DirectRender.hpp">
-      <Filter>Файлы заголовков\RenderSystems\DirectX</Filter>
+      <Filter>Файлы заголовков\Render\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="DirectWindow.hpp">
-      <Filter>Файлы заголовков\RenderSystems\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderObjectFactory.hpp">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\Render\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="RenderObjectPool.hpp">
       <Filter>Файлы заголовков</Filter>
@@ -378,7 +369,7 @@
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorSet.hpp">
-      <Filter>Файлы заголовков\RenderSystems\VulkanClasses</Filter>
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="Debug.h">
       <Filter>Файлы заголовков</Filter>
@@ -398,11 +389,17 @@
     <ClInclude Include="IDraweable.hpp">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="IProxyGameObjectFactory.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptObjectFactory.hpp">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanTextureFactory.hpp">
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="IProxyGameObjectFactory.hpp">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderObjectFactory.hpp">
+      <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

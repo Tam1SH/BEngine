@@ -28,6 +28,7 @@ TODO: подумать над реализацей:
 #include "VulkanWindow.hpp"
 #include "DirectWindow.hpp"
 #include "DirectRender.hpp"
+#include "VulkanRender.hpp"
 #include "Input.hpp"
 #include "Time.hpp"
 #include "Camera.hpp"
@@ -36,7 +37,7 @@ namespace BEbraEngine {
     class Engine {
     public:
         //std::shared_ptr<DirectRender> render;
-        std::shared_ptr<VulkanRender> render1;
+        std::shared_ptr<AbstractRender> render1;
         std::shared_ptr<Physics> physics;
         std::unique_ptr<BaseWindow> window;
         std::unique_ptr<BaseWindow> window1;
@@ -53,34 +54,60 @@ namespace BEbraEngine {
             render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
             window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
             window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-            mainCamera1 = std::unique_ptr<Camera>(new Camera(Vector3(2)));
+            mainCamera1 = std::unique_ptr<Camera>(new Camera(Vector2(800, 600), Vector3(2)));
             workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
             render1->InitCamera(mainCamera1.get());
-            render1->camera = mainCamera1.get();
             gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get(), physics));
-            window1->attach(gameLogic1.get());
 
-            
-            
+
+
 
             //     UId = std::make_unique<DebugUI>();
-            
+
 
                 //  UId->SetWorkSpace(workspace);
             // auto render = window->getRender();
 
             //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
 
+            /*
+            tbb::flow::graph g;
+            tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
+            tbb::flow::continue_node< tbb::flow::continue_msg >
+                h(g, [&](const tbb::flow::continue_msg&) {});
 
+            tbb::flow::continue_node< tbb::flow::continue_msg >
+                w(g, [&](const tbb::flow::continue_msg&) { onUpdate(); });
 
-
+            tbb::flow::make_edge(input, w);
+            tbb::flow::make_edge(input, h);
+            input.try_put(tbb::flow::continue_msg());
+            g.wait_for_all();
+            */
 
         }
         void Start() {
 
-            while (window1.get() && !window1->isClose()) {
+            while (!window1->isClose()) {
                 Time::UpdateTime();
-                Update();
+
+                tbb::flow::graph g;
+                tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
+                tbb::flow::continue_node<tbb::flow::continue_msg>
+                    _input(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
+                tbb::flow::continue_node<tbb::flow::continue_msg>
+                    _render(g, [&](const tbb::flow::continue_msg&) {render1->drawFrame(); });
+
+                tbb::flow::continue_node< tbb::flow::continue_msg >
+                    _physics(g, [&](const tbb::flow::continue_msg&) { physics->Update(); });
+                tbb::flow::continue_node< tbb::flow::continue_msg >
+                    _gameLogic(g, [&](const tbb::flow::continue_msg&) { gameLogic1->Update(); });
+                tbb::flow::make_edge(input, _physics);
+                tbb::flow::make_edge(input, _render);
+                tbb::flow::make_edge(input, _gameLogic);
+                tbb::flow::make_edge(input, _input);
+                input.try_put(tbb::flow::continue_msg());
+                g.wait_for_all();
 
             }
 

@@ -1,14 +1,11 @@
 #include "stdafx.h"
 #pragma once
 #include "platform_window.hpp"
-#include "Listener.hpp"
+#include "Vector2.hpp"
 #undef CreateWindow
+
 namespace BEbraEngine {
-	class Vector2;
-}
-namespace BEbraEngine {
-	
-	class BaseWindow : public INotifierFrame {
+	class BaseWindow {
 	public:
 		enum class Visibility {
 			Windowed,
@@ -21,6 +18,7 @@ namespace BEbraEngine {
 			DirectX,
 			OpenGL,
 			Vulkan
+			//Metal - Метал? блять анал
 		};
 	public:
 		virtual void CreateWindow(const Vector2& size, const std::string& title) = 0;
@@ -37,9 +35,7 @@ namespace BEbraEngine {
 		Vector2 GetPosition() const noexcept;
 
 		
-		void attach(IListenerOnRender* listener) override;
-		void detach(IListenerOnRender* listener) override;
-		void notifyOnUpdateFrame() override;
+
 
 		BaseWindow();
 		virtual ~BaseWindow();
@@ -52,7 +48,6 @@ namespace BEbraEngine {
 		void onCreateWindow(const Vector2& size, const SurfaceType& type, const std::string& title);
 	private:
 		bool _isClose;
-		std::list<IListenerOnRender*> R_L;
 		void _onCreateWindow(int w, int h, const SurfaceType& type, const char* title);
 	};
 

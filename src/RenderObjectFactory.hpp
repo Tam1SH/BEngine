@@ -10,7 +10,7 @@ namespace BEbraEngine {
     class AbstractRender;
     class VulkanRender;
     class Texture;
-    class TextureFactory;
+    class VulkanTextureFactory;
     class RenderObject;
     class VulkanRenderObject;
     class RenderObjectInfo;
@@ -34,9 +34,9 @@ namespace BEbraEngine {
 
         void setContext(AbstractRender* render) override;
        
-        void destroyObject(RenderObject* object) override;
+        void destroyObject(std::shared_ptr<RenderObject> object) override;
 
-        void destroyPointLight(PointLight* light) override;
+        void destroyPointLight(std::shared_ptr<PointLight> light) override;
 
 
         void CreateObjectSet(VulkanRenderObject* obj);
@@ -44,7 +44,7 @@ namespace BEbraEngine {
         VulkanRenderObjectFactory();
         ~VulkanRenderObjectFactory();
 
-        void SetImgsCreator(TextureFactory* Creator) { textureFactory = Creator; }
+        void SetImgsCreator(VulkanTextureFactory* Creator) { textureFactory = Creator; }
     private:
         std::unique_ptr<VulkanRenderObjectPool> _poolofObjects;
         std::unique_ptr<VulkanRenderObjectPool> _poolofPointLights;
@@ -55,7 +55,7 @@ namespace BEbraEngine {
         VkDescriptorSet set;
 
         VulkanRender* render;
-        TextureFactory* textureFactory;
+        VulkanTextureFactory* textureFactory;
         std::unique_ptr<MeshFactory> meshFactory;
     };
 }

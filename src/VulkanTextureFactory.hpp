@@ -12,8 +12,10 @@ namespace BEbraEngine {
         virtual Texture* createAsync(const std::string& path) = 0;
         virtual Texture* create(const std::string& path) = 0;
     };
-    class TextureFactory {
+    class VulkanTextureFactory : public ITextureFactory {
     public:
+        Texture* createAsync(const std::string& path) override { return 0; }
+        Texture* create(const std::string& path) override { return 0; }
 
         stbi_uc* loadImage(const std::string& path, int* texWidth, int* texHeight, int* texChannels) {
             auto pic = stbi_load(path.c_str(), texWidth, texHeight, texChannels, STBI_rgb_alpha);
@@ -232,7 +234,7 @@ namespace BEbraEngine {
             }
         }
 
-        TextureFactory(AbstractRender* render) : render(render) {}
+        VulkanTextureFactory(AbstractRender* render) : render(render) {}
         private:
             AbstractRender* render;
             std::vector<Texture*> images;

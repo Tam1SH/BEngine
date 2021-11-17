@@ -33,7 +33,6 @@ namespace BEbraEngine {
 
         rigidBody->SetName("RigidBody");
 
-        physics->addRigidBody(rigidBody->body);
         return rigidBody;
 	}
 }

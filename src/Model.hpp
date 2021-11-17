@@ -15,7 +15,7 @@
 #include "Vertex.hpp"
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
-    class TextureFactory;
+    class VulkanTextureFactory;
     class Mesh {
     public:
         std::vector<Vertex> vertices;

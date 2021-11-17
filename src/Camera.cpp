@@ -11,9 +11,10 @@
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
 
-    Camera::Camera(Vector3 position , Vector3 up , float yaw, float pitch)
+    Camera::Camera(Vector2 size, Vector3 position , Vector3 up , float yaw, float pitch)
         : MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     {
+        rectViewport = size;
         Position = position;
         WorldUp = up;
         Yaw = yaw;
@@ -24,15 +25,6 @@ namespace BEbraEngine {
         updateCameraVectors();
     }
 
-    Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
-        : Front(Vector3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
-    {
-        Position = Vector3(posX, posY, posZ);
-        WorldUp = Vector3(upX, upY, upZ);
-        Yaw = yaw;
-        Pitch = pitch;
-        updateCameraVectors();
-    }
 
     glm::mat4 Camera::GetViewMatrix()
     {
@@ -102,11 +94,16 @@ namespace BEbraEngine {
     {
 
         ShaderData vp;
-        vp.proj = glm::perspective(glm::radians(45.0f), WIDTH / (float)HEIGHT, 1.f, 10000.0f);
+        vp.proj = glm::perspective(glm::radians(45.0f), rectViewport.x / rectViewport.y, 1.f, 10000.0f);
         vp.view = GetViewMatrix();
         vp.position = static_cast<glm::vec3>(Position);
         ProcessMouseMovement();
         cameraData->setData(&vp, sizeof(ShaderData));
+    }
+
+    void Camera::resize(Vector2 newSize)
+    {
+        rectViewport = newSize;
     }
 
     void Camera::updateCameraVectors()

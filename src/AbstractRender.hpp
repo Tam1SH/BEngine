@@ -33,13 +33,15 @@ namespace BEbraEngine {
 		virtual RenderBuffer* createStorageBuffer(size_t size) = 0;
 		virtual void DestroyBuffer(RenderBuffer* buffer) = 0;
 		
-		//TODO: сомнительная хуйня
 		virtual void InitCamera(Camera* alloced_camera) = 0;
-		virtual void addObject(std::weak_ptr<RenderObject> object) = 0;
-		virtual void addLight(std::weak_ptr<PointLight> light) = 0;
-		virtual void addGlobalLight(std::weak_ptr<DirLight> globalLight) = 0;
+		virtual void addObject(std::shared_ptr<RenderObject> object) = 0;
+		virtual void addLight(std::shared_ptr<PointLight> light) = 0;
+		virtual void removeObject(std::shared_ptr<RenderObject> object) = 0;
+		virtual void removeLight(std::shared_ptr<PointLight> light) = 0;
+		virtual void addGlobalLight(std::shared_ptr<DirLight> globalLight) = 0;
 
 		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
+		virtual void drawFrame() = 0;
 		virtual Type getType() = 0;
 		virtual ~AbstractRender() {}
 	};

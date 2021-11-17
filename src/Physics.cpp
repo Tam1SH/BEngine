@@ -11,6 +11,26 @@ namespace BEbraEngine {
 
     void Physics::Update()
     {
+        while (!queueAdd.empty()) {
+            std::weak_ptr<RigidBody> wBody;
+            queueAdd.try_pop(wBody);
+            if (!wBody.expired()) {
+
+                dynamicsWorld->addRigidBody(wBody.lock().get()->body);
+                bodies.push_back(wBody);
+            }
+            else Debug::Log("lost rigidbody");
+
+        }
+        while (!queueDeleter.empty()) {
+            std::weak_ptr<RigidBody> wBody;
+            queueDeleter.try_pop(wBody);
+            if (!wBody.expired()) {
+
+                dynamicsWorld->removeRigidBody(wBody.lock().get()->body);
+            }
+            else Debug::Log("lost rigidbody");
+        }
         dynamicsWorld->stepSimulation(Time::GetDeltaTime() * 1/1);
         for (auto lock_body = bodies.begin(); lock_body != bodies.end();++lock_body) {
             if (lock_body->expired()) {
@@ -28,7 +48,7 @@ namespace BEbraEngine {
                 quaat.y = quat.y();
                 quaat.z = quat.z();
                 quaat.w = quat.w();
-
+                
                 auto vec = trans.getOrigin();
                 auto pos = glm::vec3(
                     vec.x(), vec.y(), vec.z()
@@ -38,21 +58,17 @@ namespace BEbraEngine {
 
         }
     }
-    void Physics::addRigidBody(btRigidBody* body)
+    void Physics::addRigidBody(std::weak_ptr<RigidBody> body)
     {
-        dynamicsWorld->addRigidBody(body);
+        queueAdd.push(body);
+
     }
-    void Physics::removeRigidBody(btRigidBody* body)
+    void Physics::removeRigidBody(std::weak_ptr<RigidBody> body)
     {
-        dynamicsWorld->removeRigidBody(body);
-    }
-    void Physics::addObject(std::weak_ptr<RigidBody> body)
-    {
-        bodies.push_back(body);
+        queueDeleter.push(body);
     }
     Physics::Physics()
     {
-        RigidBody::SetPhysics(this);
         collisionConfiguration = std::unique_ptr<btDefaultCollisionConfiguration>(new btDefaultCollisionConfiguration());
         dispatcher = std::unique_ptr<btCollisionDispatcher>(new btCollisionDispatcher(collisionConfiguration.get()));
         overlappingPairCache = std::unique_ptr<btDbvtBroadphase>(new btDbvtBroadphase());

@@ -13,8 +13,23 @@ namespace BEbraEngine {
 namespace BEbraEngine {
 
     class Physics {
+    public:
+
+        void Update();
+
+        ColliderFactory* getColliderFactory() { return colliderFactory.get(); }
+
+        RigidBodyFactory* getRigidBodyFactory() { return rigidBodyFactory.get(); }
+
+        void addRigidBody(std::weak_ptr<RigidBody> body);
+
+        void removeRigidBody(std::weak_ptr<RigidBody> body);
+
+        Physics();
+
+        ~Physics();
     private:
-        
+
         std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
 
         ///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
@@ -29,21 +44,15 @@ namespace BEbraEngine {
 
         std::list<std::weak_ptr<RigidBody>> bodies;
 
+        tbb::concurrent_queue<std::weak_ptr<RigidBody>> queueAdd;
+
+        tbb::concurrent_queue<std::weak_ptr<RigidBody>> queueDeleter;
+
         std::unique_ptr<ColliderFactory> colliderFactory;
 
         std::unique_ptr<RigidBodyFactory> rigidBodyFactory;
-    public:
 
-        void Update();
-        ColliderFactory* getColliderFactory() { return colliderFactory.get(); }
-        RigidBodyFactory* getRigidBodyFactory() { return rigidBodyFactory.get(); }
-        void addRigidBody(btRigidBody* body);
-        void removeRigidBody(btRigidBody* body);
-        void addObject(std::weak_ptr<RigidBody> body);
-
-        Physics();
-
-        ~Physics();
+        std::mutex addremovesync;
     };
 }
 

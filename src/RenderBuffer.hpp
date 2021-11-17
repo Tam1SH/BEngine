@@ -10,7 +10,7 @@ namespace BEbraEngine {
 	};
 
 	struct RenderBufferView {
-		RenderBuffer* buffer{};
+		std::shared_ptr<RenderBuffer> buffer;
 		size_t availableRange{};
 		size_t offset{};
 		void setData(void* data, size_t range, size_t offsetofData = 0) {

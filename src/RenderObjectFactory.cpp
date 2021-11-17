@@ -3,7 +3,7 @@
 #include "RenderObjectFactory.hpp"
 #include "CreateInfoStructures.hpp"
 #include "VulkanRender.hpp"
-#include "ImageCreator.hpp"
+#include "VulkanTextureFactory.hpp"
 #include "Image.hpp"
 #include "Transform.hpp"
 #include "DirectRender.hpp"
@@ -88,7 +88,7 @@ namespace BEbraEngine {
     {
         this->render = dynamic_cast<VulkanRender*>(render);
 
-        textureFactory = new TextureFactory(render);
+        textureFactory = new VulkanTextureFactory(render);
 
         _poolofObjects = std::make_unique<VulkanRenderObjectPool>();
         _poolofObjects->setContext(render);
@@ -118,17 +118,17 @@ namespace BEbraEngine {
         set = this->render->createDescriptor(&info);
     }
 
-    void VulkanRenderObjectFactory::destroyObject(RenderObject* object)
+    void VulkanRenderObjectFactory::destroyObject(std::shared_ptr<RenderObject> object)
     {
-        auto obj = static_cast<VulkanRenderObject*>(object); 
-        render->freeDescriptor(obj);
+        auto obj = std::static_pointer_cast<VulkanRenderObject>(object); 
+        render->freeDescriptor(obj.get());
         _poolofObjects->free(obj->matrix);
     }
 
-    void VulkanRenderObjectFactory::destroyPointLight(PointLight* light)
+    void VulkanRenderObjectFactory::destroyPointLight(std::shared_ptr<PointLight> light)
     {
-        auto light_ = static_cast<VulkanLight*>(light);
-        render->freeDescriptor(light_);
+        auto light_ = std::static_pointer_cast<VulkanLight>(light);
+        render->freeDescriptor(light_.get());
         _poolofPointLights->free(light_->data);
     }
 
