@@ -1,7 +1,9 @@
 #pragma once
 #include <vulkan/vulkan.h>
-#include "VulkanRender.hpp"
 
+namespace BEbraEngine {
+    class CommandPool;
+}
 namespace BEbraEngine {
     class CommandBuffer {
     public:
@@ -10,24 +12,28 @@ namespace BEbraEngine {
             Secondary
         };
     public:
+        CommandBuffer(){}
+        CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type);
 
-        CommandBuffer() {}
-        CommandBuffer(VkRenderPass renderPass, Type type) { this->renderPass = renderPass; }
+        operator VkCommandBuffer& () { return _buffer; }
 
         void Reset();
 
-        void StartRecord(VkFramebuffer buffer = 0);
+        void StartRecord(VkFramebuffer buffer = 0, VkRenderPass pass = 0);
 
-        void EndRecord();
+        void endRecord();
+
+        void destroy();
 
         VkCommandBuffer* GetBuffer() { return &_buffer; }
 
-    private:
+        void onCompleted(std::function<void()> callback) { this->callback = callback; }
+    public:
 
-        VkRenderPass renderPass;
-
+        std::function<void()> callback;
         VkCommandBuffer _buffer;
-
-        Type type;
+        VkCommandBufferUsageFlagBits usage;
+        CommandBuffer::Type type;
+        CommandPool* pool;
     };
 }

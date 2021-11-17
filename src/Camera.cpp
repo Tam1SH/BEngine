@@ -124,4 +124,7 @@ namespace BEbraEngine {
         Up = glm::normalize(glm::cross(static_cast<glm::vec3>(Right), 
                                        static_cast<glm::vec3>(Front)));
     }
+    Camera::~Camera() {
+        this->cameraData->buffer->Destroy();
+    }
 }

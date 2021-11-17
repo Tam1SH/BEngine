@@ -1,5 +1,4 @@
 
-// TODO: сделать бы слои валидации как в вулкане.
 // TODO: сделать кластерный рендер
 //TODO: сделать неймспейсы для разных частей движка
 //TODO: начать делать хотя бы что-то со звуком 
@@ -49,20 +48,17 @@ namespace BEbraEngine {
         std::unique_ptr<Camera> mainCamera1;
 
     public:
-        void Init(int i) {
-            if (i == 2) {
-                physics = std::shared_ptr<Physics>(new Physics());
-                render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
-                window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
-                window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-                mainCamera1 = std::unique_ptr<Camera>(new Camera(Vector3(2)));
-                workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
-                render1->InitCamera(mainCamera1.get());
-                render1->camera = mainCamera1.get();
-                gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get(), physics));
-                window1->attach(gameLogic1.get());
-                
-            }
+        void Init() {
+            physics = std::shared_ptr<Physics>(new Physics());
+            render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
+            window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
+            window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
+            mainCamera1 = std::unique_ptr<Camera>(new Camera(Vector3(2)));
+            workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
+            render1->InitCamera(mainCamera1.get());
+            render1->camera = mainCamera1.get();
+            gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get(), physics));
+            window1->attach(gameLogic1.get());
 
             
             
@@ -102,7 +98,7 @@ namespace BEbraEngine {
         }
 
         ~Engine() {
-
+            render1.reset();
           //  UId->Destroy();
         }
     };
@@ -121,7 +117,7 @@ extern "C"
 int main(int, char** argv)
 {
     BEbraEngine::Engine engine;
-    engine.Init(2);
+    engine.Init();
     engine.Start();
 
     return 0;

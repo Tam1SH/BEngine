@@ -202,7 +202,7 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="CommandBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\RenderSystems\VulkanClasses</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -58,7 +58,7 @@ namespace BEbraEngine {
         VkCommandBuffer buffer;
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = commandPool;
+        allocInfo.commandPool = _commandPool;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandBufferCount = 1;
 
@@ -85,16 +85,16 @@ namespace BEbraEngine {
     void VulkanRender::createCopyCmdBuffer() {
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = commandPool;
+        allocInfo.commandPool = _commandPool;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandBufferCount = 1;
 
         //vkFreeCommandBuffers(device, commandPool,1, &_copyBuffer);
-        auto result = vkAllocateCommandBuffers(device, &allocInfo, &_copyBuffer);
+        //auto result = vkAllocateCommandBuffers(device, &allocInfo, &_copyBuffer);
 
-        if (result != VK_SUCCESS) {
-            throw std::runtime_error("failed to allocate command buffers!");
-        }
+        //if (result != VK_SUCCESS) {
+        //    throw std::runtime_error("failed to allocate command buffers!");
+        //}
     }
 
     void VulkanRender::createVkImage2(stbi_uc* pixels, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkCommandBuffer& buffer)
@@ -120,6 +120,38 @@ namespace BEbraEngine {
 
         //vkDestroyBuffer(GetDevice(), stagingBuffer, nullptr);
     }
+    void VulkanRender::createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize)
+    {
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+
+        _createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+        void* _data;
+
+        vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &_data);
+        memcpy(_data, data, static_cast<size_t>(imageSize));
+        vkUnmapMemory(device, stagingBufferMemory);
+
+        createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+
+        //_createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+        auto buffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+        buffer.StartRecord();
+
+        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
+        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), buffer);
+        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, buffer);
+
+        buffer.endRecord();
+        buffer.onCompleted([=] {
+            vkDestroyBuffer(device, stagingBuffer, 0);
+            vkFreeMemory(device, stagingBufferMemory, 0);
+            });
+        AddBufferToQueue(buffer);
+    }
 
     void VulkanRender::createVkImage(stbi_uc* pixels, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize, VkBuffer& stagingBuffer)
     {
@@ -129,37 +161,29 @@ namespace BEbraEngine {
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
 
         //_createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+        auto index = tbb::this_task_arena::current_thread_index();
+        if (index > concurrentCommandPools_TransferQueue.size())
+            index = 0;
+        auto buffer = concurrentCommandPools_TransferQueue[index]->createCommandBuffer(CommandBuffer::Type::Primary , VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+        buffer.StartRecord();
 
-
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-        if (vkBeginCommandBuffer(_copyBuffer, &beginInfo) != VK_SUCCESS) {
-            throw std::runtime_error("failed to begin recording command buffer!");
-        }
-
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, _copyBuffer);
-        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), _copyBuffer);
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, _copyBuffer);
+        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
+        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), buffer);
+        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, buffer);
     
-        vkEndCommandBuffer(_copyBuffer);
+        buffer.endRecord();
 
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &_copyBuffer;
-
-        vkQueueSubmit(GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(GetGraphicsQueue());
+        AddBufferToQueue(buffer);
+       // vkQueueSubmit(GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+       // vkQueueWaitIdle(GetGraphicsQueue());
 
 
 
     }
 
-    void VulkanRender::AddBufferToQueue(VkCommandBuffer buffer)
+    void VulkanRender::AddBufferToQueue(CommandBuffer buffer)
     {
-        //BufferQueue.push(buffer);
+        BufferQueue.push(buffer);
     }
 
     VkFence* VulkanRender::GetCurrentFence()
@@ -271,6 +295,16 @@ namespace BEbraEngine {
     }
 
 
+    int VulkanRender::getCurrentThreadIndex()
+    {
+        int index = tbb::this_task_arena::current_thread_index();
+        if (index == tbb::this_task_arena::max_concurrency())
+            index--;
+        if (index > tbb::this_task_arena::max_concurrency())
+            index = 0;
+        return index;
+    }
+
     void VulkanRender::createPools()
     {
         VulkanDescriptorPoolInfo object;
@@ -336,7 +370,8 @@ namespace BEbraEngine {
             vkDestroyFramebuffer(device, framebuffer, nullptr);
         }
 
-        vkFreeCommandBuffers(device, commandPool, RenderBuffers.size(), RenderBuffers.data());
+        //vkFreeCommandBuffers(device, _commandPool, RenderBuffers.size(), RenderBuffers.data());
+
         vkDestroyPipeline(device, graphicsPipeline, nullptr);
         vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
         vkDestroyRenderPass(device, renderPass, nullptr);
@@ -352,17 +387,25 @@ namespace BEbraEngine {
     {
         cleanupSwapChain();
 
-        vkDestroyDescriptorSetLayout(device, ObjectLayout, nullptr);
-        vkDestroyDescriptorSetLayout(device, ObjectWithoutTextureLayout, nullptr);
-        vkDestroyDescriptorSetLayout(device, CameraLayout, nullptr);
+        vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::Camera], nullptr);
+        vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::DirLight], nullptr);
+        vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::LightPoint], nullptr);
+        vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::Object], nullptr);
 
+        RenderObjectPool.reset();
+        cameraPool.reset();
+        lightPool.reset();
+        factory.reset();
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
             vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
             vkDestroyFence(device, inFlightFences[i], nullptr);
         }
 
-        vkDestroyCommandPool(device, commandPool, nullptr);
+        for (int i = 0; i < concurrentCommandPools_RenderQueue.size(); i++) {
+            concurrentCommandPools_RenderQueue[i].reset();
+            concurrentCommandPools_TransferQueue[i].reset();
+        }
 
         vkDestroyDevice(device, nullptr);
 
@@ -429,36 +472,17 @@ namespace BEbraEngine {
 
     void VulkanRender::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
     {
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = commandPool;
-        allocInfo.commandBufferCount = 1;
+        auto commandBuffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(
+            CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
-
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+        commandBuffer.StartRecord();
 
         VkBufferCopy copyRegion{};
         copyRegion.size = size;
         vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+        commandBuffer.endRecord();
+        AddBufferToQueue(commandBuffer);
 
-        vkEndCommandBuffer(commandBuffer);
-
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffer;
-
-        vkQueueSubmit(GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(GetGraphicsQueue());
-
-        vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
     }
 
     void VulkanRender::copyBuffer1(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkCommandBuffer& cmdBuffer)
@@ -1122,7 +1146,7 @@ namespace BEbraEngine {
         poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
         poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 
-        if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+        if (vkCreateCommandPool(device, &poolInfo, nullptr, &_commandPool) != VK_SUCCESS) {
             throw std::runtime_error("failed to create graphics command pool!");
         }
     }
@@ -1325,16 +1349,16 @@ namespace BEbraEngine {
 
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = commandPool;
+        allocInfo.commandPool = _commandPool;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandBufferCount = RenderBuffers.size();
 
        // vkFreeCommandBuffers(device, commandPool, RenderBuffers.size(), RenderBuffers.data());
-        auto result = vkAllocateCommandBuffers(device, &allocInfo, RenderBuffers.data());
+        //auto result = vkAllocateCommandBuffers(device, &allocInfo, RenderBuffers.data());
 
-        if (result != VK_SUCCESS) {
-            throw std::runtime_error("failed to allocate command buffers!");
-        }
+        //if (result != VK_SUCCESS) {
+        ///    throw std::runtime_error("failed to allocate command buffers!");
+        //}
 
     }
 
@@ -1375,10 +1399,12 @@ namespace BEbraEngine {
         VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
         std::vector<VkCommandBuffer> buffers;
+        std::vector<CommandBuffer> bufDestroy;
         while (!BufferQueue.empty()) {
-           VkCommandBuffer buffer;
+            CommandBuffer buffer;
             BufferQueue.try_pop(buffer);
             buffers.push_back(buffer);
+            bufDestroy.push_back(buffer);
         }
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
@@ -1419,6 +1445,8 @@ namespace BEbraEngine {
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
         vkQueueWaitIdle(GetGraphicsQueue());
+        for (auto& buf : bufDestroy)
+            buf.destroy();
     }
 
     void VulkanRender::UpdateCmdBuffers()
@@ -1428,9 +1456,7 @@ namespace BEbraEngine {
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
         for (int i = 0; i < swapChainFramebuffers.size(); i++) {
-            if (vkBeginCommandBuffer(RenderBuffers[i], &beginInfo) != VK_SUCCESS) {
-                throw std::runtime_error("failed to begin recording command buffer!");
-            }
+
             VkRenderPassBeginInfo renderPassInfo{};
 
             renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -1445,26 +1471,28 @@ namespace BEbraEngine {
             clearValues[1].depthStencil = { 1.0f, 0 };
             renderPassInfo.clearValueCount = 2;
             renderPassInfo.pClearValues = clearValues.data();
-
-            CommandPool pool;
-            pool.Create(renderPass);
-            std::vector<CommandBuffer> buffers;
-            
-            buffers.resize(tbb::this_task_arena::max_concurrency());
-            for (int i = 0; i < buffers.size(); i++) {
-                buffers[i] = pool.createCommandBuffer(CommandBuffer::Type::Secondary);
+            int index = tbb::this_task_arena::max_concurrency();
+            if (index > concurrentCommandPools_RenderQueue.size())
+                index = 0;
+            if (index == tbb::this_task_arena::max_concurrency()) {
+                index--;
             }
 
-            vkCmdBeginRenderPass(RenderBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+            auto buffer = concurrentCommandPools_RenderQueue[index]->createCommandBuffer(CommandBuffer::Type::Primary,
+                VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+            buffer.StartRecord();
+
+            vkCmdBeginRenderPass(buffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
             int count = lights.size();
-            vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(int), &count);
+            vkCmdPushConstants(buffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(int), &count);
             {
                 globalLight.lock()->update();
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLight.lock()->descriptor, 0, 0);
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &lights.begin()->lock()->descriptor, 0, nullptr);
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &objects.begin()->lock()->descriptor, 0, nullptr);
+                vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLight.lock()->descriptor, 0, 0);
+                vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &lights.begin()->lock()->descriptor, 0, nullptr);
+                vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
+                if(!objects.empty())
+                    vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &objects.begin()->lock()->descriptor, 0, nullptr);
                 //tbb::parallel_for<size_t>(0, 12, [](size_t i) {
                 for (auto lock_light = lights.begin(); lock_light != lights.end(); ++lock_light) {
 
@@ -1487,7 +1515,7 @@ namespace BEbraEngine {
                     else {
                         auto object = lock_object->lock();
                         object->update();
-                        object->Draw(RenderBuffers[i]);
+                        object->Draw(buffer);
                     }
 
                 }
@@ -1496,9 +1524,9 @@ namespace BEbraEngine {
                  //     if (data)
                  //         ImGui_ImplVulkan_RenderDrawData(data, RenderBuffers[i]);
             }
-            vkCmdEndRenderPass(RenderBuffers[i]);
-            vkEndCommandBuffer(RenderBuffers[i]);
-            BufferQueue.push(RenderBuffers[i]);
+            vkCmdEndRenderPass(buffer);
+            vkEndCommandBuffer(buffer);
+            BufferQueue.push(buffer);
         }
 
     }
@@ -1810,7 +1838,7 @@ namespace BEbraEngine {
         createGraphicsPipeline();
         // createLineGraphicsPipeline();
         createFramebuffers();
-        createCommandPool();
+        //createCommandPool();
 
 
         createCopyCmdBuffer();
@@ -1819,6 +1847,15 @@ namespace BEbraEngine {
         FamilyIndices = findQueueFamilies(physicalDevice);
 
         createPools();
+        
+        concurrentCommandPools_RenderQueue.resize(tbb::this_task_arena::max_concurrency());
+        concurrentCommandPools_TransferQueue.resize(tbb::this_task_arena::max_concurrency());
+        for (int i = 0; i < concurrentCommandPools_RenderQueue.size(); i++) {
+            concurrentCommandPools_RenderQueue[i] = std::make_unique<CommandPool>();
+            concurrentCommandPools_TransferQueue[i] = std::make_unique<CommandPool>();
+            concurrentCommandPools_RenderQueue[i]->Create(FamilyIndices.graphicsFamily.value());
+            concurrentCommandPools_TransferQueue[i]->Create(FamilyIndices.graphicsFamily.value());
+        }
 
     }
 

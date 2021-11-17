@@ -30,12 +30,13 @@ namespace BEbraEngine {
     void GameLogic::ScriptInit()
     {
         object = objectFactory->create(Vector3(0, 0, 0));
-        object->GetComponent<RigidBody>()->SetDynamic(false);
-        object->GetComponent<Collider>()->setScale(Vector3(100, 1, 100));
-        object->GetComponent<Transform>()->SetScale(Vector3(100, 1, 100));
+        object->getComponent<RigidBody>()->SetDynamic(false);
+        object->getComponent<Collider>()->setScale(Vector3(100, 1, 100));
+        object->getComponent<Transform>()->SetScale(Vector3(100, 1, 100));
+        objects.push_back(object);
         globalLight = objectFactory->createDirLight(Vector3(0,-0.5f,0));
-        auto light = objectFactory->createLight(camera->Position);
-        lights.push(light);
+        light = objectFactory->createLight(camera->Position);
+
         rotate = Vector3(0, -0.5f, 0);
     }
 
@@ -49,8 +50,8 @@ namespace BEbraEngine {
             //objects.pop();
             std::shared_ptr<GameObject> obj;
             obj = objects.front();
-            objectFactory->Destroy(obj);
-            objects.pop();
+            objectFactory->destroyObject(obj);
+            objects.remove(obj);
             //std::cout << "TotalCount" << static_cast<VulkanRenderObjectFactory*>(objectFactory->renderFactory)->_poolofObjects->getCount() << std::endl;
 
         }
@@ -60,23 +61,25 @@ namespace BEbraEngine {
 
         if (Input::IsKeyPressed(KEY_CODE::KEY_R)) {
             auto obj = objectFactory->create(camera->Position + (camera->Front * 5.f));
-            obj->GetComponent<RigidBody>()->applyImpulse(camera->Front * 50.f, camera->Front);
+            obj->getComponent<RigidBody>()->applyImpulse(camera->Front * 50.f, camera->Front);
             Vector3 random_color = Vector3(
                 (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
             );
-            auto renderobj = obj->GetComponent<RenderObject>();
+            auto renderobj = obj->getComponent<RenderObject>();
             renderobj->setColor(random_color);
-            objects.push(obj);
+            objects.push_back(obj);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_T)) {
             clearObjects();
-                    }
+        }
         if (Input::IsKeyPressed(KEY_CODE::KEY_C)) {
             if (!lights.empty())
             {
                 std::shared_ptr<PointLight> light1;
                 light1 = lights.front();
-                lights.pop();
+                objectFactory->destroyPointLight(light1.get());
+                light1.reset();
+                lights.remove(light1);
             }
 
         }
@@ -89,7 +92,8 @@ namespace BEbraEngine {
                 (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
             );
             light->setColor(random_color);
-            lights.push(light);
+            light->update();
+            lights.push_back(light);
         }
         if (Input::IsKeyPressed(KEY_CODE::KEY_1)) {
 
@@ -120,12 +124,14 @@ namespace BEbraEngine {
         if (Input::IsKeyPressed(KEY_CODE::KEY_W)) {
             camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime()* speed);
         }
+
         static float time = 0;
         time += Time::GetDeltaTime();
         if (time > 1 / 60.f) {
             FixedUpdate();
             time = 0;
         }
+
         physics->Update();
         camera->Update();
         //scriptManager->RunScripts();

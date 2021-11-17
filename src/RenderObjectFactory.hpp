@@ -36,6 +36,9 @@ namespace BEbraEngine {
        
         void destroyObject(RenderObject* object) override;
 
+        void destroyPointLight(PointLight* light) override;
+
+
         void CreateObjectSet(VulkanRenderObject* obj);
 
         VulkanRenderObjectFactory();

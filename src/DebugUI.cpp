@@ -233,7 +233,7 @@ namespace BEbraEngine {
         }
     }
 
-    void DebugUI::Destroy()
+    void DebugUI::destroyObject()
     {
         vkDestroyDescriptorPool(VulkanRender::device, imguiPool, 0);
         ImGui_ImplVulkan_Shutdown();

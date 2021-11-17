@@ -31,9 +31,11 @@ namespace BEbraEngine {
 
 		std::shared_ptr<DirLight> createDirLight(const Vector3& direction) override;
 
-		void Destroy(GameObject* object);
+		void destroyObject(GameObject* object);
 
-		void Destroy(std::shared_ptr<GameObject> object);
+		void destroyObject(std::shared_ptr<GameObject> object);
+
+		void destroyPointLight(PointLight* light) override;
 
 		void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
 

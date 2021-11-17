@@ -1,18 +1,23 @@
 #include "stdafx.h"
 #include "CommandPool.hpp"
+#include "CommandBuffer.hpp"
 #include "VulkanRender.hpp"
 namespace BEbraEngine {
-    void CommandPool::Create(VkRenderPass renderPass)
+    void CommandPool::Create(uint32_t queueFamilyIndex)
     {
-        this->renderPass = renderPass;
         VkCommandPoolCreateInfo info{};
         info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        info.queueFamilyIndex = VulkanRender::FamilyIndices.graphicsFamily.value();
+        info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        info.queueFamilyIndex = queueFamilyIndex;
+        this->pool = 0;
         vkCreateCommandPool(VulkanRender::device, &info, 0, &pool);
     }
-    CommandBuffer CommandPool::createCommandBuffer(CommandBuffer::Type type)
+    CommandBuffer CommandPool::createCommandBuffer(CommandBuffer::Type type, VkCommandBufferUsageFlagBits bits)
     {
-        CommandBuffer buffer{ renderPass, type };
+        CommandBuffer buffer = CommandBuffer();
+        buffer.pool = this;
+        buffer.type = type;
+        buffer.usage = bits;
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.commandPool = pool;
@@ -22,7 +27,7 @@ namespace BEbraEngine {
             allocInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
         allocInfo.commandBufferCount = 1;
         vkAllocateCommandBuffers(VulkanRender::device, &allocInfo, buffer.GetBuffer());
-        countBuffers += 1;
+        countBuffers++;
         return buffer;
 
     }
@@ -37,16 +42,10 @@ namespace BEbraEngine {
         countBuffers -= buffers.size();
     }
 
-    void CommandPool::Destroy()
-    {
-        vkDestroyCommandPool(VulkanRender::device, pool, 0);
-        pool = 0;
-    }
 
     CommandPool::~CommandPool()
     {
-        if(pool)
-            vkDestroyCommandPool(VulkanRender::device, pool, 0);
+        vkDestroyCommandPool(VulkanRender::device, pool, 0);
     }
 
 }

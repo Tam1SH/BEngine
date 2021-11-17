@@ -37,7 +37,7 @@ namespace BEbraEngine {
 
         void Prepare();
 
-        void Destroy();
+        void destroyObject();
 
     };
 }

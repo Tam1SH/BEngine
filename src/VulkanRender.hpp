@@ -17,6 +17,9 @@
 #include "DescriptorSet.hpp"
 #include "RenderObject.hpp"
 #include "DescriptorPool.hpp"
+#include "CommandPool.hpp"
+#include "CommandBuffer.hpp"
+#include <optional>
 #undef min
 #undef max
 
@@ -79,19 +82,12 @@ namespace BEbraEngine {
     //class Buffer;
     //class DescriptorSetLayouts;
 }
-//TODO: само существование всей этой хуйни является анти-оопешной блять. 
-//Связанность с этим супер классом блять и всеми файлами которые трогают 
-//рендер(почти все) настолько сильна, как связанность хронического алкоголика с бутылкой.
-//Надо эту залупу переписывать нахуй под корень(хотя здесь нихуя и нет почти кроме инициализации).
+
 namespace BEbraEngine {
 
     class VulkanRender : public AbstractRender
     {
-    protected:
-        std::unique_ptr<VulkanRenderObjectFactory> factory;
-        std::list<std::weak_ptr<VulkanRenderObject>> objects;
-        std::list<std::weak_ptr<VulkanLight>> lights;
-        std::weak_ptr<VulkanDirLight> globalLight;
+
     public:
 
         Camera* camera;
@@ -135,6 +131,8 @@ namespace BEbraEngine {
 
         void freeDescriptor(VulkanLight* set);
 
+
+
     public:
         enum class DescriptorLayout {
             Object,
@@ -143,6 +141,7 @@ namespace BEbraEngine {
             DirLight
         };
         struct QueueFamilyIndices {
+            
             std::optional<uint32_t> graphicsFamily;
             std::optional<uint32_t> presentFamily;
             std::optional<uint32_t> transferFamily;
@@ -171,10 +170,25 @@ namespace BEbraEngine {
 
         static QueueFamilyIndices FamilyIndices;
 
+    protected:
+        std::unique_ptr<VulkanRenderObjectFactory> factory;
+        std::list<std::weak_ptr<VulkanRenderObject>> objects;
+        std::list<std::weak_ptr<VulkanLight>> lights;
+        std::weak_ptr<VulkanDirLight> globalLight;
+
     public:
         VulkanWindow* window;
 
-        VkDescriptorSet objectTransforms;
+        std::unique_ptr<DescriptorPool> RenderObjectPool;
+
+        std::unique_ptr<DescriptorPool> cameraPool;
+
+        std::unique_ptr<DescriptorPool> lightPool;
+
+        std::vector<std::unique_ptr<CommandPool>> concurrentCommandPools_RenderQueue;
+
+        std::vector<std::unique_ptr<CommandPool>> concurrentCommandPools_TransferQueue;
+
 
         VkDescriptorSet setMainCamera;
 
@@ -186,7 +200,7 @@ namespace BEbraEngine {
 
         VkSurfaceKHR surface;
 
-        tbb::concurrent_queue<VkCommandBuffer> BufferQueue;
+        tbb::concurrent_queue<CommandBuffer> BufferQueue;
 
         VkQueue graphicsQueue;
 
@@ -211,11 +225,6 @@ namespace BEbraEngine {
 
         VkRenderPass renderPass;
 
-        std::unique_ptr<DescriptorPool> RenderObjectPool;
-
-        std::unique_ptr<DescriptorPool> cameraPool;
-
-        std::unique_ptr<DescriptorPool> lightPool;
 
         std::map<DescriptorLayout, VkDescriptorSetLayout> layouts;
 
@@ -233,11 +242,11 @@ namespace BEbraEngine {
 
         VkPipeline linegraphicsPipeline;
 
-        VkCommandPool commandPool;
+        VkCommandPool _commandPool;
 
         VkCommandBuffer _copyBuffer;
 
-        std::vector<VkCommandBuffer> RenderBuffers;
+        std::vector<CommandBuffer> RenderBuffers;
 
         std::vector<VkSemaphore> imageAvailableSemaphores;
 
@@ -254,7 +263,7 @@ namespace BEbraEngine {
 
         VkQueue GetGraphicsQueue();
 
-        void AddBufferToQueue(VkCommandBuffer buffer);
+        void AddBufferToQueue(CommandBuffer buffer);
 
         VkFence* GetCurrentFence();
 
@@ -305,6 +314,8 @@ namespace BEbraEngine {
 
         void createVkImage2(stbi_uc* pixels, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkCommandBuffer& buffer);
 
+        void createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize);
+
         void createVkImage(stbi_uc* pixels, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize, VkBuffer& stagingBuffer);
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
@@ -319,6 +330,8 @@ namespace BEbraEngine {
 
         void createInstance();
     private:
+
+        int getCurrentThreadIndex();
 
         void createPools();
 
@@ -412,10 +425,22 @@ namespace BEbraEngine {
         vkUnmapMemory(device, stagingBufferMemory);
 
         _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer->self, buffer->memory);
-        copyBuffer(stagingBuffer, buffer->self, bufferSize);
+        //copyBuffer(stagingBuffer, buffer->self, bufferSize);
+        auto commandBuffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(
+            CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+        commandBuffer.StartRecord();
 
-        vkDestroyBuffer(device, stagingBuffer, nullptr);
-        vkFreeMemory(device, stagingBufferMemory, nullptr);
+        VkBufferCopy copyRegion{};
+        copyRegion.size = bufferSize;
+        vkCmdCopyBuffer(commandBuffer, stagingBuffer, buffer->self, 1, &copyRegion);
+        commandBuffer.endRecord();
+        commandBuffer.onCompleted([=] {
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            });
+        AddBufferToQueue(commandBuffer);
+        //vkDestroyBuffer(device, stagingBuffer, nullptr);
+       // vkFreeMemory(device, stagingBufferMemory, nullptr);
 
         return buffer;
     }

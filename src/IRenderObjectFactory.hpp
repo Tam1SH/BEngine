@@ -29,5 +29,7 @@ namespace BEbraEngine {
 
 		virtual void destroyObject(RenderObject* object) = 0;
 
+		virtual void destroyPointLight(PointLight* light) = 0;
+
 	};
 }

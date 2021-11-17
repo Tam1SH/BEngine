@@ -55,9 +55,10 @@ namespace BEbraEngine {
 
         std::shared_ptr<DirLight> globalLight;
         std::shared_ptr<GameObject> object;
+        std::shared_ptr<PointLight> light;
 
-        std::queue<std::shared_ptr<GameObject>> objects;
-        std::queue<std::shared_ptr<PointLight>> lights;
+        std::list<std::shared_ptr<GameObject>> objects;
+        std::list<std::shared_ptr<PointLight>> lights;
         Vector3 scale;
         Vector3 rotate;
     };

@@ -61,7 +61,7 @@ namespace BEbraEngine {
     };
 
 
-    class PointLight : public GameObjectComponent {
+    class PointLight : public GameObjectComponent, public IReusable {
     public:
         struct ShaderData {
             alignas(16) Vector3 position;
@@ -79,6 +79,8 @@ namespace BEbraEngine {
         std::weak_ptr<RenderBufferView> data;
 
         std::weak_ptr<Transform> transform;
+
+        void release() override;
 
         void setColor(const Vector3& color) {
 

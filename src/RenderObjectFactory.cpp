@@ -125,6 +125,13 @@ namespace BEbraEngine {
         _poolofObjects->free(obj->matrix);
     }
 
+    void VulkanRenderObjectFactory::destroyPointLight(PointLight* light)
+    {
+        auto light_ = static_cast<VulkanLight*>(light);
+        render->freeDescriptor(light_);
+        _poolofPointLights->free(light_->data);
+    }
+
     void VulkanRenderObjectFactory::BindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform)
     {
         light->transform = transform;

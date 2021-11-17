@@ -14,25 +14,13 @@ namespace BEbraEngine {
     class GameObject : public GameObjectComponent {
     public:
         template<typename T>
-        T* GetComponent() {
+        std::shared_ptr<T> getComponent() {
             for (auto component : Components) {
-                if (dynamic_cast<T*>(component.get())) {
-                    return static_cast<T*>(component.get());
+                if (std::dynamic_pointer_cast<T>(component)) {
+                    return std::static_pointer_cast<T>(component);
                 }
             }
-            throw std::exception();
-        }
-
-        template<typename T>
-        std::optional<T*> getComponent() {
-            for (auto component : Components) {
-                if (dynamic_cast<T*>(component.get())) {
-                    return std::optional<T*>(
-                        static_cast<T*>(component.get())
-                        );
-                }
-            }
-            return std::optional<T*>();
+            return std::shared_ptr<T>();
         }
 
         bool IsComposite() const override;

@@ -48,8 +48,20 @@ namespace BEbraEngine {
 				_isClose = true;
 			}
 		}
-		notifyOnUpdateFrame();
-		onUpdate();
+		tbb::flow::graph g;
+		tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
+		tbb::flow::continue_node< tbb::flow::continue_msg >
+			h(g, [&](const tbb::flow::continue_msg&) { 	notifyOnUpdateFrame(); });
+
+		tbb::flow::continue_node< tbb::flow::continue_msg >
+			w(g, [&](const tbb::flow::continue_msg&) { onUpdate(); });
+
+		tbb::flow::make_edge(input, w);
+		tbb::flow::make_edge(input, h);
+		input.try_put(tbb::flow::continue_msg());
+		g.wait_for_all();
+
+		
 		Input::state = SDL_GetKeyboardState(NULL);
 
 	}

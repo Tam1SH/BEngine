@@ -36,6 +36,21 @@ namespace BEbraEngine {
         vkCmdDrawIndexed(cmd, static_cast<uint32_t>(model->meshes[0].indices.size()), 1, 0, 0, 0);
     }
 
+    void PointLight::release()
+    {
+        ShaderData _data;
+        if (!data.expired()) {
+            _data.position = Vector3();
+            _data.ambient = Vector3();
+            _data.diffuse = Vector3();
+            _data.specular = Vector3();
+            _data.constant = 1.0f;
+            _data.linear = 0;
+            _data.quadratic = 0;
+            data.lock()->setData(&_data, sizeof(ShaderData));
+        }
+    }
+
     void PointLight::update()
     {
         ShaderData _data;

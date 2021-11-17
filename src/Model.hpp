@@ -34,8 +34,8 @@ namespace BEbraEngine {
     {
 
     public:
-        // Данные модели 
-        std::vector<Texture*> textures_loaded; // (оптимизация) сохраняем все загруженные текстуры, чтобы убедиться, что они не загружены более одного раза
+        std::vector<Texture*> textures_loaded; 
+        //TODO: вынести представление для каждого меша и использовать только одно.
         std::vector<Mesh> meshes;
 
         Model() {}
