@@ -12,58 +12,49 @@ namespace BEbraEngine {
     void Physics::Update()
     {
         while (!queueAdd.empty()) {
-            std::weak_ptr<RigidBody> wBody;
-            queueAdd.try_pop(wBody);
-            if (!wBody.expired()) {
-
-                dynamicsWorld->addRigidBody(wBody.lock().get()->body);
-                bodies.push_back(wBody);
+            std::shared_ptr<RigidBody> body;
+            if (queueAdd.try_pop(body)) {
+                dynamicsWorld->addRigidBody(body.get()->body);
+                bodies.push_back(body);
             }
-            else Debug::Log("lost rigidbody");
 
         }
         while (!queueDeleter.empty()) {
-            std::weak_ptr<RigidBody> wBody;
-            queueDeleter.try_pop(wBody);
-            if (!wBody.expired()) {
-
-                dynamicsWorld->removeRigidBody(wBody.lock().get()->body);
+            std::shared_ptr<RigidBody> body;
+            if (queueDeleter.try_pop(body)) {
+                dynamicsWorld->removeRigidBody(body.get()->body);
+                bodies.remove(body);
             }
-            else Debug::Log("lost rigidbody");
         }
         dynamicsWorld->stepSimulation(Time::GetDeltaTime() * 1/1);
-        for (auto lock_body = bodies.begin(); lock_body != bodies.end();++lock_body) {
-            if (lock_body->expired()) {
-                lock_body = bodies.erase(lock_body);
-                --lock_body;
-            }
-            else {
-                auto body = lock_body->lock();
-                btTransform trans;
+        for (auto body = bodies.begin(); body != bodies.end();++body) {
 
-                body->body->getMotionState()->getWorldTransform(trans);
-                auto quat = trans.getRotation();
-                Vector4 quaat;
-                quaat.x = quat.x();
-                quaat.y = quat.y();
-                quaat.z = quat.z();
-                quaat.w = quat.w();
+            //auto body = lock_body->lock();
+            btTransform trans;
+            auto _body = (*body);
+            _body->body->getMotionState()->getWorldTransform(trans);
+            auto quat = trans.getRotation();
+            Vector4 quaat;
+            quaat.x = quat.x();
+            quaat.y = quat.y();
+            quaat.z = quat.z();
+            quaat.w = quat.w();
                 
-                auto vec = trans.getOrigin();
-                auto pos = glm::vec3(
-                    vec.x(), vec.y(), vec.z()
-                );
-                body->transform->UpdatePosition(pos, quaat);
-            }
+            auto vec = trans.getOrigin();
+            auto pos = glm::vec3(
+                vec.x(), vec.y(), vec.z()
+            );
+            if(_body->getDynamic())
+                _body->transform->UpdatePosition(pos, quaat);
 
         }
     }
-    void Physics::addRigidBody(std::weak_ptr<RigidBody> body)
+    void Physics::addRigidBody(std::shared_ptr<RigidBody> body)
     {
         queueAdd.push(body);
 
     }
-    void Physics::removeRigidBody(std::weak_ptr<RigidBody> body)
+    void Physics::removeRigidBody(std::shared_ptr<RigidBody> body)
     {
         queueDeleter.push(body);
     }

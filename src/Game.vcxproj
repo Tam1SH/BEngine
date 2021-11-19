@@ -60,7 +60,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -142,18 +142,19 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;</AdditionalIncludeDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
       <EnableModules>true</EnableModules>
       <TranslateIncludes>false</TranslateIncludes>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -231,7 +232,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;$(SolutionDir)Include\assimp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\assimp</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -241,7 +242,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;tbb12.lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;tbb12.lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <EntryPointName>VS</EntryPointName>
@@ -302,14 +303,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AbstractRenderSystem.cpp" />
+    <ClCompile Include="AngelScriptEngine.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="BaseRenderWindow.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderFactory.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
+    <ClCompile Include="DXRenderObjectFactory.cpp" />
+    <ClCompile Include="DXTextureFactory.cpp" />
     <ClCompile Include="RigidBodyFactory.cpp" />
     <ClCompile Include="ScriptObjectFactory.cpp" />
+    <ClCompile Include="VulkanObjects.cpp" />
     <ClCompile Include="VulkanRender.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandPool.cpp" />
@@ -318,8 +322,8 @@
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="DescriptorSet.cpp" />
     <ClCompile Include="DescriptorSetLayout.cpp" />
-    <ClCompile Include="DirectRender.cpp" />
-    <ClCompile Include="DirectWindow.cpp" />
+    <ClCompile Include="DXRender.cpp" />
+    <ClCompile Include="DXWindow.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -336,7 +340,7 @@
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="RenderObjectFactory.cpp" />
-    <ClCompile Include="RenderObjectPool.cpp" />
+    <ClCompile Include="RenderBufferPool.cpp" />
     <ClCompile Include="RigidBoby.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -355,23 +359,29 @@
   <ItemGroup>
     <ClInclude Include="AbstractComponent.hpp" />
     <ClInclude Include="AbstractRender.hpp" />
+    <ClInclude Include="AngelScriptEngine.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BaseRenderWindow.hpp" />
     <ClInclude Include="BaseScript.hpp" />
     <ClInclude Include="BaseScriptEngine.hpp" />
     <ClInclude Include="Collider.hpp" />
     <ClInclude Include="ColliderFactory.hpp" />
+    <ClInclude Include="DXObjects.hpp" />
+    <ClInclude Include="DXRenderObjectFactory.hpp" />
+    <ClInclude Include="DXTextureFactory.hpp" />
     <ClInclude Include="IDraweable.hpp" />
+    <ClInclude Include="ITextureFactory.hpp" />
     <ClInclude Include="RigidBodyFactory.hpp" />
     <ClInclude Include="IProxyGameObjectFactory.hpp" />
     <ClInclude Include="ScriptObjectFactory.hpp" />
+    <ClInclude Include="VulkanObjects.hpp" />
     <ClInclude Include="VulkanRender.hpp" />
     <ClInclude Include="CommandBuffer.hpp" />
     <ClInclude Include="CommandPool.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="DescriptorSet.hpp" />
-    <ClInclude Include="DirectRender.hpp" />
+    <ClInclude Include="DXRender.hpp" />
     <ClInclude Include="DirectWindow.hpp" />
     <ClInclude Include="GameObjectMediator.h" />
     <ClInclude Include="IRenderObjectPool.hpp" />
@@ -393,7 +403,6 @@
     <ClInclude Include="VulkanTextureFactory.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="IScript.hpp" />
-    <ClInclude Include="IScriptObject.hpp" />
     <ClInclude Include="LoadExecuter.hpp" />
     <ClInclude Include="Model.hpp" />
     <ClInclude Include="Network.hpp" />
@@ -402,10 +411,10 @@
     <ClInclude Include="platform_window.hpp" />
     <ClInclude Include="RenderBuffer.hpp" />
     <ClInclude Include="RenderObject.hpp" />
-    <ClInclude Include="RenderObjectFactory.hpp" />
+    <ClInclude Include="VulkanRenderObjectFactory.hpp" />
     <ClInclude Include="IRenderObjectFactory.hpp" />
     <ClInclude Include="CreateInfoStructures.hpp" />
-    <ClInclude Include="RenderObjectPool.hpp" />
+    <ClInclude Include="RenderBufferPool.hpp" />
     <ClInclude Include="RigidBoby.hpp" />
     <ClInclude Include="ScriptManager.hpp" />
     <ClInclude Include="stdafx.h" />
@@ -421,8 +430,7 @@
     <ClInclude Include="WorkSpace.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="scripts\BEbraCore.js" />
-    <None Include="scripts\hello_world.js" />
+    <None Include="scripts\test.as" />
     <None Include="shaders\shader.frag" />
     <None Include="shaders\shader.vert" />
     <None Include="TAA.vert" />

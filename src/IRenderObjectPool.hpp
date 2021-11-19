@@ -1,12 +1,8 @@
 #include "stdafx.h"
-#include <optional>
-#include "RenderBuffer.hpp"
 #include "AbstractRender.hpp"
+#include "RenderBuffer.hpp"
 namespace BEbraEngine {
-
-}
-namespace BEbraEngine {
-	class IRenderObjectPool {
+	class IRenderBufferPool {
 	public:
 		enum class Usage {
 			//Представляет поведение по умолчанию: один буфер - одно представление

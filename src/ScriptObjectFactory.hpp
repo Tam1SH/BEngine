@@ -17,7 +17,7 @@ namespace BEbraEngine {
 
         std::shared_ptr<PointLight> createLight(const Vector3& position) override;
 
-        std::shared_ptr<DirLight> createDirLight(const Vector3& direction) override;
+        std::shared_ptr<DirectionLight> createDirLight(const Vector3& direction) override;
 
     };
 }

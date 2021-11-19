@@ -46,7 +46,7 @@ namespace BEbraEngine {
 	}
 	void BaseWindow::_onCreateWindow(int w, int h, const SurfaceType& type, const char* title)
 	{
-		SDL_WindowFlags flag;
+		SDL_WindowFlags flag{};
 		if (type == Vulkan) {
 			flag = SDL_WINDOW_VULKAN;
 		}

@@ -1,14 +1,24 @@
 #pragma once
 #include <vector>
-#include "RenderObject.hpp"
-//TODO: хуй знает, использовать это как интерфейс для классов либо как полноценный класс, только скрывая реализацию граф. апи
+
 namespace BEbraEngine {
 	class Vertex;
 	class Camera;
 	class BaseWindow;
 	class IRenderObjectFactory;
 	class RenderObject;
+	class PointLight;
+	class DirectionLight;
+	class RenderBuffer;
 }
+
+namespace std {
+	template<typename T, typename D>
+	class unique_ptr;
+	template<class T>
+	class shared_ptr;
+}
+
 namespace BEbraEngine {
 
 	
@@ -38,11 +48,12 @@ namespace BEbraEngine {
 		virtual void addLight(std::shared_ptr<PointLight> light) = 0;
 		virtual void removeObject(std::shared_ptr<RenderObject> object) = 0;
 		virtual void removeLight(std::shared_ptr<PointLight> light) = 0;
-		virtual void addGlobalLight(std::shared_ptr<DirLight> globalLight) = 0;
+		virtual void addGlobalLight(std::shared_ptr<DirectionLight> globalLight) = 0;
 
 		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
 		virtual void drawFrame() = 0;
 		virtual Type getType() = 0;
+		virtual size_t alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type) = 0;
 		virtual ~AbstractRender() {}
 	};
 }

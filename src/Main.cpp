@@ -1,12 +1,14 @@
-
+//TODO: сделать свою векторную матешу
+// TODO: скрипт двигло
 // TODO: сделать кластерный рендер
 //TODO: сделать неймспейсы для разных частей движка
 //TODO: начать делать хотя бы что-то со звуком 
+//TODO: реализовать систему частиц(партикле сустемXD) 
 /*
 TODO: подумать над реализацей:
 ****************************************************************************************
  * воркспейса и вообще, хорошая ли это затея разделять эту сущность на редактор и логику
- * реализовать каким-то хуем папочку в ведроиде, откуда данные таксать буду
+ * реализовать каким-то хуем папочку в ведроиде, откуда данные таскать буду
 ****************************************************************************************
 
 */
@@ -27,16 +29,17 @@ TODO: подумать над реализацей:
 #include "Vector2.hpp"
 #include "VulkanWindow.hpp"
 #include "DirectWindow.hpp"
-#include "DirectRender.hpp"
+#include "DXRender.hpp"
 #include "VulkanRender.hpp"
 #include "Input.hpp"
 #include "Time.hpp"
 #include "Camera.hpp"
+#include "AngelScriptEngine.hpp"
 namespace BEbraEngine {
 
     class Engine {
     public:
-        //std::shared_ptr<DirectRender> render;
+        //std::shared_ptr<DXRender> render;
         std::shared_ptr<AbstractRender> render1;
         std::shared_ptr<Physics> physics;
         std::unique_ptr<BaseWindow> window;
@@ -51,13 +54,14 @@ namespace BEbraEngine {
     public:
         void Init() {
             physics = std::shared_ptr<Physics>(new Physics());
-            render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
-            window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
+            render1 = std::unique_ptr<DXRender>(new DXRender());
+            window1 = std::unique_ptr<DXWindow>(new DXWindow(render1.get()));
             window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
             mainCamera1 = std::unique_ptr<Camera>(new Camera(Vector2(800, 600), Vector3(2)));
             workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
             render1->InitCamera(mainCamera1.get());
             gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get(), physics));
+            auto script = AngelScriptEngine();
 
 
 
@@ -69,21 +73,6 @@ namespace BEbraEngine {
             // auto render = window->getRender();
 
             //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
-
-            /*
-            tbb::flow::graph g;
-            tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
-            tbb::flow::continue_node< tbb::flow::continue_msg >
-                h(g, [&](const tbb::flow::continue_msg&) {});
-
-            tbb::flow::continue_node< tbb::flow::continue_msg >
-                w(g, [&](const tbb::flow::continue_msg&) { onUpdate(); });
-
-            tbb::flow::make_edge(input, w);
-            tbb::flow::make_edge(input, h);
-            input.try_put(tbb::flow::continue_msg());
-            g.wait_for_all();
-            */
 
         }
         void Start() {

@@ -7,9 +7,9 @@ namespace BEbraEngine {
 	class Transform;
 	class PointLight;
 	class Vector3;
-	class DirLight;
+	class DirectionLight;
 	class AbstractRender;
-	class IRenderObjectPool;
+	class IRenderBufferPool;
 }
 
 namespace BEbraEngine {
@@ -23,13 +23,15 @@ namespace BEbraEngine {
 
 		virtual PointLight* createLight(const Vector3& color, const Vector3& position) = 0;
 
-		virtual DirLight* createDirLight(const Vector3& color, const Vector3& direction) = 0;
+		virtual DirectionLight* createDirLight(const Vector3& color, const Vector3& direction) = 0;
 
 		virtual void setContext(AbstractRender* render) = 0;
 
 		virtual void destroyObject(std::shared_ptr<RenderObject> object) = 0;
 
 		virtual void destroyPointLight(std::shared_ptr<PointLight> light) = 0;
+
+		virtual void setModel(RenderObject* object, std::string& path) = 0;
 
 	};
 }

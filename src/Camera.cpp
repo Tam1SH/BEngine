@@ -94,7 +94,7 @@ namespace BEbraEngine {
     {
 
         ShaderData vp;
-        vp.proj = glm::perspective(glm::radians(45.0f), rectViewport.x / rectViewport.y, 1.f, 10000.0f);
+        vp.proj = glm::perspective(glm::radians(45.0f), rectViewport.x / rectViewport.y, .01f, 10000.0f);
         vp.view = GetViewMatrix();
         vp.position = static_cast<glm::vec3>(Position);
         ProcessMouseMovement();
@@ -104,6 +104,13 @@ namespace BEbraEngine {
     void Camera::resize(Vector2 newSize)
     {
         rectViewport = newSize;
+    }
+
+    void Camera::lookAt(const Vector3& at)
+    {
+        glm::vec3 front = at - Position;
+        Front = glm::normalize(front);
+
     }
 
     void Camera::updateCameraVectors()

@@ -7,18 +7,18 @@
 #include "AbstractRender.hpp"
 #undef CreateWindow
 namespace BEbraEngine {
-	class DirectRender;
-	class DirectWindow : public BaseWindow
+	class DXRender;
+	class DXWindow : public BaseWindow
 	{
 	public:
-		HWND getHandle();
+		HWND getHWND();
 		void CreateWindow(const Vector2& size, const std::string& title) override;
 		void onResizeCallback(int width, int height) override;
 		void onUpdate() override;
-		DirectWindow(std::shared_ptr<DirectRender> render);
-		~DirectWindow();
+		DXWindow(AbstractRender* render);
+		~DXWindow();
 	private:
-		std::shared_ptr<DirectRender> render;
+		DXRender* render;
 	};
 }
 #endif

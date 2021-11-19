@@ -52,7 +52,7 @@ namespace BEbraEngine {
 
         void SetScale(const Vector3& scale) noexcept;
 
-        Vector3 GetPosition() const noexcept;
+        Vector3& GetPosition() noexcept;
 
         ~Transform() { };
     };

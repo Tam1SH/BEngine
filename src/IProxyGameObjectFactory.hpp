@@ -6,7 +6,7 @@ namespace std {
 namespace BEbraEngine {
 	class GameObject;
 	class PointLight;
-	class DirLight;
+	class DirectionLight;
 	class Vector3;
 }
 namespace BEbraEngine {
@@ -16,7 +16,7 @@ namespace BEbraEngine {
 
 		virtual std::shared_ptr<PointLight> createLight(const Vector3& position) = 0;
 
-		virtual std::shared_ptr<DirLight> createDirLight(const Vector3& direction) = 0;
+		virtual std::shared_ptr<DirectionLight> createDirLight(const Vector3& direction) = 0;
 
 		virtual void destroyObject(GameObject* object) = 0;
 

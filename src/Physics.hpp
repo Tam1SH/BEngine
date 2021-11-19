@@ -21,9 +21,9 @@ namespace BEbraEngine {
 
         RigidBodyFactory* getRigidBodyFactory() { return rigidBodyFactory.get(); }
 
-        void addRigidBody(std::weak_ptr<RigidBody> body);
+        void addRigidBody(std::shared_ptr<RigidBody> body);
 
-        void removeRigidBody(std::weak_ptr<RigidBody> body);
+        void removeRigidBody(std::shared_ptr<RigidBody> body);
 
         Physics();
 
@@ -42,11 +42,11 @@ namespace BEbraEngine {
 
         std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 
-        std::list<std::weak_ptr<RigidBody>> bodies;
+        std::list<std::shared_ptr<RigidBody>> bodies;
 
-        tbb::concurrent_queue<std::weak_ptr<RigidBody>> queueAdd;
+        tbb::concurrent_queue<std::shared_ptr<RigidBody>> queueAdd;
 
-        tbb::concurrent_queue<std::weak_ptr<RigidBody>> queueDeleter;
+        tbb::concurrent_queue<std::shared_ptr<RigidBody>> queueDeleter;
 
         std::unique_ptr<ColliderFactory> colliderFactory;
 

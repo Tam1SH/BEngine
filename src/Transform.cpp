@@ -46,9 +46,6 @@ namespace BEbraEngine {
     {
         this->position = position;
 
-        auto model = glm::mat4(1);
-        glm::vec3 _s = scale;
-        glm::vec3 _p = position;
         quartion.x = quat.x;
         quartion.y = quat.y;
         quartion.z = quat.z;
@@ -70,7 +67,7 @@ namespace BEbraEngine {
         this->scale = scale;
     }
 
-    Vector3 Transform::GetPosition() const noexcept
+    Vector3& Transform::GetPosition() noexcept
     {
         return position;
     }

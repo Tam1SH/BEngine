@@ -1,17 +1,17 @@
 #include "stdafx.h"
 #include "RenderObject.hpp"
-#include "RenderObjectFactory.hpp"
+#include "VulkanRenderObjectFactory.hpp"
 #include "CreateInfoStructures.hpp"
 #include "VulkanRender.hpp"
 #include "VulkanTextureFactory.hpp"
 #include "Image.hpp"
 #include "Transform.hpp"
-#include "DirectRender.hpp"
+#include "DXRender.hpp"
 #include "VkBuffer.hpp"
-#include "RenderBuffer.hpp"
+#include "VulkanObjects.hpp"
 #include "Vertex.hpp"
 #include "Image.hpp"
-#include "RenderObjectPool.hpp"
+#include "RenderBufferPool.hpp"
 #include "Debug.h"
 #include "MeshFactory.hpp"
 
@@ -26,9 +26,9 @@ namespace BEbraEngine {
         }
         auto obj = new VulkanRenderObject();
         obj->SetName("RenderObject");
-        obj->model = meshFactory->getDefaultModel("SPHERE");
+        obj->model = meshFactory->getDefaultModel("BOX");
 
-        obj->texture = std::unique_ptr<Texture>(textureFactory->createEmptyTexture());
+        obj->texture = std::unique_ptr<Texture>(textureFactory->createEmpty());
         obj->matrix = object_view;
 
         obj->setColor(Vector3(0.2f, 0.4f, 0.3f));
@@ -50,7 +50,7 @@ namespace BEbraEngine {
             object_view = maybe_object_view.value().lock();
         }
 
-        auto light = new VulkanLight();
+        auto light = new VulkanPointLight();
         light->setColor(color);
         std::cout << "range: " << object_view->availableRange << std::endl;
         std::cout << "offset: " << object_view->offset << std::endl;
@@ -61,7 +61,7 @@ namespace BEbraEngine {
         return light;
     }
 
-    DirLight* VulkanRenderObjectFactory::createDirLight(const Vector3& color, const Vector3& direction)
+    DirectionLight* VulkanRenderObjectFactory::createDirLight(const Vector3& color, const Vector3& direction)
     {
         auto maybe_light_view = _poolofDirLights->get();
         std::shared_ptr<RenderBufferView> view;
@@ -90,18 +90,18 @@ namespace BEbraEngine {
 
         textureFactory = new VulkanTextureFactory(render);
 
-        _poolofObjects = std::make_unique<VulkanRenderObjectPool>();
+        _poolofObjects = std::make_unique<RenderBufferPool>();
         _poolofObjects->setContext(render);
-        _poolofObjects->setUsage(IRenderObjectPool::Usage::SeparateOneBuffer);
+        _poolofObjects->setUsage(IRenderBufferPool::Usage::SeparateOneBuffer);
         _poolofObjects->allocate(500, sizeof(RenderObject::ShaderData) * 500, AbstractRender::TypeBuffer::Storage);
 
-        _poolofDirLights = std::make_unique<VulkanRenderObjectPool>();
+        _poolofDirLights = std::make_unique<RenderBufferPool>();
         _poolofDirLights->setContext(render);
-        _poolofDirLights->allocate(1, sizeof(DirLight::ShaderData), AbstractRender::TypeBuffer::Storage);
+        _poolofDirLights->allocate(1, sizeof(DirectionLight::ShaderData), AbstractRender::TypeBuffer::Storage);
 
-        _poolofPointLights = std::make_unique<VulkanRenderObjectPool>();
+        _poolofPointLights = std::make_unique<RenderBufferPool>();
         _poolofPointLights->setContext(render);
-        _poolofPointLights->setUsage(IRenderObjectPool::Usage::SeparateOneBuffer);
+        _poolofPointLights->setUsage(IRenderBufferPool::Usage::SeparateOneBuffer);
         _poolofPointLights->allocate(100, sizeof(PointLight::ShaderData) * 100, AbstractRender::TypeBuffer::Storage);
 
 
@@ -127,7 +127,7 @@ namespace BEbraEngine {
 
     void VulkanRenderObjectFactory::destroyPointLight(std::shared_ptr<PointLight> light)
     {
-        auto light_ = std::static_pointer_cast<VulkanLight>(light);
+        auto light_ = std::static_pointer_cast<VulkanPointLight>(light);
         render->freeDescriptor(light_.get());
         _poolofPointLights->free(light_->data);
     }
@@ -156,5 +156,13 @@ namespace BEbraEngine {
 
     VulkanRenderObjectFactory::~VulkanRenderObjectFactory()
     {
+    }
+    void VulkanRenderObjectFactory::setModel(RenderObject* object, std::string& path)
+    {
+        object->model.reset();
+        auto m =  meshFactory->create(path);
+        if (m.has_value()) {
+            object->model = std::shared_ptr<Model>(m.value());
+        }
     }
 }

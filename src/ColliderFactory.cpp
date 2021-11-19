@@ -13,7 +13,7 @@ namespace BEbraEngine {
 		if (static_cast<glm::vec3>(info->position) == static_cast<glm::vec3>(Vector3(0, 0, 0)))
 			shape = new btBoxShape(Vector3(1.));
 		else 
-			shape = new btSphereShape(1.);
+			shape = new btBoxShape(Vector3(1.));
 
 		setShape(col, shape);
 		col->setScale(info->scale);

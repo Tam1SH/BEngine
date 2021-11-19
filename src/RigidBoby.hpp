@@ -29,6 +29,7 @@ namespace BEbraEngine {
 
 		void ResetState();
 
+		bool isActive = true;
 	public:
 
 		btRigidBody* GetRigidBody() {
@@ -40,11 +41,15 @@ namespace BEbraEngine {
 
 		void SetShape(btCollisionShape* newShape);
 
-		void SetDynamic(bool isActive);
+		void setDynamic(bool isActive);
+
+		bool getDynamic() { return isActive; }
 
 		void SetPosition(const Vector3& position);
 
 		void applyImpulse(const Vector3& force, const Vector3& direction);
+
+		void applyImpulseToPoint(float force, const Vector3& point);
 
 		RigidBody();
 

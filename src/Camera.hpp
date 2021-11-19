@@ -54,6 +54,8 @@ namespace BEbraEngine {
         void Update();
 
         void resize(Vector2 newSize);
+
+        void lookAt(const Vector3& at);
     private:
         void updateCameraVectors();
     private:

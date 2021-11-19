@@ -47,20 +47,6 @@ namespace BEbraEngine {
         Vector3 color;
     };
 
-    class VulkanRenderObject : public RenderObject {
-    public:
-        void release() override;
-
-        ~VulkanRenderObject() {}
-    public:
-        void Draw(VkCommandBuffer cmd);
-
-        VkPipelineLayout* layout;
-
-        VkDescriptorSet descriptor;
-    };
-
-
     class PointLight : public GameObjectComponent, public IReusable {
     public:
         struct ShaderData {
@@ -99,7 +85,7 @@ namespace BEbraEngine {
     };
 
 
-    class DirLight : public GameObjectComponent {
+    class DirectionLight : public GameObjectComponent {
     public:
         struct ShaderData {
             alignas(16) Vector3 direction;
@@ -142,24 +128,13 @@ namespace BEbraEngine {
         Vector3& getColor() {
             return color;
         }
-        DirLight() { name = "DirectionLight"; }
-        virtual ~DirLight() {}
+
+        DirectionLight() { name = "DirectionLight"; }
+        virtual ~DirectionLight() {}
 
     private:
         Vector3 color;
         Vector3 direction;
     };
 
-    class VulkanLight : public PointLight {
-    public:
-
-        VkDescriptorSet descriptor;
-    };
-
-    class VulkanDirLight : public DirLight {
-    public:
-
-        VkDescriptorSet descriptor;
-        ~VulkanDirLight() {}
-    };
 }

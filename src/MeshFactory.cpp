@@ -157,8 +157,14 @@ namespace BEbraEngine {
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
         // Возвращаем меш-объект, созданный на основе полученных данных
-
-        return Mesh(vertices, indices, textures);
+        auto _mesh = Mesh(vertices, indices, textures);
+        auto indices_view = new RenderBufferView();
+        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(_mesh.indices));
+        auto vertices_view = new RenderBufferView();
+        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(_mesh.vertices));
+        _mesh.indices_view = indices_view;
+        _mesh.vertices_view = vertices_view;
+        return _mesh;
     }
     std::vector<Texture*> MeshFactory::loadMaterialTextures(Model* model, aiMaterial* mat, aiTextureType type, std::string typeName, const std::string& path)
 
@@ -183,7 +189,7 @@ namespace BEbraEngine {
             if (!skip)
             {   // если текстура еще не была загружена, то загружаем её
                 Texture* texture;
-                texture = _textureFactory->createTexture(path);
+                texture = _textureFactory->create(path);
                 textures.push_back(texture);
                 model->textures_loaded.push_back(texture); // сохраняем текстуру в массиве с уже загруженными текстурами, тем самым гарантируя, что у нас не появятся без необходимости дубликаты текстур
             }

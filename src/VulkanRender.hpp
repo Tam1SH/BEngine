@@ -1,45 +1,12 @@
 #pragma once
 
 #include "stdafx.h"
-//#include "C:/.BEbraEngine/Include/stb-master/stb_image.h"
-#include "stb_image.h"
-#include <optional>
-#include <stdexcept>
-#include <array>
-#include <fstream>
-#include <set>
-#include <oneapi/tbb.h>
-#include <SDL_vulkan.h>
-#include "Vertex.hpp"
 #include "AbstractRender.hpp"
-#include "CreateInfoStructures.hpp"
-#include "VkBuffer.hpp"
-#include "DescriptorSet.hpp"
-#include "RenderObject.hpp"
-#include "DescriptorPool.hpp"
-#include "CommandPool.hpp"
-#include "CommandBuffer.hpp"
-#include <optional>
+
 #undef min
 #undef max
 
-const uint32_t WIDTH = 1920;
-const uint32_t HEIGHT = 1080;
 
-#ifdef _DEBUG
-    const bool enableValidationLayers = true;
-#else 
-    const bool enableValidationLayers = false;
-#endif
-
-
-const std::vector<const char*> validationLayers = {
-    "VK_LAYER_KHRONOS_validation"
-};
-
-const std::vector<const char*> deviceExtensions = {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
 
 const int MAX_FRAMES_IN_FLIGHT = 3;
 
@@ -48,13 +15,33 @@ namespace BEbraEngine {
     class Matrix4;
     class VulkanWindow;
     class Camera;
+    class RenderBuffer;
+    class Vertex;
+    class RenderObject;
+    class PointLight;
+    class DirectionLight;
+    class VulkanDescriptorSetInfo;
+    class VulkanRenderObject;
+    class LightDescriptorInfo;
+    class DescriptorPool;
+    class CommandPool;
+    class CommandBuffer;
+    class VulkanDirLight;
+    class VulkanPointLight;
+    class VulkanRenderObjectFactory;
+}
+
+namespace std {
+    template<typename T, typename D>
+    class unique_ptr;
+    template<class T>
+    class shared_ptr;
 }
 
 namespace BEbraEngine {
 
     class VulkanRender : public AbstractRender
     {
-
     public:
 
         Camera* camera;
@@ -62,9 +49,6 @@ namespace BEbraEngine {
         void Create(BaseWindow* window) override;
 
         void DestroyBuffer(RenderBuffer* buffer) override;
-
-        template<typename T>
-        RenderBuffer* createBuffer(std::vector<T>& data, VkBufferUsageFlags usage);
 
         RenderBuffer* createUniformBuffer(size_t size) override;
 
@@ -88,7 +72,7 @@ namespace BEbraEngine {
 
         IRenderObjectFactory* getRenderObjectFactory() override;
 
-        void addGlobalLight(std::shared_ptr<DirLight> globalLight) override;
+        void addGlobalLight(std::shared_ptr<DirectionLight> globalLight) override;
 
         void drawFrame() override;
 
@@ -102,16 +86,17 @@ namespace BEbraEngine {
 
         void freeDescriptor(VulkanDirLight* set);
 
-        void freeDescriptor(VulkanLight* set);
+        void freeDescriptor(VulkanPointLight* set);
 
- 
+        RenderBuffer* createBuffer(void* data, size_t size, VkBufferUsageFlags usage);
+
 
     public:
         enum class DescriptorLayout {
             Object,
             Camera,
             LightPoint,
-            DirLight
+            DirectionLight
         };
         struct QueueFamilyIndices {
             
@@ -147,18 +132,18 @@ namespace BEbraEngine {
     private:
         std::unique_ptr<VulkanRenderObjectFactory> factory;
         std::list<std::shared_ptr<VulkanRenderObject>> objects;
-        std::list<std::shared_ptr<VulkanLight>> lights;
+        std::list<std::shared_ptr<VulkanPointLight>> lights;
         std::weak_ptr<VulkanDirLight> globalLight;
 
         tbb::concurrent_queue<std::shared_ptr<VulkanRenderObject>> queueAddObject;
         tbb::concurrent_queue<std::shared_ptr<VulkanRenderObject>> queueDeleterObject;
 
-        tbb::concurrent_queue<std::shared_ptr<VulkanLight>> queueAddLight;
-        tbb::concurrent_queue<std::shared_ptr<VulkanLight>> queueDeleterLight;
+        tbb::concurrent_queue<std::shared_ptr<VulkanPointLight>> queueAddLight;
+        tbb::concurrent_queue<std::shared_ptr<VulkanPointLight>> queueDeleterLight;
     public:
         VulkanWindow* window;
 
-        std::unique_ptr<DescriptorPool> RenderObjectPool;
+        std::unique_ptr<DescriptorPool> RenderBufferPool;
 
         std::unique_ptr<DescriptorPool> cameraPool;
 
@@ -258,9 +243,7 @@ namespace BEbraEngine {
 
         bool hasStencilComponent(VkFormat format);
 
-        size_t pad_storage_buffer_size(size_t originalSize);
-
-        size_t pad_uniform_buffer_size(size_t originalSize);
+        size_t alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type) override;
 
         static void _createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 
@@ -269,8 +252,6 @@ namespace BEbraEngine {
         void copyBuffer1(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkCommandBuffer& cmdBuffer);
 
         VkImageView createTextureImageView(VkImage& textureImage);
-
-        VkImage createTextureImage(const std::string& path, VkDeviceMemory& textureImageMemory);
 
         VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 
@@ -289,13 +270,7 @@ namespace BEbraEngine {
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, VkCommandBuffer& cmdbuffer);
 
 
-        void createVkImage1();
-
-        void createVkImage2(stbi_uc* pixels, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkCommandBuffer& buffer);
-
         void createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize);
-
-        void createVkImage(stbi_uc* pixels, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize, VkBuffer& stagingBuffer);
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
@@ -346,10 +321,6 @@ namespace BEbraEngine {
 
         void createSyncObjects();
 
-     //   VkCommandBuffer beginSingleTimeCommands();
-
-      //  void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-
         void createCmdBuffers();
 
         void createCopyCmdBuffer();
@@ -384,42 +355,17 @@ namespace BEbraEngine {
         static void WriteDataOnBuffer(VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size);
 
 
+        const std::vector<const char*> validationLayers = {
+            "VK_LAYER_KHRONOS_validation"
+        };
+
+        const std::vector<const char*> deviceExtensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+#ifdef _DEBUG
+        const bool enableValidationLayers = true;
+#else 
+        const bool enableValidationLayers = false;
+#endif
 };
-
-
-    template<typename T>
-    inline RenderBuffer* VulkanRender::createBuffer(std::vector<T>& data, VkBufferUsageFlags usage)
-    {
-        VulkanBuffer* buffer = new VulkanBuffer();
-        VkDeviceSize bufferSize = sizeof(data[0]) * data.size();
-        buffer->size = bufferSize;
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
-        _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-        void* _data;
-        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &_data);
-        memcpy(_data, data.data(), (size_t)bufferSize);
-        vkUnmapMemory(device, stagingBufferMemory);
-
-        _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer->self, buffer->memory);
-        //copyBuffer(stagingBuffer, buffer->self, bufferSize);
-        auto commandBuffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(
-            CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-        commandBuffer.StartRecord();
-
-        VkBufferCopy copyRegion{};
-        copyRegion.size = bufferSize;
-        vkCmdCopyBuffer(commandBuffer, stagingBuffer, buffer->self, 1, &copyRegion);
-        commandBuffer.endRecord();
-        commandBuffer.onCompleted([=] {
-            vkDestroyBuffer(device, stagingBuffer, nullptr);
-            vkFreeMemory(device, stagingBufferMemory, nullptr);
-            });
-        AddBufferToQueue(commandBuffer);
-        //vkDestroyBuffer(device, stagingBuffer, nullptr);
-       // vkFreeMemory(device, stagingBufferMemory, nullptr);
-
-        return buffer;
-    }
 }

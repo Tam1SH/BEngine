@@ -1,0 +1,16 @@
+void main()
+
+Temps: 
+
+Variables: 
+
+
+- 3,2 -
+    0   0 *    SUSPEND
+    1   0 *    PGA      0xc57ab5b0          (str:Hello world
+)
+    4   2 *    CALLSYS  67           (void print(const string&in))
+- 4,2 -
+    6   0 *    SUSPEND
+            0:
+    7   0 *    RET      0

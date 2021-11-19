@@ -14,7 +14,7 @@ namespace BEbraEngine {
         return realFactory->createLight(position);
     }
 
-    std::shared_ptr<DirLight> ScriptObjectFactory::createDirLight(const Vector3& direction)
+    std::shared_ptr<DirectionLight> ScriptObjectFactory::createDirLight(const Vector3& direction)
     {
         return realFactory->createDirLight(direction);
     }

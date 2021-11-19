@@ -1,9 +1,6 @@
 #include "stdafx.h"
-#define STB_IMAGE_IMPLEMENTATION
+
 #include "VulkanRender.hpp"
-#include <iostream>
-#include <mutex>
-#include <thread>
 #include "VulkanWindow.hpp"
 #include "VkBuffer.hpp"
 #include "Camera.hpp"
@@ -12,9 +9,19 @@
 #include "DescriptorSetLayouts.hpp"
 #include "RenderBuffer.hpp"
 #include "RenderObject.hpp"
-#include "RenderObjectFactory.hpp"
+#include "VulkanRenderObjectFactory.hpp"
 #include "CommandBuffer.hpp"
 #include "CommandPool.hpp"
+#include <stdexcept>
+#include <array>
+#include <set>
+#include <SDL_vulkan.h>
+#include "Vertex.hpp"
+#include "CreateInfoStructures.hpp"
+#include "DescriptorSet.hpp"
+#include "RenderObject.hpp"
+#include "DescriptorPool.hpp"
+#include "VulkanObjects.hpp"
 namespace BEbraEngine {
     
     VkDevice VulkanRender::device;
@@ -98,29 +105,6 @@ namespace BEbraEngine {
         //}
     }
 
-    void VulkanRender::createVkImage2(stbi_uc* pixels, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkCommandBuffer& buffer)
-    {
-        VkDeviceSize imageSize = texWidth * texHeight * 4;
-
-        VkBuffer stagingBuffer;
-
-
-        _createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, textureImageMemory);
-
-        void* data;
-        vkMapMemory(GetDevice(), textureImageMemory, 0, imageSize, 0, &data);
-        memcpy(data, pixels, static_cast<size_t>(imageSize));
-        vkUnmapMemory(GetDevice(), textureImageMemory);
-        createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
-        //VkFormatFeatureFlags
-
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
-        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), buffer);
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, buffer);
-
-
-        //vkDestroyBuffer(GetDevice(), stagingBuffer, nullptr);
-    }
     void VulkanRender::createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize)
     {
         VkBuffer stagingBuffer;
@@ -154,32 +138,6 @@ namespace BEbraEngine {
         AddBufferToQueue(buffer);
     }
 
-    void VulkanRender::createVkImage(stbi_uc* pixels, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize, VkBuffer& stagingBuffer)
-    {
-
-
-        createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, 
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
-
-
-        auto buffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(
-            CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-        buffer.StartRecord();
-
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
-        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), buffer);
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, buffer);
-    
-        buffer.endRecord();
-
-        AddBufferToQueue(buffer);
-       // vkQueueSubmit(GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-       // vkQueueWaitIdle(GetGraphicsQueue());
-
-
-
-    }
-
     void VulkanRender::AddBufferToQueue(CommandBuffer buffer)
     {
         BufferQueue.push(buffer);
@@ -206,6 +164,7 @@ namespace BEbraEngine {
         imagesInFlight.resize(swapChainImages.size(), VK_NULL_HANDLE);
         createPools();
         recreateRenderObjects();
+        camera->resize(Vector2(width, height));
     }
 
     void VulkanRender::recreateRenderObjects() {
@@ -293,8 +252,8 @@ namespace BEbraEngine {
         VulkanDescriptorPoolInfo object;
         VulkanDescriptorPoolInfo light;
         VulkanDescriptorPoolInfo camera;
-        if (RenderObjectPool.get() || lightPool.get() || cameraPool.get()) {
-            object = RenderObjectPool->getInfo();
+        if (RenderBufferPool.get() || lightPool.get() || cameraPool.get()) {
+            object = RenderBufferPool->getInfo();
             light = lightPool->getInfo();
             camera = cameraPool->getInfo();
         }
@@ -330,9 +289,9 @@ namespace BEbraEngine {
             camera.types[0] = poolSize;
         }
 
-        RenderObjectPool.reset();
-        RenderObjectPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(object));
-        RenderObjectPool->allocate(MAX_COUNT_OF_OBJECTS);
+        RenderBufferPool.reset();
+        RenderBufferPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(object));
+        RenderBufferPool->allocate(MAX_COUNT_OF_OBJECTS);
 
         cameraPool.reset();
         cameraPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(camera));
@@ -371,14 +330,16 @@ namespace BEbraEngine {
         cleanupSwapChain();
 
         vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::Camera], nullptr);
-        vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::DirLight], nullptr);
+        vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::DirectionLight], nullptr);
         vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::LightPoint], nullptr);
         vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::Object], nullptr);
 
-        RenderObjectPool.reset();
+        RenderBufferPool.reset();
         cameraPool.reset();
         lightPool.reset();
         factory.reset();
+        objects.clear();
+        lights.clear();
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
             vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
@@ -431,24 +392,17 @@ namespace BEbraEngine {
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
-    size_t VulkanRender::pad_storage_buffer_size(size_t originalSize)
+    size_t VulkanRender::alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type)
     {
-        // Calculate required alignment based on minimum device offset alignment
-        size_t minUboAlignment = GPU_properties.limits.minStorageBufferOffsetAlignment;
+        size_t alignment = 0;
+        if(type == AbstractRender::TypeBuffer::Uniform)
+            alignment = GPU_properties.limits.minUniformBufferOffsetAlignment;
+        if(type == AbstractRender::TypeBuffer::Storage)
+            alignment = GPU_properties.limits.minStorageBufferOffsetAlignment;
+
         size_t alignedSize = originalSize;
-        if (minUboAlignment > 0) {
-            alignedSize = (alignedSize + minUboAlignment - 1) & ~(minUboAlignment - 1);
-        }
-        return alignedSize;
-    }
-    size_t VulkanRender::pad_uniform_buffer_size(size_t originalSize)
-    {
-        // Calculate required alignment based on minimum device offset alignment
-        size_t minUboAlignment = GPU_properties.limits.minUniformBufferOffsetAlignment;
-        size_t minUbo1Alignment =  GPU_properties.limits.minStorageBufferOffsetAlignment;
-        size_t alignedSize = originalSize;
-        if (minUboAlignment > 0) {
-            alignedSize = (alignedSize + minUboAlignment - 1) & ~(minUboAlignment - 1);
+        if (alignment > 0) {
+            alignedSize = (alignedSize + alignment - 1) & ~(alignment - 1);
         }
         return alignedSize;
     }
@@ -481,57 +435,6 @@ namespace BEbraEngine {
         return createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
     }
 
-    VkImage VulkanRender::createTextureImage(const std::string& path, VkDeviceMemory& textureImageMemory)
-    {
-        VkImage textureImage;
-        int texWidth, texHeight, texChannels;
-        stbi_set_flip_vertically_on_load(true);
-        texWidth = 16;
-        texHeight = 16;
-
-        stbi_uc* pixels = new unsigned char[texWidth * texHeight];//stbi_load(path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-        VkDeviceSize imageSize = texWidth * texHeight * 4;
-
-        if (!pixels) {
-            throw std::runtime_error("failed to load texture image!");
-        }
-
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
-        _createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-        void* data;
-        vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
-        memcpy(data, pixels, static_cast<size_t>(imageSize));
-        vkUnmapMemory(device, stagingBufferMemory);
-
-        stbi_image_free(pixels);
-
-        createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
-
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-        if (vkBeginCommandBuffer(_copyBuffer, &beginInfo) != VK_SUCCESS) {
-            throw std::runtime_error("failed to begin recording command buffer!");
-        }
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, _copyBuffer);
-        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), _copyBuffer);
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, _copyBuffer);
-
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &_copyBuffer;
-
-        vkQueueSubmit(GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(GetGraphicsQueue());
-
-        vkDestroyBuffer(device, stagingBuffer, nullptr);
-        vkFreeMemory(device, stagingBufferMemory, nullptr);
-        return textureImage;
-    }
 
     VkImageView VulkanRender::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
     {
@@ -799,16 +702,6 @@ namespace BEbraEngine {
         vkGetDeviceQueue(device, indices.transferFamily.value(), 0, &transferQueue);
     }
 
-    void VulkanRender::createVkImage1()
-    {
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &_copyBuffer;
-
-        vkQueueSubmit(GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(GetGraphicsQueue());
-    }
 
     void VulkanRender::createSwapChain(uint32_t width, uint32_t height)
     {
@@ -1060,7 +953,7 @@ namespace BEbraEngine {
             this->layouts[DescriptorLayout::Object], 
             this->layouts[DescriptorLayout::Camera], 
             this->layouts[DescriptorLayout::LightPoint],
-            this->layouts[DescriptorLayout::DirLight] };
+            this->layouts[DescriptorLayout::DirectionLight] };
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.pNext = nullptr;
         pipelineLayoutInfo.setLayoutCount = 4;
@@ -1187,7 +1080,7 @@ namespace BEbraEngine {
         vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &layoutDirection);
 
         layouts[DescriptorLayout::LightPoint] = layoutPoint;
-        layouts[DescriptorLayout::DirLight] = layoutDirection;
+        layouts[DescriptorLayout::DirectionLight] = layoutDirection;
     }
 
     void VulkanRender::createCameraDescriptorSetLayout()
@@ -1348,14 +1241,14 @@ namespace BEbraEngine {
     void VulkanRender::drawFrame()
     {
         while (!queueAddLight.empty()) {
-            std::shared_ptr<VulkanLight> light;
+            std::shared_ptr<VulkanPointLight> light;
             if (queueAddLight.try_pop(light)) {
                 lights.push_back(light);
             }
 
         }
         while (!queueDeleterLight.empty()) {
-            std::shared_ptr<VulkanLight> light;
+            std::shared_ptr<VulkanPointLight> light;
             if (queueDeleterLight.try_pop(light)) {
                 lights.remove(light);
             }
@@ -1766,6 +1659,41 @@ namespace BEbraEngine {
     {
     }
 
+    RenderBuffer* VulkanRender::createBuffer(void* data, size_t size, VkBufferUsageFlags usage)
+    {
+        VulkanBuffer* buffer = new VulkanBuffer();
+        VkDeviceSize bufferSize = size;
+        buffer->size = bufferSize;
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+        void* _data;
+        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &_data);
+        memcpy(_data, data, (size_t)bufferSize);
+        vkUnmapMemory(device, stagingBufferMemory);
+
+        _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer->self, buffer->memory);
+        //copyBuffer(stagingBuffer, buffer->self, bufferSize);
+        auto commandBuffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(
+            CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+        commandBuffer.StartRecord();
+
+        VkBufferCopy copyRegion{};
+        copyRegion.size = bufferSize;
+        vkCmdCopyBuffer(commandBuffer, stagingBuffer, buffer->self, 1, &copyRegion);
+        commandBuffer.endRecord();
+        commandBuffer.onCompleted([=] {
+            vkDestroyBuffer(device, stagingBuffer, nullptr);
+            vkFreeMemory(device, stagingBufferMemory, nullptr);
+            });
+        AddBufferToQueue(commandBuffer);
+        //vkDestroyBuffer(device, stagingBuffer, nullptr);
+       // vkFreeMemory(device, stagingBufferMemory, nullptr);
+
+        return buffer;
+    }
+
 
     /*
     void VulkanRender::framebufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -1844,7 +1772,7 @@ namespace BEbraEngine {
 
     RenderBuffer* VulkanRender::createIndexBuffer(std::vector<uint32_t> indices)
     {
-        return createBuffer(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+        return createBuffer(indices.data(), sizeof(indices[0]) * indices.size(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
 
     VkDescriptorSet VulkanRender::createDescriptor(LightDescriptorInfo* info)
@@ -1865,7 +1793,7 @@ namespace BEbraEngine {
                 //0x1f91b40000000011[] 
                 allocInfo.pSetLayouts = &layouts[DescriptorLayout::LightPoint];
             if (info->type == LightDescriptorInfo::Type::Direction)
-                allocInfo.pSetLayouts = &layouts[DescriptorLayout::DirLight];
+                allocInfo.pSetLayouts = &layouts[DescriptorLayout::DirectionLight];
             vkAllocateDescriptorSets(GetDevice(), &allocInfo, &set);
         }
 
@@ -1927,15 +1855,15 @@ namespace BEbraEngine {
     {
         return factory.get();
     }
-    void VulkanRender::addGlobalLight(std::shared_ptr<DirLight> globalLight)
+    void VulkanRender::addGlobalLight(std::shared_ptr<DirectionLight> globalLight)
     {
         this->globalLight = std::static_pointer_cast<VulkanDirLight>(globalLight);
     }
     VkDescriptorSet VulkanRender::createDescriptor(VulkanDescriptorSetInfo* info)
     {
-        auto pool = RenderObjectPool.get();
+        auto pool = RenderBufferPool.get();
         VkDescriptorSet set;
-        auto opt_set = RenderObjectPool->get();
+        auto opt_set = RenderBufferPool->get();
         if (opt_set.has_value()) {
             set = opt_set.value();
         }
@@ -1984,13 +1912,13 @@ namespace BEbraEngine {
     }
     void VulkanRender::freeDescriptor(VulkanRenderObject* set)
     {
-        RenderObjectPool->free(set->descriptor);
+        RenderBufferPool->free(set->descriptor);
     }
     void VulkanRender::freeDescriptor(VulkanDirLight* set)
     {
         lightPool->free(set->descriptor);
     }
-    void VulkanRender::freeDescriptor(VulkanLight* set)
+    void VulkanRender::freeDescriptor(VulkanPointLight* set)
     {
         lightPool->free(set->descriptor);
     }
@@ -2017,7 +1945,7 @@ namespace BEbraEngine {
     }
     RenderBuffer* VulkanRender::createVertexBuffer(std::vector<Vertex> vertices)
     {
-        return createBuffer(vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+        return createBuffer(vertices.data(), sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
     void VulkanRender::addObject(std::shared_ptr<RenderObject> object)
     {
@@ -2025,7 +1953,7 @@ namespace BEbraEngine {
     }
     void VulkanRender::addLight(std::shared_ptr<PointLight> light)
     {
-        queueAddLight.push(std::static_pointer_cast<VulkanLight>(light));
+        queueAddLight.push(std::static_pointer_cast<VulkanPointLight>(light));
     }
 
     void VulkanRender::removeObject(std::shared_ptr<RenderObject> object)
@@ -2035,7 +1963,7 @@ namespace BEbraEngine {
 
     void VulkanRender::removeLight(std::shared_ptr<PointLight> light)
     {
-        queueDeleterLight.push(std::static_pointer_cast<VulkanLight>(light));
+        queueDeleterLight.push(std::static_pointer_cast<VulkanPointLight>(light));
     }
     VulkanRender::VulkanRender() {}
 

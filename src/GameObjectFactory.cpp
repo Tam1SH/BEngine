@@ -2,7 +2,7 @@
 #define NOMINMAX
 #include "GameObjectFactory.hpp"
 #include "TransformFactory.hpp"
-#include "RenderObjectFactory.hpp"
+#include "VulkanRenderObjectFactory.hpp"
 #include "GameObject.hpp"
 #include "RigidBoby.hpp"
 #include "RenderObject.hpp"
@@ -75,9 +75,9 @@ namespace BEbraEngine {
 		return light;
 	}
 
-	std::shared_ptr<DirLight> GameObjectFactory::createDirLight(const Vector3& direction)
+	std::shared_ptr<DirectionLight> GameObjectFactory::createDirLight(const Vector3& direction)
 	{
-		auto light = std::shared_ptr<DirLight>(renderFactory->createDirLight(Vector3(0.1f), direction));
+		auto light = std::shared_ptr<DirectionLight>(renderFactory->createDirLight(Vector3(0.1f), direction));
 
 		auto name = light->GetName();
 
@@ -86,6 +86,11 @@ namespace BEbraEngine {
 
 		render->addGlobalLight(light);
 		return light;
+	}
+
+	void GameObjectFactory::setModel(GameObject* object, std::string&& path)
+	{
+		renderFactory->setModel(object->getComponent<RenderObject>().get(), path);
 	}
 
 	void GameObjectFactory::destroyObject(GameObject* object)
