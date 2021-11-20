@@ -53,9 +53,17 @@ namespace BEbraEngine {
 
     public:
         void Init() {
+            if (true) {
+
+                render1 = std::unique_ptr<DXRender>(new DXRender());
+                window1 = std::unique_ptr<DXWindow>(new DXWindow(render1.get()));
+            }
+            else {
+
+                render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
+                window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
+            }
             physics = std::shared_ptr<Physics>(new Physics());
-            render1 = std::unique_ptr<DXRender>(new DXRender());
-            window1 = std::unique_ptr<DXWindow>(new DXWindow(render1.get()));
             window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
             mainCamera1 = std::unique_ptr<Camera>(new Camera(Vector2(800, 600), Vector3(2)));
             workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());

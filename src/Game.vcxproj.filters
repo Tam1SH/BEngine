@@ -207,6 +207,9 @@
     <ClCompile Include="VulkanObjects.cpp">
       <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="DXRenderBufferPool.cpp">
+      <Filter>Исходные файлы\Renders\DirectX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.hpp">
@@ -332,9 +335,6 @@
     <ClInclude Include="DirectWindow.hpp">
       <Filter>Файлы заголовков\Render\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="RenderBufferPool.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -350,7 +350,7 @@
     <ClInclude Include="MediatorComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="IRenderObjectPool.hpp">
+    <ClInclude Include="IRenderBufferPool.hpp">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorSet.hpp">
@@ -421,6 +421,12 @@
     </ClInclude>
     <ClInclude Include="DXObjects.hpp">
       <Filter>Файлы заголовков\Render\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DXRenderBufferPool.hpp">
+      <Filter>Файлы заголовков\Render\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanRenderBufferPool.hpp">
+      <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

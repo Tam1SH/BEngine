@@ -4,11 +4,13 @@
 cbuffer ConstantBuffer : register(b1)
 {
     float4x4 World;
+    float3 Color;
 }
 
 cbuffer CameraData : register(b2) {
     float4x4 Projection;
     float4x4 View;
+    float3 position;
 
 };
 
@@ -21,6 +23,9 @@ struct VS_INPUT
 
     float4 Color : COLOR;
 
+   // float4 TexCoord : TEXCOORD;
+
+   // float4 Normal : NORMAL;
 };
 
 
@@ -53,14 +58,17 @@ PS_INPUT VS(VS_INPUT input)
 
 
   //  output.Pos = mul(World, input.Pos);
+    float4 test = (float4)input.Pos;
+    float4x4 VP = mul(Projection, View);
+    float4x4 MVP = mul(VP, World);
+    test = mul(MVP, test);
 
-    float4 test = mul(World, input.Pos);
-    float4x4 PV = mul(Projection, View);
-    test = mul(PV, test);
+
+
 
 
     output.Pos = test;
-    output.Color = test;
+    output.Color = float4(Color,1);
 
 
 
@@ -79,7 +87,6 @@ PS_INPUT VS(VS_INPUT input)
 //--------------------------------------------------------------------------------------
 
 float4 PS(PS_INPUT input) : SV_Target
-
 {
 
     return input.Color;

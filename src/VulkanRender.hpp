@@ -143,7 +143,7 @@ namespace BEbraEngine {
     public:
         VulkanWindow* window;
 
-        std::unique_ptr<DescriptorPool> RenderBufferPool;
+        std::unique_ptr<DescriptorPool> VulkanRenderBufferPool;
 
         std::unique_ptr<DescriptorPool> cameraPool;
 

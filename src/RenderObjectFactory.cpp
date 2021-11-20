@@ -11,7 +11,7 @@
 #include "VulkanObjects.hpp"
 #include "Vertex.hpp"
 #include "Image.hpp"
-#include "RenderBufferPool.hpp"
+#include "VulkanRenderBufferPool.hpp"
 #include "Debug.h"
 #include "MeshFactory.hpp"
 
@@ -90,16 +90,16 @@ namespace BEbraEngine {
 
         textureFactory = new VulkanTextureFactory(render);
 
-        _poolofObjects = std::make_unique<RenderBufferPool>();
+        _poolofObjects = std::make_unique<VulkanRenderBufferPool>();
         _poolofObjects->setContext(render);
         _poolofObjects->setUsage(IRenderBufferPool::Usage::SeparateOneBuffer);
         _poolofObjects->allocate(500, sizeof(RenderObject::ShaderData) * 500, AbstractRender::TypeBuffer::Storage);
 
-        _poolofDirLights = std::make_unique<RenderBufferPool>();
+        _poolofDirLights = std::make_unique<VulkanRenderBufferPool>();
         _poolofDirLights->setContext(render);
         _poolofDirLights->allocate(1, sizeof(DirectionLight::ShaderData), AbstractRender::TypeBuffer::Storage);
 
-        _poolofPointLights = std::make_unique<RenderBufferPool>();
+        _poolofPointLights = std::make_unique<VulkanRenderBufferPool>();
         _poolofPointLights->setContext(render);
         _poolofPointLights->setUsage(IRenderBufferPool::Usage::SeparateOneBuffer);
         _poolofPointLights->allocate(100, sizeof(PointLight::ShaderData) * 100, AbstractRender::TypeBuffer::Storage);

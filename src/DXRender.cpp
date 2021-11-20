@@ -21,7 +21,7 @@ namespace BEbraEngine {
             g_pImmediateContext->Map(buf, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
             memcpy(mappedResource.pData, data, size);
             g_pImmediateContext->Unmap(buf, 0);
-           // g_pImmediateContext->UpdateSubresource(buf, 0, NULL, data, 0, 0);
+            //g_pImmediateContext->UpdateSubresource(buf, 0, NULL, data, 0, 0);
         }
         void Destroy() override {
             throw std::exception("sasi zalypy");
@@ -60,7 +60,9 @@ namespace BEbraEngine {
     void DXRender::InitCamera(Camera* camera)
     {
         auto view = new RenderBufferView();
-        view->buffer = std::shared_ptr<RenderBuffer>(createStorageBuffer(sizeof(Matrix4) * 2));
+        view->availableRange = sizeof(Matrix4) * 2 + sizeof(Vector4);
+        view->buffer = std::shared_ptr<RenderBuffer>(createStorageBuffer(view->availableRange));
+
         camera->cameraData = view;
         this->camera = camera;
     }
@@ -75,11 +77,12 @@ namespace BEbraEngine {
         bd.Usage = D3D11_USAGE_DEFAULT;
         bd.ByteWidth = sizeof(indices[0]) * indices.size();
         bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        bd.CPUAccessFlags = 0;
         buff->size = bd.ByteWidth;
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
         InitData.pSysMem = indices.data();
+        //g_pd3dDevice->Crreate
         g_pd3dDevice->CreateBuffer(&bd, &InitData, &buff->buf);
         buff->g_pImmediateContext = g_pImmediateContext;
 
@@ -110,7 +113,10 @@ namespace BEbraEngine {
         bd.Usage = usage;
         bd.ByteWidth = size;
         bd.BindFlags = type;
-        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        if (type == D3D11_BIND_INDEX_BUFFER || type == D3D11_BIND_VERTEX_BUFFER)
+            bd.CPUAccessFlags = 0;
+        else
+            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         buff->size = bd.ByteWidth;
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
@@ -159,18 +165,29 @@ namespace BEbraEngine {
         g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
         // g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
          // Render a triangle
+        camera->Update();
         auto buf = static_cast<DXBuffer*>(camera->cameraData->buffer.get());
 
 
 
-
+        
         for (auto object : objects) {
+            object->update();
             const auto data = static_cast<const DXBuffer*>(object->matrix.lock()->buffer.get());
             g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
             g_pImmediateContext->VSSetConstantBuffers(1, 1, &data->buf);
             g_pImmediateContext->VSSetConstantBuffers(2, 1, &buf->buf);
             g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
-            // g_pImmediateContext->DrawIndexed(indices.size(),0, 0);
+            auto EBO = static_cast<const DXBuffer*>(object->model->meshes[0].indices_view->buffer.get());
+            auto VBO = static_cast<const DXBuffer*>(object->model->meshes[0].vertices_view->buffer.get());
+
+            //g_pImmediateContext->UpdateSubresource()
+            UINT stride = sizeof(Vertex);
+            UINT offset = 0;
+            g_pImmediateContext->IASetVertexBuffers(0, 1, &VBO->buf, &stride, &offset);
+            g_pImmediateContext->IASetIndexBuffer(EBO->buf, DXGI_FORMAT_R32_UINT, 0);
+
+            g_pImmediateContext->DrawIndexed(object->model->meshes[0].indices.size(), 0, 0);
         }
 
 
@@ -358,12 +375,13 @@ namespace BEbraEngine {
             pVSBlob->Release();
             return hr;
         }
-
         // Define the input layout
         D3D11_INPUT_ELEMENT_DESC layout[] =
         {
             { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(Vector4), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(Vector3), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+          //  { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(Vector4) + sizeof(Vector3), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+          //  { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(Vector4) + sizeof(Vector3) + sizeof(Vector2), D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
         UINT numElements = ARRAYSIZE(layout);
 

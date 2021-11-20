@@ -30,8 +30,8 @@ namespace BEbraEngine {
 
 		obj->texture = std::unique_ptr<Texture>(textureFactory->createEmpty());
 		obj->matrix = object_view;
-
-		obj->setColor(Vector3(0.2f, 0.4f, 0.3f));
+		srand(time(0));
+		obj->setColor(Vector3(rand() % 255 / 255.f, rand() % 255 / 255.f, rand() % 255 / 255.f));
 
 		return obj;
 	}
@@ -71,18 +71,16 @@ namespace BEbraEngine {
 
 		textureFactory = new DXTextureFactory(render);
 
-		_poolofObjects = std::make_unique<RenderBufferPool>();
+		_poolofObjects = std::make_unique<DXRenderBufferPool>();
 		_poolofObjects->setContext(render);
-		_poolofObjects->setUsage(IRenderBufferPool::Usage::Default);
-		_poolofObjects->allocate(500, sizeof(RenderObject::ShaderData), AbstractRender::TypeBuffer::Storage);
+		_poolofObjects->allocate(500, sizeof(RenderObject::ShaderData) , AbstractRender::TypeBuffer::Storage);
 
-		_poolofDirLights = std::make_unique<RenderBufferPool>();
+		_poolofDirLights = std::make_unique<DXRenderBufferPool>();
 		_poolofDirLights->setContext(render);
 		_poolofDirLights->allocate(1, sizeof(DirectionLight::ShaderData), AbstractRender::TypeBuffer::Storage);
 
-		_poolofPointLights = std::make_unique<RenderBufferPool>();
+		_poolofPointLights = std::make_unique<DXRenderBufferPool>();
 		_poolofPointLights->setContext(render);
-		_poolofPointLights->setUsage(IRenderBufferPool::Usage::Default);
 		_poolofPointLights->allocate(100, sizeof(PointLight::ShaderData), AbstractRender::TypeBuffer::Storage);
 
 

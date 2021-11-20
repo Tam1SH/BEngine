@@ -252,8 +252,8 @@ namespace BEbraEngine {
         VulkanDescriptorPoolInfo object;
         VulkanDescriptorPoolInfo light;
         VulkanDescriptorPoolInfo camera;
-        if (RenderBufferPool.get() || lightPool.get() || cameraPool.get()) {
-            object = RenderBufferPool->getInfo();
+        if (VulkanRenderBufferPool.get() || lightPool.get() || cameraPool.get()) {
+            object = VulkanRenderBufferPool->getInfo();
             light = lightPool->getInfo();
             camera = cameraPool->getInfo();
         }
@@ -289,9 +289,9 @@ namespace BEbraEngine {
             camera.types[0] = poolSize;
         }
 
-        RenderBufferPool.reset();
-        RenderBufferPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(object));
-        RenderBufferPool->allocate(MAX_COUNT_OF_OBJECTS);
+        VulkanRenderBufferPool.reset();
+        VulkanRenderBufferPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(object));
+        VulkanRenderBufferPool->allocate(MAX_COUNT_OF_OBJECTS);
 
         cameraPool.reset();
         cameraPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(camera));
@@ -334,7 +334,7 @@ namespace BEbraEngine {
         vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::LightPoint], nullptr);
         vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayout::Object], nullptr);
 
-        RenderBufferPool.reset();
+        VulkanRenderBufferPool.reset();
         cameraPool.reset();
         lightPool.reset();
         factory.reset();
@@ -1350,7 +1350,7 @@ namespace BEbraEngine {
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
+        camera->Update();
         for (int i = 0; i < swapChainFramebuffers.size(); i++) {
 
             VkRenderPassBeginInfo renderPassInfo{};
@@ -1861,9 +1861,9 @@ namespace BEbraEngine {
     }
     VkDescriptorSet VulkanRender::createDescriptor(VulkanDescriptorSetInfo* info)
     {
-        auto pool = RenderBufferPool.get();
+        auto pool = VulkanRenderBufferPool.get();
         VkDescriptorSet set;
-        auto opt_set = RenderBufferPool->get();
+        auto opt_set = VulkanRenderBufferPool->get();
         if (opt_set.has_value()) {
             set = opt_set.value();
         }
@@ -1912,7 +1912,7 @@ namespace BEbraEngine {
     }
     void VulkanRender::freeDescriptor(VulkanRenderObject* set)
     {
-        RenderBufferPool->free(set->descriptor);
+        VulkanRenderBufferPool->free(set->descriptor);
     }
     void VulkanRender::freeDescriptor(VulkanDirLight* set)
     {

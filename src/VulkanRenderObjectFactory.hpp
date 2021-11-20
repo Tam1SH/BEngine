@@ -12,7 +12,7 @@ namespace BEbraEngine {
     class RenderObject;
     class VulkanRenderObject;
     class RenderObjectInfo;
-    class RenderBufferPool;
+    class VulkanRenderBufferPool;
     class MeshFactory;
     class Transform;
 }
@@ -58,9 +58,9 @@ namespace BEbraEngine {
 
         void SetImgsCreator(VulkanTextureFactory* Creator) { textureFactory = Creator; }
     private:
-        std::unique_ptr<RenderBufferPool> _poolofObjects;
-        std::unique_ptr<RenderBufferPool> _poolofPointLights;
-        std::unique_ptr<RenderBufferPool> _poolofDirLights;
+        std::unique_ptr<VulkanRenderBufferPool> _poolofObjects;
+        std::unique_ptr<VulkanRenderBufferPool> _poolofPointLights;
+        std::unique_ptr<VulkanRenderBufferPool> _poolofDirLights;
 
         std::shared_ptr<RenderBufferView> storage;
 

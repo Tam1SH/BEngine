@@ -186,9 +186,9 @@ namespace BEbraEngine {
             camera->lookAt(*posofobject);
         }
        // else
-            camera->Update();
+            //camera->Update();
         //player->getComponent<Collider>()->setPosition(camera->Position + camera->Front * 15.f);
-        player->getComponent<RigidBody>()->SetPosition(camera->Position);
+       // player->getComponent<RigidBody>()->SetPosition(camera->Position);
         //player->getComponent<RigidBody>()->applyImpulse(Vector3(1), Vector3(1));
         //scriptManager->RunScripts();
 

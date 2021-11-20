@@ -1,6 +1,6 @@
 #pragma once
 #include "IRenderObjectFactory.hpp"
-#include "RenderBufferPool.hpp"
+#include "DXRenderBufferPool.hpp"
 #include "MeshFactory.hpp"
 #include "DXTextureFactory.hpp"
 
@@ -23,13 +23,9 @@ namespace BEbraEngine {
 		void setModel(RenderObject* object, std::string& path) override;
 
 	private:
-		std::unique_ptr<RenderBufferPool> _poolofObjects;
-		std::unique_ptr<RenderBufferPool> _poolofPointLights;
-		std::unique_ptr<RenderBufferPool> _poolofDirLights;
-
-		std::shared_ptr<RenderBufferView> storage;
-
-		VkDescriptorSet set;
+		std::unique_ptr<DXRenderBufferPool> _poolofObjects;
+		std::unique_ptr<DXRenderBufferPool> _poolofPointLights;
+		std::unique_ptr<DXRenderBufferPool> _poolofDirLights;
 
 		DXRender* render;
 		DXTextureFactory* textureFactory;

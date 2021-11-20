@@ -94,9 +94,9 @@ namespace BEbraEngine {
     {
 
         ShaderData vp;
-        vp.proj = glm::perspective(glm::radians(45.0f), rectViewport.x / rectViewport.y, .01f, 10000.0f);
+        vp.proj = glm::perspective(glm::radians(45.0f), rectViewport.x / rectViewport.y, .1f, 10000.0f);
         vp.view = GetViewMatrix();
-        vp.position = static_cast<glm::vec3>(Position);
+        vp.position = Position;
         ProcessMouseMovement();
         cameraData->setData(&vp, sizeof(ShaderData));
     }

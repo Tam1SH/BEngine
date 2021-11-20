@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "RenderBufferPool.hpp"
+#include "VulkanRenderBufferPool.hpp"
 #include "RenderObject.hpp"
 #include "RenderBuffer.hpp"
 #include "tbb/blocked_range.h"
@@ -12,7 +12,7 @@
 #include "IRenderObjectFactory.hpp"
 #include "VulkanRender.hpp"
 namespace BEbraEngine {
-	void RenderBufferPool::allocate(size_t count, size_t sizeofData, AbstractRender::TypeBuffer type)
+	void VulkanRenderBufferPool::allocate(size_t count, size_t sizeofData, AbstractRender::TypeBuffer type)
 	{
 		size_t 	new_size = totalCount + count;
 
@@ -40,7 +40,7 @@ namespace BEbraEngine {
 
 		totalCount += count;
 	}
-	void RenderBufferPool::deallocate(size_t count) {
+	void VulkanRenderBufferPool::deallocate(size_t count) {
 		/*
 		for (int i = 0; i < count; i++) {
 			std::shared_ptr<RenderBufferView> pizda;
@@ -50,7 +50,7 @@ namespace BEbraEngine {
 		totalCount -= count;
 		*/
 	}
-	std::optional<std::weak_ptr<RenderBufferView>> RenderBufferPool::get()
+	std::optional<std::weak_ptr<RenderBufferView>> VulkanRenderBufferPool::get()
 	{
 
 		std::shared_ptr<RenderBufferView> out;
@@ -62,7 +62,7 @@ namespace BEbraEngine {
 		return opt_out;
 	}
 
-	void RenderBufferPool::free(std::weak_ptr<RenderBufferView> obj)
+	void VulkanRenderBufferPool::free(std::weak_ptr<RenderBufferView> obj)
 	{
 		if (!obj.expired()) {
 			auto shared = obj.lock();
@@ -72,18 +72,18 @@ namespace BEbraEngine {
 		}
 	}
 
-	void RenderBufferPool::setContext(AbstractRender* render)
+	void VulkanRenderBufferPool::setContext(AbstractRender* render)
 	{
 		_render = static_cast<VulkanRender*>(render);
 	}
 
-	size_t RenderBufferPool::getCount()
+	size_t VulkanRenderBufferPool::getCount()
 	{
 		return _pool.unsafe_size();
 	}
 
 
-	RenderBufferPool::~RenderBufferPool()
+	VulkanRenderBufferPool::~VulkanRenderBufferPool()
 	{
 		_buffer->Destroy();
 	}
