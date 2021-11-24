@@ -9,6 +9,7 @@ TODO: подумать над реализацей:
 ****************************************************************************************
  * воркспейса и вообще, хорошая ли это затея разделять эту сущность на редактор и логику
  * реализовать каким-то хуем папочку в ведроиде, откуда данные таскать буду
+ * передачи данных через потоки.(думаеца создать очередь тасков для каждой подсистемы движка)
 ****************************************************************************************
 
 */
@@ -37,9 +38,29 @@ TODO: подумать над реализацей:
 #include "AngelScriptEngine.hpp"
 namespace BEbraEngine {
 
+    class IExecuter { };
+    class GameStateManager {
+    public:
+        using Task = std::function<void(GameStateManager*, IExecuter*)>;
+        enum class SubSystem {
+            Physics,
+            Render,
+        };
+    public:
+        void addTask(Task&& task, SubSystem System) {
+
+        }
+        GameStateManager() {
+            taskQueues.resize(2);
+        }
+    private:
+        std::vector<tbb::concurrent_queue<Task>> taskQueues;
+
+        std::shared_ptr<AbstractRender> render;
+        std::shared_ptr<Physics> physics;
+    };
     class Engine {
     public:
-        //std::shared_ptr<DXRender> render;
         std::shared_ptr<AbstractRender> render1;
         std::shared_ptr<Physics> physics;
         std::unique_ptr<BaseWindow> window;
@@ -53,7 +74,7 @@ namespace BEbraEngine {
 
     public:
         void Init() {
-            if (true) {
+            if (false) {
 
                 render1 = std::unique_ptr<DXRender>(new DXRender());
                 window1 = std::unique_ptr<DXWindow>(new DXWindow(render1.get()));
@@ -70,6 +91,8 @@ namespace BEbraEngine {
             render1->InitCamera(mainCamera1.get());
             gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get(), physics));
             auto script = AngelScriptEngine();
+            auto scripttt = script.createScript("scripts/test.as", "test").value();
+            script.executeScript(scripttt);
 
 
 

@@ -137,7 +137,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -221,13 +221,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -303,6 +303,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AbstractScriptObject.cpp" />
+    <ClCompile Include="AngelScript.cpp" />
     <ClCompile Include="AngelScriptEngine.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="BaseRenderWindow.cpp" />
@@ -360,6 +362,8 @@
   <ItemGroup>
     <ClInclude Include="AbstractComponent.hpp" />
     <ClInclude Include="AbstractRender.hpp" />
+    <ClInclude Include="AbstractScriptObject.hpp" />
+    <ClInclude Include="AngelScript.hpp" />
     <ClInclude Include="AngelScriptEngine.hpp" />
     <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="BaseRenderWindow.hpp" />
@@ -376,12 +380,13 @@
     <ClInclude Include="RigidBodyFactory.hpp" />
     <ClInclude Include="IProxyGameObjectFactory.hpp" />
     <ClInclude Include="ScriptObjectFactory.hpp" />
+    <ClInclude Include="ScriptWrappers.hpp" />
     <ClInclude Include="VulkanObjects.hpp" />
     <ClInclude Include="VulkanRender.hpp" />
     <ClInclude Include="CommandBuffer.hpp" />
     <ClInclude Include="CommandPool.hpp" />
     <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="Debug.h" />
+    <ClInclude Include="Debug.hpp" />
     <ClInclude Include="DescriptorSet.hpp" />
     <ClInclude Include="DXRender.hpp" />
     <ClInclude Include="DirectWindow.hpp" />
@@ -432,6 +437,7 @@
     <ClInclude Include="WorkSpace.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="scripts\BEbraEngine.as" />
     <None Include="scripts\test.as" />
     <None Include="shaders\shader.frag" />
     <None Include="shaders\shader.vert" />

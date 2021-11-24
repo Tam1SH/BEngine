@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "CreateInfoStructures.hpp"
 #include <array>
-#include "Debug.h"
+#include "Debug.hpp"
 #include <stdexcept>
 //TODO: этот хуй может быть очень полезен, но в нЄм ниху€ нет.
 namespace BEbraEngine {

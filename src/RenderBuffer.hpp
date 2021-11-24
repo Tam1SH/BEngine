@@ -1,5 +1,5 @@
 #pragma once
-#include "Debug.h"
+#include "Debug.hpp"
 #include "Vector3.hpp"
 namespace BEbraEngine {
 

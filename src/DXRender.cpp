@@ -360,7 +360,7 @@ namespace BEbraEngine {
 
         // Compile the vertex shader
         ID3DBlob* pVSBlob = NULL;
-        hr = CompileShaderFromFile(L"Tutorial03.hlsl", "VS", "vs_5_0", &pVSBlob);
+        hr = CompileShaderFromFile((wchar_t*)(char*)"Tutorial03.hlsl", "VS", "vs_5_0", &pVSBlob);
         if (FAILED(hr))
         {
             MessageBox(NULL,
@@ -396,7 +396,7 @@ namespace BEbraEngine {
         g_pImmediateContext->IASetInputLayout(g_pVertexLayout);
         // Compile the pixel shader
         ID3DBlob* pPSBlob = NULL;
-        hr = CompileShaderFromFile(L"Tutorial03.hlsl", "PS", "ps_5_0", &pPSBlob);
+        hr = CompileShaderFromFile((wchar_t*)(char*)"Tutorial03.hlsl", "PS", "ps_5_0", &pPSBlob);
         if (FAILED(hr))
         {
             MessageBox(NULL,

@@ -182,8 +182,8 @@ namespace BEbraEngine {
         }
         if (lookatobject) {
 
-            std::cout << posofobject->x << std::endl;
-            camera->lookAt(*posofobject);
+         //   std::cout << posofobject->x << std::endl;
+          //  camera->lookAt(*posofobject);
         }
        // else
             //camera->Update();

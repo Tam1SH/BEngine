@@ -3,7 +3,7 @@
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
 	class IRenderBufferPool {
-	public:
+	public:		
 		enum class Usage {
 			//Представляет поведение по умолчанию: один буфер - одно представление
 			Default,

@@ -58,6 +58,9 @@
     <Filter Include="Файлы заголовков\Physics">
       <UniqueIdentifier>{5f6bc11f-f81d-4498-bc1f-1a5ff96e8551}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\angelScript_addons">
+      <UniqueIdentifier>{b318cd18-a8ea-4e82-a1e2-32cc883979ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -171,9 +174,6 @@
     <ClCompile Include="MeshFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="ColliderFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -188,9 +188,6 @@
     </ClCompile>
     <ClCompile Include="VulkanTextureFactory.cpp">
       <Filter>Исходные файлы\Renders\Vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="AngelScriptEngine.cpp">
-      <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Pipeline.cpp">
       <Filter>Исходные файлы\Renders\Vulkan</Filter>
@@ -209,6 +206,18 @@
     </ClCompile>
     <ClCompile Include="DXRenderBufferPool.cpp">
       <Filter>Исходные файлы\Renders\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Исходные файлы\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="AngelScriptEngine.cpp">
+      <Filter>Исходные файлы\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="AngelScript.cpp">
+      <Filter>Исходные файлы\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="AbstractScriptObject.cpp">
+      <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -356,7 +365,7 @@
     <ClInclude Include="DescriptorSet.hpp">
       <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Debug.h">
+    <ClInclude Include="Debug.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="MeshFactory.hpp">
@@ -398,9 +407,6 @@
     <ClInclude Include="AbstractRender.hpp">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="AngelScriptEngine.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Pipeline.hpp">
       <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
@@ -428,6 +434,18 @@
     <ClInclude Include="VulkanRenderBufferPool.hpp">
       <Filter>Файлы заголовков\Render\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="AngelScriptEngine.hpp">
+      <Filter>Файлы заголовков\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="AngelScript.hpp">
+      <Filter>Файлы заголовков\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractScriptObject.hpp">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptWrappers.hpp">
+      <Filter>Файлы заголовков\Script</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\shader.frag">
@@ -438,6 +456,9 @@
     </None>
     <None Include="TAA.vert">
       <Filter>Файлы ресурсов\Shaders</Filter>
+    </None>
+    <None Include="scripts\BEbraEngine.as">
+      <Filter>Файлы ресурсов\Scripts</Filter>
     </None>
     <None Include="scripts\test.as">
       <Filter>Файлы ресурсов\Scripts</Filter>

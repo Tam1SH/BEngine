@@ -12,7 +12,7 @@
 #include "Vertex.hpp"
 #include "Image.hpp"
 #include "VulkanRenderBufferPool.hpp"
-#include "Debug.h"
+#include "Debug.hpp"
 #include "MeshFactory.hpp"
 
 namespace BEbraEngine {

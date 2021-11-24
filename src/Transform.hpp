@@ -21,15 +21,15 @@ namespace BEbraEngine {
 
     private:
 
-        glm::quat quartion;
+        glm::quat quartion{};
 
-        Vector3 position;
+        Vector3 position{};
 
-        Vector3 scale;
+        Vector3 scale{};
 
-        Vector3 rotation;
+        Vector3 rotation{};
     
-        Matrix4 getBasis;
+        Matrix4 getBasis{};
     private:
 
         static void SetFactory(TransformFactory* factory) noexcept;
