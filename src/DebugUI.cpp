@@ -122,7 +122,7 @@ namespace BEbraEngine {
         static int selection_mask = (1 << 2);
         int node_clicked = -1;
 
-        if (!component->IsComposite()) {
+        if (!component->isComposite()) {
             return;
         }
 
@@ -175,7 +175,7 @@ namespace BEbraEngine {
     }
     void DebugUI::Prepare()
     {
-        // Start the Dear ImGui frame
+        // start the Dear ImGui frame
         if (workspace.get()) {
 
             ImGui_ImplVulkan_NewFrame();

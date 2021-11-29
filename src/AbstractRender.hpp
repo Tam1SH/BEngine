@@ -32,23 +32,26 @@ namespace BEbraEngine {
 		};
 		enum class Type {
 			Vulkan,
-			DirectX,
-			OpenGL_ES
+			DirectX, //11
+			OpenGL, //4.2
+			OpenGL_ES = OpenGL //3.2
 		};
 	public:
-		virtual void Create(BaseWindow* window) = 0;
+		virtual void create(BaseWindow* window) = 0;
 		virtual RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices) = 0;
 		virtual RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices) = 0;
 		virtual RenderBuffer* createUniformBuffer(size_t size) = 0;
 		virtual RenderBuffer* createStorageBuffer(size_t size) = 0;
-		virtual void DestroyBuffer(RenderBuffer* buffer) = 0;
+		virtual void destroyBuffer(RenderBuffer* buffer) = 0;
 		
-		virtual void InitCamera(Camera* alloced_camera) = 0;
+		virtual void selectMainCamera(Camera* camera) = 0;
 		virtual void addObject(std::shared_ptr<RenderObject> object) = 0;
 		virtual void addLight(std::shared_ptr<PointLight> light) = 0;
 		virtual void removeObject(std::shared_ptr<RenderObject> object) = 0;
 		virtual void removeLight(std::shared_ptr<PointLight> light) = 0;
 		virtual void addGlobalLight(std::shared_ptr<DirectionLight> globalLight) = 0;
+		virtual void addCamera(std::shared_ptr<Camera> camera) = 0; 
+		virtual void removeCamera(std::shared_ptr<Camera> camera) = 0;
 
 		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
 		virtual void drawFrame() = 0;

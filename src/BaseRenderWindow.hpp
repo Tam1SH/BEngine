@@ -14,25 +14,24 @@ namespace BEbraEngine {
 			FullScreen,
 			Hidden
 		};
-		enum SurfaceType {
+		enum class SurfaceType {
 			DirectX,
 			OpenGL,
 			Vulkan
 			//Metal - Метал? блять анал
 		};
 	public:
-		virtual void CreateWindow(const Vector2& size, const std::string& title) = 0;
+		virtual void createWindow(const Vector2& size, const std::string& title) = 0;
 		virtual void onResizeCallback(int width, int height) = 0;
-		virtual void onUpdate() = 0;
 
 		bool isClose();
 		void update();
-		Vector2 GetWindowSize() const noexcept;
-		void SetWindowSize(const Vector2& newSize) const noexcept;
-		int Width() const noexcept;
-		int Height() const noexcept;
-		void SetPosition(const Vector2& position) const noexcept;
-		Vector2 GetPosition() const noexcept;
+		Vector2 getSize() const noexcept;
+		void setWindowSize(const Vector2& newSize) const noexcept;
+		int width() const noexcept;
+		int height() const noexcept;
+		void setPosition(const Vector2& position) const noexcept;
+		Vector2 getPosition() const noexcept;
 
 		
 
@@ -40,13 +39,14 @@ namespace BEbraEngine {
 		BaseWindow();
 		virtual ~BaseWindow();
 
-		void Vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface);
-		std::vector<const char*> Vulkan_GetInstanceExtensions();
+		void vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface);
+		std::vector<const char*> vulkan_GetInstanceExtensions();
 
 	protected:
 		WindowHandle* handle;
 		void onCreateWindow(const Vector2& size, const SurfaceType& type, const std::string& title);
 	private:
+		SurfaceType type;
 		bool _isClose;
 		void _onCreateWindow(int w, int h, const SurfaceType& type, const char* title);
 	};

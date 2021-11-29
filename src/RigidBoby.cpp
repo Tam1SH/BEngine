@@ -4,11 +4,10 @@
 #include "Physics.hpp"
 #include "Vector3.hpp"
 namespace BEbraEngine {
-    Physics* RigidBody::physics;
 
-    void RigidBody::ResetState()
+    void RigidBody::resetState()
     {
-        auto vec = transform->GetPosition();
+        auto vec = transform->getPosition();
         auto btvec = btVector3(
             vec.x, vec.y, vec.z
         );
@@ -17,17 +16,14 @@ namespace BEbraEngine {
         body->getWorldTransform().setOrigin(btvec);
     }
 
-    void RigidBody::SetPhysics(Physics* physics)
-    {
-        RigidBody::physics = physics;
-    }
 
-    void RigidBody::SetTransform(std::shared_ptr<Transform> transform)
+
+    void RigidBody::setTransform(std::shared_ptr<Transform> transform)
     {
         this->transform = transform;
     }
 
-    void RigidBody::SetShape(btCollisionShape* newShape)
+    void RigidBody::setShape(btCollisionShape* newShape)
     {
 
     }
@@ -46,10 +42,10 @@ namespace BEbraEngine {
     }
 
 
-    void RigidBody::SetPosition(const Vector3& position)
+    void RigidBody::setPosition(const Vector3& position)
     {
-        transform->UpdatePosition(position, Vector4(0.f));
-        ResetState();
+        transform->updatePosition(position, Vector4(0.f));
+        resetState();
 
     }
 
@@ -60,7 +56,7 @@ namespace BEbraEngine {
     }
     void RigidBody::applyImpulseToPoint(float force, const Vector3& point)
     {
-        auto posBody = transform->GetPosition();
+        auto posBody = transform->getPosition();
         float dist = sqrt(
             (posBody.x - point.x) * (posBody.x - point.x) +
             (posBody.y - point.y) * (posBody.y - point.y) +

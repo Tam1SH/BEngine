@@ -13,17 +13,15 @@ namespace BEbraEngine {
 	class VulkanWindow : public BaseWindow {
 	public:
 
-		void CreateWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
+		void createWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
 
 		VulkanWindow(AbstractRender* render);
 
 		void onResizeCallback(int width, int height) override;
 
-		Vector2 GetDrawableSize();
+		Vector2 getDrawableSize();
 
 		void SetVulkanRender(VulkanRender* render);
-
-		void onUpdate() override;
 
 		~VulkanWindow();
 

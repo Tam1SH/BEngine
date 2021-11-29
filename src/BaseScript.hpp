@@ -17,7 +17,7 @@ namespace BEbraEngine {
 		virtual void SetActive(bool active) {
 			isEnable = active;
 		}
-		virtual bool GetActive() {
+		virtual bool getActive() {
 			return isEnable;
 		}
 	};

@@ -9,13 +9,13 @@ namespace BEbraEngine {
         this->usage = usage;
         this->type = type;
     }
-    void CommandBuffer::Reset()
+    void CommandBuffer::reset()
     {
         vkResetCommandBuffer(_buffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
     }
 
 
-    void CommandBuffer::StartRecord(VkFramebuffer buffer, VkRenderPass pass)
+    void CommandBuffer::startRecord(VkFramebuffer buffer, VkRenderPass pass)
     {
         VkCommandBufferInheritanceInfo InhInfo{};
         InhInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
@@ -42,7 +42,7 @@ namespace BEbraEngine {
     {
         if(callback)
             callback();
-        pool->DestroyCmdBuffer(*this);
+        pool->destroyCmdBuffer(*this);
     }
 
 }

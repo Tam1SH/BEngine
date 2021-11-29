@@ -12,14 +12,27 @@ namespace BEbraEngine {
 namespace BEbraEngine {
 
     class Transform : public GameObjectComponent {
-    private:
+    public:
         friend class TransformFactory;
 
-        friend class VulkanRenderObjectFactory;
+    public:
+        void updatePosition(const Vector3& position, const Vector4& quat);
 
-        static TransformFactory* factory;
+        void setPosition(const Vector3& position) noexcept;
+
+        void setScale(const Vector3& scale) noexcept;
+
+        //void setRotation()
+
+        Vector3 getPosition() const noexcept;
+
+        Matrix4 getBasis() const noexcept;
+
+        ~Transform() { };
 
     private:
+
+        Transform(const Vector3& position);
 
         glm::quat quartion{};
 
@@ -27,33 +40,5 @@ namespace BEbraEngine {
 
         Vector3 scale{};
 
-        Vector3 rotation{};
-    
-        Matrix4 getBasis{};
-    private:
-
-        static void SetFactory(TransformFactory* factory) noexcept;
-
-
-
-    public:
-
-        Matrix4 getMatrix();
-
-        Transform(const Vector3& position);
-
-        std::shared_ptr<RenderBufferView> buffer;
-
-        static Transform* New(const Vector3& position = Vector3(0));
-
-        void UpdatePosition(const Vector3& position, const Vector4& quat);
-
-        void SetPosition(const Vector3& position) noexcept;
-
-        void SetScale(const Vector3& scale) noexcept;
-
-        Vector3& GetPosition() noexcept;
-
-        ~Transform() { };
     };
 }

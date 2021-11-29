@@ -6,7 +6,6 @@
 #include "Vertex.hpp"
 #include "Camera.hpp"
 #include "DXRender.hpp"
-#include "Camera.hpp"
 #include "DXRenderObjectFactory.hpp"
 namespace BEbraEngine {
 
@@ -23,18 +22,21 @@ namespace BEbraEngine {
             g_pImmediateContext->Unmap(buf, 0);
             //g_pImmediateContext->UpdateSubresource(buf, 0, NULL, data, 0, 0);
         }
-        void Destroy() override {
+        void destroy() override {
             throw std::exception("sasi zalypy");
         }
     };
 
-    void DXRender::Create(BaseWindow* window) {
+    void DXRender::create(BaseWindow* window) {
         auto win = dynamic_cast<DXWindow*>(window);
         g_hWnd = win->getHWND();
         InitDevice(win);
         InitResource();
 
         factory = std::make_unique<DXRenderObjectFactory>();
+    }
+    void DXRender::selectMainCamera(Camera* camera)
+    {
     }
     void DXRender::addObject(std::shared_ptr<RenderObject> object)
     {
@@ -57,15 +59,6 @@ namespace BEbraEngine {
     {
     }
 
-    void DXRender::InitCamera(Camera* camera)
-    {
-        auto view = new RenderBufferView();
-        view->availableRange = sizeof(Matrix4) * 2 + sizeof(Vector4);
-        view->buffer = std::shared_ptr<RenderBuffer>(createStorageBuffer(view->availableRange));
-
-        camera->cameraData = view;
-        this->camera = camera;
-    }
     RenderBuffer* DXRender::createIndexBuffer(std::vector<uint32_t> indices)
     {
 
@@ -92,19 +85,6 @@ namespace BEbraEngine {
     RenderBuffer* DXRender::createUniformBuffer(size_t size) {
 
         return createBuffer(0, size, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER);
-        /*
-        auto buff = new DXBuffer();
-        D3D11_BUFFER_DESC bd;
-        ZeroMemory(&bd, sizeof(bd));
-        bd.ByteWidth = size;
-        bd.Usage = D3D11_USAGE_DYNAMIC;
-        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        bd.MiscFlags = 0;
-        g_pd3dDevice->CreateBuffer(&bd, NULL, &buff->buf);
-        buff->g_pImmediateContext = g_pImmediateContext;
-        return buff;
-        */
     }
     RenderBuffer* DXRender::createBuffer(void* data, size_t size, D3D11_USAGE usage, D3D11_BIND_FLAG type) {
         auto buff = new DXBuffer();
@@ -129,24 +109,18 @@ namespace BEbraEngine {
         buff->size = size;
         return buff;
     }
+    void DXRender::addCamera(std::shared_ptr<Camera> camera)
+    {
+    }
+    void DXRender::removeCamera(std::shared_ptr<Camera> camera)
+    {
+    }
     RenderBuffer* DXRender::createStorageBuffer(size_t size) {
 
         return createBuffer(0, size, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER);
-        /*
-        auto buff = new DXBuffer();
-        D3D11_BUFFER_DESC bd;
-        ZeroMemory(&bd, sizeof(bd));
-        bd.ByteWidth = size;
-        bd.Usage = D3D11_USAGE_DYNAMIC;
-        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        bd.MiscFlags = 0;
-        g_pd3dDevice->CreateBuffer(&bd, NULL, &buff->buf);
-        buff->g_pImmediateContext = g_pImmediateContext;
-        return buff;
-        */
+
     }
-    void DXRender::DestroyBuffer(RenderBuffer* buffer)
+    void DXRender::destroyBuffer(RenderBuffer* buffer)
     {
     }
     IRenderObjectFactory* DXRender::getRenderObjectFactory()
@@ -165,7 +139,7 @@ namespace BEbraEngine {
         g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
         // g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
          // Render a triangle
-        camera->Update();
+        camera->update();
         auto buf = static_cast<DXBuffer*>(camera->cameraData->buffer.get());
 
 
@@ -173,7 +147,7 @@ namespace BEbraEngine {
         
         for (auto object : objects) {
             object->update();
-            const auto data = static_cast<const DXBuffer*>(object->matrix.lock()->buffer.get());
+            auto data = static_cast<const DXBuffer*>(object->matrix->buffer.get());
             g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
             g_pImmediateContext->VSSetConstantBuffers(1, 1, &data->buf);
             g_pImmediateContext->VSSetConstantBuffers(2, 1, &buf->buf);

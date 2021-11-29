@@ -10,8 +10,8 @@ namespace BEbraEngine {
         std::string path;
         bool _isLoad;
         unsigned char* picture;
-        int Width;
-        int Height;
+        int width;
+        int height;
         int Channels;
 
         VkBuffer buf;

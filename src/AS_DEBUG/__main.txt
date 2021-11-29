@@ -3,24 +3,14 @@ void main()
 Temps: 
 
 Variables: 
- 010: Vector3 d
 
 
 - 3,2 -
-    0  10 *    SUSPEND
-               VarDecl  0
-    1  10 *    PSF      v10
-    2  12 *    CALLSYS  103           (Vector3::Vector3())
-- 4,2 -
-               ObjInfo  v10, 1
-    4  10 *    SUSPEND
-    5  10 *    PGA      0x1f70df30          (str:Hello world
+    0   0 *    SUSPEND
+    1   0 *    PGA      0xf01e4fb0          (str:Hello world
 )
-    8  12 *    CALLSYS  102           (void print(const string&in))
-- 5,2 -
-   10  10 *    SUSPEND
-   11  10 *    PSF      v10
-   12  12 *    CALLSYS  104           (Vector3::~Vector3())
-               ObjInfo  v10, 0
+    4   2 *    CALLSYS  102           (void print(const string&in))
+- 4,2 -
+    6   0 *    SUSPEND
             0:
-   14  10 *    RET      0
+    7   0 *    RET      0

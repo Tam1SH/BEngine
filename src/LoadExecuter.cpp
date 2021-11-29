@@ -51,7 +51,7 @@ namespace BEbraEngine {
                     taskPool.enqueue([this, cmdBuffer, req]() {
 
                         auto& buffer = const_cast<CommandBuffer&>(cmdBuffer);
-                        buffer.StartRecord();
+                        buffer.startRecord();
                         req(buffer);
                         buffer.EndRecord();
                         RecordedBuffers.push(buffer);
@@ -111,7 +111,7 @@ namespace BEbraEngine {
         }
 
         for (auto& buffer : completedBuffers) {
-            render->AddBufferToQueue(buffer);
+            render->addBufferToQueue(buffer);
         }
 
         totalTasks -= taskCompleted;

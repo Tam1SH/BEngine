@@ -10,7 +10,9 @@
 #include "VulkanRender.hpp"
 #include "Physics.hpp"
 #include "WorkSpace.hpp"
+#include "Collider.hpp"
 #include "AbstractRender.hpp"
+#include "Camera.hpp"
 namespace BEbraEngine {
 	GameObjectFactory::GameObjectFactory(std::shared_ptr<AbstractRender> render, std::shared_ptr<Physics> physics)
 		: render(render), physics(physics)
@@ -27,22 +29,22 @@ namespace BEbraEngine {
 	std::shared_ptr<GameObject> GameObjectFactory::create(const Vector3& position)
 	{
 		auto obj = std::shared_ptr<GameObject>(new GameObject());
-		auto name = obj->GetName();
+		auto name = obj->getName();
 
-		obj->SetName(name + std::to_string(workspace->GetSize()));
+		obj->setName(name + std::to_string(workspace->getSize()));
 		//workspace->addComponent(obj);
 		ColliderInfo info;
 		info.scale = Vector3(1);
 		info.position = position;
 
 		auto collider = std::shared_ptr<Collider>(colliderFactory->create(&info));
-		auto transform = std::shared_ptr<Transform>(Transform::New(position));
+		auto transform = std::shared_ptr<Transform>(transFactory->create(position));
 		auto renderObj = std::shared_ptr<RenderObject>(renderFactory->createObject());
 		auto rigidbody = std::shared_ptr<RigidBody>(rigidBodyFactory->create(collider.get()));
 
-		renderFactory->BindTransform(renderObj, transform);
+		renderFactory->bindTransform(renderObj, transform);
 
-		rigidbody->SetTransform(transform);
+		rigidbody->setTransform(transform);
 
 		obj->addComponent(renderObj);
 		obj->addComponent(rigidbody);
@@ -51,7 +53,8 @@ namespace BEbraEngine {
 		btTransform trans;
 		trans.setIdentity();
 		trans.setOrigin(btVector3(position.x, position.y, position.z));
-		rigidbody->GetRigidBody()->setWorldTransform(trans);
+		rigidbody->getRigidBody()->setWorldTransform(trans);
+
 		render->addObject(renderObj);
 		physics->addRigidBody(rigidbody);
 
@@ -60,15 +63,15 @@ namespace BEbraEngine {
 
 	std::shared_ptr<PointLight> GameObjectFactory::createLight(const Vector3& position)
 	{
-		auto transform = std::shared_ptr<Transform>(Transform::New(position));
+		auto transform = std::shared_ptr<Transform>(transFactory->create(position));
 		auto light = std::shared_ptr<PointLight>(renderFactory->createLight(Vector3(1), position));
 		light->addComponent(transform);
 
-		auto name = light->GetName();
+		auto name = light->getName();
 
-		light->SetName(name + std::to_string(workspace->GetSize()));
+		light->setName(name + std::to_string(workspace->getSize()));
 		//workspace->addComponent(light);
-		renderFactory->BindTransform(light, transform);
+		renderFactory->bindTransform(light, transform);
 
 		light->update();
 		render->addLight(light);
@@ -79,16 +82,16 @@ namespace BEbraEngine {
 	{
 		auto light = std::shared_ptr<DirectionLight>(renderFactory->createDirLight(Vector3(0.1f), direction));
 
-		auto name = light->GetName();
+		auto name = light->getName();
 
-		light->SetName(name + std::to_string(workspace->GetSize()));
+		light->setName(name + std::to_string(workspace->getSize()));
 		workspace->addComponent(light);
 
 		render->addGlobalLight(light);
 		return light;
 	}
 
-	void GameObjectFactory::setModel(GameObject* object, std::string&& path)
+	void GameObjectFactory::setModel(GameObject* object, const std::string& path)
 	{
 		renderFactory->setModel(object->getComponent<RenderObject>().get(), path);
 	}
@@ -105,7 +108,7 @@ namespace BEbraEngine {
 		auto end = workspace->GetList().end();
 
 		/*
-		if (workspace->GetSize() != 0) {
+		if (workspace->getSize() != 0) {
 			workspace->GetList().erase(
 				std::remove_if(begin, end,
 					[&](std::shared_ptr<GameObjectComponent> component) {
@@ -135,6 +138,16 @@ namespace BEbraEngine {
 	}
 
 	GameObjectFactory::~GameObjectFactory()
+	{
+	}
+	std::shared_ptr<Camera> GameObjectFactory::createCamera(const Vector3& position)
+	{
+		auto camera = std::shared_ptr<Camera>(renderFactory->createCamera(position));
+		render->addCamera(camera);
+		render->selectMainCamera(camera.get());
+		return camera;
+	}
+	void GameObjectFactory::destroyCamera(std::shared_ptr<Camera> camera)
 	{
 	}
 }

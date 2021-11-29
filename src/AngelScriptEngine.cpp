@@ -27,8 +27,10 @@ namespace BEbraEngine {
 		std::cout << in << std::endl;
 	}
 
-	AngelScriptEngine::AngelScriptEngine()
+	AngelScriptEngine::AngelScriptEngine(IProxyGameObjectFactory* factory)
 	{
+		this->factory = factory;
+
 		engine = asCreateScriptEngine();
 
 		RegisterStdString(engine);
@@ -43,6 +45,8 @@ namespace BEbraEngine {
 
 
 		Wrappers::_Vector3::registerObj(engine);
+		Wrappers::_GameObject::registerObj(engine);
+		Wrappers::_GameObject::factory = factory;
 	}
 
 	AngelScriptEngine::~AngelScriptEngine()
@@ -51,7 +55,7 @@ namespace BEbraEngine {
 	}
 
 
-	std::optional<BaseScript*> AngelScriptEngine::createScript(std::string path, std::string name) {
+	std::optional<AngelScript*> AngelScriptEngine::createScript(std::string path, std::string name) {
 
 		CScriptBuilder builder;
 		builder.StartNewModule(engine, name.c_str());
@@ -60,21 +64,22 @@ namespace BEbraEngine {
 		if (r < 0) {
 			Debug::log("Can't create a script. Params : " + path + " | " + name, 0, 
 				"ScriptEngine", Debug::ObjectType::Script, Debug::MessageType::Error);
-			return std::make_optional<BaseScript*>();
+			return std::make_optional<AngelScript*>();
 		}
 		asIScriptContext* ctx = engine->CreateContext();
 		auto script = new AngelScript(ctx);
-		script->SetName(name);
-		return std::make_optional<BaseScript*>(script);
+		script->setName(name);
+		return std::make_optional<AngelScript*>(script);
 	}
-	void AngelScriptEngine::executeScript(BaseScript* script)
+	void AngelScriptEngine::executeScript(AngelScript* script, const std::string&& name)
 	{
 
-		asIScriptModule* mod = engine->GetModule(script->GetName().c_str());
-		asIScriptFunction* func = mod->GetFunctionByDecl("void Start()");
+		asIScriptModule* mod = engine->GetModule(script->getName().c_str());
+		asIScriptFunction* func = mod->GetFunctionByName(name.c_str());
 		if (func == 0)
 		{
-			printf("The script must have the function 'void Start()'. Please add it and try again.\n");
+			std::string xyuuuu = "The script must have the function '";
+			printf((xyuuuu + name + "'. Please add it and try again.\n").c_str());
 			return;
 		}
 
@@ -91,7 +96,7 @@ namespace BEbraEngine {
 
 		ctx->Release();
 	}
-	BaseScript* AngelScriptEngine::CreateScript(std::string code)
+	AngelScript* AngelScriptEngine::CreateScript(std::string code)
 	{
 		return nullptr;
 	}

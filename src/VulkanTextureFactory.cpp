@@ -33,8 +33,8 @@ namespace BEbraEngine {
         image->sampler = sampler;
         image->memory = textureImageMemory;
         image->picture = pixels;
-        image->Width = texWidth;
-        image->Height = texHeight;
+        image->width = texWidth;
+        image->height = texHeight;
         image->path = "nothing";
         return image;
     }
@@ -65,8 +65,8 @@ namespace BEbraEngine {
         image->sampler = sampler;
         image->memory = textureImageMemory;
         image->picture = pixels;
-        image->Width = texWidth;
-        image->Height = texHeight;
+        image->width = texWidth;
+        image->height = texHeight;
         image->path = "nothing";
         return image;
     }

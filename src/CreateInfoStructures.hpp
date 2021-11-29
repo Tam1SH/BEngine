@@ -36,5 +36,6 @@ namespace BEbraEngine {
 	class VulkanDescriptorPoolInfo {
 	public:
 		std::vector<VkDescriptorPoolSize> types;
+		VkDescriptorSetLayout layout;
 	};
 }

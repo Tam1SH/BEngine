@@ -15,13 +15,13 @@ namespace BEbraEngine {
 
         CommandPool() {}
 
-        void Create(uint32_t queueFamilyIndex);
+        void create(uint32_t queueFamilyIndex);
 
         CommandBuffer createCommandBuffer(CommandBuffer::Type type, VkCommandBufferUsageFlagBits bits);
 
-        void DestroyCmdBuffer(VkCommandBuffer buffer);
+        void destroyCmdBuffer(VkCommandBuffer buffer);
 
-        void DestroyCmdBuffers(std::vector<VkCommandBuffer> buffers);
+        void destroyCmdBuffers(std::vector<VkCommandBuffer> buffers);
 
         ~CommandPool();
     private:

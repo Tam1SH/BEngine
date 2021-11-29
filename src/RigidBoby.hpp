@@ -14,10 +14,34 @@ namespace BEbraEngine {
 	class RigidBody : public GameObjectComponent
 	{
 	public:
+		friend class RigidBodyFactory;
+	public:
 
-		friend class Physics;
+		void resetState();
 
-		static Physics* physics;
+		btRigidBody* getRigidBody() { return body; }
+
+		void setTransform(std::shared_ptr<Transform> transform);
+
+		void setShape(btCollisionShape* newShape);
+
+		void setDynamic(bool isActive);
+
+		bool getDynamic() { return isActive; }
+
+		void setPosition(const Vector3& position);
+
+		void applyImpulse(const Vector3& force, const Vector3& direction);
+
+		void applyImpulseToPoint(float force, const Vector3& point);
+
+		Transform* getTransform() { return transform.get(); }
+
+		RigidBody();
+
+		~RigidBody();
+
+	private:
 
 		btRigidBody* body;
 
@@ -27,33 +51,8 @@ namespace BEbraEngine {
 
 		btVector3 AngularFactor;
 
-		void ResetState();
 
 		bool isActive = true;
-	public:
-
-		btRigidBody* GetRigidBody() {
-			return body;
-		}
-		static void SetPhysics(Physics* physics);
-
-		void SetTransform(std::shared_ptr<Transform> transform);
-
-		void SetShape(btCollisionShape* newShape);
-
-		void setDynamic(bool isActive);
-
-		bool getDynamic() { return isActive; }
-
-		void SetPosition(const Vector3& position);
-
-		void applyImpulse(const Vector3& force, const Vector3& direction);
-
-		void applyImpulseToPoint(float force, const Vector3& point);
-
-		RigidBody();
-
-		~RigidBody();
 
 	};
 }

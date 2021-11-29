@@ -10,20 +10,16 @@ namespace BEbraEngine {
 		return info.info.win.window;
 	}
 
-	void DXWindow::CreateWindow(const Vector2& size, const std::string& title)
+	void DXWindow::createWindow(const Vector2& size, const std::string& title)
 	{
-		onCreateWindow(size, BaseWindow::DirectX, title);
-		render->Create(this);
+		onCreateWindow(size, BaseWindow::SurfaceType::DirectX, title);
+		render->create(this);
 	}
 
 	void DXWindow::onResizeCallback(int width, int height)
 	{
 	}
 
-	void DXWindow::onUpdate()
-	{
-		render->drawFrame();
-	}
 
 	DXWindow::DXWindow(AbstractRender* render)
 	{

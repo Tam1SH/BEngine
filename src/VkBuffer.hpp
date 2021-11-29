@@ -7,7 +7,7 @@ namespace BEbraEngine {
         VkDeviceMemory memory = VK_NULL_HANDLE;
         size_t size = 0;
 
-        void Destroy() override;
+        void destroy() override;
         void setData(void* data, size_t size, size_t offset) override;
         VulkanBuffer() { }
         ~VulkanBuffer();

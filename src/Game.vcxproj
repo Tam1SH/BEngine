@@ -60,7 +60,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -142,7 +142,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;;$(SolutionDir)Include\glad\include;$(SolutionDir)Include\json</AdditionalIncludeDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
       <EnableModules>true</EnableModules>
@@ -232,7 +232,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\assimp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\assimp;$(SolutionDir)Include\glad\include;$(SolutionDir)Include\json</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -303,6 +303,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\glad\src\glad.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="AbstractScriptObject.cpp" />
     <ClCompile Include="AngelScript.cpp" />
     <ClCompile Include="AngelScriptEngine.cpp" />
@@ -314,6 +318,9 @@
     <ClCompile Include="DXRenderBufferPool.cpp" />
     <ClCompile Include="DXRenderObjectFactory.cpp" />
     <ClCompile Include="DXTextureFactory.cpp" />
+    <ClCompile Include="GLRender.cpp" />
+    <ClCompile Include="GLWindow.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="RigidBodyFactory.cpp" />
     <ClCompile Include="ScriptObjectFactory.cpp" />
     <ClCompile Include="VulkanObjects.cpp" />
@@ -342,7 +349,7 @@
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RenderObject.cpp" />
-    <ClCompile Include="RenderObjectFactory.cpp" />
+    <ClCompile Include="VulkanRenderObjectFactory.cpp" />
     <ClCompile Include="RenderBufferPool.cpp" />
     <ClCompile Include="RigidBoby.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
@@ -375,8 +382,12 @@
     <ClInclude Include="DXRenderBufferPool.hpp" />
     <ClInclude Include="DXRenderObjectFactory.hpp" />
     <ClInclude Include="DXTextureFactory.hpp" />
+    <ClInclude Include="GLRender.hpp" />
+    <ClInclude Include="GLWindow.hpp" />
     <ClInclude Include="IDraweable.hpp" />
     <ClInclude Include="ITextureFactory.hpp" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Quaternion.hpp" />
     <ClInclude Include="RigidBodyFactory.hpp" />
     <ClInclude Include="IProxyGameObjectFactory.hpp" />
     <ClInclude Include="ScriptObjectFactory.hpp" />
@@ -437,6 +448,7 @@
     <ClInclude Include="WorkSpace.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="scripts\BEbraEngine.as" />
     <None Include="scripts\test.as" />
     <None Include="shaders\shader.frag" />

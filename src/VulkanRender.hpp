@@ -15,6 +15,7 @@ namespace BEbraEngine {
     class Matrix4;
     class VulkanWindow;
     class Camera;
+    class VulkanCamera;
     class RenderBuffer;
     class Vertex;
     class RenderObject;
@@ -43,12 +44,10 @@ namespace BEbraEngine {
     class VulkanRender : public AbstractRender
     {
     public:
-
-        Camera* camera;
        
-        void Create(BaseWindow* window) override;
+        void create(BaseWindow* window) override;
 
-        void DestroyBuffer(RenderBuffer* buffer) override;
+        void destroyBuffer(RenderBuffer* buffer) override;
 
         RenderBuffer* createUniformBuffer(size_t size) override;
 
@@ -66,7 +65,11 @@ namespace BEbraEngine {
 
         void removeLight(std::shared_ptr<PointLight> light) override;
 
-        void InitCamera(Camera* alloced_camera) override;
+        void addCamera(std::shared_ptr<Camera> camera) override;
+
+        void selectMainCamera(Camera* camera) override;
+
+        void removeCamera(std::shared_ptr<Camera> camera) override;
 
         AbstractRender::Type getType() override { return AbstractRender::Type::Vulkan; }
 
@@ -80,7 +83,7 @@ namespace BEbraEngine {
 
         VkDescriptorSet createDescriptor(LightDescriptorInfo* info);
 
-        void createDescriptor(RenderBuffer* buffer);
+        VkDescriptorSet createDescriptor(RenderBuffer* buffer);
 
         void freeDescriptor(VulkanRenderObject* set);
 
@@ -92,7 +95,7 @@ namespace BEbraEngine {
 
 
     public:
-        enum class DescriptorLayout {
+        enum class DescriptorLayoutType {
             Object,
             Camera,
             LightPoint,
@@ -133,6 +136,8 @@ namespace BEbraEngine {
         std::unique_ptr<VulkanRenderObjectFactory> factory;
         std::list<std::shared_ptr<VulkanRenderObject>> objects;
         std::list<std::shared_ptr<VulkanPointLight>> lights;
+        std::list<std::shared_ptr<VulkanCamera>> cameras;
+
         std::weak_ptr<VulkanDirLight> globalLight;
 
         tbb::concurrent_queue<std::shared_ptr<VulkanRenderObject>> queueAddObject;
@@ -140,10 +145,13 @@ namespace BEbraEngine {
 
         tbb::concurrent_queue<std::shared_ptr<VulkanPointLight>> queueAddLight;
         tbb::concurrent_queue<std::shared_ptr<VulkanPointLight>> queueDeleterLight;
+
     public:
         VulkanWindow* window;
 
         std::unique_ptr<DescriptorPool> VulkanRenderBufferPool;
+
+        std::vector<std::unique_ptr<DescriptorPool>> renderObjectsPools;
 
         std::unique_ptr<DescriptorPool> cameraPool;
 
@@ -156,9 +164,9 @@ namespace BEbraEngine {
 
         VkDescriptorSet setMainCamera;
 
-        size_t MAX_COUNT_OF_OBJECTS = 5000;
+        size_t MAX_COUNT_OF_OBJECTS = 10000;
 
-        size_t MAX_COUNT_OF_LIGHTS = 100;
+        size_t MAX_COUNT_OF_LIGHTS = 1000;
 
         VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -189,8 +197,7 @@ namespace BEbraEngine {
 
         VkRenderPass renderPass;
 
-
-        std::map<DescriptorLayout, VkDescriptorSetLayout> layouts;
+        std::map<DescriptorLayoutType, VkDescriptorSetLayout> layouts;
 
         VkDescriptorSetLayout ObjectWithoutTextureLayout;
 
@@ -225,11 +232,11 @@ namespace BEbraEngine {
 
         size_t currentFrame = 0;
 
-        VkQueue GetGraphicsQueue();
+        VkQueue getGraphicsQueue();
 
-        void AddBufferToQueue(CommandBuffer buffer);
+        void addBufferToQueue(CommandBuffer buffer);
 
-        VkFence* GetCurrentFence();
+        VkFence* getCurrentFence();
 
         void recreateSwapChain(uint32_t width, uint32_t height);
 
@@ -259,7 +266,7 @@ namespace BEbraEngine {
 
         //static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
-        VkDevice GetDevice();
+        VkDevice getDevice();
 
         static uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
@@ -273,8 +280,6 @@ namespace BEbraEngine {
         void createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize);
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-
-        static VkCommandPool CreateCommandPool();
 
         VkCommandBuffer createCommandBuffer();
 
@@ -325,7 +330,7 @@ namespace BEbraEngine {
 
         void createCopyCmdBuffer();
 
-        void UpdateCmdBuffers();
+        void updateCmdBuffers();
 
         VkShaderModule createShaderModule(const std::vector<char>& code);
 
@@ -349,11 +354,9 @@ namespace BEbraEngine {
 
         static std::vector<char> readFile(const std::string& filename);
 
-        VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
+        VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 
         void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
-        static void WriteDataOnBuffer(VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size);
-
 
         const std::vector<const char*> validationLayers = {
             "VK_LAYER_KHRONOS_validation"
@@ -367,5 +370,6 @@ namespace BEbraEngine {
 #else 
         const bool enableValidationLayers = false;
 #endif
+
 };
 }

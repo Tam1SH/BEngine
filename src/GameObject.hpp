@@ -23,7 +23,7 @@ namespace BEbraEngine {
             return std::shared_ptr<T>();
         }
 
-        bool IsComposite() const override;
+        bool isComposite() const override;
 
         GameObject();
 

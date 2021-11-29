@@ -3,6 +3,7 @@
 #include "matrix.hpp"
 #include "Vector3.hpp"
 #include "Vector2.hpp"
+#include "IReusable.hpp"
 namespace BEbraEngine {
     class RenderBufferView;
 
@@ -25,8 +26,15 @@ namespace BEbraEngine {
     const float ZOOM = 45.0f;
 
    
-    class Camera : public GameObjectComponent
+    class Camera : public GameObjectComponent, public IReusable
     {
+    public:
+        struct ShaderData {
+            Matrix4 proj;
+            Matrix4 view;
+            alignas(16) Vector3 position;
+
+        };
     public:
         RenderBufferView* cameraData;
         
@@ -38,34 +46,33 @@ namespace BEbraEngine {
 
         Camera() {}
         ~Camera();
-        Camera(Vector2 size, Vector3 position = Vector3(0.0f, 0.0f, 0.0f), Vector3 up = Vector3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
+        Camera(const Vector2& size, const Vector3& position = Vector3(0.0f, 0.0f, 0.0f), Vector3 up = Vector3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 
 
-        glm::mat4 GetViewMatrix();
+        glm::mat4 getViewMatrix();
         
-        void ProcessKeyboard(Camera_Movement direction, float deltaTime);
+        void processKeyboard(Camera_Movement direction, float deltaTime);
+
+        void release() override;
 
         void _move(float& x, float& y);
 
-        void ProcessMouseMovement(bool constrainPitch = true);
+        void processMouseMovement(bool constrainPitch = true);
 
-        void ProcessMouseScroll(float yoffset);
+        void processMouseScroll(float yoffset);
 
-        void Update();
+        void update();
 
         void resize(Vector2 newSize);
 
         void lookAt(const Vector3& at);
+        
+        bool isMain() { return _isMain; }
+
+        void setMain(bool value) { _isMain = value; }
     private:
         void updateCameraVectors();
     private:
-        struct ShaderData {
-            Matrix4 proj;
-            Matrix4 view;
-            alignas(16) Vector3 position;
-
-        };
-
 
         float Yaw;
         float Pitch;
@@ -77,6 +84,8 @@ namespace BEbraEngine {
         float lastX;
         float lastY;
 
+        bool _isMain;
         Vector2 rectViewport;
+
     };
 }

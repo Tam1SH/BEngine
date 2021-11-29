@@ -11,19 +11,9 @@
 #include "VkBuffer.hpp"
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
-    TransformFactory* Transform::factory;
 
-    void Transform::SetFactory(TransformFactory* factory) noexcept 
-    {
-        Transform::factory = factory;
-    }
 
-    Transform* Transform::New(const Vector3& position)
-    {
-        return factory->Create(position);
-    }
-
-    Matrix4 Transform::getMatrix()
+    Matrix4 Transform::getBasis() const noexcept
     {
         auto model = glm::mat4(1);
         glm::vec3 _s = scale;
@@ -39,10 +29,9 @@ namespace BEbraEngine {
     {
         this->position = position;
         scale = Vector3(1);
-        rotation = Vector3(1);
     }
 
-    void Transform::UpdatePosition(const Vector3& position, const Vector4& quat)
+    void Transform::updatePosition(const Vector3& position, const Vector4& quat)
     {
         this->position = position;
 
@@ -50,24 +39,21 @@ namespace BEbraEngine {
         quartion.y = quat.y;
         quartion.z = quat.z;
         quartion.w = quat.w;
-        //model = glm::translate(model, _p);
-        //model = glm::scale(model, _s);
-        //model *= glm::toMat4(quartion);
-        //buffer->setData(&model, sizeof(Matrix4));
+
     }
 
-    void Transform::SetPosition(const Vector3& position) noexcept
+    void Transform::setPosition(const Vector3& position) noexcept
     {
         this->position = position;
     }
 
 
-    void Transform::SetScale(const Vector3& scale) noexcept
+    void Transform::setScale(const Vector3& scale) noexcept
     {
         this->scale = scale;
     }
 
-    Vector3& Transform::GetPosition() noexcept
+    Vector3 Transform::getPosition() const noexcept
     {
         return position;
     }

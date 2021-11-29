@@ -41,8 +41,8 @@ namespace BEbraEngine {
         Model() {}
         ~Model() {
             for (auto& mesh : meshes) {
-                mesh.vertices_view->buffer->Destroy();
-                mesh.indices_view->buffer->Destroy();
+                mesh.vertices_view->buffer->destroy();
+                mesh.indices_view->buffer->destroy();
                 delete mesh.vertices_view;
                 delete mesh.indices_view;
             }

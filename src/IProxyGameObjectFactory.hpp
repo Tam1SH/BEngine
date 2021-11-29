@@ -8,6 +8,7 @@ namespace BEbraEngine {
 	class PointLight;
 	class DirectionLight;
 	class Vector3;
+	class Camera;
 }
 namespace BEbraEngine {
 	class IProxyGameObjectFactory {
@@ -17,6 +18,10 @@ namespace BEbraEngine {
 		virtual std::shared_ptr<PointLight> createLight(const Vector3& position) = 0;
 
 		virtual std::shared_ptr<DirectionLight> createDirLight(const Vector3& direction) = 0;
+
+		virtual std::shared_ptr<Camera> createCamera(const Vector3& position) = 0;
+
+		virtual void destroyCamera(std::shared_ptr<Camera> camera) = 0;
 
 		virtual void destroyObject(GameObject* object) = 0;
 

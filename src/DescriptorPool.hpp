@@ -23,23 +23,20 @@ namespace BEbraEngine {
 
         void allocate(int count);
 
-        void free(VkDescriptorSet set) {
-            setsQueue.push(set);
-        }
-        std::optional<VkDescriptorSet> get() {
-            VkDescriptorSet set;
-            if (setsQueue.try_pop(set)) {
-                return std::optional<VkDescriptorSet>(set);
-                
-            }
-            return std::optional<VkDescriptorSet>();
-        }
+        void free(VkDescriptorSet set);
+        std::optional<VkDescriptorSet> get();
 
         VulkanDescriptorPoolInfo getInfo() { return info; }
     private:
         VulkanDescriptorPoolInfo info;
+        VkDescriptorSetLayout layout;
         VkDescriptorPool pool;
-        tbb::concurrent_queue<VkDescriptorSet> setsQueue;
+
+        tbb::concurrent_queue<VkDescriptorSet> sets;
+        //производительно нахуй? не то слово блять
+        std::list<VkDescriptorSet> setsUses;
+        std::mutex mutex;
+
         int countDescriptors;
 
     };

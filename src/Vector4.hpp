@@ -1,7 +1,7 @@
 #pragma once
 #define GLM_FORCE_XYZW_ONLY
-#include <glm/glm.hpp>
-#include <Physics/btBulletCollisionCommon.h>
+#include <glm/vec3.hpp>
+#include <Physics/LinearMath/btVector3.h>
 #ifdef _WIN64
 #include <DirectXMath.h>
 #endif
@@ -16,12 +16,9 @@ namespace BEbraEngine {
 		float z;
 		float w;
 	public:
-		Vector4(float x, float y, float z, float w) {
-			this->x= x;
-			this->y = y;
-			this->z = z;
-			this->w = w;
-		}
+		Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) { }
+		Vector4(const Vector4& other) : x(other.x), y(other.y), z(other.z), w(other.w) { }
+		Vector4(const glm::vec4& other) : x(other.x), y(other.y), z(other.z), w(other.w) { }
 
 		Vector4(float x, float y, float z) {
 			this->x = x;
@@ -47,13 +44,6 @@ namespace BEbraEngine {
 			this->y = all;
 			this->z = all;
 			this->w = all;
-		}
-
-		Vector4(const glm::vec4& vec) {
-			x = vec.x;
-			y = vec.y;
-			z = vec.z;
-			w = vec.w;
 		}
 
 		Vector4(const glm::vec3& vec) {

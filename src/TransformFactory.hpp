@@ -4,7 +4,7 @@ namespace BEbraEngine {
     class Transform;
     class TransformFactory {
     public:
-        Transform* Create(const glm::vec3& position);
+        Transform* create(const glm::vec3& position);
 
         TransformFactory();
     private:

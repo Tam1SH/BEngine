@@ -86,19 +86,19 @@ namespace BEbraEngine {
 
         static int* mouse_y;
 
-        static void SetKeyBoardState(const Uint8* state);
+        static void setKeyBoardState(const Uint8* state);
 
-        static int GetScrollX();
+        static int getScrollX();
 
-        static int GetScrollY();
+        static int getScrollY();
 
-        static int GetX();
+        static int getX();
 
-        static int GetY();
+        static int getY();
 
-        static void SetWindow(WindowHandle* window);
+        static void setWindow(WindowHandle* window);
 
-        static bool IsKeyPressed(KEY_CODE key);
+        static bool isKeyPressed(KEY_CODE key);
 
         static bool isKeyReleased(KEY_CODE key);
 

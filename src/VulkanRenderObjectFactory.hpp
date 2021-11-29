@@ -15,6 +15,7 @@ namespace BEbraEngine {
     class VulkanRenderBufferPool;
     class MeshFactory;
     class Transform;
+    class Camera;
 }
 namespace std {
     template<typename T>
@@ -33,9 +34,9 @@ namespace BEbraEngine {
     public:
         friend class Transform;
 
-        void BindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform) override;
+        void bindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform) override;
 
-        void BindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) override;
+        void bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) override;
 
         RenderObject* createObject() override;
 
@@ -43,13 +44,17 @@ namespace BEbraEngine {
 
         DirectionLight* createDirLight(const Vector3& color, const Vector3& direction) override;
 
+        Camera* createCamera(const Vector3& position) override;
+
         void setContext(AbstractRender* render) override;
        
         void destroyObject(std::shared_ptr<RenderObject> object) override;
 
         void destroyPointLight(std::shared_ptr<PointLight> light) override;
 
-        void setModel(RenderObject* object, std::string& path) override;
+        void destroyCamera(std::shared_ptr<Camera> camera) override;
+
+        void setModel(RenderObject* object, const std::string& path) override;
 
         void CreateObjectSet(VulkanRenderObject* obj);
 
@@ -69,6 +74,7 @@ namespace BEbraEngine {
         VulkanRender* render;
         VulkanTextureFactory* textureFactory;
         std::unique_ptr<MeshFactory> meshFactory;
+
 
     };
 }

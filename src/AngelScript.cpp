@@ -3,15 +3,15 @@
 #include <angelscript.h>
 namespace BEbraEngine {
 
-	void AngelScript::Initialization()
+	void AngelScript::init()
 	{
 	}
 
-	void AngelScript::Run()
+	void AngelScript::run()
 	{
 	}
 
-	void AngelScript::Destroy()
+	void AngelScript::destroy()
 	{
 	}
 	AngelScript::AngelScript(asIScriptContext* context)

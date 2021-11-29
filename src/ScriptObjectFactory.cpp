@@ -19,4 +19,29 @@ namespace BEbraEngine {
         return realFactory->createDirLight(direction);
     }
 
+    void ScriptObjectFactory::destroyObject(GameObject* object)
+    {
+        realFactory->destroyObject(object);
+    }
+
+    void ScriptObjectFactory::destroyObject(std::shared_ptr<GameObject> object)
+    {
+        realFactory->destroyObject(object);
+    }
+
+    void ScriptObjectFactory::destroyPointLight(std::shared_ptr<PointLight> light)
+    {
+        realFactory->destroyPointLight(light);
+    }
+
+    std::shared_ptr<Camera> ScriptObjectFactory::createCamera(const Vector3& position)
+    {
+        return realFactory->createCamera(position);
+    }
+
+    void ScriptObjectFactory::destroyCamera(std::shared_ptr<Camera> camera)
+    {
+        realFactory->destroyCamera(camera);
+    }
+
 }

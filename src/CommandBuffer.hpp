@@ -17,9 +17,9 @@ namespace BEbraEngine {
 
         operator VkCommandBuffer& () { return _buffer; }
 
-        void Reset();
+        void reset();
 
-        void StartRecord(VkFramebuffer buffer = 0, VkRenderPass pass = 0);
+        void startRecord(VkFramebuffer buffer = 0, VkRenderPass pass = 0);
 
         void endRecord();
 

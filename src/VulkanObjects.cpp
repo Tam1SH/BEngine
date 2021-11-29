@@ -8,7 +8,7 @@ namespace BEbraEngine {
         matrix.reset();
     }
 
-    void VulkanRenderObject::Draw(VkCommandBuffer cmd)
+    void VulkanRenderObject::draw(VkCommandBuffer cmd)
     {
         auto bufferVBOview = model->meshes[0].vertices_view;
         auto bufferEBOview = model->meshes[0].indices_view;

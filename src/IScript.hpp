@@ -2,7 +2,7 @@
 
 class IScript {
 public:
-	virtual void Initialization() = 0;
-	virtual void Run() = 0;
-	virtual void Destroy() = 0;
+	virtual void init() = 0;
+	virtual void run() = 0;
+	virtual void destroy() = 0;
 };

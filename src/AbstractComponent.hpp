@@ -20,35 +20,35 @@ namespace BEbraEngine {
 
         virtual void addComponent(std::shared_ptr<GameObjectComponent> component) {
             Components.push_back(component);
-            component->SetParent(this);
+            component->setParent(this);
         }
         virtual void removeComponent(std::shared_ptr<GameObjectComponent> component) {
             Components.remove(component);
-            component->SetParent(this);
+            component->setParent(this);
         }
 
         virtual ~GameObjectComponent() {}
 
-        void SetParent(GameObjectComponent* parent) {
+        void setParent(GameObjectComponent* parent) {
             this->parent_ = parent;
         }
-        GameObjectComponent* GetParent() const {
+        GameObjectComponent* getParent() const {
             return this->parent_;
         }
 
 
-        virtual bool IsComposite() const {
+        virtual bool isComposite() const {
             return Components.size() != 0;
         }
 
-        std::string GetName() {
+        std::string getName() {
             return name;
         }
-        void SetName(std::string name) {
+        void setName(std::string name) {
             this->name = name;
         }
 
-        int GetSize() {
+        int getSize() {
             return Components.size();
         }
     };

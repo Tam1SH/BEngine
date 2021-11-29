@@ -7,12 +7,12 @@ namespace BEbraEngine {
 
    
 
-	void DXRenderObjectFactory::BindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform)
+	void DXRenderObjectFactory::bindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform)
 	{
 		light->transform = transform;
 	}
 
-	void DXRenderObjectFactory::BindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform)
+	void DXRenderObjectFactory::bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform)
 	{
 		object->transform = transform;
 	}
@@ -25,7 +25,7 @@ namespace BEbraEngine {
 			object_view = maybe_object_view.value().lock();
 		}
 		auto obj = new DXRenderObject();
-		obj->SetName("RenderObject");
+		obj->setName("RenderObject");
 		obj->model = meshFactory->getDefaultModel("BOX");
 
 		obj->texture = std::unique_ptr<Texture>(textureFactory->createEmpty());
@@ -95,7 +95,16 @@ namespace BEbraEngine {
 	{
 	}
 
-	void DXRenderObjectFactory::setModel(RenderObject* object, std::string& path)
+	void DXRenderObjectFactory::setModel(RenderObject* object, const std::string& path)
+	{
+	}
+
+	Camera* DXRenderObjectFactory::createCamera(const Vector3& position)
+	{
+		return nullptr;
+	}
+
+	void DXRenderObjectFactory::destroyCamera(std::shared_ptr<Camera> camera)
 	{
 	}
 

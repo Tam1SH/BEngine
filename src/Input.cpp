@@ -17,31 +17,31 @@ namespace BEbraEngine {
 
     SDL_Window* Input::window;
 
-    void Input::SetKeyBoardState(const Uint8* state)
+    void Input::setKeyBoardState(const Uint8* state)
     {
         Input::state = state;
     }
 
-    int Input::GetScrollX()
+    int Input::getScrollX()
     {
         return *Input::scroll_x;
     }
 
-    int Input::GetScrollY()
+    int Input::getScrollY()
     {
         return *Input::scroll_y;
     }
 
-    int Input::GetX()
+    int Input::getX()
     {
         return *Input::mouse_x;
     }
 
-    int Input::GetY()
+    int Input::getY()
     {
         return *Input::mouse_y;
     }
-    bool Input::IsKeyPressed(KEY_CODE key)
+    bool Input::isKeyPressed(KEY_CODE key)
     {
         if (Input::state[(int)key])
             return true;
@@ -55,7 +55,7 @@ namespace BEbraEngine {
         return false;
     }
 
-    void Input::SetWindow(WindowHandle* window)
+    void Input::setWindow(WindowHandle* window)
     {
         
         SDL_GetMouseState(Input::mouse_x, Input::mouse_y);

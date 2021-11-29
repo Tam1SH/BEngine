@@ -31,9 +31,13 @@ namespace BEbraEngine {
 
 		std::shared_ptr<DirectionLight> createDirLight(const Vector3& direction) override;
 
-		void setModel(GameObject* object, std::string&& path);
+		std::shared_ptr<Camera> createCamera(const Vector3& position) override;
+
+		void setModel(GameObject* object, const std::string& path);
 
 		void destroyObject(GameObject* object);
+
+		void destroyCamera(std::shared_ptr<Camera> camera) override;
 
 		void destroyObject(std::shared_ptr<GameObject> object);
 
@@ -53,6 +57,7 @@ namespace BEbraEngine {
 		IRenderObjectFactory* renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;
+
 	};
 
 }

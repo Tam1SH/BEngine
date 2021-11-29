@@ -9,7 +9,8 @@ public:
 		Script,
 		Model,
 		Buffer,
-		BufferPool
+		BufferPool,
+		DescriptorPool
 	};
 	enum class MessageType {
 		Error,
@@ -36,6 +37,7 @@ private:
 		case ObjectType::Script: return "Script";
 		case ObjectType::Model: return "Model";
 		case ObjectType::BufferPool: return "BufferPool";
+		case ObjectType::DescriptorPool: return "DescriptorPool";
 		}
 	}
 	static std::string to_string(MessageType type) {

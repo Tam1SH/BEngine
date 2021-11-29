@@ -30,7 +30,7 @@ namespace BEbraEngine {
         }
         std::shared_ptr<GameObject> FindObject(std::string name) {
             for (auto component : Components) {
-                if (name == component->GetName()) {
+                if (name == component->getName()) {
                     return std::static_pointer_cast<GameObject>(component);
                 }
             }

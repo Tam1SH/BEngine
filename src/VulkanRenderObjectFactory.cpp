@@ -14,6 +14,7 @@
 #include "VulkanRenderBufferPool.hpp"
 #include "Debug.hpp"
 #include "MeshFactory.hpp"
+#include "Vector2.hpp"
 
 namespace BEbraEngine {
 
@@ -25,7 +26,7 @@ namespace BEbraEngine {
             object_view = maybe_object_view.value().lock();
         }
         auto obj = new VulkanRenderObject();
-        obj->SetName("RenderObject");
+        obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
 
         obj->texture = std::unique_ptr<Texture>(textureFactory->createEmpty());
@@ -89,12 +90,12 @@ namespace BEbraEngine {
         this->render = dynamic_cast<VulkanRender*>(render);
 
         textureFactory = new VulkanTextureFactory(render);
-
+       
         _poolofObjects = std::make_unique<VulkanRenderBufferPool>();
         _poolofObjects->setContext(render);
         _poolofObjects->setUsage(IRenderBufferPool::Usage::SeparateOneBuffer);
-        _poolofObjects->allocate(500, sizeof(RenderObject::ShaderData) * 500, AbstractRender::TypeBuffer::Storage);
-
+        _poolofObjects->allocate(10000, sizeof(RenderObject::ShaderData) * 10000, AbstractRender::TypeBuffer::Storage);
+        
         _poolofDirLights = std::make_unique<VulkanRenderBufferPool>();
         _poolofDirLights->setContext(render);
         _poolofDirLights->allocate(1, sizeof(DirectionLight::ShaderData), AbstractRender::TypeBuffer::Storage);
@@ -132,21 +133,26 @@ namespace BEbraEngine {
         _poolofPointLights->free(light_->data);
     }
 
-    void VulkanRenderObjectFactory::BindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform)
+    void VulkanRenderObjectFactory::destroyCamera(std::shared_ptr<Camera> camera)
+    {
+    }
+
+    void VulkanRenderObjectFactory::bindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform)
     {
         light->transform = transform;
     }
-    void VulkanRenderObjectFactory::BindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform)
+    void VulkanRenderObjectFactory::bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform)
     {
         object->transform = transform;
     }
 
     void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)
     {
+        render->freeDescriptor(obj);
         VulkanDescriptorSetInfo setinfo{};
         setinfo.sampler = obj->texture->sampler;
         setinfo.imageView = obj->texture->imageView;
-        setinfo.bufferView = obj->matrix.lock().get();
+        setinfo.bufferView = obj->matrix.get();
         obj->descriptor = render->createDescriptor(&setinfo);
     }
 
@@ -157,7 +163,19 @@ namespace BEbraEngine {
     VulkanRenderObjectFactory::~VulkanRenderObjectFactory()
     {
     }
-    void VulkanRenderObjectFactory::setModel(RenderObject* object, std::string& path)
+
+    Camera* VulkanRenderObjectFactory::createCamera(const Vector3& position)
+    {
+        auto camera = new VulkanCamera(Vector2(), position);
+        auto view = new RenderBufferView();
+        view->availableRange = sizeof(Camera::ShaderData);
+        view->buffer = std::shared_ptr<RenderBuffer>(render->createStorageBuffer(sizeof(Camera::ShaderData)));
+        camera->cameraData = view;
+        camera->descriptor = render->createDescriptor(camera->cameraData->buffer.get());
+        return camera;
+    }
+
+    void VulkanRenderObjectFactory::setModel(RenderObject* object, const std::string& path)
     {
         object->model.reset();
         auto m =  meshFactory->create(path);

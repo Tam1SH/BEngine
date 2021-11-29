@@ -1,10 +1,11 @@
 #pragma once
-#include "Collider.hpp"
 #include "CreateInfoStructures.hpp"
+class btCollisionShape;
+
 namespace BEbraEngine {
 	class Physics;
+	class Collider;
 }
-
 
 namespace BEbraEngine {
 	class ColliderFactory

@@ -4,6 +4,7 @@
 //TODO: сделать неймспейсы для разных частей движка
 //TODO: начать делать хотя бы что-то со звуком 
 //TODO: реализовать систему частиц(партикле сустемXD) 
+//TODO: сборку под ведро вынести в отдельный проект.
 /*
 TODO: подумать над реализацей:
 ****************************************************************************************
@@ -18,8 +19,8 @@ TODO: подумать над реализацей:
 
 
 #define NOMINMAX
-//#include "GLWindow.h"
-//#include "GLRender.h"
+#include "GLWindow.hpp"
+#include "GLRender.hpp"
 #include "CreateInfoStructures.hpp"
 #include "BaseRenderWindow.hpp"
 #include "DebugUI.hpp"
@@ -32,10 +33,12 @@ TODO: подумать над реализацей:
 #include "DirectWindow.hpp"
 #include "DXRender.hpp"
 #include "VulkanRender.hpp"
+#include "VulkanObjects.hpp"
 #include "Input.hpp"
 #include "Time.hpp"
 #include "Camera.hpp"
 #include "AngelScriptEngine.hpp"
+#include "ScriptManager.hpp"
 namespace BEbraEngine {
 
     class IExecuter { };
@@ -55,7 +58,7 @@ namespace BEbraEngine {
         }
     private:
         std::vector<tbb::concurrent_queue<Task>> taskQueues;
-
+        
         std::shared_ptr<AbstractRender> render;
         std::shared_ptr<Physics> physics;
     };
@@ -69,32 +72,36 @@ namespace BEbraEngine {
         std::shared_ptr<WorkSpace> workspace1;
         std::unique_ptr<GameLogic> gameLogic;
         std::unique_ptr<GameLogic> gameLogic1;
-        std::unique_ptr<Camera> mainCamera;
-        std::unique_ptr<Camera> mainCamera1;
-
     public:
-        void Init() {
-            if (false) {
+        void init() {
+            int pizdaXyuViborRenderAPIEptaAhyliEsheDelat = 1;
+
+            if (pizdaXyuViborRenderAPIEptaAhyliEsheDelat == 0) {
 
                 render1 = std::unique_ptr<DXRender>(new DXRender());
                 window1 = std::unique_ptr<DXWindow>(new DXWindow(render1.get()));
             }
-            else {
+
+            if(pizdaXyuViborRenderAPIEptaAhyliEsheDelat == 1) {
 
                 render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
                 window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
             }
-            physics = std::shared_ptr<Physics>(new Physics());
-            window1->CreateWindow(Vector2(800, 600), "BEEEBRA!!!");
-            mainCamera1 = std::unique_ptr<Camera>(new Camera(Vector2(800, 600), Vector3(2)));
-            workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
-            render1->InitCamera(mainCamera1.get());
-            gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, mainCamera1.get(), physics));
-            auto script = AngelScriptEngine();
-            auto scripttt = script.createScript("scripts/test.as", "test").value();
-            script.executeScript(scripttt);
+
+            if (pizdaXyuViborRenderAPIEptaAhyliEsheDelat == 2) {
+                render1 = std::unique_ptr<GLRender>(new GLRender());
+                window1 = std::unique_ptr<GLWindow>(new GLWindow(render1.get()));
+            }
+
+            if (pizdaXyuViborRenderAPIEptaAhyliEsheDelat != 2) {
+
+                window1->createWindow(Vector2(800, 600), "BEEEBRA!!!");
+                physics = std::shared_ptr<Physics>(new Physics());
+                workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
+                gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, physics));
 
 
+            }
 
 
             //     UId = std::make_unique<DebugUI>();
@@ -106,42 +113,58 @@ namespace BEbraEngine {
             //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
 
         }
-        void Start() {
+        void start() {
 
             while (!window1->isClose()) {
-                Time::UpdateTime();
+                Time::updateTime();
+
+                window1->update();
+                if (physics.get())
+                    physics->update();
+                if (gameLogic1.get())
+                    gameLogic1->update();
+                render1->drawFrame();
 
                 tbb::flow::graph g;
                 tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
                 tbb::flow::continue_node<tbb::flow::continue_msg>
-                    _input(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
+                    _input(g, [&](const tbb::flow::continue_msg&) { 
+
+                    //window1->update();
+
+                    });
                 tbb::flow::continue_node<tbb::flow::continue_msg>
-                    _render(g, [&](const tbb::flow::continue_msg&) {render1->drawFrame(); });
+                    _render(g, [&](const tbb::flow::continue_msg&) {
+                    
+                    
+
+                    });
+
+
 
                 tbb::flow::continue_node< tbb::flow::continue_msg >
-                    _physics(g, [&](const tbb::flow::continue_msg&) { physics->Update(); });
-                tbb::flow::continue_node< tbb::flow::continue_msg >
-                    _gameLogic(g, [&](const tbb::flow::continue_msg&) { gameLogic1->Update(); });
+                    _physics(g, [&](const tbb::flow::continue_msg&) { 
+
+                       
+                        });
+                tbb::flow::continue_node<tbb::flow::continue_msg> _gameLogic(g, [&](const tbb::flow::continue_msg&) { 
+
+
+                    });
+
                 tbb::flow::make_edge(input, _physics);
                 tbb::flow::make_edge(input, _render);
                 tbb::flow::make_edge(input, _gameLogic);
                 tbb::flow::make_edge(input, _input);
-                input.try_put(tbb::flow::continue_msg());
-                g.wait_for_all();
+
+                //input.try_put(tbb::flow::continue_msg());
+              //  g.wait_for_all();
 
             }
 
 
             //vkDeviceWaitIdle(VulkanRender::device);
 
-        }
-        void Update() {
-            //   UId->Prepare();
-            if(window.get())
-                window->update();
-            if(window1.get())
-                window1->update();
-            // window1->update();
         }
 
         ~Engine() {
@@ -164,8 +187,8 @@ extern "C"
 int main(int, char** argv)
 {
     BEbraEngine::Engine engine;
-    engine.Init();
-    engine.Start();
+    engine.init();
+    engine.start();
 
     return 0;
 }

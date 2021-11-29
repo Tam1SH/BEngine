@@ -67,7 +67,7 @@ namespace BEbraEngine {
     DXRenderBufferPool::~DXRenderBufferPool()
     {
         for (auto& buffer : buffers) {
-            buffer->Destroy();
+            buffer->destroy();
         }
     }
 }

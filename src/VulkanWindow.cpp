@@ -6,10 +6,10 @@
 
 namespace BEbraEngine {
 
-	void VulkanWindow::CreateWindow(const Vector2& size, const std::string& title)
+	void VulkanWindow::createWindow(const Vector2& size, const std::string& title)
 	{
 		onCreateWindow(size, BaseWindow::SurfaceType::Vulkan, title);
-		render->Create(this);
+		render->create(this);
 	}
 
 	VulkanWindow::VulkanWindow(AbstractRender* render)
@@ -25,16 +25,14 @@ namespace BEbraEngine {
 		render->drawFrame();
 	}
 
-	Vector2 VulkanWindow::GetDrawableSize()
+	Vector2 VulkanWindow::getDrawableSize()
 	{
 		Vector2 vec;
-		vec = GetWindowSize();
+		vec = getSize();
 		return vec;
 	}
 
-	void VulkanWindow::onUpdate()
-	{
-	}
+
 
 	VulkanWindow::~VulkanWindow()
 	{

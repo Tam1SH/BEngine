@@ -11,13 +11,23 @@ namespace BEbraEngine {
 
     class ScriptObjectFactory : public IProxyGameObjectFactory {
     public:
-        std::unique_ptr<IProxyGameObjectFactory> realFactory;
+        IProxyGameObjectFactory* realFactory;
 
         std::shared_ptr<GameObject> create(const Vector3& position) override;
 
         std::shared_ptr<PointLight> createLight(const Vector3& position) override;
 
         std::shared_ptr<DirectionLight> createDirLight(const Vector3& direction) override;
+
+        void destroyObject(GameObject* object) override;
+
+        void destroyObject(std::shared_ptr<GameObject> object) override;
+
+        void destroyPointLight(std::shared_ptr<PointLight> light) override;
+
+        std::shared_ptr<Camera> createCamera(const Vector3& position) override;
+
+        void destroyCamera(std::shared_ptr<Camera> camera) override;
 
     };
 }

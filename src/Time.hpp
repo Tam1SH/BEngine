@@ -4,12 +4,13 @@ namespace BEbraEngine {
     class Time {
     public:
         Time() { }
-        static  void UpdateTime() {
+
+        static void updateTime() {
             CurrentFrame = Clock::now();
             deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(CurrentFrame - lastFrame).count() / 1000000.f;
             lastFrame = CurrentFrame;
         }
-        static float GetDeltaTime() {
+        static float getDeltaTime() {
             return deltaTime;
         }
     private:

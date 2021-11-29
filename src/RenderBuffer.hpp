@@ -6,7 +6,7 @@ namespace BEbraEngine {
 	struct RenderBuffer
 	{
 		virtual void setData(void* data, size_t range, size_t offset) = 0;
-		virtual void Destroy() = 0;
+		virtual void destroy() = 0;
 	};
 
 	struct RenderBufferView {

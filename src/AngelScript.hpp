@@ -7,9 +7,9 @@ namespace BEbraEngine {
 	class AngelScript : public BaseScript
 	{
 	public:
-		virtual void Initialization() override;
-		virtual void Run() override;
-		virtual void Destroy() override;
+		virtual void init() override;
+		virtual void run() override;
+		virtual void destroy() override;
 		AngelScript(asIScriptContext* context);
 	private:
 		asIScriptContext* context;

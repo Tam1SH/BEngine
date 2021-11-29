@@ -1,34 +1,40 @@
 #pragma once
 
 #include <map>
-//#include <filesystem>
 #include <string>
 #include "AbstractComponent.hpp"
 #include "BaseScript.hpp"
 #include "BaseScriptEngine.hpp"
+#include "AngelScriptEngine.hpp"
+#include "AngelScript.hpp"
+#include "IProxyGameObjectFactory.hpp"
 namespace BEbraEngine {
 	class WorkSpace;
 	class ScriptManager
 	{
 	private:
-		std::map<std::string, std::shared_ptr<BaseScriptEngine>> engines;
-		std::map<std::string, std::shared_ptr<BaseScript>> scripts;
+		std::unique_ptr<AngelScriptEngine> engine;
+
+		std::vector<std::shared_ptr<AngelScript>> scripts;
 
 		std::shared_ptr<WorkSpace> workspace;
-	private:
+
+		IProxyGameObjectFactory* factory;
 
 	public:
 		void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
 
-		std::shared_ptr<BaseScript> GetScriptByName(std::string name);
+		std::optional<std::shared_ptr<AngelScript>> getScriptByName(std::string name);
 
-		void RunScripts();
+		void runScripts();
 
 		void InitScripts();
 
 		void LoadScripts();
 
-		ScriptManager();
+		ScriptManager(IProxyGameObjectFactory* factory);
+
+		ScriptManager() {}
 
 		~ScriptManager();
 

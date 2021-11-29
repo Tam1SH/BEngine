@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Исходные файлы\ImGui">
-      <UniqueIdentifier>{aedf4f84-b357-4279-9f64-0ac665957981}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\ImGui">
-      <UniqueIdentifier>{cba1c011-0c14-48bf-a1e6-4daed914ee76}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Файлы ресурсов\Shaders">
       <UniqueIdentifier>{d044d852-6e83-4ea8-bfa2-0775703f031a}</UniqueIdentifier>
     </Filter>
@@ -58,8 +52,20 @@
     <Filter Include="Файлы заголовков\Physics">
       <UniqueIdentifier>{5f6bc11f-f81d-4498-bc1f-1a5ff96e8551}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\angelScript_addons">
-      <UniqueIdentifier>{b318cd18-a8ea-4e82-a1e2-32cc883979ba}</UniqueIdentifier>
+    <Filter Include="Файлы заголовков\Render\GL">
+      <UniqueIdentifier>{e8d8addc-54f9-4fb1-80ed-fb44258443d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Renders\GL">
+      <UniqueIdentifier>{5131efc1-75e0-48af-a359-53133f5df874}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\Shaders\Vulkan">
+      <UniqueIdentifier>{4dfd22de-5eea-429f-87df-3ec307a7b9b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\Shaders\GL">
+      <UniqueIdentifier>{e92bfe43-7631-4706-a5b5-44d5dacf0bc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\Shaders\DX">
+      <UniqueIdentifier>{7b280c19-536c-4f6d-8f07-5bb938be1e41}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -174,12 +180,6 @@
     <ClCompile Include="MeshFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderFactory.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="RigidBodyFactory.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptObjectFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -195,7 +195,7 @@
     <ClCompile Include="DXTextureFactory.cpp">
       <Filter>Исходные файлы\Renders\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="RenderObjectFactory.cpp">
+    <ClCompile Include="VulkanRenderObjectFactory.cpp">
       <Filter>Исходные файлы\Renders\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="DXRenderObjectFactory.cpp">
@@ -218,6 +218,24 @@
     </ClCompile>
     <ClCompile Include="AbstractScriptObject.cpp">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="GLWindow.cpp">
+      <Filter>Исходные файлы\Renders\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="GLRender.cpp">
+      <Filter>Исходные файлы\Renders\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\glad\src\glad.c">
+      <Filter>Исходные файлы\Renders\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBodyFactory.cpp">
+      <Filter>Исходные файлы\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderFactory.cpp">
+      <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -446,14 +464,20 @@
     <ClInclude Include="ScriptWrappers.hpp">
       <Filter>Файлы заголовков\Script</Filter>
     </ClInclude>
+    <ClInclude Include="GLWindow.hpp">
+      <Filter>Файлы заголовков\Render\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="GLRender.hpp">
+      <Filter>Файлы заголовков\Render\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Quaternion.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\shader.frag">
-      <Filter>Файлы ресурсов\Shaders</Filter>
-    </None>
-    <None Include="shaders\shader.vert">
-      <Filter>Файлы ресурсов\Shaders</Filter>
-    </None>
     <None Include="TAA.vert">
       <Filter>Файлы ресурсов\Shaders</Filter>
     </None>
@@ -463,6 +487,13 @@
     <None Include="scripts\test.as">
       <Filter>Файлы ресурсов\Scripts</Filter>
     </None>
+    <None Include="shaders\shader.frag">
+      <Filter>Файлы ресурсов\Shaders\Vulkan</Filter>
+    </None>
+    <None Include="shaders\shader.vert">
+      <Filter>Файлы ресурсов\Shaders\Vulkan</Filter>
+    </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt">
@@ -471,7 +502,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Tutorial03.hlsl">
-      <Filter>Файлы ресурсов\Shaders</Filter>
+      <Filter>Файлы ресурсов\Shaders\DX</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

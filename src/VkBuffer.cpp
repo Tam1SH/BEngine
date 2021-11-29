@@ -4,7 +4,7 @@
 //TODO: сделать не зависимым от граф. апи.
 namespace BEbraEngine {
 
-    void VulkanBuffer::Destroy()
+    void VulkanBuffer::destroy()
     {
         vkFreeMemory(VulkanRender::device, memory, 0);
         vkDestroyBuffer(VulkanRender::device, self, 0);
@@ -14,7 +14,7 @@ namespace BEbraEngine {
 
     VulkanBuffer::~VulkanBuffer()
     {
-        Destroy();
+        destroy();
     }
     void VulkanBuffer::setData(void* data, size_t size, size_t offset)
     {

@@ -13,58 +13,66 @@
 #include "GameObject.hpp"
 #include "RenderObject.hpp"
 #include "Transform.hpp"
+#include "ScriptObjectFactory.hpp"
 namespace BEbraEngine {
 
 
-    GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera, std::shared_ptr<Physics> physics)
+    GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, std::shared_ptr<Physics> physics)
     {
         this->workspace = workspace;
         this->render = std::shared_ptr<AbstractRender>(render);
         objectFactory = std::unique_ptr<GameObjectFactory>(new GameObjectFactory(this->render, physics));
         objectFactory->SetWorkSpace(workspace);
-        //scriptManager->SetWorkSpace(workspace);
-        this->camera = camera;
+        auto scriptsss = new ScriptObjectFactory();
+        scriptsss->realFactory = objectFactory.get();
+        scriptObjectFactory = std::unique_ptr<IProxyGameObjectFactory>(scriptsss);
+
+        scriptManager = std::make_unique<ScriptManager>(scriptObjectFactory.get());
+        scriptManager->LoadScripts();
 
 
-        ScriptInit();
+        scriptInit();
     }
 
-    void GameLogic::ScriptInit()
+    void GameLogic::scriptInit()
     {
+        scriptManager->InitScripts();
+        camera = objectFactory->createCamera(Vector3(0));
         object = objectFactory->create(Vector3(0, 100, -100));
-        object->getComponent<RigidBody>()->setDynamic(false);
+     //   object->getComponent<RigidBody>()->setDynamic(false);
         object->getComponent<Collider>()->setScale(Vector3(100, 100, 1));
-        object->getComponent<Transform>()->SetScale(Vector3(100, 100, 1));
+        object->getComponent<Transform>()->setScale(Vector3(100, 100, 1));
 
         object2 = objectFactory->create(Vector3(0, 100, 100));
-        object2->getComponent<RigidBody>()->setDynamic(false);
+      //  object2->getComponent<RigidBody>()->setDynamic(false);
         object2->getComponent<Collider>()->setScale(Vector3(100, 100, 1));
-        object2->getComponent<Transform>()->SetScale(Vector3(100, 100, 1));
+        object2->getComponent<Transform>()->setScale(Vector3(100, 100, 1));
 
         object3 = objectFactory->create(Vector3(-100, 100, 0));
-        object3->getComponent<RigidBody>()->setDynamic(false);
+      //  object3->getComponent<RigidBody>()->setDynamic(false);
         object3->getComponent<Collider>()->setScale(Vector3(1, 100, 100));
-        object3->getComponent<Transform>()->SetScale(Vector3(1, 100, 100));
+        object3->getComponent<Transform>()->setScale(Vector3(1, 100, 100));
 
         object4 = objectFactory->create(Vector3(100, 100, 0));
-        object4->getComponent<RigidBody>()->setDynamic(false);
+      //  object4->getComponent<RigidBody>()->setDynamic(false);
         object4->getComponent<Collider>()->setScale(Vector3(1, 100, 100));
-        object4->getComponent<Transform>()->SetScale(Vector3(1, 100, 100));
+        object4->getComponent<Transform>()->setScale(Vector3(1, 100, 100));
 
         object5 = objectFactory->create(Vector3(0, 0, 0));
-        object5->getComponent<RigidBody>()->setDynamic(false);
+       // object5->getComponent<RigidBody>()->setDynamic(false);
         object5->getComponent<Collider>()->setScale(Vector3(100, 1, 100));
-        object5->getComponent<Transform>()->SetScale(Vector3(100, 1, 100));
+        object5->getComponent<Transform>()->setScale(Vector3(100, 1, 100));
 
         auto sphere = objectFactory->create(Vector3(0, 20, 0));
         sphere->getComponent<Collider>()->setScale(Vector3(0));
-        sphere->getComponent<Transform>()->SetScale(Vector3(10));
+        sphere->getComponent<Transform>()->setScale(Vector3(10));
         sphere->getComponent<RenderObject>()->setColor(Vector3(0));
-        sphere->getComponent<RigidBody>()->setDynamic(false);
-        player = objectFactory->create(Vector3(2));
-        player->getComponent<RigidBody>()->setDynamic(false);
-        player->getComponent<Collider>()->setScale(Vector3(2));
-        player->getComponent<Transform>()->SetScale(Vector3(2));
+        //sphere->getComponent<RigidBody>()->setDynamic(false);
+       // player = objectFactory->create(Vector3(2));
+       // player->getComponent<RigidBody>()->setDynamic(false);
+     //   player->getComponent<Collider>()->setScale(Vector3(2));
+     //   player->getComponent<Transform>()->setScale(Vector3(2));
+
 
 
         objectFactory->setModel(sphere.get(), "C:/.BEbraEngine/src/Models/Sphere.fbx");
@@ -75,6 +83,7 @@ namespace BEbraEngine {
         bounds.push_back(sphere);
         globalLight = objectFactory->createDirLight(Vector3(0,-0.5f,0));
         light = objectFactory->createLight(Vector3(0, 20, 0));
+
 
         rotate = Vector3(0, -0.5f, 0);
     }
@@ -92,11 +101,11 @@ namespace BEbraEngine {
         }
 
     }
-    void GameLogic::FixedUpdate() {
+    void GameLogic::fixedUpdate() {
 
-        if (Input::IsKeyPressed(KEY_CODE::KEY_Z)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_Z)) {
             auto obj = objectFactory->create(camera->Position + (camera->Front * 5.f));
-            obj->getComponent<RigidBody>()->applyImpulse(camera->Front * 40.f, camera->Front);
+            //obj->getComponent<RigidBody>()->applyImpulse(camera->Front * 40.f, camera->Front);
             Vector3 random_color = Vector3(
                 (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
             );
@@ -104,20 +113,20 @@ namespace BEbraEngine {
             renderobj->setColor(random_color);
             objects.push_back(obj);
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_T)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_T)) {
             clearObjects();
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_Q)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_Q)) {
             lookatobject = true;
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_R)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_R)) {
             lookatobject = false;
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_X)) {
-            if (objects.size() >= 40)
-                posofobject = &objects.back()->getComponent<Transform>()->GetPosition();
+        if (Input::isKeyPressed(KEY_CODE::KEY_X)) {
+            //if (objects.size() >= 40)
+                //posofobject = &objects.back()->getComponent<Transform>()->getPosition();
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_C)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_C)) {
             if (!lights.empty())
             {
                 std::shared_ptr<PointLight> light1;
@@ -129,7 +138,7 @@ namespace BEbraEngine {
 
         }
 
-        if (Input::IsKeyPressed(KEY_CODE::KEY_E)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_E)) {
             auto light = objectFactory->createLight(camera->Position);
             Vector3 random_color = Vector3(
                 (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
@@ -138,12 +147,12 @@ namespace BEbraEngine {
             light->update();
             lights.push_back(light);
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_1)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_1)) {
 
             rotate.y = 0.5f;
             globalLight->setDirection(rotate);
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_2)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_2)) {
             rotate.y = -0.5f;
             globalLight->setDirection(rotate);
         }
@@ -152,32 +161,33 @@ namespace BEbraEngine {
         }
 
     }
-    void GameLogic::Update()
+    void GameLogic::update()
     {
+        scriptManager->runScripts();
         float speed = 1;
-        if (Input::IsKeyPressed(KEY_CODE::KEY_LEFT_SHIFT)) {
+        if (Input::isKeyPressed(KEY_CODE::KEY_LEFT_SHIFT)) {
             speed = 20;
         }
 
         //if (Input::IsKeyPressed(KEY_CODE::KEY_Z)) {
         //}
-        if (Input::IsKeyPressed(KEY_CODE::KEY_A)) {
-            camera->ProcessKeyboard(LEFT, Time::GetDeltaTime() * speed);
+        if (Input::isKeyPressed(KEY_CODE::KEY_A)) {
+            camera->processKeyboard(LEFT, Time::getDeltaTime() * speed);
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_D)) {
-            camera->ProcessKeyboard(RIGHT, Time::GetDeltaTime() * speed);
+        if (Input::isKeyPressed(KEY_CODE::KEY_D)) {
+            camera->processKeyboard(RIGHT, Time::getDeltaTime() * speed);
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_S)) {
-            camera->ProcessKeyboard(BACKWARD, Time::GetDeltaTime()* speed);
+        if (Input::isKeyPressed(KEY_CODE::KEY_S)) {
+            camera->processKeyboard(BACKWARD, Time::getDeltaTime()* speed);
         }
-        if (Input::IsKeyPressed(KEY_CODE::KEY_W)) {
-            camera->ProcessKeyboard(FORWARD, Time::GetDeltaTime()* speed);
+        if (Input::isKeyPressed(KEY_CODE::KEY_W)) {
+            camera->processKeyboard(FORWARD, Time::getDeltaTime()* speed);
         }
 
         static float time = 0;
-        time += Time::GetDeltaTime();
+        time += Time::getDeltaTime();
         if (time > 1 / 60.f) {
-            FixedUpdate();
+            fixedUpdate();
             time = 0;
         }
         if (lookatobject) {

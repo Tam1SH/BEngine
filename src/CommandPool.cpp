@@ -3,7 +3,7 @@
 #include "CommandBuffer.hpp"
 #include "VulkanRender.hpp"
 namespace BEbraEngine {
-    void CommandPool::Create(uint32_t queueFamilyIndex)
+    void CommandPool::create(uint32_t queueFamilyIndex)
     {
         VkCommandPoolCreateInfo info{};
         info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -31,12 +31,12 @@ namespace BEbraEngine {
         return buffer;
 
     }
-    void CommandPool::DestroyCmdBuffer(VkCommandBuffer buffer)
+    void CommandPool::destroyCmdBuffer(VkCommandBuffer buffer)
     {
         vkFreeCommandBuffers(VulkanRender::device, pool, 1, &buffer);
         countBuffers--;
     }
-    void CommandPool::DestroyCmdBuffers(std::vector<VkCommandBuffer> buffers)
+    void CommandPool::destroyCmdBuffers(std::vector<VkCommandBuffer> buffers)
     {
         vkFreeCommandBuffers(VulkanRender::device, pool, buffers.size(), buffers.data());
         countBuffers -= buffers.size();

@@ -27,15 +27,15 @@ namespace BEbraEngine {
     class GameLogic {
     public:
 
-        GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, Camera* camera, std::shared_ptr<Physics> physics);
+        GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, std::shared_ptr<Physics> physics);
 
-        void ScriptInit();
+        void scriptInit();
 
         void clearObjects();
 
-        void FixedUpdate();
+        void fixedUpdate();
 
-        void Update();
+        void update();
 
         ~GameLogic();
 
@@ -48,7 +48,9 @@ namespace BEbraEngine {
 
         std::unique_ptr<IProxyGameObjectFactory> scriptObjectFactory;
 
-        Camera* camera;
+        std::unique_ptr<ScriptManager> scriptManager;
+
+        std::shared_ptr<Camera> camera;
 
         std::shared_ptr<DirectionLight> globalLight;
         std::shared_ptr<GameObject> object;

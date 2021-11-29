@@ -1,82 +1,82 @@
 #include "stdafx.h"
 #include "ScriptManager.hpp"
-
-#include "LuaEngine.hpp"
-//#include "PythonEngine.hpp"
-#include "JScriptEngine.hpp"
-
-//TODO: стал бесполезен.
+#include "AngelScriptEngine.hpp"
+#include <filesystem>
 namespace BEbraEngine {
-	constexpr const wchar_t* LUA = L"LUA";
-	constexpr const wchar_t* PYTHON = L"PYTHON";
-	constexpr const wchar_t* JAVASCRIPT = L"JAVASCRIPT";
+	
 
-	//void ScriptManager::AddScript(const std::filesystem::path& path, const wchar_t* engineName)
-	//{
-		//std::wstring name = path.filename();
-		//auto code = engines[engineName]->DownloadScript(path);
-		//scripts[name] = std::shared_ptr<BaseScript>(engines[engineName]->CreateScript(code));
-	//}
 	void ScriptManager::SetWorkSpace(std::shared_ptr<WorkSpace> workspace)
 	{
 		ScriptManager::workspace = workspace;
 	}
-	std::shared_ptr<BaseScript> ScriptManager::GetScriptByName(std::string name)
-	{
-		return scripts[name];
-	}
-	void ScriptManager::RunScripts()
+	std::optional<std::shared_ptr<AngelScript>> ScriptManager::getScriptByName(std::string name)
 	{
 		for (auto& script : scripts) {
-			if (script.second->GetActive())
-				script.second->Run();
+			if (script->getName() == name) {
+				return std::make_optional(script);
+			}
 		}
+		return std::optional<std::shared_ptr<AngelScript>>();
+	}
+	void ScriptManager::runScripts()
+	{
+		tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
+			if (scripts[i]->getActive()) 
+				engine->executeScript(scripts[i].get(), "Update");
+			
+		});
 	}
 	void ScriptManager::InitScripts()
 	{
-		BaseScript::SetWorkSpace(workspace);
-		for (auto& script : scripts) {
-			if (script.second->GetActive())
-				script.second->Initialization();
-		}
+		tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
+			if (scripts[i]->getActive()) 
+				engine->executeScript(scripts[i].get(), "Start");
+			
+			});
 	}
 	void ScriptManager::LoadScripts()
 	{
-		/*
+		using namespace nlohmann;
+
 		auto currentPath = std::filesystem::current_path();
 		currentPath /= "scripts";
+		auto setup = currentPath / "setup.json";
+		std::ifstream stream(setup);
+		json j;
+		stream >> j;
+		for (int i = 0; i < j["scripts"].size(); i++) {
+			std::string name;
+			std::string path;
+			for (auto& [key, value] : j["scripts"][i].items()) {
+				if (key == "name") {
+					name = value;
+				}
+				if (key == "path") {
+					path = value;
+				}
+			}
+			auto opt_script = engine->createScript(path, name);
 
-		for (auto& files : std::filesystem::directory_iterator(currentPath)) {
-			auto extension = files.path().extension();
-			if (extension == ".js") {
-				AddScript(files.path(), JAVASCRIPT);
-			}
-			if (extension == ".lua") {
-				AddScript(files.path(), LUA);
-			}
-			if (extension == ".py") {
-				AddScript(files.path(), PYTHON);
+			if (opt_script.has_value()) {
+				auto script = std::shared_ptr<AngelScript>(opt_script.value());
+				script->SetActive(true);
+				scripts.push_back(script);
 			}
 		}
-		*/
+
+		
 	}
-	ScriptManager::ScriptManager()
+	ScriptManager::ScriptManager(IProxyGameObjectFactory* factory)
 	{
-		//std::wstring s = std::filesystem::current_path().c_str();
-		//std::string st{ s.begin(), s.end() };
-
-
-		//engines[LUA] = std::shared_ptr<BaseScriptEngine>(new LuaEngine());
-		//engines[JAVASCRIPT] = std::shared_ptr<BaseScriptEngine>(
-			//new JScriptEngine(const_cast<char*>(st.c_str())));
-
+		this->factory = factory;
+		engine = std::unique_ptr<AngelScriptEngine>(new AngelScriptEngine(factory));
 
 	}
 
 	ScriptManager::~ScriptManager()
 	{
 		for (auto& script : scripts) {
-			script.second->Destroy();
+			script->destroy();
 		}
 	}
 }

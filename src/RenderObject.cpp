@@ -8,13 +8,9 @@ namespace BEbraEngine {
     void RenderObject::update()
     {
         ShaderData data;
-        if (!transform.expired() && !matrix.expired()) {
-            data.model = transform.lock()->getMatrix();
-            data.color = color;
-            matrix.lock()->setData(&data, sizeof(ShaderData));
-        }
-        else
-            Debug::Log(GetName() + " has invalid data");
+        data.model = transform->getBasis();
+        data.color = color;
+        matrix->setData(&data, sizeof(ShaderData));
     }
 
     
@@ -38,7 +34,7 @@ namespace BEbraEngine {
     {
         ShaderData _data;
         if (!transform.expired() && !data.expired()) {
-            _data.position = transform.lock()->GetPosition();
+            _data.position = transform.lock()->getPosition();
             _data.ambient = color;
             _data.diffuse = color;
             _data.specular = color;
@@ -48,6 +44,6 @@ namespace BEbraEngine {
             data.lock()->setData(&_data, sizeof(ShaderData));
         }
         else
-            Debug::Log(GetName() + " has invalid data");
+            Debug::Log(getName() + " has invalid data");
     }
 }

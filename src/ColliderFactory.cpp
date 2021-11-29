@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "ColliderFactory.hpp"
+#include <Physics/btBulletCollisionCommon.h>
+#include "Collider.hpp"
 namespace BEbraEngine {
 	ColliderFactory::ColliderFactory(Physics* physics) {
 		this->physics = physics;

@@ -3,7 +3,7 @@
 #include "GameObjectFactory.hpp"
 namespace BEbraEngine {
 
-    bool GameObject::IsComposite() const
+    bool GameObject::isComposite() const
     {
         return true;
     }

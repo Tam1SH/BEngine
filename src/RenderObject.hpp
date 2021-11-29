@@ -6,33 +6,33 @@
 #include "Model.hpp"
 #include "matrix.hpp"
 namespace BEbraEngine {
-    class VulkanRenderObjectFactory;
+    class Transform;
+    class Texture;
 }
 
 //TODO: draw is bad bleat.
 namespace BEbraEngine {
-    class Transform;
-    class Texture;
+
     class RenderObject : public GameObjectComponent, public IReusable {
     public:
         struct ShaderData {
             Matrix4 model;
             alignas(16) Vector3 color;
         };
+
     public:
 
-        virtual ~RenderObject() {}
-    public:
-        //TODO: useless;
         std::unique_ptr<Texture> texture;
 
         std::shared_ptr<Model> model;
 
-        std::weak_ptr<RenderBufferView> matrix;
+        std::shared_ptr<RenderBufferView> matrix;
 
-        std::weak_ptr<Transform> transform;
+        std::shared_ptr<Transform> transform;
 
         void update();
+
+        virtual ~RenderObject() {}
 
         RenderObject() {}
 
@@ -119,7 +119,7 @@ namespace BEbraEngine {
                 data.lock()->setData(&data1, sizeof(ShaderData));
             }
             else
-                Debug::Log(GetName() + " has invalid data");
+                Debug::Log(getName() + " has invalid data");
 
         }
         Vector3& getDirection() {

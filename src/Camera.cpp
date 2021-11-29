@@ -9,9 +9,10 @@
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>
 #include "RenderBuffer.hpp"
+#include "Math.hpp"
 namespace BEbraEngine {
 
-    Camera::Camera(Vector2 size, Vector3 position , Vector3 up , float yaw, float pitch)
+    Camera::Camera(const Vector2& size, const Vector3& position , Vector3 up , float yaw, float pitch)
         : MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     {
         rectViewport = size;
@@ -20,13 +21,13 @@ namespace BEbraEngine {
         Yaw = yaw;
         Front = Vector3(0, 0, -1);
         Pitch = pitch;
-        lastX = Input::GetX();
-        lastY = Input::GetY();
+        lastX = Input::getX();
+        lastY = Input::getY();
         updateCameraVectors();
     }
 
 
-    glm::mat4 Camera::GetViewMatrix()
+    glm::mat4 Camera::getViewMatrix()
     {
         glm::vec3 _pos = Position;
         glm::vec3 pos_f = Position + Front;
@@ -34,7 +35,7 @@ namespace BEbraEngine {
         return glm::lookAt(_pos, pos_f, up);
     }
 
-    void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
+    void Camera::processKeyboard(Camera_Movement direction, float deltaTime)
     {
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)
@@ -49,13 +50,13 @@ namespace BEbraEngine {
 
     void Camera::_move(float& x, float& y)
     {
-        x = Input::GetX() - lastX;
-        y = lastY - Input::GetY(); // �����������, ��� ��� y-���������� ���� ����� �����
-        lastX = Input::GetX();
-        lastY = Input::GetY();
+        x = Input::getX() - lastX;
+        y = lastY - Input::getY();
+        lastX = Input::getX();
+        lastY = Input::getY();
     }
 
-    void Camera::ProcessMouseMovement(bool constrainPitch)
+    void Camera::processMouseMovement(bool constrainPitch)
     {
         float xoffset;
         float yoffset;
@@ -66,7 +67,6 @@ namespace BEbraEngine {
         Yaw += xoffset;
         Pitch += yoffset;
 
-        // ����������, ��� ����� ������ ������� �� ������� ������, ����� �� ����������������
         if (constrainPitch)
         {
             if (Pitch > 89.0f)
@@ -75,11 +75,10 @@ namespace BEbraEngine {
                 Pitch = -89.0f;
         }
 
-        // ��������� �������� �������-�����, �������-������ � �������-�����, ��������� ����������� �������� ����� ������
         updateCameraVectors();
     }
 
-    void Camera::ProcessMouseScroll(float yoffset)
+    void Camera::processMouseScroll(float yoffset)
     {
         if (Zoom >= 1.0f && Zoom <= 45.0f)
             Zoom -= yoffset;
@@ -90,14 +89,14 @@ namespace BEbraEngine {
     }
 
 
-    void Camera::Update()
+    void Camera::update()
     {
 
         ShaderData vp;
         vp.proj = glm::perspective(glm::radians(45.0f), rectViewport.x / rectViewport.y, .1f, 10000.0f);
-        vp.view = GetViewMatrix();
+        vp.view = getViewMatrix();
         vp.position = Position;
-        ProcessMouseMovement();
+        processMouseMovement();
         cameraData->setData(&vp, sizeof(ShaderData));
     }
 
@@ -108,27 +107,23 @@ namespace BEbraEngine {
 
     void Camera::lookAt(const Vector3& at)
     {
-        glm::vec3 front = at - Position;
-        Front = glm::normalize(front);
-
+        Front = BEbraMath::normalize(at - Position);
     }
 
     void Camera::updateCameraVectors()
     {
-        glm::vec3 front;
-        front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-        front.y = sin(glm::radians(Pitch));
-        front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-        Front = glm::normalize(front);
-
-        Right = glm::normalize(glm::cross(static_cast<glm::vec3>(Front), 
-                                          static_cast<glm::vec3>(WorldUp)));  
-
-        // 
-        Up = glm::normalize(glm::cross(static_cast<glm::vec3>(Right), 
-                                       static_cast<glm::vec3>(Front)));
+        Vector3 front;
+        front.x = cos(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
+        front.y = sin(BEbraMath::radians(Pitch));
+        front.z = sin(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
+        Front = BEbraMath::normalize(front);
+        Right = BEbraMath::normalize(BEbraMath::cross(Front, WorldUp));  
+        Up = BEbraMath::normalize(BEbraMath::cross(Right, Front));
+    }
+    void Camera::release()
+    {
     }
     Camera::~Camera() {
-        this->cameraData->buffer->Destroy();
+        this->cameraData->buffer->destroy();
     }
 }

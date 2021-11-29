@@ -1,0 +1,12 @@
+{
+  "scripts": [
+    {
+      "name": "test",
+      "path" : "scripts/test.as"
+    },
+    {
+      "name": "BEbraEngine",
+      "path" : "scripts/BEbraEngine.as"
+    }
+  ]
+}

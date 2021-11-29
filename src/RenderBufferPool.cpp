@@ -20,12 +20,19 @@ namespace BEbraEngine {
 
 		if (_usage == IRenderBufferPool::Usage::Default) {
 			alignsizeofData = _render->alignmentBuffer(sizeofData, type);
-			_buffer = std::shared_ptr<RenderBuffer>(_render->createUniformBuffer(alignsizeofData * new_size));
+			if(type == AbstractRender::TypeBuffer::Storage)
+				_buffer = std::shared_ptr<RenderBuffer>(_render->createStorageBuffer(alignsizeofData * new_size));
+			if (type == AbstractRender::TypeBuffer::Uniform)
+				_buffer = std::shared_ptr<RenderBuffer>(_render->createUniformBuffer(alignsizeofData * new_size));
 		}
 
 		if (_usage == IRenderBufferPool::Usage::SeparateOneBuffer) {
 			alignsizeofData = _render->alignmentBuffer(sizeofData / count, type);
 			_buffer = std::shared_ptr<RenderBuffer>(_render->createUniformBuffer(sizeofData));
+			if (type == AbstractRender::TypeBuffer::Storage)
+				_buffer = std::shared_ptr<RenderBuffer>(_render->createStorageBuffer(sizeofData));
+			if (type == AbstractRender::TypeBuffer::Uniform)
+				_buffer = std::shared_ptr<RenderBuffer>(_render->createUniformBuffer(sizeofData));
 
 		}
 
@@ -85,6 +92,6 @@ namespace BEbraEngine {
 
 	VulkanRenderBufferPool::~VulkanRenderBufferPool()
 	{
-		_buffer->Destroy();
+		_buffer->destroy();
 	}
 }
