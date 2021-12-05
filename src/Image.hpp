@@ -9,18 +9,17 @@ namespace BEbraEngine {
     public:
         std::string path;
         bool _isLoad;
-        unsigned char* picture;
         int width;
         int height;
         int Channels;
 
-        VkBuffer buf;
         VkImage self;
         VkImageView imageView;
         VkSampler sampler;
         VkDeviceMemory memory;
         Texture(VkImage& self, VkImageView& imageView, VkSampler& sampler, VkDeviceMemory& textureImageMemory) : self(self), imageView(imageView), sampler(sampler), memory(textureImageMemory) {}
-        Texture() {}
+        Texture() {
+        }
         bool IsLoad() {
             return _isLoad;
         }

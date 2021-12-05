@@ -7,7 +7,7 @@ namespace BEbraEngine {
     {
         vkDestroyDescriptorPool(VulkanRender::device, pool, 0);
     }
-    void DescriptorPool::allocate(int count)
+    void DescriptorPool::allocate(uint32_t count)
     {
         countDescriptors += count;
 
@@ -15,11 +15,12 @@ namespace BEbraEngine {
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
         poolInfo.poolSizeCount = info.types.size();
         poolInfo.pPoolSizes = info.types.data();
-        poolInfo.maxSets = static_cast<uint32_t>(countDescriptors);
+        poolInfo.maxSets =countDescriptors;
         VkResult result;
 
         if (result = vkCreateDescriptorPool(VulkanRender::device, &poolInfo, nullptr, &pool); result != VK_SUCCESS) {
             Debug::log("Failed to create decsriptor pool", this, "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
+            return;
         }
 
         for (int i = 0; i < countDescriptors; i++) {
@@ -35,19 +36,13 @@ namespace BEbraEngine {
     }
     void DescriptorPool::free(VkDescriptorSet set)
     {
+
         {
             //пахнет хуем как бы. Есть ли вообще смысл, в данном случае, отслеживать эти ебливые дескрипторы? 
             std::lock_guard g(mutex);
             std::remove(setsUses.begin(), setsUses.end(), set);
         }
-        auto _set = VkDescriptorSet();
-        VkDescriptorSetAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.descriptorPool = pool;
-        allocInfo.descriptorSetCount = 1;
-        allocInfo.pSetLayouts = &info.layout;
-        vkAllocateDescriptorSets(VulkanRender::device, &allocInfo, &_set);
-        sets.push(_set);
+        sets.push(set);
     }
     std::optional<VkDescriptorSet> DescriptorPool::get()
     {

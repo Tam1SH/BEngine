@@ -1,10 +1,13 @@
 #pragma once
+
 #include "stdafx.h"
 #include "Image.hpp"
 #include "ITextureFactory.hpp"
+#define STB_IMAGE_IMPLEMENTATION
 
 namespace BEbraEngine {
     class AbstractRender;
+    class VulkanRender;
 }
 namespace BEbraEngine {
     class VulkanTextureFactory : public ITextureFactory {
@@ -17,9 +20,9 @@ namespace BEbraEngine {
         Texture* create(const std::string& path) override;
 
 
-        VulkanTextureFactory(AbstractRender* render) : render(render) {}
+        VulkanTextureFactory(AbstractRender* render);
 
         private:
-            AbstractRender* render;
+            VulkanRender* render;
     };
 }

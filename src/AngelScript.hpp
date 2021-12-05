@@ -10,7 +10,9 @@ namespace BEbraEngine {
 		virtual void init() override;
 		virtual void run() override;
 		virtual void destroy() override;
+		asIScriptContext* getContext();
 		AngelScript(asIScriptContext* context);
+		
 	private:
 		asIScriptContext* context;
 	};

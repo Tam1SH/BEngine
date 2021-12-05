@@ -32,9 +32,9 @@ namespace BEbraEngine {
 
         void update();
 
-        virtual ~RenderObject() {}
+        virtual ~RenderObject();
 
-        RenderObject() {}
+        RenderObject();
 
         void setColor(const Vector3& color) {
 
@@ -119,7 +119,7 @@ namespace BEbraEngine {
                 data.lock()->setData(&data1, sizeof(ShaderData));
             }
             else
-                Debug::Log(getName() + " has invalid data");
+                Debug::log(getName() + " has invalid data");
 
         }
         Vector3& getDirection() {

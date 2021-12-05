@@ -10,20 +10,22 @@
 #include "AngelScript.hpp"
 #include "ScriptWrappers.hpp"
 namespace BEbraEngine {
-	void MessageCallback(const asSMessageInfo& msg) {
-		const char* type = "ERR ";
+	
+	static void MessageCallback(const asSMessageInfo& msg) {
+		const char* type = "ERROR";
 		if (msg.type == asMSGTYPE_WARNING)
 			type = "WARN";
 		else if (msg.type == asMSGTYPE_INFORMATION)
 			type = "INFO";
-
-		std::cout << msg.section << " (" << msg.row << ", " << msg.col << ") : " << type << " : " << msg.message << std::endl;
+		std::stringstream ss;
+		ss << msg.section << " (" << msg.row << ", " << msg.col << ") : " << type << " : " << msg.message;
+		Debug::log(ss.str());
 
 	}
-	void print(const std::string& in) {
+	static void print(const std::string& in) {
 		std::cout << in << std::endl;
 	}
-	void print(const float& in) {
+	static void print(const float& in) {
 		std::cout << in << std::endl;
 	}
 
@@ -40,12 +42,13 @@ namespace BEbraEngine {
 
 		int r = engine->SetMessageCallback(asFUNCTION(MessageCallback), 0, asCALL_CDECL); assert(r >= 0);
 		r = engine->RegisterGlobalFunction("void print(const string &in)", asFUNCTIONPR(print, (const std::string&), void), asCALL_CDECL); assert(r >= 0);
-
 		r = engine->RegisterGlobalFunction("void print(float &in)", asFUNCTIONPR(print, (const float&), void), asCALL_CDECL); assert(r >= 0);
 
 
 		Wrappers::_Vector3::registerObj(engine);
 		Wrappers::_GameObject::registerObj(engine);
+		Wrappers::_Input::registerObj(engine);
+		Wrappers::_Input::getInstance();
 		Wrappers::_GameObject::factory = factory;
 	}
 
@@ -64,12 +67,12 @@ namespace BEbraEngine {
 		if (r < 0) {
 			Debug::log("Can't create a script. Params : " + path + " | " + name, 0, 
 				"ScriptEngine", Debug::ObjectType::Script, Debug::MessageType::Error);
-			return std::make_optional<AngelScript*>();
+			return std::optional<AngelScript*>();
 		}
 		asIScriptContext* ctx = engine->CreateContext();
 		auto script = new AngelScript(ctx);
 		script->setName(name);
-		return std::make_optional<AngelScript*>(script);
+		return std::optional<AngelScript*>(script);
 	}
 	void AngelScriptEngine::executeScript(AngelScript* script, const std::string&& name)
 	{
@@ -78,26 +81,23 @@ namespace BEbraEngine {
 		asIScriptFunction* func = mod->GetFunctionByName(name.c_str());
 		if (func == 0)
 		{
-			std::string xyuuuu = "The script must have the function '";
-			printf((xyuuuu + name + "'. Please add it and try again.\n").c_str());
 			return;
 		}
 
-		asIScriptContext* ctx = engine->CreateContext();
+		asIScriptContext* ctx = script->getContext();
 		ctx->Prepare(func);
 		int r = ctx->Execute();
-		if (r != asEXECUTION_FINISHED)
+		if (r != asEXECUTION_FINISHED && r == asEXECUTION_EXCEPTION)
 		{
-			if (r == asEXECUTION_EXCEPTION)
-			{
-				printf("An exception '%s' occurred. Please correct the code and try again.\n", ctx->GetExceptionString());
-			}
+			std::stringstream ss;
+			ss << "ScriptException: ";
+			ss << ctx->GetExceptionString();
+			Debug::log("an exception has occurred", script, script->getName(), Debug::ObjectType::Script, Debug::MessageType::Error);
 		}
-
-		ctx->Release();
 	}
 	AngelScript* AngelScriptEngine::CreateScript(std::string code)
 	{
+		throw std::exception();
 		return nullptr;
 	}
 }

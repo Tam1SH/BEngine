@@ -18,14 +18,20 @@
 
 namespace BEbraEngine {
 
-    RenderObject* VulkanRenderObjectFactory::createObject()
+    std::optional<RenderObject*> VulkanRenderObjectFactory::createObject()
     {
+        auto obj = new VulkanRenderObject();
         auto maybe_object_view = _poolofObjects->get();
         std::shared_ptr<RenderBufferView> object_view;
+
         if (maybe_object_view.has_value()) {
             object_view = maybe_object_view.value().lock();
         }
-        auto obj = new VulkanRenderObject();
+        else {
+            Debug::log("BufferPool is empty", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            return std::optional<RenderObject*>();
+        }
+
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
 
@@ -39,8 +45,12 @@ namespace BEbraEngine {
         setinfo.bufferView = object_view.get();
 
         obj->descriptor = render->createDescriptor(&setinfo);
+        if (!obj->descriptor) {
+            Debug::log("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            return std::optional<RenderObject*>();
+        }
         obj->layout = &render->pipelineLayout;
-        return obj;
+        return std::optional<RenderObject*>(obj);
     }
 
     PointLight* VulkanRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)

@@ -9,11 +9,11 @@
 #include "RigidBodyFactory.hpp"
 #include "IProxyGameObjectFactory.hpp"
 #include <typeinfo>
+#include "Input.hpp"
 namespace BEbraEngine {
 	namespace Wrappers {
 		template<typename T>
 		T* defaultFactory() {
-			std::cout << "PIZDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA     " << typeid(T).name() << std::endl;
 			return new T();
 		}
 		template<typename T>
@@ -25,22 +25,86 @@ namespace BEbraEngine {
 		void defaultAllocate(void* memory) {
 			
 			new(memory)T();
-			std::cout << memory << std::endl;
 		}
 		template<typename T>
-		void defaultDeallocate(void* memory) {
-			std::cout << memory << std::endl;
+		void defaultDeallocate(void* memory) { 
 			((T*)memory)->~T();
 
 		}
+		class _Input : public AbstractScriptObject {
+		public:
+
+
+			static constexpr const char* __name = "_Input";
+
+			static _Input& getInstance() {
+				if (!instance) {
+					instance = new _Input();
+				}
+				return *instance;
+			}
+
+			static void registerObj(asIScriptEngine* engine) {
+				int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
+
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_RELEASE, "void f()", asMETHOD(_Input, release), asCALL_THISCALL); assert(r >= 0);
+
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_ADDREF, "void f()", asMETHOD(_Input, addRef), asCALL_THISCALL); assert(r >= 0);
+
+				r = engine->RegisterObjectMethod(__name,
+					"bool __isKeyPressed(int)", asMETHODPR(_Input, isKeyPressed, (int), bool), asCALL_THISCALL); assert(r >= 0);
+				// asMETHODPR(_Vector3, operator*, (float) const noexcept, _Vector3&&)
+
+				r = engine->RegisterGlobalProperty("_Input@ input", &instance); assert(r >= 0);
+			}
+		private:
+
+			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_Input)
+			bool isKeyPressed(int key) {
+				return Input::isKeyPressed((KEY_CODE)key);
+			}
+
+		private:
+			_Input() {}
+			static _Input* instance;
+
+
+		};
+
+		_Input* _Input::instance;
 
 		class _GameObject : public AbstractScriptObject {
 		public:
+
+			static IProxyGameObjectFactory* factory;
+
+			static void registerObj(asIScriptEngine* engine) {
+
+				int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
+
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_FACTORY, "GameObject@ f()", asFUNCTION(gameObjectFactory), asCALL_CDECL); assert(r >= 0);
+
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_RELEASE, "void f()", asMETHOD(_GameObject, release1), asCALL_THISCALL); assert(r >= 0);
+
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_ADDREF, "void f()", asMETHOD(_GameObject, addRef), asCALL_THISCALL); assert(r >= 0);
+
+				r = engine->RegisterObjectMethod(__name,
+					"void Create()", asMETHOD(_GameObject, create), asCALL_THISCALL); assert(r >= 0);
+
+			}
+		private:
+			_GameObject() {}
+			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObject)
+
 			std::shared_ptr<GameObject> instance;
 
 			static constexpr const char* __name = "GameObject";
 			
-			static IProxyGameObjectFactory* factory;
 
 			static _GameObject* gameObjectFactory() {
 				auto o = new _GameObject();
@@ -53,6 +117,7 @@ namespace BEbraEngine {
 				{
 					if (instance.get()) {
 						factory->destroyObject(instance);
+						instance.reset();
 					}
 
 					delete this;
@@ -66,23 +131,7 @@ namespace BEbraEngine {
 			}
 
 
-			static void registerObj(asIScriptEngine* engine) {
-
-				int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
-
-				r = engine->RegisterObjectBehaviour(__name, 
-					asBEHAVE_FACTORY, "GameObject@ f()", asFUNCTION(gameObjectFactory), asCALL_CDECL); assert(r >= 0);
-				
-				r = engine->RegisterObjectBehaviour(__name, 
-					asBEHAVE_RELEASE, "void f()", asMETHOD(_GameObject, release1), asCALL_THISCALL); assert(r >= 0);
-
-				r = engine->RegisterObjectBehaviour(__name, 
-					asBEHAVE_ADDREF, "void f()", asMETHOD(_GameObject, addRef), asCALL_THISCALL); assert(r >= 0);
-
-				r = engine->RegisterObjectMethod(__name,
-					"void Create()", asMETHOD(_GameObject, create), asCALL_THISCALL); assert(r >= 0);
-
-			}
+			
 
 		};
 		IProxyGameObjectFactory* _GameObject::factory;

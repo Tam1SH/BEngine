@@ -1,11 +1,23 @@
 void Update()
 
-Temps: 
+Temps: 1, 2
 
 Variables: 
 
 
-- 7,2 -
-    0   0 *    SUSPEND
+- 15,2 -
+    0   2 *    SUSPEND
+    1   2 *    PshC4    0x14          (i:20, f:2.8026e-44)
+    3   3 *    CALL     120           (bool isKeyPressed(KEY_CODE))
+    5   2 *    JLowZ    +6              (d:13)
+- 16,3 -
+            {
+    7   2 *    SUSPEND
+    8   2 *    PGA      0xb38fcde0          (str:I LOVE YOU)
+   11   4 *    CALLSYS  102           (void print(const string&in))
+- 24,2 -
+            }
+            1:
+   13   2 *    SUSPEND
             0:
-    1   0 *    RET      0
+   14   2 *    RET      0

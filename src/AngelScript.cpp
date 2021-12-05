@@ -14,6 +14,10 @@ namespace BEbraEngine {
 	void AngelScript::destroy()
 	{
 	}
+	asIScriptContext* AngelScript::getContext()
+	{
+		return context;
+	}
 	AngelScript::AngelScript(asIScriptContext* context)
 	{
 		this->context = context;

@@ -2,6 +2,7 @@
 #include "ScriptObjectFactory.hpp"
 #include "GameObject.hpp"
 #include "Vector3.hpp"
+#include "GameObjectFactory.hpp"
 namespace BEbraEngine {
 
     std::shared_ptr<GameObject> ScriptObjectFactory::create(const Vector3& position)

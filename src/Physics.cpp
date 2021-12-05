@@ -5,7 +5,7 @@
 #include "Transform.hpp"
 #include "Time.hpp"
 #include "Vector4.hpp"
-
+#include "Collider.hpp"
 #include "BulletCollision/CollisionDispatch/btCollisionDispatcherMt.h"
 #include "BulletDynamics/Dynamics/btSimulationIslandManagerMt.h"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorldMt.h"
@@ -14,11 +14,13 @@
 #include "BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h"
 
 namespace BEbraEngine {
-    class ParallelDiscreteDynamicsWorld : public btDiscreteDynamicsWorldMt
+    ATTRIBUTE_ALIGNED16(class)
+    ParallelDiscreteDynamicsWorld : public btDiscreteDynamicsWorldMt
     {
         typedef btDiscreteDynamicsWorldMt ParentClass;
 
     public:
+        BT_DECLARE_ALIGNED_ALLOCATOR();
 
         ParallelDiscreteDynamicsWorld(btDispatcher* dispatcher,
             btBroadphaseInterface* pairCache,
@@ -112,27 +114,7 @@ namespace BEbraEngine {
     }
     void Physics::update()
     {
-
-        while (!queueAdd.empty()) {
-            std::shared_ptr<RigidBody> body;
-            if (queueAdd.try_pop(body)) {
-                dynamicsWorld->addRigidBody(body.get()->getRigidBody());
-                bodies.push_back(body);
-            }
-
-        }
-
-        while (!queueDeleter.empty()) {
-            std::shared_ptr<RigidBody> body;
-            if (queueDeleter.try_pop(body)) {
-                dynamicsWorld->removeRigidBody(body.get()->getRigidBody());
-                bodies.remove(body);
-            }
-        }
-
-
-        dynamicsWorld->stepSimulation(Time::getDeltaTime(), 1, Time::getDeltaTime());
-
+        dynamicsWorld->stepSimulation(Time::deltaTime(), 0, 1 / 60.f);
         for (auto body = bodies.begin(); body != bodies.end();++body) {
 
             btTransform trans;
@@ -153,52 +135,88 @@ namespace BEbraEngine {
                 _body->getTransform()->updatePosition(pos, quaat);
 
         }
+        queues.execute();
     }
     void Physics::addRigidBody(std::shared_ptr<RigidBody> body)
     {
-        queueAdd.push(body);
-
+        queues.addTask([=]() {
+            dynamicsWorld->addRigidBody(body.get()->getRigidBody());
+            bodies.push_back(body);
+            });
     }
     void Physics::removeRigidBody(std::shared_ptr<RigidBody> body)
     {
-        queueDeleter.push(body);
+        queues.addTask([=]() {
+            dynamicsWorld->removeRigidBody(body.get()->getRigidBody());
+            bodies.remove(body);
+            });
+    }
+    void Physics::removeCollider(std::shared_ptr<Collider> col)
+    {
+        queues.addTask([=]() {
+            dynamicsWorld->removeCollisionObject(col->get());
+            });
     }
     Physics::Physics()
     {
-        mgr = std::make_unique<btTaskSchedulerManager>();
-        mgr->init();
-
-        btDefaultCollisionConstructionInfo cci;
-        cci.m_defaultMaxPersistentManifoldPoolSize = 80000;
-        cci.m_defaultMaxCollisionAlgorithmPoolSize = 80000;
-        collisionConfiguration = std::unique_ptr<btDefaultCollisionConfiguration>(new btDefaultCollisionConfiguration(cci));
-
-        dispatcher = std::make_unique<btCollisionDispatcherMt>(collisionConfiguration.get(), 40);
-
-        overlappingPairCache = std::unique_ptr<btDbvtBroadphase>(new btDbvtBroadphase());
-
-        {
-            SolverType poolSolverType = SOLVER_TYPE_SEQUENTIAL_IMPULSE;
-            btConstraintSolver* solvers[BT_MAX_THREAD_COUNT];
-            int maxThreadCount = BT_MAX_THREAD_COUNT;
-            for (int i = 0; i < maxThreadCount; ++i)
-            {
-                solvers[i] = createSolverByType(poolSolverType);
-            }
-            solverPool = std::make_unique<btConstraintSolverPoolMt>(solvers, maxThreadCount);
-        }
-        solverMt = std::make_unique<btSequentialImpulseConstraintSolverMt>();
-
-        btAssert(btGetTaskScheduler() != NULL);
-        
-        dynamicsWorld = std::unique_ptr<ParallelDiscreteDynamicsWorld>(
-            new ParallelDiscreteDynamicsWorld(dispatcher.get(), overlappingPairCache.get(), solverPool.get(), solverMt.get(), collisionConfiguration.get()));
- 
 
         colliderFactory = std::unique_ptr<ColliderFactory>(new ColliderFactory(this));
         rigidBodyFactory = std::unique_ptr<RigidBodyFactory>(new RigidBodyFactory(this));
+        if (false) {
+
+            mgr = std::make_unique<btTaskSchedulerManager>();
+            mgr->init();
+
+            btDefaultCollisionConstructionInfo cci;
+            cci.m_defaultMaxPersistentManifoldPoolSize = 80000;
+            cci.m_defaultMaxCollisionAlgorithmPoolSize = 80000;
+            collisionConfiguration = std::unique_ptr<btDefaultCollisionConfiguration>(new btDefaultCollisionConfiguration(cci));
+
+            overlappingPairCache = std::unique_ptr<btDbvtBroadphase>(new btDbvtBroadphase());
+
+
+            {
+                SolverType poolSolverType = SOLVER_TYPE_SEQUENTIAL_IMPULSE;
+                btConstraintSolver* solvers[BT_MAX_THREAD_COUNT];
+                int maxThreadCount = BT_MAX_THREAD_COUNT;
+                for (int i = 0; i < maxThreadCount; ++i)
+                {
+                    solvers[i] = createSolverByType(poolSolverType);
+                }
+                solverPool = std::make_unique<btConstraintSolverPoolMt>(solvers, maxThreadCount);
+            }
+            solver = std::make_unique<btSequentialImpulseConstraintSolverMt>();
+
+            btAssert(btGetTaskScheduler() != NULL);
+
+            dispatcher = std::unique_ptr<btCollisionDispatcherMt>(new btCollisionDispatcherMt(collisionConfiguration.get(), 40));
+            dynamicsWorld = std::unique_ptr<ParallelDiscreteDynamicsWorld>(
+                new ParallelDiscreteDynamicsWorld(dispatcher.get(),
+                    overlappingPairCache.get(),
+                    solverPool.get(),
+                    static_cast<btSequentialImpulseConstraintSolverMt*>(solver.get()),
+                    collisionConfiguration.get()));
+        }
+        else {
+
+            collisionConfiguration = std::unique_ptr<btDefaultCollisionConfiguration>(new btDefaultCollisionConfiguration());
+
+            overlappingPairCache = std::unique_ptr<btDbvtBroadphase>(new btDbvtBroadphase());
+
+            dispatcher = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
+
+            dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(),
+                overlappingPairCache.get(),
+                solver.get(),
+                collisionConfiguration.get());
+        }
+
     }
     Physics::~Physics()
     {
+        for (auto& body : bodies) {
+            rigidBodyFactory->destroy(body);
+        }
+        dynamicsWorld.reset();
     }
 }

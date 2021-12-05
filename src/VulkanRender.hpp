@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "AbstractRender.hpp"
-
+#include "ExecuteQueues.hpp"
 #undef min
 #undef max
 
@@ -40,6 +40,8 @@ namespace std {
 }
 
 namespace BEbraEngine {
+
+
 
     class VulkanRender : public AbstractRender
     {
@@ -79,6 +81,9 @@ namespace BEbraEngine {
 
         void drawFrame() override;
 
+        size_t alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type) override;
+
+
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
 
         VkDescriptorSet createDescriptor(LightDescriptorInfo* info);
@@ -93,6 +98,15 @@ namespace BEbraEngine {
 
         RenderBuffer* createBuffer(void* data, size_t size, VkBufferUsageFlags usage);
 
+        void createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize);
+
+        VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+
+        void createTextureSampler(VkSampler& textureSampler);
+
+        void recreateSwapChain(uint32_t width, uint32_t height);
+
+        VkPipelineLayout pipelineLayout;
 
     public:
         enum class DescriptorLayoutType {
@@ -146,7 +160,8 @@ namespace BEbraEngine {
         tbb::concurrent_queue<std::shared_ptr<VulkanPointLight>> queueAddLight;
         tbb::concurrent_queue<std::shared_ptr<VulkanPointLight>> queueDeleterLight;
 
-    public:
+        ExecuteQueues<std::function<void()>> executeQueues_Objects;
+
         VulkanWindow* window;
 
         std::unique_ptr<DescriptorPool> VulkanRenderBufferPool;
@@ -207,7 +222,6 @@ namespace BEbraEngine {
 
         VkDescriptorSetLayout LightLayout;
 
-        VkPipelineLayout pipelineLayout;
 
         VkPipeline graphicsPipeline;
 
@@ -232,13 +246,16 @@ namespace BEbraEngine {
 
         size_t currentFrame = 0;
 
+    private:
+
+       
+
         VkQueue getGraphicsQueue();
 
         void addBufferToQueue(CommandBuffer buffer);
 
         VkFence* getCurrentFence();
 
-        void recreateSwapChain(uint32_t width, uint32_t height);
 
         void recreateRenderObjects();
 
@@ -250,8 +267,7 @@ namespace BEbraEngine {
 
         bool hasStencilComponent(VkFormat format);
 
-        size_t alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type) override;
-
+       
         static void _createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
@@ -260,10 +276,8 @@ namespace BEbraEngine {
 
         VkImageView createTextureImageView(VkImage& textureImage);
 
-        VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
-
-        void createTextureSampler(VkSampler& textureSampler);
-
+       
+        
         //static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
         VkDevice getDevice();
@@ -277,17 +291,11 @@ namespace BEbraEngine {
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, VkCommandBuffer& cmdbuffer);
 
 
-        void createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize);
-
+       
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
-        VkCommandBuffer createCommandBuffer();
-
-        static VkCommandBuffer createCommandBuffer(VkCommandPool pool);
 
         void createInstance();
-
-        int getCurrentThreadIndex();
 
         void createPools();
 
@@ -328,7 +336,6 @@ namespace BEbraEngine {
 
         void createCmdBuffers();
 
-        void createCopyCmdBuffer();
 
         void updateCmdBuffers();
 

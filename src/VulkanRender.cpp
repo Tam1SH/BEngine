@@ -24,6 +24,16 @@
 #include "VulkanObjects.hpp"
 namespace BEbraEngine {
     
+    int getCurrentThreadIndex()
+    {
+
+        int index = tbb::this_task_arena::current_thread_index();
+        if (index >= tbb::this_task_arena::max_concurrency())
+            index = 0;
+
+        return index;
+    }
+
     VkDevice VulkanRender::device;
 
     VkPhysicalDevice VulkanRender::physicalDevice;
@@ -33,48 +43,6 @@ namespace BEbraEngine {
     VulkanRender::QueueFamilyIndices VulkanRender::FamilyIndices;
                                       
 
-    VkCommandBuffer VulkanRender::createCommandBuffer() {
-        VkCommandBuffer buffer;
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = _commandPool;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandBufferCount = 1;
-
-        //vkFreeCommandBuffers(device, commandPool, 1, &buffer);
-        auto result = vkAllocateCommandBuffers(device, &allocInfo, &buffer);
-        return buffer;
-
-    }
-
-    VkCommandBuffer VulkanRender::createCommandBuffer(VkCommandPool pool)
-    {
-        VkCommandBuffer buffer;
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = pool;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandBufferCount = 1;
-
-        vkAllocateCommandBuffers(VulkanRender::device, &allocInfo, &buffer);
-
-        return buffer;
-    }
-
-    void VulkanRender::createCopyCmdBuffer() {
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = _commandPool;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandBufferCount = 1;
-
-        //vkFreeCommandBuffers(device, commandPool,1, &_copyBuffer);
-        //auto result = vkAllocateCommandBuffers(device, &allocInfo, &_copyBuffer);
-
-        //if (result != VK_SUCCESS) {
-        //    throw std::runtime_error("failed to allocate command buffers!");
-        //}
-    }
 
     void VulkanRender::createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize)
     {
@@ -82,7 +50,6 @@ namespace BEbraEngine {
         VkDeviceMemory stagingBufferMemory;
 
         _createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
         void* _data;
 
         vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &_data);
@@ -92,7 +59,6 @@ namespace BEbraEngine {
         createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
 
-        //_createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
         auto buffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         buffer.startRecord();
@@ -213,15 +179,7 @@ namespace BEbraEngine {
     }
 
 
-    int VulkanRender::getCurrentThreadIndex()
-    {
 
-        int index = tbb::this_task_arena::current_thread_index();
-        if (index > tbb::this_task_arena::max_concurrency())
-            index = 0;
-
-        return index;
-    }
 
     void VulkanRender::createPools()
     {
@@ -315,6 +273,7 @@ namespace BEbraEngine {
         cameraPool.reset();
         lightPool.reset();
         factory.reset();
+        cameras.clear();
         objects.clear();
         lights.clear();
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
@@ -1206,42 +1165,12 @@ namespace BEbraEngine {
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandBufferCount = RenderBuffers.size();
 
-       // vkFreeCommandBuffers(device, commandPool, RenderBuffers.size(), RenderBuffers.data());
-        //auto result = vkAllocateCommandBuffers(device, &allocInfo, RenderBuffers.data());
-
-        //if (result != VK_SUCCESS) {
-        ///    throw std::runtime_error("failed to allocate command buffers!");
-        //}
 
     }
 
     void VulkanRender::drawFrame()
     {
-        while (!queueAddLight.empty()) {
-            std::shared_ptr<VulkanPointLight> light;
-            if (queueAddLight.try_pop(light)) {
-                lights.push_back(light);
-            }
 
-        }
-        while (!queueDeleterLight.empty()) {
-            std::shared_ptr<VulkanPointLight> light;
-            if (queueDeleterLight.try_pop(light)) {
-                lights.remove(light);
-            }
-        }
-        while (!queueAddObject.empty()) {
-            std::shared_ptr<VulkanRenderObject> object;
-            if (queueAddObject.try_pop(object)) {
-                objects.push_back(object);
-            }
-        }
-        while (!queueDeleterObject.empty()) {
-            std::shared_ptr<VulkanRenderObject> object;
-            if (queueDeleterObject.try_pop(object)) {
-                objects.remove(object);
-            }
-        }
         updateCmdBuffers();
 
 
@@ -1320,6 +1249,8 @@ namespace BEbraEngine {
         vkQueueWaitIdle(getGraphicsQueue());
         for (auto& buf : bufDestroy)
             buf.destroy();
+        executeQueues_Objects.execute();
+
     }
 
     void VulkanRender::updateCmdBuffers()
@@ -1360,19 +1291,20 @@ namespace BEbraEngine {
             {
                 globalLight.lock()->update();
                 vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLight.lock()->descriptor, 0, 0);
-                vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &(*lights.begin())->descriptor, 0, nullptr);
+
                 vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
                 if(!objects.empty())
                     vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &(*objects.begin())->descriptor, 0, nullptr);
                 //tbb::parallel_for<size_t>(0, 12, [](size_t i) {
                 for (auto light = lights.begin(); light != lights.end(); ++light) {
+                    vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &(*light)->descriptor, 0, nullptr);
+
                     (*light)->update();
                 }
 
                 for (auto object = objects.begin(); object != objects.end(); ++object) {
                     (*object)->update();
                     (*object)->draw(buffer);
-
                 }
                 
                 //      auto data = ImGui::GetDrawData();
@@ -1747,8 +1679,6 @@ namespace BEbraEngine {
         createFramebuffers();
         //createCommandPool();
 
-
-        createCopyCmdBuffer();
         createCmdBuffers();
         createSyncObjects();
         FamilyIndices = findQueueFamilies(physicalDevice);
@@ -1763,7 +1693,7 @@ namespace BEbraEngine {
             concurrentCommandPools_RenderQueue[i]->create(FamilyIndices.graphicsFamily.value());
             concurrentCommandPools_TransferQueue[i]->create(FamilyIndices.graphicsFamily.value());
         }
-
+        executeQueues_Objects.setStrategy(ExecuteType::Single);
     }
 
     RenderBuffer* VulkanRender::createIndexBuffer(std::vector<uint32_t> indices)
@@ -1934,21 +1864,34 @@ namespace BEbraEngine {
     }
     void VulkanRender::addObject(std::shared_ptr<RenderObject> object)
     {
-        queueAddObject.push(std::dynamic_pointer_cast<VulkanRenderObject>(object));
+        executeQueues_Objects.addTask([=]() {
+            objects.push_back(std::static_pointer_cast<VulkanRenderObject>(object));
+            });
     }
     void VulkanRender::addLight(std::shared_ptr<PointLight> light)
     {
-        queueAddLight.push(std::static_pointer_cast<VulkanPointLight>(light));
+        executeQueues_Objects.addTask([=]() {
+            lights.push_back(std::static_pointer_cast<VulkanPointLight>(light));
+            });
     }
 
     void VulkanRender::removeObject(std::shared_ptr<RenderObject> object)
     {
-        queueDeleterObject.push(std::static_pointer_cast<VulkanRenderObject>(object));
+
+        executeQueues_Objects.addTask([=]() {
+            auto item = std::remove(objects.begin(), objects.end(), object);
+            factory->destroyObject(object);
+            objects.erase(item);
+            
+            });
     }
 
     void VulkanRender::removeLight(std::shared_ptr<PointLight> light)
     {
-        queueDeleterLight.push(std::static_pointer_cast<VulkanPointLight>(light));
+        executeQueues_Objects.addTask([=]() {
+            auto item = std::remove(lights.begin(), lights.end(), light);
+            lights.erase(item);
+            });
     }
     VulkanRender::VulkanRender() {}
 

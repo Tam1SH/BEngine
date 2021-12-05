@@ -27,6 +27,8 @@ namespace BEbraEngine {
 
         GameObject();
 
+        GameObject(const std::string& name);
+
         ~GameObject();
 
     };

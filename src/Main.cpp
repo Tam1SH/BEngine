@@ -41,37 +41,15 @@ TODO: подумать над реализацей:
 #include "ScriptManager.hpp"
 namespace BEbraEngine {
 
-    class IExecuter { };
-    class GameStateManager {
-    public:
-        using Task = std::function<void(GameStateManager*, IExecuter*)>;
-        enum class SubSystem {
-            Physics,
-            Render,
-        };
-    public:
-        void addTask(Task&& task, SubSystem System) {
 
-        }
-        GameStateManager() {
-            taskQueues.resize(2);
-        }
-    private:
-        std::vector<tbb::concurrent_queue<Task>> taskQueues;
-        
-        std::shared_ptr<AbstractRender> render;
-        std::shared_ptr<Physics> physics;
-    };
     class Engine {
     public:
         std::shared_ptr<AbstractRender> render1;
         std::shared_ptr<Physics> physics;
-        std::unique_ptr<BaseWindow> window;
         std::unique_ptr<BaseWindow> window1;
-        std::shared_ptr<WorkSpace> workspace;
         std::shared_ptr<WorkSpace> workspace1;
-        std::unique_ptr<GameLogic> gameLogic;
         std::unique_ptr<GameLogic> gameLogic1;
+        bool multiThreading = false;
     public:
         void init() {
             int pizdaXyuViborRenderAPIEptaAhyliEsheDelat = 1;
@@ -102,63 +80,39 @@ namespace BEbraEngine {
 
 
             }
-
-
-            //     UId = std::make_unique<DebugUI>();
-
-
-                //  UId->SetWorkSpace(workspace);
-            // auto render = window->getRender();
-
-            //   UId->Create(render, static_cast<VulkanWindow*>(window1.get()));
-
         }
         void start() {
 
             while (!window1->isClose()) {
                 Time::updateTime();
+                if (multiThreading) {
 
-                window1->update();
-                if (physics.get())
+
+                    tbb::flow::graph g;
+                    tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
+                    tbb::flow::continue_node<tbb::flow::continue_msg>
+                        _input(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
+                    tbb::flow::continue_node<tbb::flow::continue_msg>
+                        _render(g, [&](const tbb::flow::continue_msg&) { render1->drawFrame(); });
+                    tbb::flow::continue_node<tbb::flow::continue_msg>
+                        _physics(g, [&](const tbb::flow::continue_msg&) { physics->update(); });
+                    tbb::flow::continue_node<tbb::flow::continue_msg>
+                        _gameLogic(g, [&](const tbb::flow::continue_msg&) { gameLogic1->update(); });
+
+                    tbb::flow::make_edge(input, _physics);
+                    tbb::flow::make_edge(input, _render);
+                    tbb::flow::make_edge(input, _gameLogic);
+                    tbb::flow::make_edge(input, _input);
+
+                    input.try_put(tbb::flow::continue_msg());
+                    g.wait_for_all();
+                }
+                else {
+                    window1->update();
+                    render1->drawFrame();
                     physics->update();
-                if (gameLogic1.get())
                     gameLogic1->update();
-                render1->drawFrame();
-
-                tbb::flow::graph g;
-                tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
-                tbb::flow::continue_node<tbb::flow::continue_msg>
-                    _input(g, [&](const tbb::flow::continue_msg&) { 
-
-                    //window1->update();
-
-                    });
-                tbb::flow::continue_node<tbb::flow::continue_msg>
-                    _render(g, [&](const tbb::flow::continue_msg&) {
-                    
-                    
-
-                    });
-
-
-
-                tbb::flow::continue_node< tbb::flow::continue_msg >
-                    _physics(g, [&](const tbb::flow::continue_msg&) { 
-
-                       
-                        });
-                tbb::flow::continue_node<tbb::flow::continue_msg> _gameLogic(g, [&](const tbb::flow::continue_msg&) { 
-
-
-                    });
-
-                tbb::flow::make_edge(input, _physics);
-                tbb::flow::make_edge(input, _render);
-                tbb::flow::make_edge(input, _gameLogic);
-                tbb::flow::make_edge(input, _input);
-
-                //input.try_put(tbb::flow::continue_msg());
-              //  g.wait_for_all();
+                }
 
             }
 
@@ -168,6 +122,7 @@ namespace BEbraEngine {
         }
 
         ~Engine() {
+            gameLogic1.reset();
             render1.reset();
           //  UId->Destroy();
         }

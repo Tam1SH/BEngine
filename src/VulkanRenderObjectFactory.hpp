@@ -38,7 +38,7 @@ namespace BEbraEngine {
 
         void bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) override;
 
-        RenderObject* createObject() override;
+        std::optional<RenderObject*> createObject() override;
 
         PointLight* createLight(const Vector3& color, const Vector3& position) override;
 

@@ -39,27 +39,27 @@ namespace BEbraEngine {
         scriptManager->InitScripts();
         camera = objectFactory->createCamera(Vector3(0));
         object = objectFactory->create(Vector3(0, 100, -100));
-     //   object->getComponent<RigidBody>()->setDynamic(false);
+        object->getComponent<RigidBody>()->setDynamic(false);
         object->getComponent<Collider>()->setScale(Vector3(100, 100, 1));
         object->getComponent<Transform>()->setScale(Vector3(100, 100, 1));
 
         object2 = objectFactory->create(Vector3(0, 100, 100));
-      //  object2->getComponent<RigidBody>()->setDynamic(false);
+        object2->getComponent<RigidBody>()->setDynamic(false);
         object2->getComponent<Collider>()->setScale(Vector3(100, 100, 1));
         object2->getComponent<Transform>()->setScale(Vector3(100, 100, 1));
 
         object3 = objectFactory->create(Vector3(-100, 100, 0));
-      //  object3->getComponent<RigidBody>()->setDynamic(false);
+        object3->getComponent<RigidBody>()->setDynamic(false);
         object3->getComponent<Collider>()->setScale(Vector3(1, 100, 100));
         object3->getComponent<Transform>()->setScale(Vector3(1, 100, 100));
 
         object4 = objectFactory->create(Vector3(100, 100, 0));
-      //  object4->getComponent<RigidBody>()->setDynamic(false);
+        object4->getComponent<RigidBody>()->setDynamic(false);
         object4->getComponent<Collider>()->setScale(Vector3(1, 100, 100));
         object4->getComponent<Transform>()->setScale(Vector3(1, 100, 100));
 
         object5 = objectFactory->create(Vector3(0, 0, 0));
-       // object5->getComponent<RigidBody>()->setDynamic(false);
+        object5->getComponent<RigidBody>()->setDynamic(false);
         object5->getComponent<Collider>()->setScale(Vector3(100, 1, 100));
         object5->getComponent<Transform>()->setScale(Vector3(100, 1, 100));
 
@@ -67,7 +67,7 @@ namespace BEbraEngine {
         sphere->getComponent<Collider>()->setScale(Vector3(0));
         sphere->getComponent<Transform>()->setScale(Vector3(10));
         sphere->getComponent<RenderObject>()->setColor(Vector3(0));
-        //sphere->getComponent<RigidBody>()->setDynamic(false);
+        sphere->getComponent<RigidBody>()->setDynamic(false);
        // player = objectFactory->create(Vector3(2));
        // player->getComponent<RigidBody>()->setDynamic(false);
      //   player->getComponent<Collider>()->setScale(Vector3(2));
@@ -172,20 +172,20 @@ namespace BEbraEngine {
         //if (Input::IsKeyPressed(KEY_CODE::KEY_Z)) {
         //}
         if (Input::isKeyPressed(KEY_CODE::KEY_A)) {
-            camera->processKeyboard(LEFT, Time::getDeltaTime() * speed);
+            camera->processKeyboard(LEFT, Time::deltaTime() * speed);
         }
         if (Input::isKeyPressed(KEY_CODE::KEY_D)) {
-            camera->processKeyboard(RIGHT, Time::getDeltaTime() * speed);
+            camera->processKeyboard(RIGHT, Time::deltaTime() * speed);
         }
         if (Input::isKeyPressed(KEY_CODE::KEY_S)) {
-            camera->processKeyboard(BACKWARD, Time::getDeltaTime()* speed);
+            camera->processKeyboard(BACKWARD, Time::deltaTime()* speed);
         }
         if (Input::isKeyPressed(KEY_CODE::KEY_W)) {
-            camera->processKeyboard(FORWARD, Time::getDeltaTime()* speed);
+            camera->processKeyboard(FORWARD, Time::deltaTime()* speed);
         }
 
         static float time = 0;
-        time += Time::getDeltaTime();
+        time += Time::deltaTime();
         if (time > 1 / 60.f) {
             fixedUpdate();
             time = 0;

@@ -4,7 +4,6 @@
 #include "BaseRenderWindow.hpp"
 #include "AbstractRender.hpp"
 
-#undef CreateWindow
 namespace BEbraEngine {
 	class VulkanRender;
 }
@@ -20,8 +19,6 @@ namespace BEbraEngine {
 		void onResizeCallback(int width, int height) override;
 
 		Vector2 getDrawableSize();
-
-		void SetVulkanRender(VulkanRender* render);
 
 		~VulkanWindow();
 

@@ -13,6 +13,20 @@ namespace BEbraEngine {
         matrix->setData(&data, sizeof(ShaderData));
     }
 
+    RenderObject::~RenderObject()
+    {
+#ifdef _DEBUG
+        Debug::log("Destroy", this, "", Debug::ObjectType::RenderObject, Debug::MessageType::Info);
+#endif 
+    }
+
+    RenderObject::RenderObject()
+    {
+#ifdef _DEBUG
+        Debug::log("Create", this, "", Debug::ObjectType::RenderObject, Debug::MessageType::Info);
+#endif 
+    }
+
     
 
     void PointLight::release()
@@ -44,6 +58,6 @@ namespace BEbraEngine {
             data.lock()->setData(&_data, sizeof(ShaderData));
         }
         else
-            Debug::Log(getName() + " has invalid data");
+            Debug::log(getName() + " has invalid data");
     }
 }

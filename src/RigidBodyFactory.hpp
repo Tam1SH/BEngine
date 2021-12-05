@@ -15,6 +15,8 @@ namespace BEbraEngine {
 		RigidBodyFactory(Physics* physics);
 
 		RigidBody* create(Collider* collider = nullptr);
+
+		void destroy(std::shared_ptr<RigidBody> body);
 	private:
 		Physics* physics;
 	};

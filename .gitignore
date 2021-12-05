@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /Include/assimp
 /Include/mono
 /Include
+/src/AS_DEBUG

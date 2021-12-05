@@ -38,8 +38,5 @@ namespace BEbraEngine {
 	{
 	}
 
-	void VulkanWindow::SetVulkanRender(VulkanRender* render)
-	{
-		//SDL_Vulkan_CreateSurface(handle, VulkanRender::instance, &render->surface);
-	}
+
 }

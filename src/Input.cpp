@@ -41,6 +41,7 @@ namespace BEbraEngine {
     {
         return *Input::mouse_y;
     }
+
     bool Input::isKeyPressed(KEY_CODE key)
     {
         if (Input::state[(int)key])

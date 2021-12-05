@@ -1,7 +1,2 @@
-void Start()
-{
-	//print("Hello world\n");
-}
-void Update() {
-
-}
+#include "KEY_CODE.as"
+#include "Input.as"

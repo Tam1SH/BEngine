@@ -2,7 +2,6 @@
 #pragma once
 #include "platform_window.hpp"
 #include "Vector2.hpp"
-#undef CreateWindow
 
 namespace BEbraEngine {
 	class BaseWindow {
@@ -23,7 +22,6 @@ namespace BEbraEngine {
 	public:
 		virtual void createWindow(const Vector2& size, const std::string& title) = 0;
 		virtual void onResizeCallback(int width, int height) = 0;
-
 		bool isClose();
 		void update();
 		Vector2 getSize() const noexcept;
@@ -32,15 +30,11 @@ namespace BEbraEngine {
 		int height() const noexcept;
 		void setPosition(const Vector2& position) const noexcept;
 		Vector2 getPosition() const noexcept;
-
-		
-
+		void vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface);
+		std::vector<const char*> vulkan_GetInstanceExtensions();
 
 		BaseWindow();
 		virtual ~BaseWindow();
-
-		void vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface);
-		std::vector<const char*> vulkan_GetInstanceExtensions();
 
 	protected:
 		WindowHandle* handle;

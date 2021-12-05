@@ -2,6 +2,7 @@
 #include "ColliderFactory.hpp"
 #include <Physics/btBulletCollisionCommon.h>
 #include "Collider.hpp"
+#include "Physics.hpp"
 namespace BEbraEngine {
 	ColliderFactory::ColliderFactory(Physics* physics) {
 		this->physics = physics;
@@ -20,6 +21,12 @@ namespace BEbraEngine {
 		setShape(col, shape);
 		col->setScale(info->scale);
 		return col;
+	}
+
+	void ColliderFactory::destroyCollider(std::shared_ptr<Collider> col)
+	{
+		physics->removeCollider(col);
+		col.reset();
 	}
 
 	void ColliderFactory::setShape(Collider* collider, btCollisionShape* newShape)

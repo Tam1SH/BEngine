@@ -1,22 +1,26 @@
 
 Total count
-RET        : 6812
-CALLSYS    : 1
-SUSPEND    : 6600
-FREE       : 3412
+PshGPtr    : 1111
+PshC4      : 1111
+PshV4      : 1111
+CALL       : 1111
+RET        : 2223
+CALLSYS    : 1113
+SUSPEND    : 3336
+FREE       : 1
+STOREOBJ   : 1
+CpyVtoR4   : 1111
+CpyRtoV4   : 1111
 PGA        : 1
+JLowZ      : 1111
 
 Never executed
 PopPtr    
-PshGPtr   
-PshC4     
-PshV4     
 PSF       
 SwapPtr   
 NOT       
 PshG4     
 LdGRdR4   
-CALL      
 JMP       
 JZ        
 JNZ       
@@ -70,7 +74,6 @@ STR
 CALLBND   
 ALLOC     
 LOADOBJ   
-STOREOBJ  
 GETOBJ    
 REFCPY    
 CHKREF    
@@ -85,10 +88,8 @@ SetV8
 ADDSi     
 CpyVtoV4  
 CpyVtoV8  
-CpyVtoR4  
 CpyVtoR8  
 CpyVtoG4  
-CpyRtoV4  
 CpyRtoV8  
 CpyGtoV4  
 WRTV1     
@@ -189,7 +190,6 @@ MODu64
 LoadRObjR 
 LoadVObjR 
 RefCpyV   
-JLowZ     
 JLowNZ    
 AllocMem  
 SetListSiz
@@ -205,15 +205,25 @@ POWu64
 Thiscall1 
 
 Sequences
-RET       , RET        : 624
-RET       , SUSPEND    : 6317
-RET       , FREE       : 154
+PshGPtr   , CALLSYS    : 1111
+PshC4     , CALL       : 1111
+PshV4     , PshGPtr    : 1111
+CALL      , SUSPEND    : 1111
+RET       , SUSPEND    : 1111
+RET       , JLowZ      : 1111
 CALLSYS   , SUSPEND    : 1
-SUSPEND   , RET        : 3050
-SUSPEND   , SUSPEND    : 244
-SUSPEND   , FREE       : 3258
+CALLSYS   , STOREOBJ   : 1
+CALLSYS   , CpyRtoV4   : 1111
+SUSPEND   , PshC4      : 1111
+SUSPEND   , PshV4      : 1111
+SUSPEND   , RET        : 1111
+SUSPEND   , CALLSYS    : 1
+SUSPEND   , FREE       : 1
 SUSPEND   , PGA        : 1
-FREE      , RET        : 3100
-FREE      , SUSPEND    : 15
+FREE      , RET        : 1
+STOREOBJ  , SUSPEND    : 1
+CpyVtoR4  , RET        : 1111
+CpyRtoV4  , CpyVtoR4   : 1111
 PGA       , CALLSYS    : 1
+JLowZ     , SUSPEND    : 1111
 LABEL     , SUSPEND    : 1

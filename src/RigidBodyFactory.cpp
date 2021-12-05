@@ -29,7 +29,6 @@ namespace BEbraEngine {
         btVector3 localInertia(0, 0, 0);
         if (isDynamic)
             shape->get()->getCollisionShape()->calculateLocalInertia(mass, localInertia);
-        //using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 
         btTransform startTransform;
         startTransform.setIdentity();
@@ -43,5 +42,9 @@ namespace BEbraEngine {
 
         return rigidBody;
 	}
+    void RigidBodyFactory::destroy(std::shared_ptr<RigidBody> body)
+    {
+        physics->removeRigidBody(body);
+    }
 }
 

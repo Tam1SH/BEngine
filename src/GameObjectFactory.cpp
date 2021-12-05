@@ -24,41 +24,48 @@ namespace BEbraEngine {
 		colliderFactory = physics->getColliderFactory();
 		rigidBodyFactory = physics->getRigidBodyFactory();
 		transFactory = std::unique_ptr<TransformFactory>(new TransformFactory());
+		Debug::enableAll();
 
 	}
 	std::shared_ptr<GameObject> GameObjectFactory::create(const Vector3& position)
 	{
-		auto obj = std::shared_ptr<GameObject>(new GameObject());
-		auto name = obj->getName();
+		auto opt_renderObj = renderFactory->createObject();
+		if (opt_renderObj.has_value()) {
+			auto obj = new GameObject();
+			auto name = obj->getName();
 
-		obj->setName(name + std::to_string(workspace->getSize()));
-		//workspace->addComponent(obj);
-		ColliderInfo info;
-		info.scale = Vector3(1);
-		info.position = position;
+			obj->setName(name + std::to_string(workspace->getSize()));
 
-		auto collider = std::shared_ptr<Collider>(colliderFactory->create(&info));
-		auto transform = std::shared_ptr<Transform>(transFactory->create(position));
-		auto renderObj = std::shared_ptr<RenderObject>(renderFactory->createObject());
-		auto rigidbody = std::shared_ptr<RigidBody>(rigidBodyFactory->create(collider.get()));
+			ColliderInfo info;
+			info.scale = Vector3(1);
+			info.position = position;
+			auto collider = std::shared_ptr<Collider>(colliderFactory->create(&info));
+			auto transform = std::shared_ptr<Transform>(transFactory->create(position));
+			auto renderObj = std::shared_ptr<RenderObject>(opt_renderObj.value());
+			auto rigidbody = std::shared_ptr<RigidBody>(rigidBodyFactory->create(collider.get()));
 
-		renderFactory->bindTransform(renderObj, transform);
+			renderFactory->bindTransform(renderObj, transform);
 
-		rigidbody->setTransform(transform);
+			rigidbody->setTransform(transform);
 
-		obj->addComponent(renderObj);
-		obj->addComponent(rigidbody);
-		obj->addComponent(transform);
-		obj->addComponent(collider);
-		btTransform trans;
-		trans.setIdentity();
-		trans.setOrigin(btVector3(position.x, position.y, position.z));
-		rigidbody->getRigidBody()->setWorldTransform(trans);
+			obj->addComponent(renderObj);
+			obj->addComponent(rigidbody);
+			obj->addComponent(transform);
+			obj->addComponent(collider);
+			btTransform trans;
+			trans.setIdentity();
+			trans.setOrigin(btVector3(position.x, position.y, position.z));
+			rigidbody->getRigidBody()->setWorldTransform(trans);
 
-		render->addObject(renderObj);
-		physics->addRigidBody(rigidbody);
+			render->addObject(renderObj);
+			physics->addRigidBody(rigidbody);
 
-		return obj;
+			return std::shared_ptr<GameObject>(obj);
+		}
+		else
+			return std::shared_ptr<GameObject>();
+
+
 	}
 
 	std::shared_ptr<PointLight> GameObjectFactory::createLight(const Vector3& position)
@@ -107,23 +114,11 @@ namespace BEbraEngine {
 		auto begin = workspace->GetList().begin();
 		auto end = workspace->GetList().end();
 
-		/*
-		if (workspace->getSize() != 0) {
-			workspace->GetList().erase(
-				std::remove_if(begin, end,
-					[&](std::shared_ptr<GameObjectComponent> component) {
-						if (component.get() == object.get()) {
-							std::cout << "GAMEOBJECT FOUNDED" << std::endl;
-							return true;
-						}
-						return false;
-					})
-			);
-		}
-		*/
-		renderFactory->destroyObject(object->getComponent<RenderObject>());
-		physics->removeRigidBody(object->getComponent<RigidBody>());
 		render->removeObject(object->getComponent<RenderObject>());
+		physics->removeRigidBody(object->getComponent<RigidBody>());
+		colliderFactory->destroyCollider(object->getComponent<Collider>());
+
+
 	}
 
 	void GameObjectFactory::destroyPointLight(std::shared_ptr<PointLight> light)

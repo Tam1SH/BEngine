@@ -5,13 +5,13 @@ namespace std {
     class unique_ptr;
 }
 namespace BEbraEngine {
-
+    class GameObjectFactory;
 }
 namespace BEbraEngine {
 
     class ScriptObjectFactory : public IProxyGameObjectFactory {
     public:
-        IProxyGameObjectFactory* realFactory;
+        GameObjectFactory* realFactory;
 
         std::shared_ptr<GameObject> create(const Vector3& position) override;
 

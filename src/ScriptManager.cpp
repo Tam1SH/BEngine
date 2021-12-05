@@ -2,6 +2,7 @@
 #include "ScriptManager.hpp"
 #include "AngelScriptEngine.hpp"
 #include <filesystem>
+#include "Time.hpp"
 namespace BEbraEngine {
 	
 
@@ -20,11 +21,25 @@ namespace BEbraEngine {
 	}
 	void ScriptManager::runScripts()
 	{
-		tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
-			if (scripts[i]->getActive()) 
-				engine->executeScript(scripts[i].get(), "Update");
-			
-		});
+		static float time = 0.f;
+		tbb::task_group task;
+		task.run([&] {
+			tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
+				//for (int i = 0; i < scripts.size(); i++)
+				if (scripts[i]->getActive())
+					engine->executeScript(scripts[i].get(), "Update");
+				});
+			});
+		time += Time::deltaTime();
+		if (time >= Time::fixedDeltaTime())
+			task.run([&] {
+			tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
+				//for (int i = 0; i < scripts.size(); i++)
+				if (scripts[i]->getActive())
+					engine->executeScript(scripts[i].get(), "FixedUpdate");
+				});
+			});
+		task.wait();
 	}
 	void ScriptManager::InitScripts()
 	{

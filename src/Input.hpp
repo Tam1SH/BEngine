@@ -96,6 +96,8 @@ namespace BEbraEngine {
 
         static int getY();
 
+
+
         static void setWindow(WindowHandle* window);
 
         static bool isKeyPressed(KEY_CODE key);

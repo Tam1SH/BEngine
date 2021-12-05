@@ -72,9 +72,16 @@ namespace BEbraEngine {
 
     RigidBody::RigidBody()
     {
+#ifdef _DEBUG
+        Debug::log("Create", this, "", Debug::ObjectType::RigidBody, Debug::MessageType::Info);
+#endif 
     }
 
     RigidBody::~RigidBody()
     {
+        delete body;
+#ifdef _DEBUG
+        Debug::log("Destroy", this, "", Debug::ObjectType::RigidBody, Debug::MessageType::Info);
+#endif 
     }
 }

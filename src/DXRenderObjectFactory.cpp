@@ -17,7 +17,7 @@ namespace BEbraEngine {
 		object->transform = transform;
 	}
 
-	RenderObject* DXRenderObjectFactory::createObject()
+	std::optional<RenderObject*> DXRenderObjectFactory::createObject()
 	{
 		auto maybe_object_view = _poolofObjects->get();
 		std::shared_ptr<RenderBufferView> object_view;
@@ -28,12 +28,11 @@ namespace BEbraEngine {
 		obj->setName("RenderObject");
 		obj->model = meshFactory->getDefaultModel("BOX");
 
-		obj->texture = std::unique_ptr<Texture>(textureFactory->createEmpty());
+		//obj->texture = std::unique_ptr<Texture>(textureFactory->createEmpty());
 		obj->matrix = object_view;
-		srand(time(0));
-		obj->setColor(Vector3(rand() % 255 / 255.f, rand() % 255 / 255.f, rand() % 255 / 255.f));
+		obj->setColor(Vector3(1));
 
-		return obj;
+		return std::optional<RenderObject*>(obj);
 	}
 
 	PointLight* DXRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)

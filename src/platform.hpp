@@ -1,11 +1,11 @@
 #pragma once
-#if defined(_WIN64)
+#if defined(_WIN32)
 #define GLFW_EXPOSE_NATIVE_WIN32
 #elif defined(__APPLE__)
 #define GLFW_EXPOSE_NATIVE_COCOA
 
 #endif
-#if defined(_WIN64) || defined(__APPLE__) || (defined(__unix__) && !defined(__ANDROID__))
+#if defined(_WIN32) || defined(__APPLE__) || (defined(__unix__) && !defined(__ANDROID__))
 #define DESKTOP
 
 #endif

@@ -6,6 +6,7 @@
 
 #include "ColliderFactory.hpp"
 #include "RigidBodyFactory.hpp"
+#include "ExecuteQueues.hpp"
 
 class btConstraintSolverPoolMt;
 class btSequentialImpulseConstraintSolverMt;
@@ -20,10 +21,14 @@ namespace BEbraEngine {
     class RigidBody;
     class ParallelDiscreteDynamicsWorld;
     class btTaskSchedulerManager;
-    
 }
 
 namespace BEbraEngine {
+
+    class PhysicsData {
+        std::vector<std::shared_ptr<RigidBody>> bodies;
+        std::vector<std::shared_ptr<Collider>> colliders;
+    };
 
     class Physics {
     public:
@@ -38,6 +43,8 @@ namespace BEbraEngine {
 
         void removeRigidBody(std::shared_ptr<RigidBody> body);
 
+        void removeCollider(std::shared_ptr<Collider> col);
+
         Physics();
 
         ~Physics();
@@ -49,15 +56,17 @@ namespace BEbraEngine {
 
         std::unique_ptr<btBroadphaseInterface> overlappingPairCache;
 
-        std::unique_ptr<btSequentialImpulseConstraintSolverMt> solverMt;
+        std::unique_ptr<btConstraintSolver> solver;
 
-        std::unique_ptr<ParallelDiscreteDynamicsWorld> dynamicsWorld;
+        std::unique_ptr<btDynamicsWorld> dynamicsWorld;
 
         std::unique_ptr<btConstraintSolverPoolMt> solverPool;
 
         std::unique_ptr<btTaskSchedulerManager> mgr;
 
         std::list<std::shared_ptr<RigidBody>> bodies;
+
+        std::vector<std::shared_ptr<RigidBody>> _bodies;
 
         tbb::concurrent_queue<std::shared_ptr<RigidBody>> queueAdd;
 
@@ -67,7 +76,9 @@ namespace BEbraEngine {
 
         std::unique_ptr<RigidBodyFactory> rigidBodyFactory;
 
+        ExecuteQueues<std::function<void()>> queues;
         std::mutex addremovesync;
+
 
     };
 }

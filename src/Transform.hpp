@@ -28,7 +28,7 @@ namespace BEbraEngine {
 
         Matrix4 getBasis() const noexcept;
 
-        ~Transform() { };
+        ~Transform();
 
     private:
 

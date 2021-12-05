@@ -25,10 +25,20 @@ namespace BEbraEngine {
         return Matrix4(model);
     }
 
+    Transform::~Transform()
+    {
+#ifdef _DEBUG
+        Debug::log("Destroy", this, "", Debug::ObjectType::Transform, Debug::MessageType::Info);
+#endif 
+    }
+
     Transform::Transform(const Vector3& position)
     {
         this->position = position;
         scale = Vector3(1);
+#ifdef _DEBUG
+        Debug::log("Create", this, "", Debug::ObjectType::Transform, Debug::MessageType::Info);
+#endif 
     }
 
     void Transform::updatePosition(const Vector3& position, const Vector4& quat)

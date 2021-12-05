@@ -17,11 +17,15 @@ namespace std {
 	class unique_ptr;
 	template<class T>
 	class shared_ptr;
+	template <class T, class Alloc>
+	class vector;
 }
 
 namespace BEbraEngine {
 
-	
+	class RenderData {
+		std::vector<std::shared_ptr<RenderObject>> objects;
+	};
 	class AbstractRender {
 	public:
 		enum class TypeBuffer {

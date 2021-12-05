@@ -20,7 +20,7 @@ namespace BEbraEngine {
 
 		virtual void bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) = 0;
 
-		virtual RenderObject* createObject() = 0;
+		virtual std::optional<RenderObject*> createObject() = 0;
 
 		virtual PointLight* createLight(const Vector3& color, const Vector3& position) = 0;
 

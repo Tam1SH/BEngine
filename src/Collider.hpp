@@ -32,6 +32,10 @@ namespace BEbraEngine {
 
 		Vector3 getPosition();
 
+		Collider();
+
+		~Collider();
+
 	private:
 		std::unique_ptr<btCollisionObject> _collider;
 		Vector3 size;
