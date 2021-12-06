@@ -13,7 +13,7 @@ namespace BEbraEngine {
 
         VkDescriptorPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        poolInfo.poolSizeCount = info.types.size();
+        poolInfo.poolSizeCount = static_cast<uint32_t>(info.types.size());
         poolInfo.pPoolSizes = info.types.data();
         poolInfo.maxSets =countDescriptors;
         VkResult result;
@@ -23,7 +23,7 @@ namespace BEbraEngine {
             return;
         }
 
-        for (int i = 0; i < countDescriptors; i++) {
+        for (uint32_t i = 0; i < countDescriptors; i++) {
             auto set = VkDescriptorSet();
             VkDescriptorSetAllocateInfo allocInfo{};
             allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;

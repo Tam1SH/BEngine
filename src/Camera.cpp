@@ -50,8 +50,8 @@ namespace BEbraEngine {
 
     void Camera::_move(float& x, float& y)
     {
-        x = Input::getX() - lastX;
-        y = lastY - Input::getY();
+        x = (float)Input::getX() - (float)lastX;
+        y = (float)lastY - (float)Input::getY();
         lastX = Input::getX();
         lastY = Input::getY();
     }

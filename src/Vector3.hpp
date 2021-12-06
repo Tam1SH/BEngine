@@ -12,7 +12,7 @@ namespace BEbraEngine {
 	class Vector3
 	{
 	public:
-		float x, y, z;
+		float x{}, y{}, z{};
 	public:
 		Vector3() {}
 
@@ -22,15 +22,10 @@ namespace BEbraEngine {
 
 		Vector3(const glm::vec3& other) : x(other.x), y(other.y), z(other.z) { }
 
-		Vector3(float x, float y) : x(x), y(y), z(0) { }
-
 		Vector3(float all) : x(all), y(all), z(all) { }
 
 		Vector3(const btVector3& vec) : x(vec.x()), y(vec.y()), z(vec.z()) { }
 
-		operator glm::vec3() const noexcept { return glm::vec3(x, y, z); }
-
-		operator btVector3() const noexcept { return btVector3(x, y, z); }
 
 #ifdef _WIN64
 		Vector3(const DirectX::XMFLOAT3& vec) : x(vec.x), y(vec.y), z(vec.z) { } 
@@ -38,6 +33,9 @@ namespace BEbraEngine {
 		operator DirectX::XMFLOAT3() const noexcept { return DirectX::XMFLOAT3(x, y, z); }
 #endif
 
+		operator glm::vec3() const noexcept { return glm::vec3(x, y, z); }
+
+		operator btVector3() const noexcept { return btVector3(x, y, z); }
 		Vector3 operator+(const Vector3& other) const noexcept { 
 			glm::vec3 l = *this;
 			glm::vec3 r = other;
@@ -76,6 +74,14 @@ namespace BEbraEngine {
 		Vector3& operator-=(const Vector3& other) noexcept {
 			*this = *this - other;
 			return *this;
+		}
+		bool operator==(const Vector3& other) {
+			return (this->x == other.x) &&
+				(this->y == other.y) &&
+				(this->z == other.z);
+		}
+		bool operator!=(const Vector3& other) {
+			return !(*this == other);
 		}
 
 	};

@@ -48,7 +48,7 @@ namespace BEbraEngine {
             this->name = name;
         }
 
-        int getSize() {
+        size_t getSize() {
             return Components.size();
         }
     };

@@ -7,6 +7,8 @@ namespace BEbraEngine {
 namespace BEbraEngine {
     class CommandBuffer {
     public:
+        friend class CommandPool;
+
         enum class Type {
             Primary,
             Secondary
@@ -27,13 +29,13 @@ namespace BEbraEngine {
 
         VkCommandBuffer* GetBuffer() { return &_buffer; }
 
-        void onCompleted(std::function<void()> callback) { this->callback = callback; }
-    public:
+        void onCompleted(std::function<void()> callback) { _callback = callback; }
+    private:
 
-        std::function<void()> callback;
-        VkCommandBuffer _buffer;
-        VkCommandBufferUsageFlagBits usage;
-        CommandBuffer::Type type;
-        CommandPool* pool;
+        std::function<void()> _callback{};
+        VkCommandBuffer _buffer{};
+        VkCommandBufferUsageFlagBits usage{};
+        CommandBuffer::Type type{};
+        CommandPool* pool{};
     };
 }

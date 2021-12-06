@@ -44,8 +44,8 @@ namespace BEbraEngine {
 		virtual void create(BaseWindow* window) = 0;
 		virtual RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices) = 0;
 		virtual RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices) = 0;
-		virtual RenderBuffer* createUniformBuffer(size_t size) = 0;
-		virtual RenderBuffer* createStorageBuffer(size_t size) = 0;
+		virtual RenderBuffer* createUniformBuffer(uint32_t size) = 0;
+		virtual RenderBuffer* createStorageBuffer(uint32_t size) = 0;
 		virtual void destroyBuffer(RenderBuffer* buffer) = 0;
 		
 		virtual void selectMainCamera(Camera* camera) = 0;
@@ -60,7 +60,7 @@ namespace BEbraEngine {
 		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
 		virtual void drawFrame() = 0;
 		virtual Type getType() = 0;
-		virtual size_t alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type) = 0;
+		virtual uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type) = 0;
 		virtual ~AbstractRender() {}
 	};
 }

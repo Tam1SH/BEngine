@@ -26,9 +26,9 @@ namespace BEbraEngine {
         ~CommandPool();
     private:
 
-        VkCommandPool pool;
+        VkCommandPool pool{};
 
-        int countBuffers;
+        size_t countBuffers{};
     };
 }
 

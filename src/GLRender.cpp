@@ -107,11 +107,11 @@ namespace BEbraEngine {
 	{
 		return nullptr;
 	}
-	RenderBuffer* GLRender::createUniformBuffer(size_t size)
+	RenderBuffer* GLRender::createUniformBuffer(uint32_t size)
 	{
 		return nullptr;
 	}
-	RenderBuffer* GLRender::createStorageBuffer(size_t size)
+	RenderBuffer* GLRender::createStorageBuffer(uint32_t size)
 	{
 		return nullptr;
 	}
@@ -153,9 +153,9 @@ namespace BEbraEngine {
 	{
 		return Type::OpenGL_ES;
 	}
-	size_t GLRender::alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type)
+	uint32_t GLRender::alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type)
 	{
-		return size_t();
+		return uint32_t();
 	}
 	void GLRender::selectMainCamera(Camera* camera)
 	{

@@ -3,7 +3,7 @@
 namespace BEbraEngine {
 
 
-    void DXRenderBufferPool::allocate(size_t count, size_t sizeofData, AbstractRender::TypeBuffer type)
+    void DXRenderBufferPool::allocate(uint32_t count, uint32_t sizeofData, AbstractRender::TypeBuffer type)
     {
         size_t 	new_size = totalCount + count;
 
@@ -11,7 +11,7 @@ namespace BEbraEngine {
         buffers.resize(new_size);
 
 
-        for (int i = totalCount; i < new_size; i++) {
+        for (uint32_t i = totalCount; i < new_size; i++) {
             buffers[i] = std::shared_ptr<RenderBuffer>(_render->createUniformBuffer(sizeofData));
             auto bufferView = new RenderBufferView();
             bufferView->availableRange = sizeofData;
@@ -33,7 +33,7 @@ namespace BEbraEngine {
         }
     }
 
-    void DXRenderBufferPool::deallocate(size_t count)
+    void DXRenderBufferPool::deallocate(uint32_t count)
     {
 
     }

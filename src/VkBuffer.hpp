@@ -2,13 +2,14 @@
 #include <vulkan/vulkan.h>
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
-    struct VulkanBuffer : public RenderBuffer {
+    class VulkanBuffer : public RenderBuffer {
+    public:
         VkBuffer self = VK_NULL_HANDLE;
         VkDeviceMemory memory = VK_NULL_HANDLE;
         size_t size = 0;
 
         void destroy() override;
-        void setData(void* data, size_t size, size_t offset) override;
+        void setData(void* data, uint32_t size, uint32_t offset) override;
         VulkanBuffer() { }
         ~VulkanBuffer();
     };

@@ -12,11 +12,11 @@
 #include "IRenderObjectFactory.hpp"
 #include "VulkanRender.hpp"
 namespace BEbraEngine {
-	void VulkanRenderBufferPool::allocate(size_t count, size_t sizeofData, AbstractRender::TypeBuffer type)
+	void VulkanRenderBufferPool::allocate(uint32_t count, uint32_t sizeofData, AbstractRender::TypeBuffer type)
 	{
-		size_t 	new_size = totalCount + count;
+		uint32_t new_size = totalCount + count;
+		uint32_t alignsizeofData = 0;
 
-		size_t alignsizeofData = 0;
 
 		if (_usage == IRenderBufferPool::Usage::Default) {
 			alignsizeofData = _render->alignmentBuffer(sizeofData, type);
@@ -37,7 +37,7 @@ namespace BEbraEngine {
 		}
 
 		
-		for (int i = totalCount; i < new_size; i++) {
+		for (uint32_t i = totalCount; i < new_size; i++) {
 			auto bufferView = new RenderBufferView();
 			bufferView->availableRange = alignsizeofData;
 			bufferView->buffer = std::shared_ptr<RenderBuffer>(_buffer);
@@ -47,7 +47,7 @@ namespace BEbraEngine {
 
 		totalCount += count;
 	}
-	void VulkanRenderBufferPool::deallocate(size_t count) {
+	void VulkanRenderBufferPool::deallocate(uint32_t count) {
 		/*
 		for (int i = 0; i < count; i++) {
 			std::shared_ptr<RenderBufferView> pizda;

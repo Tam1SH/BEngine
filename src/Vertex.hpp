@@ -6,7 +6,8 @@
 #include "Vector2.hpp"
 #include "Vector4.hpp"
 namespace BEbraEngine {
-    struct Vertex {
+    class Vertex {
+    public:
         Vector3 position;
         Vector4 color;
         Vector2 texCoord;

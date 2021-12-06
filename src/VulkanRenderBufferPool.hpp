@@ -18,8 +18,8 @@ namespace BEbraEngine {
 
 	class VulkanRenderBufferPool : public IRenderBufferPool {
 	public:
-		void allocate(size_t count, size_t sizeofData, AbstractRender::TypeBuffer type) override;
-		void deallocate(size_t count) override;
+		void allocate(uint32_t count, uint32_t sizeofData, AbstractRender::TypeBuffer type) override;
+		void deallocate(uint32_t count) override;
 		void free(std::weak_ptr<RenderBufferView> obj) override;
 		void setContext(AbstractRender* render) override;
 		std::shared_ptr<RenderBuffer> getBuffer() override { return _buffer; }

@@ -11,8 +11,8 @@ namespace BEbraEngine {
 		void create(BaseWindow* window) override;
 		RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices) override;
 		RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices) override;
-		RenderBuffer* createUniformBuffer(size_t size) override;
-		RenderBuffer* createStorageBuffer(size_t size) override;
+		RenderBuffer* createUniformBuffer(uint32_t size) override;
+		RenderBuffer* createStorageBuffer(uint32_t size) override;
 		void destroyBuffer(RenderBuffer* buffer) override;
 		void selectMainCamera(Camera* camera) override;
 		void addObject(std::shared_ptr<RenderObject> object) override;
@@ -26,7 +26,7 @@ namespace BEbraEngine {
 		IRenderObjectFactory* getRenderObjectFactory() override;
 		void drawFrame() override;
 		Type getType() override;
-		size_t alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type) override;
+		uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type) override;
 
 	private:
 		GLWindow* window;

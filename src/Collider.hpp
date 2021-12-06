@@ -15,11 +15,6 @@ namespace BEbraEngine {
 	{
 	public:
 		friend class ColliderFactory;
-		enum class Type {
-			BOX,
-			SPHERE,
-			CUSTOM //≈·Û?
-		};
 	public:
 		btCollisionObject* get() { return _collider.get(); }
 

@@ -38,13 +38,13 @@ namespace BEbraEngine {
 
         void setColor(const Vector3& color) {
 
-            this->color = color;
+            _color = color;
         }
         Vector3& getColor() {
-            return color;
+            return _color;
         }
     private:
-        Vector3 color;
+        Vector3 _color;
     };
 
     class PointLight : public GameObjectComponent, public IReusable {
@@ -107,12 +107,12 @@ namespace BEbraEngine {
             this->color = color;
         }
         void setDirection(const Vector3& direction) {
-            this->direction = direction;
+            _direction = direction;
         }
         void update() {
             ShaderData data1;
             if (!data.expired()) {
-                data1.direction = direction;
+                data1.direction = _direction;
                 data1.ambient = color;
                 data1.diffuse = color;
                 data1.specular = color;
@@ -123,7 +123,7 @@ namespace BEbraEngine {
 
         }
         Vector3& getDirection() {
-            return direction;
+            return _direction;
         }
         Vector3& getColor() {
             return color;
@@ -134,7 +134,7 @@ namespace BEbraEngine {
 
     private:
         Vector3 color;
-        Vector3 direction;
+        Vector3 _direction;
     };
 
 }

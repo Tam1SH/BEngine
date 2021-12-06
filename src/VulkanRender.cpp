@@ -108,7 +108,7 @@ namespace BEbraEngine {
 
     void VulkanRender::recreateRenderObjects() {
 
-        auto& dec1 = globalLight.lock()->descriptor;
+        //auto& dec1 = globalLight.lock()->descriptor;
         auto info1 = LightDescriptorInfo();
         info1.bufferView = globalLight.lock()->data.lock().get();
         info1.type = LightDescriptorInfo::Type::Direction;
@@ -123,7 +123,6 @@ namespace BEbraEngine {
 
         for (auto light = lights.begin(); light != lights.end(); ++light) {
             
-            auto& dec = (*light)->descriptor;
             auto info = LightDescriptorInfo();
             info.bufferView = (*light)->data.lock().get();
             info.type = LightDescriptorInfo::Type::Point;
@@ -328,15 +327,15 @@ namespace BEbraEngine {
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
-    size_t VulkanRender::alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type)
+    uint32_t VulkanRender::alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type)
     {
-        size_t alignment = 0;
+        VkDeviceSize alignment = 0;
         if(type == AbstractRender::TypeBuffer::Uniform)
             alignment = GPU_properties.limits.minUniformBufferOffsetAlignment;
         if(type == AbstractRender::TypeBuffer::Storage)
             alignment = GPU_properties.limits.minStorageBufferOffsetAlignment;
 
-        size_t alignedSize = originalSize;
+        VkDeviceSize alignedSize = originalSize;
         if (alignment > 0) {
             alignedSize = (alignedSize + alignment - 1) & ~(alignment - 1);
         }
@@ -492,9 +491,9 @@ namespace BEbraEngine {
         std::vector<VkPhysicalDevice> devices(deviceCount);
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
-        for (const auto& device : devices) {
-            if (isDeviceSuitable(device)) {
-                physicalDevice = device;
+        for (const auto& d : devices) {
+            if (isDeviceSuitable(d)) {
+                physicalDevice = d;
                 break;
             }
         }
@@ -818,7 +817,7 @@ namespace BEbraEngine {
 
         VkViewport viewport{};
         viewport.x = 0.0f;
-        viewport.y = swapChainExtent.height;
+        viewport.y = (float)swapChainExtent.height;
         viewport.width = (float)swapChainExtent.width;
         viewport.height = -(float)swapChainExtent.height;
         viewport.minDepth = 0.0f;
@@ -1163,7 +1162,7 @@ namespace BEbraEngine {
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.commandPool = _commandPool;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandBufferCount = RenderBuffers.size();
+        allocInfo.commandBufferCount = static_cast<uint32_t>(RenderBuffers.size());
 
 
     }
@@ -1212,7 +1211,7 @@ namespace BEbraEngine {
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
     
-        submitInfo.commandBufferCount = buffers.size();
+        submitInfo.commandBufferCount = static_cast<uint32_t>(buffers.size());
         submitInfo.pCommandBuffers = buffers.data();
 
         VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
@@ -1286,8 +1285,10 @@ namespace BEbraEngine {
 
             vkCmdBeginRenderPass(buffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-            int count = lights.size();
-            vkCmdPushConstants(buffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(int), &count);
+
+            uint32_t count = lights.size();
+            vkCmdPushConstants(buffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t), &count);
+            
             {
                 globalLight.lock()->update();
                 vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLight.lock()->descriptor, 0, 0);
@@ -1587,7 +1588,7 @@ namespace BEbraEngine {
     }
 
 
-    RenderBuffer* VulkanRender::createBuffer(void* data, size_t size, VkBufferUsageFlags usage)
+    RenderBuffer* VulkanRender::createBuffer(void* data, uint32_t size, VkBufferUsageFlags usage)
     {
         VulkanBuffer* buffer = new VulkanBuffer();
         VkDeviceSize bufferSize = size;
@@ -1665,7 +1666,7 @@ namespace BEbraEngine {
         pickPhysicalDevice();
         createLogicalDevice();
         setupDebugMessenger();
-        createSwapChain(size.x, size.y);
+        createSwapChain(static_cast<uint32_t>(size.x), static_cast<uint32_t>(size.y));
         createDepthResources();
         createImageViews();
 
@@ -1844,14 +1845,14 @@ namespace BEbraEngine {
         vkFreeMemory(device, vkBuffer->memory, 0);
         delete buffer;
     }
-    RenderBuffer* VulkanRender::createStorageBuffer(size_t size)
+    RenderBuffer* VulkanRender::createStorageBuffer(uint32_t size)
     {
         VulkanBuffer* buffer = new VulkanBuffer();
         buffer->size = size;
         _createBuffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer->self, buffer->memory);
         return buffer;
     }
-    RenderBuffer* VulkanRender::createUniformBuffer(size_t size)
+    RenderBuffer* VulkanRender::createUniformBuffer(uint32_t size)
     {
         VulkanBuffer* buffer = new VulkanBuffer();
         buffer->size = size;

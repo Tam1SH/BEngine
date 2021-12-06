@@ -40,8 +40,8 @@ namespace BEbraEngine {
 
     void CommandBuffer::destroy()
     {
-        if(callback)
-            callback();
+        if(_callback)
+            _callback();
         pool->destroyCmdBuffer(*this);
     }
 

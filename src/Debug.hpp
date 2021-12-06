@@ -101,12 +101,14 @@ namespace BEbraEngine {
 			case ObjectType::BufferPool: return "BufferPool";
 			case ObjectType::DescriptorPool: return "DescriptorPool";
 			}
+			return "Unknown Type";
 		}
 		static std::string to_string(MessageType type) {
 			switch (type) {
 			case MessageType::Info: return "Info";
 			case MessageType::Error: return "Error";
 			}
+			return "Unknown Type";
 		}
 		static std::mutex m;
 		static std::vector<ObjectType> _disableLog;

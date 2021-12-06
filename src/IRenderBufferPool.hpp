@@ -12,9 +12,9 @@ namespace BEbraEngine {
 
 		};
 	public:
-		virtual void allocate(size_t count, size_t sizeofData, AbstractRender::TypeBuffer type) = 0;
+		virtual void allocate(uint32_t count, uint32_t sizeofData, AbstractRender::TypeBuffer type) = 0;
+		virtual void deallocate(uint32_t count) = 0;
 		virtual void free(std::weak_ptr<RenderBufferView> obj) = 0;
-		virtual void deallocate(size_t count) = 0;
 		virtual void setContext(AbstractRender* render) = 0;
 		virtual std::shared_ptr<RenderBuffer> getBuffer() = 0;
 		virtual void setUsage(Usage usage) { _usage = usage; }

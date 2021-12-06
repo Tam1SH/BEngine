@@ -10,11 +10,11 @@
 namespace BEbraEngine {
 
     struct DXRender::DXBuffer : public RenderBuffer {
-        ID3D11DeviceContext* g_pImmediateContext;
-        ID3D11Buffer* buf;
-        size_t size;
+        ID3D11DeviceContext* g_pImmediateContext{};
+        ID3D11Buffer* buf{};
+        uint32_t size{};
 
-        void setData(void* data, size_t size, size_t offset) override {
+        void setData(void* data, uint32_t size, uint32_t offset) override {
             D3D11_MAPPED_SUBRESOURCE mappedResource;
             ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
             g_pImmediateContext->Map(buf, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -82,11 +82,11 @@ namespace BEbraEngine {
         return buff;
         */
     }
-    RenderBuffer* DXRender::createUniformBuffer(size_t size) {
+    RenderBuffer* DXRender::createUniformBuffer(uint32_t size) {
 
         return createBuffer(0, size, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER);
     }
-    RenderBuffer* DXRender::createBuffer(void* data, size_t size, D3D11_USAGE usage, D3D11_BIND_FLAG type) {
+    RenderBuffer* DXRender::createBuffer(void* data, uint32_t size, D3D11_USAGE usage, D3D11_BIND_FLAG type) {
         auto buff = new DXBuffer();
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
@@ -115,7 +115,7 @@ namespace BEbraEngine {
     void DXRender::removeCamera(std::shared_ptr<Camera> camera)
     {
     }
-    RenderBuffer* DXRender::createStorageBuffer(size_t size) {
+    RenderBuffer* DXRender::createStorageBuffer(uint32_t size) {
 
         return createBuffer(0, size, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER);
 
@@ -127,7 +127,7 @@ namespace BEbraEngine {
     {
         return factory.get();
     }
-    size_t DXRender::alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type)
+    uint32_t DXRender::alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type)
     {
         return originalSize;
     }
@@ -139,8 +139,8 @@ namespace BEbraEngine {
         g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
         // g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
          // Render a triangle
-        camera->update();
-        auto buf = static_cast<DXBuffer*>(camera->cameraData->buffer.get());
+       // camera->update();
+     //   auto buf = static_cast<DXBuffer*>(camera->cameraData->buffer.get());
 
 
 
@@ -150,7 +150,7 @@ namespace BEbraEngine {
             auto data = static_cast<const DXBuffer*>(object->matrix->buffer.get());
             g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
             g_pImmediateContext->VSSetConstantBuffers(1, 1, &data->buf);
-            g_pImmediateContext->VSSetConstantBuffers(2, 1, &buf->buf);
+            //g_pImmediateContext->VSSetConstantBuffers(2, 1, &buf->buf);
             g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
             auto EBO = static_cast<const DXBuffer*>(object->model->meshes[0].indices_view->buffer.get());
             auto VBO = static_cast<const DXBuffer*>(object->model->meshes[0].vertices_view->buffer.get());

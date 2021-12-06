@@ -51,9 +51,9 @@ namespace BEbraEngine {
 
         void destroyBuffer(RenderBuffer* buffer) override;
 
-        RenderBuffer* createUniformBuffer(size_t size) override;
+        RenderBuffer* createUniformBuffer(uint32_t size) override;
 
-        RenderBuffer* createStorageBuffer(size_t size) override;
+        RenderBuffer* createStorageBuffer(uint32_t size) override;
 
         RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices) override;
 
@@ -81,8 +81,7 @@ namespace BEbraEngine {
 
         void drawFrame() override;
 
-        size_t alignmentBuffer(size_t originalSize, AbstractRender::TypeBuffer type) override;
-
+        uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type) override;
 
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
 
@@ -96,7 +95,7 @@ namespace BEbraEngine {
 
         void freeDescriptor(VulkanPointLight* set);
 
-        RenderBuffer* createBuffer(void* data, size_t size, VkBufferUsageFlags usage);
+        RenderBuffer* createBuffer(void* data, uint32_t size, VkBufferUsageFlags usage);
 
         void createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize);
 
@@ -107,6 +106,8 @@ namespace BEbraEngine {
         void recreateSwapChain(uint32_t width, uint32_t height);
 
         VkPipelineLayout pipelineLayout;
+
+        ExecuteQueues<std::function<void()>> executeQueues_Objects;
 
     public:
         enum class DescriptorLayoutType {
@@ -160,8 +161,6 @@ namespace BEbraEngine {
         tbb::concurrent_queue<std::shared_ptr<VulkanPointLight>> queueAddLight;
         tbb::concurrent_queue<std::shared_ptr<VulkanPointLight>> queueDeleterLight;
 
-        ExecuteQueues<std::function<void()>> executeQueues_Objects;
-
         VulkanWindow* window;
 
         std::unique_ptr<DescriptorPool> VulkanRenderBufferPool;
@@ -179,9 +178,9 @@ namespace BEbraEngine {
 
         VkDescriptorSet setMainCamera;
 
-        size_t MAX_COUNT_OF_OBJECTS = 10000;
+        uint32_t MAX_COUNT_OF_OBJECTS = 10000;
 
-        size_t MAX_COUNT_OF_LIGHTS = 1000;
+        uint32_t MAX_COUNT_OF_LIGHTS = 1000;
 
         VkDebugUtilsMessengerEXT debugMessenger;
 

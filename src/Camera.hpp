@@ -36,13 +36,13 @@ namespace BEbraEngine {
 
         };
     public:
-        RenderBufferView* cameraData;
+        RenderBufferView* cameraData{};
         
-        Vector3 Position;
-        Vector3 Front;
-        Vector3 Up;
-        Vector3 Right;
-        Vector3 WorldUp;
+        Vector3 Position{};
+        Vector3 Front{};
+        Vector3 Up{};
+        Vector3 Right{};
+        Vector3 WorldUp{};
 
         Camera() {}
         ~Camera();
@@ -74,18 +74,18 @@ namespace BEbraEngine {
         void updateCameraVectors();
     private:
 
-        float Yaw;
-        float Pitch;
+        float Yaw{};
+        float Pitch{};
 
-        float MovementSpeed;
-        float MouseSensitivity;
-        float Zoom;
+        float MovementSpeed{};
+        float MouseSensitivity{};
+        float Zoom{};
 
-        float lastX;
-        float lastY;
+        int lastX{};
+        int lastY{};
 
-        bool _isMain;
-        Vector2 rectViewport;
+        bool _isMain{};
+        Vector2 rectViewport{};
 
     };
 }

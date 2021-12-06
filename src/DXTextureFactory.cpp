@@ -4,7 +4,7 @@
 #include "DXRender.hpp"
 namespace BEbraEngine {
 
-	Texture* DXTextureFactory::createAsync(const std::string& path)
+	Texture* DXTextureFactory::createAsync(const std::filesystem::path& path, std::function<void(Texture*)>)
 	{
 		return nullptr;
 	}

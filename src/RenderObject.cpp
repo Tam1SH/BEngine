@@ -9,7 +9,7 @@ namespace BEbraEngine {
     {
         ShaderData data;
         data.model = transform->getBasis();
-        data.color = color;
+        data.color = _color;
         matrix->setData(&data, sizeof(ShaderData));
     }
 

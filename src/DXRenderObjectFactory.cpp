@@ -37,6 +37,7 @@ namespace BEbraEngine {
 
 	PointLight* DXRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)
 	{
+
 		auto maybe_object_view = _poolofPointLights->get();
 		std::shared_ptr<RenderBufferView> object_view;
 		if (maybe_object_view.has_value()) {

@@ -10,7 +10,7 @@ namespace BEbraEngine {
 	class DXTextureFactory : public ITextureFactory
 	{
 	public:
-		virtual Texture* createAsync(const std::string& path) override;
+		virtual Texture* createAsync(const std::filesystem::path& path, std::function<void(Texture*)>) override;
 		virtual Texture* create(const std::string& path) override;
 		virtual Texture* createEmpty() override;
 

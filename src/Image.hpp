@@ -18,8 +18,38 @@ namespace BEbraEngine {
         VkSampler sampler;
         VkDeviceMemory memory;
         Texture(VkImage& self, VkImageView& imageView, VkSampler& sampler, VkDeviceMemory& textureImageMemory) : self(self), imageView(imageView), sampler(sampler), memory(textureImageMemory) {}
-        Texture() {
+        Texture() { }
+
+        Texture(Texture&& other) {
+            width = other.width;
+            height = other.height;
+            self = other.self;
+            imageView = other.imageView;
+            sampler = other.sampler;
+            memory = other.memory;
+            other.width = 0;
+            other.height = 0;
+            other.self = 0;
+            other.imageView = VK_NULL_HANDLE;
+            other.sampler = VK_NULL_HANDLE;
+            other.memory = VK_NULL_HANDLE;
         }
+        Texture& operator=(Texture&& other) {
+            width = other.width;
+            height = other.height;
+            self = other.self;
+            imageView = other.imageView;
+            sampler = other.sampler;
+            memory = other.memory;
+            other.width = 0;
+            other.height = 0;
+            other.self = 0;
+            other.imageView = VK_NULL_HANDLE;
+            other.sampler = VK_NULL_HANDLE;
+            other.memory = VK_NULL_HANDLE;
+            return *this;
+        }
+
         bool IsLoad() {
             return _isLoad;
         }

@@ -139,7 +139,7 @@ namespace BEbraEngine {
 #ifdef __cplusplus
 extern "C"
 #endif
-int main(int, char** argv)
+int main()
 {
     BEbraEngine::Engine engine;
     engine.init();

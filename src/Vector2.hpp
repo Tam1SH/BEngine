@@ -28,13 +28,28 @@ namespace BEbraEngine {
 		operator DirectX::XMFLOAT2() const noexcept { return DirectX::XMFLOAT2(x, y); }
 #endif
 
-		Vector2 operator+(const Vector2& other) const noexcept { return Vector2(*this + other); }
+		Vector2 operator+(const Vector2& other) const noexcept {
+			glm::vec2 l = *this;
+			glm::vec2 r = other;
+			return Vector2(l + r);
+		}
 
-		Vector2 operator-(const Vector2& other) const noexcept { return Vector2(*this - other); }
+		Vector2 operator-(const Vector2& other) const noexcept {
+			glm::vec2 l = *this;
+			glm::vec2 r = other;
+			return Vector2(l - r);
+		}
 
-		Vector2 operator*(const Vector2& other) const noexcept { return Vector2(*this * other); }
+		Vector2 operator*(const Vector2& other) const noexcept {
+			glm::vec2 l = *this;
+			glm::vec2 r = other;
+			return Vector2(l * r);
+		}
 
-		Vector2 operator*(float scalar) const noexcept { return Vector2(*this * scalar); }
+		Vector2 operator*(float scalar) const noexcept {
+			glm::vec2 l = *this;
+			return Vector2(l * scalar);
+		}
 
 		Vector2& operator*=(const Vector2& other) noexcept {
 			*this = *this * other;
@@ -49,6 +64,15 @@ namespace BEbraEngine {
 		Vector2& operator-=(const Vector2& other) noexcept {
 			*this = *this - other;
 			return *this;
+		}
+
+		bool operator==(const Vector2& other) const noexcept {
+			return (this->x == other.x) &&
+				(this->y == other.y);
+		}
+
+		bool operator!=(const Vector2& other) const noexcept {
+			return !(*this == other);
 		}
 	};
 }

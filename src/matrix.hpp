@@ -35,7 +35,7 @@ namespace BEbraEngine {
 			elements[2] = mat[2];
 			elements[3] = mat[3];
 		}
-		Matrix4(size_t all) {
+		Matrix4(float all) {
 			elements[0] = Vector4(all);
 			elements[1] = Vector4(all);
 			elements[2] = Vector4(all);

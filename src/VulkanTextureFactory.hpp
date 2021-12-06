@@ -12,7 +12,8 @@ namespace BEbraEngine {
 namespace BEbraEngine {
     class VulkanTextureFactory : public ITextureFactory {
     public:
-        Texture* createAsync(const std::string& path) override { return 0; }
+        Texture* createAsync(const std::filesystem::path& path, std::function<void(Texture*)> onComplete) override;
+
        // Texture* create(const std::string& path) override { return 0; }
 
         Texture* createEmpty() override;

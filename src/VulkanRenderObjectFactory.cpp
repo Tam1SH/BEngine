@@ -34,8 +34,22 @@ namespace BEbraEngine {
 
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
+        Texture* _texture = textureFactory->createAsync("C:/.BEbraEngine/src/textures/tex9.jpg",
+            [=](Texture* texture) {
+                *obj->texture = std::move(*texture);
+                delete texture;
+                render->executeQueues_Objects.addTask([=] {
+                    render->freeDescriptor(obj);
+                    VulkanDescriptorSetInfo setinfo{};
+                    setinfo.sampler = obj->texture->sampler;
+                    setinfo.imageView = obj->texture->imageView;
+                    setinfo.bufferView = object_view.get();
 
-        obj->texture = std::unique_ptr<Texture>(textureFactory->createEmpty());
+                    obj->descriptor = render->createDescriptor(&setinfo);
+
+                    });
+            });
+        obj->texture = std::unique_ptr<Texture>(_texture);
         obj->matrix = object_view;
 
         obj->setColor(Vector3(0.2f, 0.4f, 0.3f));
