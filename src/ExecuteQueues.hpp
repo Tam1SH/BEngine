@@ -20,6 +20,11 @@ namespace BEbraEngine {
 		void addTask(Function&& func) {
 			queues[getCurrentThreadIndex()].push(func);
 		}
+		void reset() {
+			for (auto& queue : queues) {
+				queue.clear();
+			}
+		}
 
 		template<typename... Args>
 		void execute(Args&&... args) {

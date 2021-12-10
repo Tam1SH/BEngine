@@ -1,7 +1,9 @@
 #pragma once
+#include "stdafx.h"
 #include "AbstractComponent.hpp"
 #include <Physics/btBulletDynamicsCommon.h>
-#include <memory>
+#include "Debug.hpp"
+
 namespace BEbraEngine {
 	class Transform;
 	class Physics;
@@ -11,15 +13,14 @@ namespace BEbraEngine {
 
 namespace BEbraEngine {
 
-	class RigidBody : public GameObjectComponent
-	{
+	class RigidBody : public GameObjectComponent { DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class RigidBodyFactory;
 	public:
 
 		void resetState();
 
-		btRigidBody* getRigidBody() { return body; }
+		btRigidBody* getRigidBody() { return body.get(); }
 
 		void setTransform(std::shared_ptr<Transform> transform);
 
@@ -43,7 +44,7 @@ namespace BEbraEngine {
 
 	private:
 
-		btRigidBody* body;
+		std::unique_ptr<btRigidBody> body;
 
 		std::shared_ptr<Transform> transform;
 

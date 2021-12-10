@@ -26,7 +26,10 @@ namespace BEbraEngine {
 	void ColliderFactory::destroyCollider(std::shared_ptr<Collider> col)
 	{
 		physics->removeCollider(col);
-		col.reset();
+#ifdef _DEBUG
+		col->isDestroyed = true;
+#endif // _DEBUG
+
 	}
 
 	void ColliderFactory::setShape(Collider* collider, btCollisionShape* newShape)

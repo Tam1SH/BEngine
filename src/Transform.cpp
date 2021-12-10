@@ -1,15 +1,9 @@
 #include "stdafx.h"
 #define NOMINMAX
 #include "Transform.hpp"
-#include "GameObject.hpp"
-#include "RigidBoby.hpp"
 #include "TransformFactory.hpp"
-#include "btBulletDynamicsCommon.h"
-#include "VulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
-#include<glm/gtc/quaternion.hpp>
-#include "VkBuffer.hpp"
-#include "RenderBuffer.hpp"
+#include <glm/gtc/quaternion.hpp>
 namespace BEbraEngine {
 
 
@@ -27,18 +21,12 @@ namespace BEbraEngine {
 
     Transform::~Transform()
     {
-#ifdef _DEBUG
-        Debug::log("Destroy", this, "", Debug::ObjectType::Transform, Debug::MessageType::Info);
-#endif 
     }
 
     Transform::Transform(const Vector3& position)
     {
         this->position = position;
         scale = Vector3(1);
-#ifdef _DEBUG
-        Debug::log("Create", this, "", Debug::ObjectType::Transform, Debug::MessageType::Info);
-#endif 
     }
 
     void Transform::updatePosition(const Vector3& position, const Vector4& quat)

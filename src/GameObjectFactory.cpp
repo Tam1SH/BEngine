@@ -25,7 +25,10 @@ namespace BEbraEngine {
 		rigidBodyFactory = physics->getRigidBodyFactory();
 		transFactory = std::unique_ptr<TransformFactory>(new TransformFactory());
 		Debug::enableAll();
-
+		//Debug::disableLog(Debug::ObjectType::Collider);
+		//Debug::disableLog(Debug::ObjectType::Transform);
+		//Debug::disableLog(Debug::ObjectType::RigidBody);
+		//Debug::disableLog(Debug::ObjectType::RenderObject);
 	}
 	std::shared_ptr<GameObject> GameObjectFactory::create(const Vector3& position)
 	{
@@ -117,6 +120,9 @@ namespace BEbraEngine {
 		render->removeObject(object->getComponent<RenderObject>());
 		physics->removeRigidBody(object->getComponent<RigidBody>());
 		colliderFactory->destroyCollider(object->getComponent<Collider>());
+#ifdef _DEBUG
+		object->isDestroyed = true;
+#endif // _DEBUG
 
 
 	}

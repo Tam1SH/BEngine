@@ -22,6 +22,8 @@
 #include "RenderObject.hpp"
 #include "DescriptorPool.hpp"
 #include "VulkanObjects.hpp"
+#include "Shader.hpp"
+#include "Pipeline.hpp"
 namespace BEbraEngine {
     
     int getCurrentThreadIndex()
@@ -43,8 +45,91 @@ namespace BEbraEngine {
     VulkanRender::QueueFamilyIndices VulkanRender::FamilyIndices;
                                       
 
+    void VulkanRender::generateMipmaps(VulkanTexture* texture, VkFormat imageFormat, CommandBuffer& buffer) {
+        // Check if image format supports linear blitting
+        VkFormatProperties formatProperties;
+        vkGetPhysicalDeviceFormatProperties(physicalDevice, imageFormat, &formatProperties);
 
-    void VulkanRender::createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize)
+        if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)) {
+            throw std::runtime_error("texture image format does not support linear blitting!");
+        }
+
+        VkImageMemoryBarrier barrier{};
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.image = texture->image;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount = 1;
+        barrier.subresourceRange.levelCount = 1;
+
+        int32_t mipWidth = texture->width();
+        int32_t mipHeight = texture->height();
+
+        for (uint32_t i = 1; i < texture->mipLevels; i++) {
+            barrier.subresourceRange.baseMipLevel = i - 1;
+            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+            vkCmdPipelineBarrier(buffer,
+                VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+                0, nullptr,
+                0, nullptr,
+                1, &barrier);
+
+            VkImageBlit blit{};
+            blit.srcOffsets[0] = { 0, 0, 0 };
+            blit.srcOffsets[1] = { mipWidth, mipHeight, 1 };
+            blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            blit.srcSubresource.mipLevel = i - 1;
+            blit.srcSubresource.baseArrayLayer = 0;
+            blit.srcSubresource.layerCount = 1;
+            blit.dstOffsets[0] = { 0, 0, 0 };
+            blit.dstOffsets[1] = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 };
+            blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            blit.dstSubresource.mipLevel = i;
+            blit.dstSubresource.baseArrayLayer = 0;
+            blit.dstSubresource.layerCount = 1;
+
+            vkCmdBlitImage(buffer,
+                texture->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                texture->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1, &blit,
+                VK_FILTER_LINEAR);
+
+            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+            vkCmdPipelineBarrier(buffer,
+                VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+                0, nullptr,
+                0, nullptr,
+                1, &barrier);
+
+            if (mipWidth > 1) mipWidth /= 2;
+            if (mipHeight > 1) mipHeight /= 2;
+        }
+
+        barrier.subresourceRange.baseMipLevel = texture->mipLevels - 1;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+        vkCmdPipelineBarrier(buffer,
+            VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+            0, nullptr,
+            0, nullptr,
+            1, &barrier);
+
+    }
+
+    void VulkanRender::createVkImage(unsigned char* data, VulkanTexture* texture, VkDeviceSize imageSize)
     {
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
@@ -55,17 +140,24 @@ namespace BEbraEngine {
         vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &_data);
         memcpy(_data, data, static_cast<size_t>(imageSize));
         vkUnmapMemory(device, stagingBufferMemory);
-
-        createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+        if (texture->mipLevels != 1)
+            createImage(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
+                VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        else 
+            createImage(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
+                VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 
         auto buffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         buffer.startRecord();
 
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
-        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), buffer);
-        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, buffer);
+        transitionImageLayout(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
+        copyBufferToImage(stagingBuffer, texture->image, static_cast<uint32_t>(texture->width()), static_cast<uint32_t>(texture->height()), buffer);
+        
+        if(texture->mipLevels != 1)
+            generateMipmaps(texture, VK_FORMAT_R8G8B8A8_SRGB, buffer);
+        else 
+            transitionImageLayout(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, buffer);
 
         buffer.endRecord();
         buffer.onCompleted([=] {
@@ -140,9 +232,14 @@ namespace BEbraEngine {
     void VulkanRender::createDepthResources()
     {
         VkFormat depthFormat = findDepthFormat();
-
-        createImage(swapChainExtent.width, swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
-        depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+        if(!depthTexture.get())
+            depthTexture = std::make_unique<VulkanTexture>();
+        depthTexture->mipLevels = 1;
+        
+        depthTexture->setWidth(swapChainExtent.width);
+        depthTexture->setHeight(swapChainExtent.height);
+        createImage(depthTexture.get(), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        depthTexture->imageView = createImageView(depthTexture.get(), depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
         //transitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     }
 
@@ -239,16 +336,14 @@ namespace BEbraEngine {
 
     void VulkanRender::cleanupSwapChain()
     {
-        vkDestroyImageView(device, depthImageView, nullptr);
-        vkDestroyImage(device, depthImage, nullptr);
-        vkFreeMemory(device, depthImageMemory, nullptr);
+
         for (auto framebuffer : swapChainFramebuffers) {
             vkDestroyFramebuffer(device, framebuffer, nullptr);
         }
 
         //vkFreeCommandBuffers(device, _commandPool, RenderBuffers.size(), RenderBuffers.data());
-
-        vkDestroyPipeline(device, graphicsPipeline, nullptr);
+        
+        vkDestroyPipeline(device, pipeLine->getPipeLine(), nullptr);
         vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
         vkDestroyRenderPass(device, renderPass, nullptr);
 
@@ -261,6 +356,7 @@ namespace BEbraEngine {
 
     void VulkanRender::cleanUpDefault()
     {
+        executeQueues_Objects.reset();
         cleanupSwapChain();
 
         vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayoutType::Camera], nullptr);
@@ -268,12 +364,18 @@ namespace BEbraEngine {
         vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayoutType::LightPoint], nullptr);
         vkDestroyDescriptorSetLayout(device, layouts[DescriptorLayoutType::Object], nullptr);
 
+        for (auto& object : objects) {
+            factory->destroyObject(object);
+        }
+
         VulkanRenderBufferPool.reset();
         cameraPool.reset();
         lightPool.reset();
+
+        objects.clear();
         factory.reset();
         cameras.clear();
-        objects.clear();
+
         lights.clear();
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
@@ -300,7 +402,8 @@ namespace BEbraEngine {
 
     void VulkanRender::_createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
     {
-        thread_local VkBufferCreateInfo bufferInfo{};
+
+        VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
         bufferInfo.usage = usage;
@@ -365,22 +468,17 @@ namespace BEbraEngine {
 
     }
 
-    VkImageView VulkanRender::createTextureImageView(VkImage& textureImage)
-    {
-        return createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
-    }
 
-
-    VkImageView VulkanRender::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
+    VkImageView VulkanRender::createImageView(VulkanTexture* texture, VkFormat format, VkImageAspectFlags aspectFlags)
     {
         VkImageViewCreateInfo viewInfo{};
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        viewInfo.image = image;
+        viewInfo.image = texture->image;
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
         viewInfo.format = format;
         viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = 0;
-        viewInfo.subresourceRange.levelCount = 1;
+        viewInfo.subresourceRange.levelCount = texture->mipLevels;
         viewInfo.subresourceRange.baseArrayLayer = 0;
         viewInfo.subresourceRange.layerCount = 1;
 
@@ -392,7 +490,7 @@ namespace BEbraEngine {
         return imageView;
     }
 
-    void VulkanRender::createTextureSampler(VkSampler& textureSampler)
+    void VulkanRender::createTextureSampler(VulkanTexture* texture)
     {
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(physicalDevice, &properties);
@@ -411,8 +509,10 @@ namespace BEbraEngine {
         samplerInfo.compareEnable = VK_FALSE;
         samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
         samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-
-        if (vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
+        samplerInfo.minLod = 0.0f;
+        samplerInfo.maxLod = static_cast<float>(texture->mipLevels);
+        samplerInfo.mipLodBias = 0.0f;
+        if (vkCreateSampler(device, &samplerInfo, nullptr, &texture->sampler) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture sampler!");
         }
     }
@@ -776,28 +876,34 @@ namespace BEbraEngine {
         }
     }
 
-
     void VulkanRender::createGraphicsPipeline()
     {
-        auto vertShaderCode = readFile("vert.spv");
-        auto fragShaderCode = readFile("frag.spv");
+        VulkanShader* vertShaderModule{}, * fragShaderModule{};
 
-        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+        if (!pipeLine.get()) {
+            pipeLine = std::make_unique<VulkanPipeline>();
+            vertShaderModule = VulkanShader::createFromFile(device, "vert.spv");
+            fragShaderModule = VulkanShader::createFromFile(device, "frag.spv");
 
-        VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
-        vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-        vertShaderStageInfo.module = vertShaderModule;
-        vertShaderStageInfo.pName = "main";
+            VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+            vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+            vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+            vertShaderStageInfo.module = vertShaderModule->module;
+            vertShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
-        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        fragShaderStageInfo.module = fragShaderModule;
-        fragShaderStageInfo.pName = "main";
+            VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+            fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+            fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+            fragShaderStageInfo.module = fragShaderModule->module;
+            fragShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+            std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+            shaderStages.push_back(vertShaderStageInfo);
+            shaderStages.push_back(fragShaderStageInfo);
+            pipeLine->setShaderStages(shaderStages);
+        }
+
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -899,28 +1005,26 @@ namespace BEbraEngine {
         if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create pipeline layout!");
         }
-        VkGraphicsPipelineCreateInfo pipelineInfo{};
-        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-        pipelineInfo.stageCount = 2;
-        pipelineInfo.pStages = shaderStages;
-        pipelineInfo.pVertexInputState = &vertexInputInfo;
-        pipelineInfo.pInputAssemblyState = &inputAssembly;
-        pipelineInfo.pViewportState = &viewportState;
-        pipelineInfo.pRasterizationState = &rasterizer;
-        pipelineInfo.pMultisampleState = &multisampling;
-        pipelineInfo.pColorBlendState = &colorBlending;
-        pipelineInfo.layout = pipelineLayout;
-        pipelineInfo.renderPass = renderPass;
-        pipelineInfo.subpass = 0;
-        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-        pipelineInfo.pDepthStencilState = &depthStencil;
 
-        if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create graphics pipeline!");
-        }
+        std::vector< VkPipelineColorBlendAttachmentState> colorBlendStates;
+        colorBlendStates.push_back(colorBlendAttachment);
+        pipeLine->setColorBlendAttachments(colorBlendStates);
+        pipeLine->setColorBlendState(colorBlending);
 
-        vkDestroyShaderModule(device, fragShaderModule, nullptr);
-        vkDestroyShaderModule(device, vertShaderModule, nullptr);
+        pipeLine->setVertexInputBindingDescription(bindingDescription);
+        pipeLine->setViewportState(viewportState);
+        std::vector<VkViewport> ports = { viewport };
+        pipeLine->setViewports(ports);
+        pipeLine->setVertexInputState(vertexInputInfo);
+        pipeLine->setRasterizationState(rasterizer);
+        pipeLine->setMultisampleState(multisampling);
+        pipeLine->setDepthStencilState(depthStencil);
+        pipeLine->setPushConstantRange(push_constant);
+        pipeLine->setPipelineCreateInfo(pipelineLayout);
+        pipeLine->setRenderPass(renderPass);
+        pipeLine->setInputAssemblyState(inputAssembly);
+        pipeLine->create(device);
+
     }
 
     void VulkanRender::createFramebuffers()
@@ -930,7 +1034,7 @@ namespace BEbraEngine {
         for (size_t i = 0; i < swapChainImageViews.size(); i++) {
             std::array<VkImageView, 2> attachments = {
                 swapChainImageViews[i],
-                depthImageView
+                depthTexture->imageView
             };
 
             VkFramebufferCreateInfo framebufferInfo{};
@@ -1064,15 +1168,15 @@ namespace BEbraEngine {
         }
     }
 
-    void VulkanRender::createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+    void VulkanRender::createImage(VulkanTexture* texture, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties)
     {
         VkImageCreateInfo imageInfo{};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         imageInfo.imageType = VK_IMAGE_TYPE_2D;
-        imageInfo.extent.width = width;
-        imageInfo.extent.height = height;
+        imageInfo.extent.width = texture->width();
+        imageInfo.extent.height = texture->height();
         imageInfo.extent.depth = 1;
-        imageInfo.mipLevels = 1;
+        imageInfo.mipLevels = texture->mipLevels;
     
         imageInfo.arrayLayers = 1;
         imageInfo.format = format;
@@ -1082,26 +1186,26 @@ namespace BEbraEngine {
         imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
+        if (vkCreateImage(device, &imageInfo, nullptr, &texture->image) != VK_SUCCESS) {
             throw std::runtime_error("failed to create image!");
         }
 
         VkMemoryRequirements memRequirements;
-        vkGetImageMemoryRequirements(device, image, &memRequirements);
+        vkGetImageMemoryRequirements(device, texture->image, &memRequirements);
 
         VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = memRequirements.size;
         allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-        if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+        if (vkAllocateMemory(device, &allocInfo, nullptr, &texture->memory) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate image memory!");
         }
 
-        vkBindImageMemory(device, image, imageMemory, 0);
+        vkBindImageMemory(device, texture->image, texture->memory, 0);
     }
 
-    void VulkanRender::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandBuffer& buffer)
+    void VulkanRender::transitionImageLayout(VulkanTexture* texture, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandBuffer& buffer)
     {
 
         VkImageMemoryBarrier barrier{};
@@ -1110,10 +1214,10 @@ namespace BEbraEngine {
         barrier.newLayout = newLayout;
         barrier.srcQueueFamilyIndex = //VK_QUEUE_FAMILY_IGNORED;
         barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.image = image;
+        barrier.image = texture->image;
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         barrier.subresourceRange.baseMipLevel = 0;
-        barrier.subresourceRange.levelCount = 1;
+        barrier.subresourceRange.levelCount = texture->mipLevels;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount = 1;
 
@@ -1180,7 +1284,7 @@ namespace BEbraEngine {
 
         /*
         if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-            recreateSwapChain();
+            recreateSwapChain(window->getDrawableSize().x, window->getDrawableSize().y);
             return;
         }
         else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
@@ -1284,7 +1388,7 @@ namespace BEbraEngine {
             buffer.startRecord();
 
             vkCmdBeginRenderPass(buffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+            vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeLine->getPipeLine());
 
             uint32_t count = lights.size();
             vkCmdPushConstants(buffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t), &count);
@@ -1603,7 +1707,7 @@ namespace BEbraEngine {
         vkUnmapMemory(device, stagingBufferMemory);
 
         _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer->self, buffer->memory);
-        //copyBuffer(stagingBuffer, buffer->self, bufferSize);
+
         auto commandBuffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(
             CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         commandBuffer.startRecord();
@@ -1617,21 +1721,11 @@ namespace BEbraEngine {
             vkFreeMemory(device, stagingBufferMemory, nullptr);
             });
         addBufferToQueue(commandBuffer);
-        //vkDestroyBuffer(device, stagingBuffer, nullptr);
-       // vkFreeMemory(device, stagingBufferMemory, nullptr);
 
         return buffer;
     }
 
 
-    /*
-    void VulkanRender::framebufferResizeCallback(GLFWwindow* window, int width, int height)
-    {
-        auto app = reinterpret_cast<VulkanRender*>(glfwGetWindowUserPointer(window));
-        app->recreateSwapChain();
-        app->UpdateFrame();
-    }
-    */
     VkDevice VulkanRender::getDevice()
     {
         return device;
@@ -1639,6 +1733,7 @@ namespace BEbraEngine {
 
     VulkanRender::~VulkanRender()
     {
+
         cleanUpDefault();
     }
 
@@ -1837,6 +1932,17 @@ namespace BEbraEngine {
     void VulkanRender::freeDescriptor(VulkanPointLight* set)
     {
         lightPool->free(set->descriptor);
+    }
+    void VulkanRender::destroyTexture(VulkanTexture* texture)
+    {
+        vkFreeMemory(device, texture->memory, 0);
+        vkDestroyImage(device, texture->image, 0);
+        vkDestroySampler(device, texture->sampler, 0);
+        vkDestroyImageView(device, texture->imageView, 0);
+        texture->memory = 0;
+        texture->image = 0;
+        texture->sampler = 0;
+        texture->imageView = 0;
     }
     void VulkanRender::destroyBuffer(RenderBuffer* buffer)
     {

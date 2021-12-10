@@ -24,6 +24,10 @@ namespace BEbraEngine {
         auto model_out = std::make_optional<Model*>(model);
         return model_out;
     }
+    std::optional<Model*> MeshFactory::createAsync(const std::string& path)
+    {
+        return std::optional<Model*>();
+    }
     std::shared_ptr<Model> MeshFactory::getDefaultModel(const std::string& name)
     {
         return default_models[name];
@@ -42,7 +46,7 @@ namespace BEbraEngine {
         indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models["BOX"]->meshes[0].indices));
         default_models["BOX"]->meshes[0].indices_view = indices_view;
 
-        default_models["SPHERE"] = std::shared_ptr<Model>(create("C:/.BEbraEngine/src/Models/Sphere.fbx").value());
+        default_models["SPHERE"] = std::shared_ptr<Model>(create("C:/.BEbraEngine/src/Models/HighSphere.fbx").value());
         vertices_view = new RenderBufferView();
         vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models["SPHERE"]->meshes[0].vertices));
         default_models["SPHERE"]->meshes[0].vertices_view = vertices_view;
@@ -179,7 +183,7 @@ namespace BEbraEngine {
             bool skip = false;
             for (unsigned int j = 0; j < model->textures_loaded.size(); j++)
             {
-                if (std::strcmp(model->textures_loaded[j]->path.data(), str.C_Str()) == 0)
+                if (std::strcmp(path.data(), str.C_Str()) == 0)
                 {
                     textures.push_back(model->textures_loaded[j]);
                     skip = true; // текстура с тем же путем к файлу уже загружена, переходим к следующей (оптимизация)
@@ -189,7 +193,7 @@ namespace BEbraEngine {
             if (!skip)
             {   // если текстура еще не была загружена, то загружаем её
                 Texture* texture;
-                texture = _textureFactory->create(path);
+                //texture = _textureFactory->create(path);
                 textures.push_back(texture);
                 model->textures_loaded.push_back(texture); // сохраняем текстуру в массиве с уже загруженными текстурами, тем самым гарантируя, что у нас не появятся без необходимости дубликаты текстур
             }

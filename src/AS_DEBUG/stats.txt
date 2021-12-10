@@ -1,18 +1,18 @@
 
 Total count
-PshGPtr    : 6804
-PshC4      : 6804
-PshV4      : 6804
-CALL       : 6804
-RET        : 13609
-CALLSYS    : 6806
-SUSPEND    : 20415
+PshGPtr    : 6244
+PshC4      : 6244
+PshV4      : 6244
+CALL       : 6244
+RET        : 12489
+CALLSYS    : 6246
+SUSPEND    : 18735
 FREE       : 1
 STOREOBJ   : 1
-CpyVtoR4   : 6804
-CpyRtoV4   : 6804
+CpyVtoR4   : 6244
+CpyRtoV4   : 6244
 PGA        : 1
-JLowZ      : 6804
+JLowZ      : 6244
 
 Never executed
 PopPtr    
@@ -205,25 +205,25 @@ POWu64
 Thiscall1 
 
 Sequences
-PshGPtr   , CALLSYS    : 6804
-PshC4     , CALL       : 6804
-PshV4     , PshGPtr    : 6804
-CALL      , SUSPEND    : 6804
-RET       , SUSPEND    : 6804
-RET       , JLowZ      : 6804
+PshGPtr   , CALLSYS    : 6244
+PshC4     , CALL       : 6244
+PshV4     , PshGPtr    : 6244
+CALL      , SUSPEND    : 6244
+RET       , SUSPEND    : 6244
+RET       , JLowZ      : 6244
 CALLSYS   , SUSPEND    : 1
 CALLSYS   , STOREOBJ   : 1
-CALLSYS   , CpyRtoV4   : 6804
-SUSPEND   , PshC4      : 6804
-SUSPEND   , PshV4      : 6804
-SUSPEND   , RET        : 6804
+CALLSYS   , CpyRtoV4   : 6244
+SUSPEND   , PshC4      : 6244
+SUSPEND   , PshV4      : 6244
+SUSPEND   , RET        : 6244
 SUSPEND   , CALLSYS    : 1
 SUSPEND   , FREE       : 1
 SUSPEND   , PGA        : 1
 FREE      , RET        : 1
 STOREOBJ  , SUSPEND    : 1
-CpyVtoR4  , RET        : 6804
-CpyRtoV4  , CpyVtoR4   : 6804
+CpyVtoR4  , RET        : 6244
+CpyRtoV4  , CpyVtoR4   : 6244
 PGA       , CALLSYS    : 1
-JLowZ     , SUSPEND    : 6804
+JLowZ     , SUSPEND    : 6244
 LABEL     , SUSPEND    : 1

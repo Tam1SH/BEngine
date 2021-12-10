@@ -12,21 +12,14 @@ namespace BEbraEngine {
     GameObject::GameObject()
     {
         name = "GameObject";
-#ifdef _DEBUG
-        Debug::log("Create", this, name, Debug::ObjectType::GameObject, Debug::MessageType::Info);
-#endif 
 
     }
     GameObject::GameObject(const std::string& name)
     {
-#ifdef _DEBUG
-        Debug::log("Create", this, name, Debug::ObjectType::GameObject, Debug::MessageType::Info);
-#endif 
+        this->name = name;
     }
     GameObject::~GameObject()
     {
-#ifdef _DEBUG
-        Debug::log("Destroy", this, name, Debug::ObjectType::GameObject, Debug::MessageType::Info);
-#endif 
+        DEBUG_DESTROY_CHECK("GameObject has not destroyed", this, name, Debug::ObjectType::GameObject, Debug::MessageType::Info);
     }
 }

@@ -3,6 +3,7 @@
 #include "Transform.hpp"
 #include "Physics.hpp"
 #include "Vector3.hpp"
+#include <Physics/btBulletCollisionCommon.h>
 namespace BEbraEngine {
 
     void RigidBody::resetState()
@@ -72,16 +73,10 @@ namespace BEbraEngine {
 
     RigidBody::RigidBody()
     {
-#ifdef _DEBUG
-        Debug::log("Create", this, "", Debug::ObjectType::RigidBody, Debug::MessageType::Info);
-#endif 
     }
 
     RigidBody::~RigidBody()
     {
-        delete body;
-#ifdef _DEBUG
-        Debug::log("Destroy", this, "", Debug::ObjectType::RigidBody, Debug::MessageType::Info);
-#endif 
+        DEBUG_DESTROY_CHECK("RigidBody has not destroyed", this, "", Debug::ObjectType::RigidBody, Debug::MessageType::Info);
     }
 }

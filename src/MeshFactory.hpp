@@ -10,6 +10,7 @@ namespace BEbraEngine {
     public:
 
         std::optional<Model*> create(const std::string& path);
+        std::optional<Model*> createAsync(const std::string& path);
         std::shared_ptr<Model> getDefaultModel(const std::string& name);
         MeshFactory(AbstractRender* render);
     private:

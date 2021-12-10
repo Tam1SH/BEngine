@@ -29,38 +29,26 @@ namespace BEbraEngine {
         }
         else {
             Debug::log("BufferPool is empty", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            delete obj;
             return std::optional<RenderObject*>();
         }
 
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
-        Texture* _texture = textureFactory->createAsync("C:/.BEbraEngine/src/textures/tex9.jpg",
-            [=](Texture* texture) {
-                *obj->texture = std::move(*texture);
-                delete texture;
-                render->executeQueues_Objects.addTask([=] {
-                    render->freeDescriptor(obj);
-                    VulkanDescriptorSetInfo setinfo{};
-                    setinfo.sampler = obj->texture->sampler;
-                    setinfo.imageView = obj->texture->imageView;
-                    setinfo.bufferView = object_view.get();
-
-                    obj->descriptor = render->createDescriptor(&setinfo);
-
-                    });
-            });
-        obj->texture = std::unique_ptr<Texture>(_texture);
+        setTexture(obj, "textures/tex8.jpg");
         obj->matrix = object_view;
 
         obj->setColor(Vector3(0.2f, 0.4f, 0.3f));
         VulkanDescriptorSetInfo setinfo{};
-        setinfo.sampler = obj->texture->sampler;
-        setinfo.imageView = obj->texture->imageView;
+        auto vTex = static_cast<VulkanTexture*>(obj->texture.get());
+        setinfo.sampler = vTex->sampler;
+        setinfo.imageView = vTex->imageView;
         setinfo.bufferView = object_view.get();
 
         obj->descriptor = render->createDescriptor(&setinfo);
         if (!obj->descriptor) {
             Debug::log("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            delete obj;
             return std::optional<RenderObject*>();
         }
         obj->layout = &render->pipelineLayout;
@@ -148,6 +136,11 @@ namespace BEbraEngine {
         auto obj = std::static_pointer_cast<VulkanRenderObject>(object); 
         render->freeDescriptor(obj.get());
         _poolofObjects->free(obj->matrix);
+        textureFactory->destroyTexture(obj->texture.get());
+#ifdef _DEBUG
+        object->isDestroyed = true;
+#endif // _DEBUG
+
     }
 
     void VulkanRenderObjectFactory::destroyPointLight(std::shared_ptr<PointLight> light)
@@ -174,18 +167,54 @@ namespace BEbraEngine {
     {
         render->freeDescriptor(obj);
         VulkanDescriptorSetInfo setinfo{};
-        setinfo.sampler = obj->texture->sampler;
-        setinfo.imageView = obj->texture->imageView;
+        auto vTex = static_cast<VulkanTexture*>(obj->texture.get());
+        setinfo.sampler = vTex->sampler;
+        setinfo.imageView = vTex->imageView;
         setinfo.bufferView = obj->matrix.get();
         obj->descriptor = render->createDescriptor(&setinfo);
     }
 
     VulkanRenderObjectFactory::VulkanRenderObjectFactory()
     {
+
     }
 
     VulkanRenderObjectFactory::~VulkanRenderObjectFactory()
     {
+
+    }
+
+    void VulkanRenderObjectFactory::setTexture(RenderObject* object, const boost::filesystem::path& path)
+    {
+        auto obj = static_cast<VulkanRenderObject*>(object);
+        if (obj->texture.get())
+        {
+            textureFactory->destroyTexture(obj->texture.get());
+            obj->texture.reset();
+        }
+        Texture* _texture = textureFactory->createAsync(path,
+            [=](Texture* texture) {
+                render->executeQueues_Objects.addTask([=] {
+                    
+                    textureFactory->destroyTexture(object->texture.get());
+                    object->texture.reset();
+                    object->texture = std::unique_ptr<Texture>(texture);
+                    render->freeDescriptor(obj);
+                    VulkanDescriptorSetInfo setinfo{};
+
+                    auto vTex = static_cast<VulkanTexture*>(obj->texture.get());
+                    setinfo.sampler = vTex->sampler;
+                    setinfo.imageView = vTex->imageView;
+                    setinfo.bufferView = obj->matrix.get();
+                    obj->descriptor = render->createDescriptor(&setinfo);
+                    });
+            });
+        obj->texture = std::unique_ptr<Texture>(_texture);
+    }
+
+    void VulkanRenderObjectFactory::setTexture(RenderObject* object, Texture const* path)
+    {
+
     }
 
     Camera* VulkanRenderObjectFactory::createCamera(const Vector3& position)

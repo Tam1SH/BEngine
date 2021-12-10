@@ -5,6 +5,7 @@
 #include "IReusable.hpp"
 #include "Model.hpp"
 #include "matrix.hpp"
+#include "Debug.hpp"
 namespace BEbraEngine {
     class Transform;
     class Texture;
@@ -13,7 +14,7 @@ namespace BEbraEngine {
 //TODO: draw is bad bleat.
 namespace BEbraEngine {
 
-    class RenderObject : public GameObjectComponent, public IReusable {
+    class RenderObject : public GameObjectComponent, public IReusable { DEBUG_DESTROY_CHECK_DECL()
     public:
         struct ShaderData {
             Matrix4 model;
@@ -21,6 +22,7 @@ namespace BEbraEngine {
         };
 
     public:
+
 
         std::unique_ptr<Texture> texture;
 

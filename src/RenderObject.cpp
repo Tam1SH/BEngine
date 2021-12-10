@@ -15,16 +15,11 @@ namespace BEbraEngine {
 
     RenderObject::~RenderObject()
     {
-#ifdef _DEBUG
-        Debug::log("Destroy", this, "", Debug::ObjectType::RenderObject, Debug::MessageType::Info);
-#endif 
+        DEBUG_DESTROY_CHECK("RenderObject has not destroyed", this, "", Debug::ObjectType::RenderObject, Debug::MessageType::Info);
     }
 
     RenderObject::RenderObject()
     {
-#ifdef _DEBUG
-        Debug::log("Create", this, "", Debug::ObjectType::RenderObject, Debug::MessageType::Info);
-#endif 
     }
 
     

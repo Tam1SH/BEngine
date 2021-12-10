@@ -1,7 +1,7 @@
 #pragma once
 #include "AbstractComponent.hpp"
 #include "Vector3.hpp"
-
+#include "Debug.hpp"
 class btCollisionObject;
 
 namespace std {
@@ -11,8 +11,7 @@ namespace std {
 }
 namespace BEbraEngine {
 
-	class Collider : public GameObjectComponent
-	{
+	class Collider : public GameObjectComponent { DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class ColliderFactory;
 	public:

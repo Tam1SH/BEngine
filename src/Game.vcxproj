@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
@@ -104,7 +104,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(SolutionDir)Include\KHR;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(SolutionDir)Include\KHR;$(IncludePath);C:\boost</IncludePath>
     <PublicIncludeDirectories>
     </PublicIncludeDirectories>
     <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
@@ -122,7 +122,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(IncludePath);C:\boost</IncludePath>
     <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,7 +154,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;libboost_filesystem-vc142-mt-gd-x64-1_77.lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -242,7 +242,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;tbb12.lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;libboost_filesystem-vc142-mt-gd-x64-1_77.lib;tbb12.lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <EntryPointName>VS</EntryPointName>
@@ -303,10 +303,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Include\glad\src\glad.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="AbstractScriptObject.cpp" />
     <ClCompile Include="AngelScript.cpp" />
     <ClCompile Include="AngelScriptEngine.cpp" />
@@ -315,14 +311,10 @@
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderFactory.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
-    <ClCompile Include="DXRenderBufferPool.cpp" />
-    <ClCompile Include="DXRenderObjectFactory.cpp" />
-    <ClCompile Include="DXTextureFactory.cpp" />
-    <ClCompile Include="GLRender.cpp" />
-    <ClCompile Include="GLWindow.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="RigidBodyFactory.cpp" />
     <ClCompile Include="ScriptObjectFactory.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="VulkanObjects.cpp" />
     <ClCompile Include="VulkanRender.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -332,8 +324,6 @@
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="DescriptorSet.cpp" />
     <ClCompile Include="DescriptorSetLayout.cpp" />
-    <ClCompile Include="DXRender.cpp" />
-    <ClCompile Include="DXWindow.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -342,7 +332,6 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="VulkanTextureFactory.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="LoadExecuter.cpp" />
     <ClCompile Include="MeshFactory.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Network.cpp" />
@@ -378,13 +367,7 @@
     <ClInclude Include="BaseScriptEngine.hpp" />
     <ClInclude Include="Collider.hpp" />
     <ClInclude Include="ColliderFactory.hpp" />
-    <ClInclude Include="DXObjects.hpp" />
-    <ClInclude Include="DXRenderBufferPool.hpp" />
-    <ClInclude Include="DXRenderObjectFactory.hpp" />
-    <ClInclude Include="DXTextureFactory.hpp" />
     <ClInclude Include="ExecuteQueues.hpp" />
-    <ClInclude Include="GLRender.hpp" />
-    <ClInclude Include="GLWindow.hpp" />
     <ClInclude Include="IDraweable.hpp" />
     <ClInclude Include="ITextureFactory.hpp" />
     <ClInclude Include="Math.hpp" />
@@ -393,6 +376,7 @@
     <ClInclude Include="IProxyGameObjectFactory.hpp" />
     <ClInclude Include="ScriptObjectFactory.hpp" />
     <ClInclude Include="ScriptWrappers.hpp" />
+    <ClInclude Include="Shader.hpp" />
     <ClInclude Include="VulkanObjects.hpp" />
     <ClInclude Include="VulkanRender.hpp" />
     <ClInclude Include="CommandBuffer.hpp" />
@@ -400,8 +384,6 @@
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="DescriptorSet.hpp" />
-    <ClInclude Include="DXRender.hpp" />
-    <ClInclude Include="DirectWindow.hpp" />
     <ClInclude Include="GameObjectMediator.h" />
     <ClInclude Include="IRenderBufferPool.hpp" />
     <ClInclude Include="IReusable.hpp" />
@@ -422,7 +404,6 @@
     <ClInclude Include="VulkanTextureFactory.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="IScript.hpp" />
-    <ClInclude Include="LoadExecuter.hpp" />
     <ClInclude Include="Model.hpp" />
     <ClInclude Include="Network.hpp" />
     <ClInclude Include="Physics.hpp" />

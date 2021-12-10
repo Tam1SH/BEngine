@@ -26,6 +26,12 @@ namespace BEbraEngine {
 	class RenderData {
 		std::vector<std::shared_ptr<RenderObject>> objects;
 	};
+	class RenderSettings {
+	public:
+		bool isEnable_MSAA{};
+		size_t countPerPixel_MSSA{};
+
+	};
 	class AbstractRender {
 	public:
 		enum class TypeBuffer {

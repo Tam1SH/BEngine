@@ -4,7 +4,6 @@
 //TODO: сделать неймспейсы для разных частей движка
 //TODO: начать делать хотя бы что-то со звуком 
 //TODO: реализовать систему частиц(партикле сустемXD) 
-//TODO: сборку под ведро вынести в отдельный проект.
 /*
 TODO: подумать над реализацей:
 ****************************************************************************************
@@ -19,8 +18,6 @@ TODO: подумать над реализацей:
 
 
 #define NOMINMAX
-#include "GLWindow.hpp"
-#include "GLRender.hpp"
 #include "CreateInfoStructures.hpp"
 #include "BaseRenderWindow.hpp"
 #include "DebugUI.hpp"
@@ -30,8 +27,6 @@ TODO: подумать над реализацей:
 #include "GameLogic.hpp"
 #include "Vector2.hpp"
 #include "VulkanWindow.hpp"
-#include "DirectWindow.hpp"
-#include "DXRender.hpp"
 #include "VulkanRender.hpp"
 #include "VulkanObjects.hpp"
 #include "Input.hpp"
@@ -49,37 +44,15 @@ namespace BEbraEngine {
         std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace1;
         std::unique_ptr<GameLogic> gameLogic1;
-        bool multiThreading = false;
+        bool multiThreading = true;
     public:
         void init() {
-            int pizdaXyuViborRenderAPIEptaAhyliEsheDelat = 1;
-
-            if (pizdaXyuViborRenderAPIEptaAhyliEsheDelat == 0) {
-
-                render1 = std::unique_ptr<DXRender>(new DXRender());
-                window1 = std::unique_ptr<DXWindow>(new DXWindow(render1.get()));
-            }
-
-            if(pizdaXyuViborRenderAPIEptaAhyliEsheDelat == 1) {
-
-                render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
-                window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
-            }
-
-            if (pizdaXyuViborRenderAPIEptaAhyliEsheDelat == 2) {
-                render1 = std::unique_ptr<GLRender>(new GLRender());
-                window1 = std::unique_ptr<GLWindow>(new GLWindow(render1.get()));
-            }
-
-            if (pizdaXyuViborRenderAPIEptaAhyliEsheDelat != 2) {
-
-                window1->createWindow(Vector2(800, 600), "BEEEBRA!!!");
-                physics = std::shared_ptr<Physics>(new Physics());
-                workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
-                gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, physics));
-
-
-            }
+            render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
+            window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
+            window1->createWindow(Vector2(800, 700), "BEEEBRA!!!");
+            physics = std::shared_ptr<Physics>(new Physics());
+            workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
+            gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, physics));
         }
         void start() {
 
@@ -89,7 +62,7 @@ namespace BEbraEngine {
 
 
                     tbb::flow::graph g;
-                    tbb::flow::broadcast_node< tbb::flow::continue_msg> input(g);
+                    tbb::flow::broadcast_node<tbb::flow::continue_msg> input(g);
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _input(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
@@ -122,8 +95,8 @@ namespace BEbraEngine {
         }
 
         ~Engine() {
-            gameLogic1.reset();
-            render1.reset();
+          //  gameLogic1.reset();
+          //  render1.reset();
           //  UId->Destroy();
         }
     };

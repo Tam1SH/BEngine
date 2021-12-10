@@ -13,7 +13,7 @@ Variables:
 - 16,3 -
             {
     7   2 *    SUSPEND
-    8   2 *    PGA      0xd9287d0          (str:I LOVE YOU)
+    8   2 *    PGA      0x96a34c0          (str:I LOVE YOU)
    11   4 *    CALLSYS  102           (void print(const string&in))
 - 24,2 -
             }

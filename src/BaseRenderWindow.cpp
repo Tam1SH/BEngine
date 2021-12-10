@@ -30,13 +30,15 @@ namespace BEbraEngine {
 	void BaseWindow::update() {
 
 		SDL_Event event;
+		
 		while (SDL_PollEvent(&event)) {
 			SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
-
 			//    ImGui_ImplSDL2_ProcessEvent(&event);
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
 				auto size = getSize();
+				
 				this->onResizeCallback(size.x,size.y);
+				//break;
 			}
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE) {
 				_isClose = true;
@@ -52,23 +54,8 @@ namespace BEbraEngine {
 		if (type == SurfaceType::Vulkan) {
 			flag = SDL_WINDOW_VULKAN;
 		}
-		if (type == SurfaceType::OpenGL) {
-			flag = SDL_WINDOW_OPENGL;
-		}
 		handle = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flag | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
-		
-		if (type == SurfaceType::OpenGL) {
-			//nevermind.
-			auto gl = dynamic_cast<GLWindow*>(this);
-			SDL_GLContext context = SDL_GL_CreateContext(handle);
-			SDL_GL_MakeCurrent(handle, context);
-			gl->setGLContext(context);
-			if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
-			{
-				throw std::exception();
-			}
-			
-		}
+
 		Input::setWindow(handle);
 	}
 	void BaseWindow::onCreateWindow(const Vector2& size, const SurfaceType& type, const std::string& title = "BEbraEngine")

@@ -140,14 +140,15 @@ namespace BEbraEngine {
     void Physics::addRigidBody(std::shared_ptr<RigidBody> body)
     {
         queues.addTask([=]() {
-            dynamicsWorld->addRigidBody(body.get()->getRigidBody());
+            dynamicsWorld->addRigidBody(body->getRigidBody());
             bodies.push_back(body);
             });
     }
     void Physics::removeRigidBody(std::shared_ptr<RigidBody> body)
     {
         queues.addTask([=]() {
-            dynamicsWorld->removeRigidBody(body.get()->getRigidBody());
+            rigidBodyFactory->destroy(body);
+            dynamicsWorld->removeRigidBody(body->getRigidBody());
             bodies.remove(body);
             });
     }

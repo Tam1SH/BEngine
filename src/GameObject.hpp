@@ -3,15 +3,13 @@
 #include "stdafx.h"
 #include <typeinfo>
 #include "Vector3.hpp"
+#include "Debug.hpp"
+
 
 namespace BEbraEngine {
-    class GameObjectFactory;
 
-}
-namespace BEbraEngine {
-    class GameObjectFactory;
 
-    class GameObject : public GameObjectComponent {
+    class GameObject : public GameObjectComponent { DEBUG_DESTROY_CHECK_DECL()
     public:
         template<typename T>
         std::shared_ptr<T> getComponent() {

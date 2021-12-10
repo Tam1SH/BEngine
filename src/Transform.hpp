@@ -5,6 +5,7 @@
 #include "matrix.hpp"
 #include "RenderBuffer.hpp"
 #include <glm/gtx/quaternion.hpp>
+#include "Debug.hpp"
 namespace BEbraEngine {
     class TransformFactory;
 
@@ -16,6 +17,7 @@ namespace BEbraEngine {
         friend class TransformFactory;
 
     public:
+
         void updatePosition(const Vector3& position, const Vector4& quat);
 
         void setPosition(const Vector3& position) noexcept;

@@ -1,4 +1,5 @@
 #include <fstream>
+#include <boost/filesystem.hpp>
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -14,7 +15,3 @@
 #include <json/json.hpp>
 #include <glm/glm.hpp>
 
-#ifdef _WIN64
-#include <DirectXMath.h>
-
-#endif

@@ -13,10 +13,10 @@ Variables:
     3   2 *    STOREOBJ v2
 - 11,2 -
     4   2 *    SUSPEND
-    5   2 *    PGA      0xd92a250          (str:EBAL)
+    5   2 *    PGA      0x96a30c0          (str:EBAL)
     8   4 *    CALLSYS  102           (void print(const string&in))
 - 12,2 -
    10   2 *    SUSPEND
-   11   2 *    FREE     v2, 0xa137b80          (type:GameObject)
+   11   2 *    FREE     v2, 0x8fa36a0          (type:GameObject)
             0:
    14   2 *    RET      0

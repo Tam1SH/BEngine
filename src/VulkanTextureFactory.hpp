@@ -9,21 +9,20 @@ namespace BEbraEngine {
     class AbstractRender;
     class VulkanRender;
 }
+
 namespace BEbraEngine {
-    class VulkanTextureFactory : public ITextureFactory {
+    class VulkanTextureFactory final : public ITextureFactory {
     public:
-        Texture* createAsync(const std::filesystem::path& path, std::function<void(Texture*)> onComplete) override;
+        Texture* createAsync(const boost::filesystem::path& path, std::function<void(Texture*)> onComplete) override;
 
-       // Texture* create(const std::string& path) override { return 0; }
+        Texture* create(const boost::filesystem::path& path, bool generateMip) override;
 
-        Texture* createEmpty() override;
-
-        Texture* create(const std::string& path) override;
-
+        void destroyTexture(Texture* texture) override;
 
         VulkanTextureFactory(AbstractRender* render);
 
         private:
             VulkanRender* render;
+
     };
 }

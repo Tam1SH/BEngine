@@ -21,15 +21,10 @@ namespace BEbraEngine {
 	Collider::Collider()
 	{
 		name = "Collider";
-#ifdef _DEBUG
-		Debug::log("Create", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
-#endif 
 	}
 	Collider::~Collider()
 	{
-#ifdef _DEBUG
-		Debug::log("Destroy", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
-#endif 
+		DEBUG_DESTROY_CHECK("Collider has not destroyed", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
 	}
 }
 

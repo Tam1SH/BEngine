@@ -22,7 +22,6 @@ namespace BEbraEngine {
 	void VulkanWindow::onResizeCallback(int width, int height)
 	{
 		render->recreateSwapChain(width, height);
-		render->drawFrame();
 	}
 
 	Vector2 VulkanWindow::getDrawableSize()

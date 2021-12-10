@@ -32,11 +32,14 @@ namespace BEbraEngine {
     class VulkanRenderObjectFactory : public IRenderObjectFactory
     {
     public:
-        friend class Transform;
 
         void bindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform) override;
 
         void bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) override;
+
+        void setTexture(RenderObject* object, const boost::filesystem::path& path) override;
+
+        void setTexture(RenderObject* object, Texture const* path) override;
 
         std::optional<RenderObject*> createObject() override;
 
@@ -74,7 +77,6 @@ namespace BEbraEngine {
         VulkanRender* render;
         VulkanTextureFactory* textureFactory;
         std::unique_ptr<MeshFactory> meshFactory;
-
 
     };
 }

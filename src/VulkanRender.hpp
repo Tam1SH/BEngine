@@ -11,7 +11,7 @@
 const int MAX_FRAMES_IN_FLIGHT = 3;
 
 namespace BEbraEngine {
-    class Texture;
+    class VulkanTexture;
     class Matrix4;
     class VulkanWindow;
     class Camera;
@@ -26,6 +26,7 @@ namespace BEbraEngine {
     class LightDescriptorInfo;
     class DescriptorPool;
     class CommandPool;
+    class VulkanPipeline;
     class CommandBuffer;
     class VulkanDirLight;
     class VulkanPointLight;
@@ -95,13 +96,17 @@ namespace BEbraEngine {
 
         void freeDescriptor(VulkanPointLight* set);
 
+        void destroyTexture(VulkanTexture* texture);
+
         RenderBuffer* createBuffer(void* data, uint32_t size, VkBufferUsageFlags usage);
 
-        void createVkImage(unsigned char* data, int texWidth, int texHeight, VkImage& textureImage, VkDeviceMemory& textureImageMemory, VkDeviceSize imageSize);
+        void generateMipmaps(VulkanTexture* texture, VkFormat imageFormat, CommandBuffer& buffer);
 
-        VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+        void createVkImage(unsigned char* data, VulkanTexture* texture, VkDeviceSize imageSize);
 
-        void createTextureSampler(VkSampler& textureSampler);
+        VkImageView createImageView(VulkanTexture* texture, VkFormat format, VkImageAspectFlags aspectFlags);
+
+        void createTextureSampler(VulkanTexture* texture);
 
         void recreateSwapChain(uint32_t width, uint32_t height);
 
@@ -201,9 +206,7 @@ namespace BEbraEngine {
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
 
-        VkImage depthImage;
-        VkDeviceMemory depthImageMemory;
-        VkImageView depthImageView;
+        std::unique_ptr<VulkanTexture> depthTexture;
 
         std::vector<VkImageView> swapChainImageViews;
 
@@ -221,8 +224,7 @@ namespace BEbraEngine {
 
         VkDescriptorSetLayout LightLayout;
 
-
-        VkPipeline graphicsPipeline;
+        std::unique_ptr<VulkanPipeline> pipeLine;
 
         VkPipeline linegraphicsPipeline;
 
@@ -273,8 +275,6 @@ namespace BEbraEngine {
 
         void copyBuffer1(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkCommandBuffer& cmdBuffer);
 
-        VkImageView createTextureImageView(VkImage& textureImage);
-
        
         
         //static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
@@ -283,9 +283,9 @@ namespace BEbraEngine {
 
         static uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
-        void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+        void createImage(VulkanTexture* texture, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
 
-        void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandBuffer& buffer);
+        void transitionImageLayout(VulkanTexture* texture, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandBuffer& buffer);
 
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, VkCommandBuffer& cmdbuffer);
 

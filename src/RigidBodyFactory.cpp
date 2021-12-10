@@ -4,6 +4,7 @@
 #include "Physics.hpp"
 #include "Collider.hpp"
 namespace BEbraEngine {
+
 	RigidBodyFactory::RigidBodyFactory(Physics* physics)
 	{
 		this->physics = physics;
@@ -36,7 +37,7 @@ namespace BEbraEngine {
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape->get()->getCollisionShape(), localInertia);
-        rigidBody->body = new btRigidBody(rbInfo);
+        rigidBody->body = std::make_unique<btRigidBody>(rbInfo);
 
         rigidBody->setName("RigidBody");
 
@@ -44,7 +45,10 @@ namespace BEbraEngine {
 	}
     void RigidBodyFactory::destroy(std::shared_ptr<RigidBody> body)
     {
-        physics->removeRigidBody(body);
+#ifdef _DEBUG
+        body->isDestroyed = true;
+#endif // _DEBUG
+
     }
 }
 
