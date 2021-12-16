@@ -430,13 +430,19 @@
     <None Include="scripts\test.as">
       <Filter>Файлы ресурсов\Scripts</Filter>
     </None>
-    <None Include="shaders\shader.frag">
+    <None Include="shaders\shaderWrite.frag">
       <Filter>Файлы ресурсов\Shaders\Vulkan</Filter>
     </None>
-    <None Include="shaders\shader.vert">
+    <None Include="shaders\shaderWrite.vert">
       <Filter>Файлы ресурсов\Shaders\Vulkan</Filter>
     </None>
     <None Include="cpp.hint" />
+    <None Include="shaders\shaderRead.frag">
+      <Filter>Файлы ресурсов\Shaders\Vulkan</Filter>
+    </None>
+    <None Include="shaders\shaderRead.vert">
+      <Filter>Файлы ресурсов\Shaders\Vulkan</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt">

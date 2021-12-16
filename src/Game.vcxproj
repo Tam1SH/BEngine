@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
@@ -60,7 +60,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -154,7 +154,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;libboost_filesystem-vc142-mt-gd-x64-1_77.lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -433,8 +433,10 @@
     <None Include="cpp.hint" />
     <None Include="scripts\BEbraEngine.as" />
     <None Include="scripts\test.as" />
-    <None Include="shaders\shader.frag" />
-    <None Include="shaders\shader.vert" />
+    <None Include="shaders\shaderRead.frag" />
+    <None Include="shaders\shaderRead.vert" />
+    <None Include="shaders\shaderWrite.frag" />
+    <None Include="shaders\shaderWrite.vert" />
     <None Include="TAA.vert" />
   </ItemGroup>
   <ItemGroup>

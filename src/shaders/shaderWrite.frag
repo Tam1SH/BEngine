@@ -92,6 +92,7 @@ void main() {
     
     vec4 FragColor = vec4(result * objectColor,1.0f);
 
+    //outColor =  vec4(vec3(1.0 - texture(texSampler, fragTexCoord)), 1.0);
     outColor = texture(texSampler, fragTexCoord) * FragColor; 
     //outColor = FragColor; 
 }

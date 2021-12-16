@@ -1,7 +1,6 @@
 //TODO: сделать свою векторную матешу
 // TODO: скрипт двигло
 // TODO: сделать кластерный рендер
-//TODO: сделать неймспейсы для разных частей движка
 //TODO: начать делать хотя бы что-то со звуком 
 //TODO: реализовать систему частиц(партикле сустемXD) 
 /*
@@ -106,19 +105,23 @@ namespace BEbraEngine {
 
 
 
+size_t operator"" lol(size_t t) {
+    return t;
+}
 #ifndef __ANDROID__
 #undef main
 #endif
 #ifdef __cplusplus
 extern "C"
 #endif
+
 int main()
 {
     BEbraEngine::Engine engine;
     engine.init();
     engine.start();
 
-    return 0;
+    return 0x1337228lol;
 }
 
 

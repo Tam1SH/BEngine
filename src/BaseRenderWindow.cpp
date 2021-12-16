@@ -10,6 +10,7 @@ namespace BEbraEngine {
 	void BaseWindow::vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface)
 	{
 		SDL_Vulkan_CreateSurface(handle, instance, surface);
+
 	}
 	std::vector<const char*> BaseWindow::vulkan_GetInstanceExtensions()
 	{

@@ -37,7 +37,7 @@ namespace BEbraEngine {
     void GameLogic::scriptInit()
     {
         scriptManager->InitScripts();
-        camera = objectFactory->createCamera(Vector3(0));
+        camera = objectFactory->createCamera(Vector3(1));
         auto object = objectFactory->create(Vector3(0, 100, -100));
         object->getComponent<RigidBody>()->setDynamic(false);
         object->getComponent<Collider>()->setScale(Vector3(100, 100, 1));
@@ -104,13 +104,13 @@ namespace BEbraEngine {
     }
     void GameLogic::fixedUpdate() {
 
-        globalLight->setColor(lightColor);
-        step++;
-        if (step > 127) lightColor.x = 0; else lightColor.x = (128 - step) / 255.f * 2;
-        if(step < 128) lightColor.y = 0; else lightColor.y = (step - 128) / 255.f * 2;
-        if (step < 128) lightColor.z = (1 - lightColor.x); lightColor.z = (1 - lightColor.y);
-        if (step >= 255)
-            step = 0;
+        globalLight->setColor(Vector3(100,0,0));
+        //step++;
+        //if (step > 127) lightColor.x = 0; else lightColor.x = (128 - step) / 255.f * 2;
+        //if(step < 128) lightColor.y = 0; else lightColor.y = (step - 128) / 255.f * 2;
+       // if (step < 128) lightColor.z = (1 - lightColor.x); lightColor.z = (1 - lightColor.y);
+       // if (step >= 255)
+       //     step = 0;
         if (Input::isKeyPressed(KEY_CODE::KEY_Z)) {
             auto obj = objectFactory->create(camera->Position + (camera->Front * 5.f));
             //obj->getComponent<RigidBody>()->applyImpulse(camera->Front * 40.f, camera->Front);
