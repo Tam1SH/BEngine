@@ -7,7 +7,7 @@ layout(location = 0) out vec4 outColor;
 
 void main() {
 	outColor = vec4(subpassLoad(inputColor).rgb,1.f);
-	outColor *= vec4(0.1);
-	float depth = subpassLoad(inputDepth).r;
-	outColor.rgb += vec3((depth - 1) * 1.0 / (1 - 1.1));
+	//outColor *= vec4(0.1);
+	//float depth = subpassLoad(inputDepth).r;
+	//outColor.rgb += vec3((depth - 1) * 1.0 / (1 - 1.1));
 }

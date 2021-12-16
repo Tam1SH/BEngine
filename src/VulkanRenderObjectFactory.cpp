@@ -35,7 +35,7 @@ namespace BEbraEngine {
 
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
-        setTexture(obj, "textures/tex81.jpg");
+        setTexture(obj, "textures/tex9.jpg");
         obj->matrix = object_view;
 
         obj->setColor(Vector3(0.2f, 0.4f, 0.3f));

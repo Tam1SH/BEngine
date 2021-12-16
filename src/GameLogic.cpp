@@ -104,7 +104,7 @@ namespace BEbraEngine {
     }
     void GameLogic::fixedUpdate() {
 
-        globalLight->setColor(Vector3(100,0,0));
+        globalLight->setColor(Vector3(0.5f));
         //step++;
         //if (step > 127) lightColor.x = 0; else lightColor.x = (128 - step) / 255.f * 2;
         //if(step < 128) lightColor.y = 0; else lightColor.y = (step - 128) / 255.f * 2;
