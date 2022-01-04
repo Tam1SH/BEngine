@@ -4,19 +4,7 @@
 #include "Vector3.hpp"
 namespace BEbraEngine {
 
-	class ColliderInfo {
-	public:
-		enum class Type {
-			BOX,
-			SPHERE,
-			CUSTOM //≈·Û?
-		};
-	public:
-		Vector3 scale;
-		Vector3 position;
-		int type;
 
-	};
 	class LightDescriptorInfo {
 	public:
 		enum class Type {

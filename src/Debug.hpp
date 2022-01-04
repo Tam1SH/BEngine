@@ -49,7 +49,9 @@ namespace BEbraEngine {
 
 		static void enableLog(ObjectType type);
 
-		static void log(std::string text);
+		static void log(const std::stringstream& stream);
+
+		static void log(const std::string&& text);
 
 		static void log(const std::string&& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType);
 

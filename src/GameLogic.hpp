@@ -1,7 +1,15 @@
 #pragma once
 #include "stdafx.h"
+#include "IProxyGameObjectFactory.hpp"
 #include "VulkanRenderObjectFactory.hpp"
+#include "ExecuteQueues.hpp"
 #include <queue>
+
+using std::shared_ptr;
+using std::unique_ptr;
+using std::optional;
+using std::string;
+
 namespace BEbraEngine {
     class VulkanRender;
     class WorkSpace;
@@ -12,22 +20,21 @@ namespace BEbraEngine {
     class Camera;
     class Time;
     class ScriptObjectFactory;
-    class IProxyGameObjectFactory;
-    class GameObject;
 }
 namespace std {
     template<class _Ty, class _Dx>
     class unique_ptr;
     template<class T>
     class shared_ptr;
+
 }
 namespace BEbraEngine {
     //TODO: полигон блять для испытаний(делай скрипты)
     
-    class GameLogic {
+    class ScriptState {
     public:
 
-        GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, std::shared_ptr<Physics> physics);
+        ScriptState(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, std::shared_ptr<Physics> physics);
 
         void scriptInit();
 
@@ -37,16 +44,31 @@ namespace BEbraEngine {
 
         void update();
 
-        ~GameLogic();
+        void updateState();
+
+        void addObject(shared_ptr<GameObject> object, const GameObject::GameObjectCreateInfo& info = {});
+
+        void removeObject(shared_ptr<GameObject> object);
+
+        void addCamera(shared_ptr<Camera> camera);
+
+        void addLight(shared_ptr<PointLight> light);
+
+        void addDirLight(shared_ptr<DirectionLight> light);
+
+        ~ScriptState();
 
     private:
+
+        std::vector<shared_ptr<GameObject>> objects_;
+
+        ExecuteQueues<std::function<void()>> queues;
+
         std::shared_ptr<AbstractRender> render;
-       
-        std::shared_ptr<WorkSpace> workspace;
 
-        std::unique_ptr<GameObjectFactory> objectFactory;
+        std::shared_ptr<Physics> physics;
 
-        std::unique_ptr<IProxyGameObjectFactory> scriptObjectFactory;
+        std::unique_ptr<ScriptObjectFactory> scriptObjectFactory;
 
         std::unique_ptr<ScriptManager> scriptManager;
 

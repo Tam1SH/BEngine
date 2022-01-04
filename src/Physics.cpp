@@ -114,8 +114,9 @@ namespace BEbraEngine {
     }
     void Physics::update()
     {
+        
         dynamicsWorld->stepSimulation(Time::deltaTime(), 0, 1 / 60.f);
-        for (auto body = bodies.begin(); body != bodies.end();++body) {
+        for (auto body = bodies.begin(); body != bodies.end(); ++body) {
 
             btTransform trans;
             auto _body = (*body);
@@ -128,6 +129,7 @@ namespace BEbraEngine {
             quaat.w = quat.w();
                 
             auto vec = trans.getOrigin();
+
             auto pos = glm::vec3(
                 vec.x(), vec.y(), vec.z()
             );
@@ -135,28 +137,35 @@ namespace BEbraEngine {
                 _body->getTransform()->updatePosition(pos, quaat);
 
         }
+
         queues.execute();
+
     }
-    void Physics::addRigidBody(std::shared_ptr<RigidBody> body)
+    void Physics::updateData(const PhysicsData& data)
     {
-        queues.addTask([=]() {
-            dynamicsWorld->addRigidBody(body->getRigidBody());
-            bodies.push_back(body);
-            });
+        bodies.insert(bodies.end(), data.bodies.begin(), data.bodies.end());
+
     }
-    void Physics::removeRigidBody(std::shared_ptr<RigidBody> body)
+    void Physics::addRigidBody(shared_ptr<RigidBody> body)
     {
-        queues.addTask([=]() {
-            rigidBodyFactory->destroy(body);
-            dynamicsWorld->removeRigidBody(body->getRigidBody());
-            bodies.remove(body);
-            });
+        dynamicsWorld->addRigidBody(body->getRigidBody());
+        bodies.push_back(body);
     }
-    void Physics::removeCollider(std::shared_ptr<Collider> col)
+    void Physics::removeRigidBody(shared_ptr<RigidBody> body)
     {
-        queues.addTask([=]() {
-            dynamicsWorld->removeCollisionObject(col->get());
-            });
+        rigidBodyFactory->destroy(body.get());
+        dynamicsWorld->removeRigidBody(body->getRigidBody());
+        bodies.remove(body);
+    }
+    void Physics::removeCollider(Collider* col)
+    {
+        dynamicsWorld->removeCollisionObject(col->get());
+    }
+    void Physics::setCollder(RigidBody* body, Collider* collider)
+    {
+        colliderFactory->destroyCollider(rigidBodyFactory->getCollider(body));
+
+        rigidBodyFactory->setCollder(body, collider);
     }
     Physics::Physics()
     {
@@ -211,12 +220,13 @@ namespace BEbraEngine {
                 solver.get(),
                 collisionConfiguration.get());
         }
+        queues.setStrategy(ExecuteType::Single);
 
     }
     Physics::~Physics()
     {
         for (auto& body : bodies) {
-            rigidBodyFactory->destroy(body);
+            rigidBodyFactory->destroy(body.get());
         }
         dynamicsWorld.reset();
     }

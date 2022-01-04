@@ -21,9 +21,10 @@ namespace BEbraEngine {
             alignas(16) Vector3 color;
         };
 
+        struct RenderObjectCreateInfo { };
     public:
 
-
+        //бесполезная хуйня
         std::unique_ptr<Texture> texture;
 
         std::shared_ptr<Model> model;
@@ -59,9 +60,17 @@ namespace BEbraEngine {
             alignas(16) Vector3 diffuse;
             alignas(16) Vector3 specular;
 
+            //TODO: мне кажется, что стоит перейти на другую модель расчёта дальности света
             alignas(4) float constant;
             alignas(4) float linear;
             alignas(4) float quadratic;
+        };
+        
+        struct PointLightCreateInfo {
+            const Vector3 lightColor{ 1 };
+            float constant{};
+            float linear{};
+            float quadratic{};
         };
     public:
         std::weak_ptr<RenderBufferView> data;
@@ -98,7 +107,9 @@ namespace BEbraEngine {
             alignas(16) Vector3 specular;
 
         };
-
+        struct DirectionLightCreateInfo {
+            const Vector3 lightColor{ 1 };
+        };
 
 
     public:

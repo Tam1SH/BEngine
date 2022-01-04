@@ -8,7 +8,6 @@ namespace BEbraEngine {
 	};
 	template<typename Function>
 	class ExecuteQueues {
-	public:
 
 	public:
 		using Queue = tbb::concurrent_queue<Function>;
@@ -56,10 +55,10 @@ namespace BEbraEngine {
 
 			};
 
-				if (type == ExecuteType::Multi)
-					tbb::parallel_for<size_t>(
-						0, queues.size(),
-						[&](size_t i) { f(i); });
+			if (type == ExecuteType::Multi)
+				tbb::parallel_for<size_t>(
+					0, queues.size(),
+					[&](size_t i) { f(i); });
 
 			if (type == ExecuteType::Single)
 				for (int i = 0; i < queues.size(); i++)

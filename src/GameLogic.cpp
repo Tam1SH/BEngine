@@ -17,102 +17,102 @@
 namespace BEbraEngine {
 
 
-    GameLogic::GameLogic(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, std::shared_ptr<Physics> physics)
+    ScriptState::ScriptState(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, std::shared_ptr<Physics> physics)
     {
-        this->workspace = workspace;
-        this->render = std::shared_ptr<AbstractRender>(render);
-        objectFactory = std::unique_ptr<GameObjectFactory>(new GameObjectFactory(this->render, physics));
-        objectFactory->SetWorkSpace(workspace);
-        auto scriptsss = new ScriptObjectFactory();
-        scriptsss->realFactory = objectFactory.get();
-        scriptObjectFactory = std::unique_ptr<IProxyGameObjectFactory>(scriptsss);
+        this->physics = physics;
+        this->render = render;
+        auto scriptsss = new ScriptObjectFactory(new GameObjectFactory(render, physics));
+        scriptsss->setContext(this);
 
+        scriptObjectFactory = std::unique_ptr<ScriptObjectFactory>(scriptsss);
         scriptManager = std::make_unique<ScriptManager>(scriptObjectFactory.get());
+
         scriptManager->LoadScripts();
 
 
         scriptInit();
     }
 
-    void GameLogic::scriptInit()
+    void ScriptState::scriptInit()
     {
         scriptManager->InitScripts();
-        camera = objectFactory->createCamera(Vector3(1));
-        auto object = objectFactory->create(Vector3(0, 100, -100));
+        camera = scriptObjectFactory->createCamera(Vector3(1));
+
+        auto object = scriptObjectFactory->create(Vector3(0, 100, -100));
         object->getComponent<RigidBody>()->setDynamic(false);
         object->getComponent<Collider>()->setScale(Vector3(100, 100, 1));
         object->getComponent<Transform>()->setScale(Vector3(100, 100, 1));
 
-        auto object2 = objectFactory->create(Vector3(0, 100, 100));
+
+        auto object2 = scriptObjectFactory->create(Vector3(0, 100, 100));
+        auto d = object2->getComponentByName("RigidBody");
         object2->getComponent<RigidBody>()->setDynamic(false);
         object2->getComponent<Collider>()->setScale(Vector3(100, 100, 1));
         object2->getComponent<Transform>()->setScale(Vector3(100, 100, 1));
 
-        auto object3 = objectFactory->create(Vector3(-100, 100, 0));
+        auto object3 = scriptObjectFactory->create(Vector3(-100, 100, 0));
         object3->getComponent<RigidBody>()->setDynamic(false);
         object3->getComponent<Collider>()->setScale(Vector3(1, 100, 100));
         object3->getComponent<Transform>()->setScale(Vector3(1, 100, 100));
 
-        auto object4 = objectFactory->create(Vector3(100, 100, 0));
+
+        auto object4 = scriptObjectFactory->create(Vector3(100, 100, 0));
         object4->getComponent<RigidBody>()->setDynamic(false);
         object4->getComponent<Collider>()->setScale(Vector3(1, 100, 100));
         object4->getComponent<Transform>()->setScale(Vector3(1, 100, 100));
 
-        auto object5 = objectFactory->create(Vector3(0, 0, 0));
+        auto object5 = scriptObjectFactory->create(Vector3(0, 0, 0));
         object5->getComponent<RigidBody>()->setDynamic(false);
         object5->getComponent<Collider>()->setScale(Vector3(100, 1, 100));
         object5->getComponent<Transform>()->setScale(Vector3(100, 1, 100));
 
-        auto sphere = objectFactory->create(Vector3(0, 20, 0));
+        auto sphere = scriptObjectFactory->create(Vector3(0, 20, 0));
         sphere->getComponent<Collider>()->setScale(Vector3(10));
         sphere->getComponent<Transform>()->setScale(Vector3(10));
         sphere->getComponent<RenderObject>()->setColor(Vector3(1));
         sphere->getComponent<RigidBody>()->setDynamic(false);
-       // player = objectFactory->create(Vector3(2));
-       // player->getComponent<RigidBody>()->setDynamic(false);
-     //   player->getComponent<Collider>()->setScale(Vector3(2));
-     //   player->getComponent<Transform>()->setScale(Vector3(2));
 
 
-
-        objectFactory->setModel(sphere.get(), "C:/.BEbraEngine/src/Models/HighSphere.fbx");
+        scriptObjectFactory->setModel(sphere.get(), "C:/.BEbraEngine/src/Models/HighSphere.fbx");
         bounds.push_back(object4);
         bounds.push_back(object3);
         bounds.push_back(object2);
         bounds.push_back(object5);
         bounds.push_back(object);
         bounds.push_back(sphere);
-        globalLight = objectFactory->createDirLight(Vector3(0,-0.5f,0));
-        light = objectFactory->createLight(Vector3(0, 20, 0));
 
+        globalLight = scriptObjectFactory->createDirLight(Vector3(0, -0.5f, 0));
+        light = scriptObjectFactory->createLight(Vector3(0, 20, 0));
+        ///light->setColor(Vector3(0));
 
         rotate = Vector3(0, -0.5f, 0);
     }
 
 
-    void GameLogic::clearObjects() {
+    void ScriptState::clearObjects() {
         if (!objects.empty()) {
 
             std::shared_ptr<GameObject> obj;
             obj = objects.back();
-            objectFactory->destroyObject(obj);
+            scriptObjectFactory->destroyObject(obj);
             objects.remove(obj);
             obj.reset();
 
         }
 
     }
-    void GameLogic::fixedUpdate() {
-
-        globalLight->setColor(Vector3(0.5f));
+    void ScriptState::fixedUpdate() {
+        globalLight->setColor(Vector3(0.1));
         //step++;
         //if (step > 127) lightColor.x = 0; else lightColor.x = (128 - step) / 255.f * 2;
         //if(step < 128) lightColor.y = 0; else lightColor.y = (step - 128) / 255.f * 2;
        // if (step < 128) lightColor.z = (1 - lightColor.x); lightColor.z = (1 - lightColor.y);
        // if (step >= 255)
        //     step = 0;
-        if (Input::isKeyPressed(KEY_CODE::KEY_Z)) {
-            auto obj = objectFactory->create(camera->Position + (camera->Front * 5.f));
+        if (false) {
+
+
+            auto obj = scriptObjectFactory->create(camera->Position + (camera->Front * 5.f));
             //obj->getComponent<RigidBody>()->applyImpulse(camera->Front * 40.f, camera->Front);
             Vector3 random_color = Vector3(
                 (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
@@ -122,24 +122,15 @@ namespace BEbraEngine {
             objects.push_back(obj);
         }
         if (Input::isKeyPressed(KEY_CODE::KEY_T)) {
-            clearObjects();
+            //clearObjects();
         }
-        if (Input::isKeyPressed(KEY_CODE::KEY_Q)) {
-            lookatobject = true;
-        }
-        if (Input::isKeyPressed(KEY_CODE::KEY_R)) {
-            lookatobject = false;
-        }
-        if (Input::isKeyPressed(KEY_CODE::KEY_X)) {
-            //if (objects.size() >= 40)
-                //posofobject = &objects.back()->getComponent<Transform>()->getPosition();
-        }
+
         if (Input::isKeyPressed(KEY_CODE::KEY_C)) {
             if (!lights.empty())
             {
                 std::shared_ptr<PointLight> light1;
                 light1 = lights.front();
-                objectFactory->destroyPointLight(light1);
+                scriptObjectFactory->destroyPointLight(light1);
                 light1.reset();
                 lights.remove(light1);
             }
@@ -147,7 +138,7 @@ namespace BEbraEngine {
         }
 
         if (Input::isKeyPressed(KEY_CODE::KEY_E)) {
-            auto light = objectFactory->createLight(camera->Position);
+            auto light = scriptObjectFactory->createLight(camera->Position);
             Vector3 random_color = Vector3(
                 (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
             );
@@ -164,21 +155,24 @@ namespace BEbraEngine {
             rotate.y = -0.5f;
             globalLight->setDirection(rotate);
         }
+
         for (auto& object : objects) {
+
+           
             object->getComponent<RigidBody>()->applyImpulseToPoint(1, Vector3(0, 20, 0));
         }
 
     }
-    void GameLogic::update()
+    void ScriptState::update()
     {
-        scriptManager->runScripts();
+        auto obj = scriptObjectFactory->create(Vector3(0));
+        scriptObjectFactory->destroyObject(obj);
+     //   scriptManager->runScripts();
         float speed = 1;
         if (Input::isKeyPressed(KEY_CODE::KEY_LEFT_SHIFT)) {
             speed = 20;
         }
 
-        //if (Input::IsKeyPressed(KEY_CODE::KEY_Z)) {
-        //}
         if (Input::isKeyPressed(KEY_CODE::KEY_A)) {
             camera->processKeyboard(LEFT, Time::deltaTime() * speed);
         }
@@ -186,10 +180,10 @@ namespace BEbraEngine {
             camera->processKeyboard(RIGHT, Time::deltaTime() * speed);
         }
         if (Input::isKeyPressed(KEY_CODE::KEY_S)) {
-            camera->processKeyboard(BACKWARD, Time::deltaTime()* speed);
+            camera->processKeyboard(BACKWARD, Time::deltaTime() * speed);
         }
         if (Input::isKeyPressed(KEY_CODE::KEY_W)) {
-            camera->processKeyboard(FORWARD, Time::deltaTime()* speed);
+            camera->processKeyboard(FORWARD, Time::deltaTime() * speed);
         }
 
         static float time = 0;
@@ -198,26 +192,80 @@ namespace BEbraEngine {
             fixedUpdate();
             time = 0;
         }
-        if (lookatobject) {
-
-         //   std::cout << posofobject->x << std::endl;
-          //  camera->lookAt(*posofobject);
-        }
-       // else
-            //camera->Update();
-        //player->getComponent<Collider>()->setPosition(camera->Position + camera->Front * 15.f);
-       // player->getComponent<RigidBody>()->SetPosition(camera->Position);
-        //player->getComponent<RigidBody>()->applyImpulse(Vector3(1), Vector3(1));
-        //scriptManager->RunScripts();
 
     }
 
-    GameLogic::~GameLogic()
+    void ScriptState::updateState()
     {
-        this;
+        queues.execute();
+    }
+
+
+    void ScriptState::addObject(shared_ptr<GameObject> object, const GameObject::GameObjectCreateInfo& info)
+    {
+        queues.addTask([=] {
+            
+            if (object.get()) {
+
+                auto renderObj = object->getComponent<RenderObject>();
+                render->addObject(renderObj);
+
+                if (info.rigidBodyInfo) {
+                    auto rigidBody = object->getComponent<RigidBody>();
+
+                    physics->addRigidBody(rigidBody);
+                }
+            }
+            else
+                Debug::log("object has destroyed", &object, "", Debug::ObjectType::GameObject, Debug::MessageType::Error);
+
+            }
+        );
+
+    }
+
+    void ScriptState::removeObject(shared_ptr<GameObject> object)
+    {
+        queues.addTask([this, object] {
+            if (object.get()) {
+               // Debug::log("object removed from render", object->getComponent<RenderObject>().get(), object->getName(), Debug::ObjectType::GameObject, Debug::MessageType::Info);
+                physics->removeRigidBody(object->getComponent<RigidBody>());
+                render->removeObject(object->getComponent<RenderObject>());
+            }
+            else
+                Debug::log("object pointer is invalid", &object, "", Debug::ObjectType::GameObject, Debug::MessageType::Error);
+            });
+    }
+
+    void ScriptState::addCamera(shared_ptr<Camera> camera)
+    {
+        queues.addTask([this, camera] {
+            render->addCamera(camera);
+            render->selectMainCamera(camera.get());
+            });
+    }
+
+    void ScriptState::addLight(shared_ptr<PointLight> light)
+    {
+        queues.addTask([this, light] {
+            render->addLight(light);
+            });
+    }
+
+    void ScriptState::addDirLight(shared_ptr<DirectionLight> light)
+    {
+        queues.addTask([this, light] {
+            render->addGlobalLight(light);
+            });
+    }
+
+    ScriptState::~ScriptState()
+    {
         for (auto& object : bounds) {
-            objectFactory->destroyObject(object);
+            scriptObjectFactory->destroyObject(object);
         }
-        //scriptManager.reset();
+        for (auto& object : objects) {
+            scriptObjectFactory->destroyObject(object);
+        }
     }
 }

@@ -77,26 +77,29 @@ namespace BEbraEngine {
         KEY_RIGHT_SHIFT = SDL_SCANCODE_RSHIFT
     };
     
-    class Input {
 
+    class Input {
+        struct InputState {
+            float x{}, y{};
+            float scrollX{}, scrollY{};
+
+        };
     public:
         friend class BaseWindow;
 
-        static int* mouse_x;
-
-        static int* mouse_y;
-
         static void setKeyBoardState(const Uint8* state);
 
-        static int getScrollX();
+        static float getScrollX();
 
-        static int getScrollY();
+        static float getScrollY();
 
-        static int getX();
+        static float getX();
 
-        static int getY();
+        static float getY();
 
+        static float getOffsetX();
 
+        static float getOffsetY();
 
         static void setWindow(WindowHandle* window);
 
@@ -109,13 +112,23 @@ namespace BEbraEngine {
         ~Input();
     private:
 
+        static void update(InputState& state);
+
+        static float* mouseX;
+
+        static float* mouseY;
+
+        static float* lastX;
+        
+        static float* lastY;
+
         static const Uint8* state;
 
-        static const Uint8* old_state;
+        static const Uint8* oldState;
 
-        static int* scroll_x;
+        static float* scrollX;
 
-        static int* scroll_y;
+        static float* scrollY;
 
         static WindowHandle* window;
 

@@ -70,6 +70,7 @@ namespace BEbraEngine {
         bool isMain() { return _isMain; }
 
         void setMain(bool value) { _isMain = value; }
+
     private:
         void updateCameraVectors();
     private:
@@ -84,6 +85,8 @@ namespace BEbraEngine {
         int lastX{};
         int lastY{};
 
+        int cursorX;
+        int cursorY;
         bool _isMain{};
         Vector2 rectViewport{};
 

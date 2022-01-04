@@ -3,12 +3,14 @@
 #include "AbstractComponent.hpp"
 #include <Physics/btBulletDynamicsCommon.h>
 #include "Debug.hpp"
+#include "Vector3.hpp"
+
+using std::shared_ptr;
 
 namespace BEbraEngine {
 	class Transform;
 	class Physics;
-	class Vector3;
-
+	class Collider;
 }
 
 namespace BEbraEngine {
@@ -16,15 +18,21 @@ namespace BEbraEngine {
 	class RigidBody : public GameObjectComponent { DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class RigidBodyFactory;
+
+		struct RigidBodyCreateInfo {
+			Collider* collider{};
+			Vector3 position{};
+			float mass{};
+		};
 	public:
 
 		void resetState();
 
 		btRigidBody* getRigidBody() { return body.get(); }
 
-		void setTransform(std::shared_ptr<Transform> transform);
+		void setTransform(Transform* transform);
 
-		void setShape(btCollisionShape* newShape);
+		void setMass(float mass);
 
 		void setDynamic(bool isActive);
 
@@ -36,7 +44,7 @@ namespace BEbraEngine {
 
 		void applyImpulseToPoint(float force, const Vector3& point);
 
-		Transform* getTransform() { return transform.get(); }
+		Transform* getTransform() { return transform; }
 
 		RigidBody();
 
@@ -46,7 +54,9 @@ namespace BEbraEngine {
 
 		std::unique_ptr<btRigidBody> body;
 
-		std::shared_ptr<Transform> transform;
+		Collider* collider;
+
+		Transform* transform;
 
 		btVector3 linearFactor;
 

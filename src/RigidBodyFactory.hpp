@@ -1,6 +1,12 @@
 #pragma once
-
+#include "stdafx.h"
 #include "RigidBoby.hpp"
+
+
+using std::shared_ptr;
+using std::unique_ptr;
+using std::optional;
+using std::string;
 
 namespace BEbraEngine {
 	class Physics;
@@ -14,9 +20,13 @@ namespace BEbraEngine {
 	public:
 		RigidBodyFactory(Physics* physics);
 
-		RigidBody* create(Collider* collider = nullptr);
+		std::optional<RigidBody*> create(const RigidBody::RigidBodyCreateInfo& info);
 
-		void destroy(std::shared_ptr<RigidBody> body);
+		void destroy(RigidBody* body);
+
+		void setCollder(RigidBody* body, Collider* collider);
+
+		Collider* getCollider(RigidBody* body);
 	private:
 		Physics* physics;
 	};

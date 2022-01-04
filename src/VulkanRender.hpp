@@ -32,6 +32,7 @@ namespace BEbraEngine {
     class VulkanDirLight;
     class VulkanPointLight;
     class VulkanRenderObjectFactory;
+    class RenderBufferView;
 }
 
 namespace std {
@@ -81,6 +82,13 @@ namespace BEbraEngine {
         void addGlobalLight(std::shared_ptr<DirectionLight> globalLight) override;
 
         void drawFrame() override;
+
+        Vector2 getCurrentRenderResolution() { 
+            return { 
+            static_cast<float>(currentRenderResolution.width), 
+            static_cast<float>(currentRenderResolution.height) 
+        };
+        }
 
         uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type) override;
 
@@ -156,7 +164,7 @@ namespace BEbraEngine {
     private:
         std::unique_ptr<VulkanRenderObjectFactory> factory;
 
-        std::list<std::shared_ptr<VulkanRenderObject>> objects;
+        std::vector<std::shared_ptr<VulkanRenderObject>> objects;
 
         std::list<std::shared_ptr<VulkanPointLight>> lights;
 
@@ -169,6 +177,8 @@ namespace BEbraEngine {
         VkPipeline graphicsPipeline;
 
         VkPipeline graphicsPipeline2;
+
+        std::shared_ptr<RenderBuffer> cameraPlug;
 
         std::unique_ptr<DescriptorPool> VulkanRenderBufferPool;
 
@@ -188,7 +198,13 @@ namespace BEbraEngine {
 
         VkDescriptorSet setMainCamera;
 
+        VkDescriptorSet globalLightSet;
+
+        VkDescriptorSet pointLightsSet;
+
         std::vector<VkDescriptorSet> attachmentsSets;
+
+        std::vector <std::unique_ptr<VulkanTexture>> normalAttachments;
 
         std::vector<std::unique_ptr<VulkanTexture>> colorAttachments;
 
@@ -202,7 +218,9 @@ namespace BEbraEngine {
 
         VkSurfaceKHR surface;
 
-        tbb::concurrent_queue<CommandBuffer> BufferQueue;
+        tbb::concurrent_queue<CommandBuffer> BufferRenderQueue;
+
+        tbb::concurrent_queue<CommandBuffer> BufferTransferQueue;
 
         VkQueue graphicsQueue;
 
@@ -259,9 +277,15 @@ namespace BEbraEngine {
 
     private:
 
+        void createCameraSet(); 
+
+        void createPointAndDirectionLightsSets();
+
         VkQueue getGraphicsQueue();
 
-        void addBufferToQueue(CommandBuffer buffer);
+        void addBufferToRenderQueue(const CommandBuffer& buffer);
+
+        void addBufferToTransferQueue(const CommandBuffer& buffer);
 
         VkFence* getCurrentFence();
 
@@ -376,11 +400,8 @@ namespace BEbraEngine {
         const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
-#ifdef _DEBUG
+
         const bool enableValidationLayers = true;
-#else 
-        const bool enableValidationLayers = false;
-#endif
 
 };
 }

@@ -37,6 +37,7 @@ namespace BEbraEngine {
 
     void Camera::processKeyboard(Camera_Movement direction, float deltaTime)
     {
+
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)
             Position += Front * velocity;
@@ -50,10 +51,11 @@ namespace BEbraEngine {
 
     void Camera::_move(float& x, float& y)
     {
-        x = (float)Input::getX() - (float)lastX;
-        y = (float)lastY - (float)Input::getY();
-        lastX = Input::getX();
-        lastY = Input::getY();
+        
+        x = Input::getOffsetX();
+        y = Input::getOffsetY();
+        
+
     }
 
     void Camera::processMouseMovement(bool constrainPitch)
@@ -61,6 +63,7 @@ namespace BEbraEngine {
         float xoffset;
         float yoffset;
         _move(xoffset, yoffset);
+
         xoffset *= MouseSensitivity;
         yoffset *= MouseSensitivity;
 
@@ -109,6 +112,8 @@ namespace BEbraEngine {
     {
         Front = BEbraMath::normalize(at - Position);
     }
+
+
 
     void Camera::updateCameraVectors()
     {

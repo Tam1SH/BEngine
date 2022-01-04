@@ -1,7 +1,16 @@
 #pragma once
+#include "GameObject.hpp"
+
+using std::shared_ptr;
+using std::unique_ptr;
+using std::optional;
+using std::string;
+
 namespace std {
 	template<typename T>
 	class shared_ptr;
+	template<typename T>
+	class optional;
 }
 namespace BEbraEngine {
 	class GameObject;
@@ -13,19 +22,19 @@ namespace BEbraEngine {
 namespace BEbraEngine {
 	class IProxyGameObjectFactory {
 	public:
-		virtual std::shared_ptr<GameObject> create(const Vector3& position) = 0;
+		virtual optional<shared_ptr<GameObject>> create(const GameObject::GameObjectCreateInfo& info) = 0;
 
-		virtual std::shared_ptr<PointLight> createLight(const Vector3& position) = 0;
+		virtual shared_ptr<PointLight> createLight(const Vector3& position) = 0;
 
-		virtual std::shared_ptr<DirectionLight> createDirLight(const Vector3& direction) = 0;
+		virtual shared_ptr<DirectionLight> createDirLight(const Vector3& direction) = 0;
 
-		virtual std::shared_ptr<Camera> createCamera(const Vector3& position) = 0;
+		virtual shared_ptr<Camera> createCamera(const Vector3& position) = 0;
 
-		virtual void destroyCamera(std::shared_ptr<Camera> camera) = 0;
+		virtual void destroyCamera(shared_ptr<Camera> camera) = 0;
 
-		virtual void destroyObject(GameObject* object) = 0;
+		virtual void destroyObject(shared_ptr<GameObject> object) = 0;
 
-		virtual void destroyObject(std::shared_ptr<GameObject> object) = 0;
+		virtual void setModel(GameObject* object, const string& path) = 0;
 
 		virtual void destroyPointLight(std::shared_ptr<PointLight> light) = 0;
 

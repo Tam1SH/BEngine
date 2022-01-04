@@ -8,11 +8,16 @@ namespace BEbraEngine {
 		this->size = size;
 		_collider->getCollisionShape()->setLocalScaling(size);
 	}
-	void Collider::setPosition(const Vector3& size)
+	void Collider::setPosition(const Vector3& position)
 	{
 		btTransform trans;
 		trans.setOrigin(size);
 		_collider->setWorldTransform(trans);
+	}
+	void Collider::setMass(float mass)
+	{
+		auto vec = btVector3(0,0,0);
+		_collider->getCollisionShape()->calculateLocalInertia(mass, vec);
 	}
 	Vector3 Collider::getPosition()
 	{

@@ -41,10 +41,8 @@ namespace BEbraEngine {
 			UniformDynamic //only vulkan
 		};
 		enum class Type {
-			Vulkan,
-			DirectX, //11
-			OpenGL, //4.2
-			OpenGL_ES = OpenGL //3.2
+			Vulkan
+			//Metal
 		};
 	public:
 		virtual void create(BaseWindow* window) = 0;

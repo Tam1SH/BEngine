@@ -12,6 +12,8 @@ namespace BEbraEngine {
 
         virtual Texture* create(const boost::filesystem::path& path, bool generateMip) = 0;
 
+        virtual Texture* createEmpty() = 0;
+
         virtual void destroyTexture(Texture* texture) = 0;
 
         virtual ~ITextureFactory() {}

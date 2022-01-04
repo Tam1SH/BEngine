@@ -4,6 +4,7 @@
 #include "Vector2.hpp"
 #include <SDL_vulkan.h>
 #include "GLWindow.hpp"
+#include "Debug.hpp"
 #include <glad/glad.h>
 #ifdef BEBRA_USE_SDL
 namespace BEbraEngine {
@@ -31,22 +32,42 @@ namespace BEbraEngine {
 	void BaseWindow::update() {
 
 		SDL_Event event;
-		
+
+
+		Input::InputState state{};
+		int x{}, y{};
+
+
+
+
+		//SDL_WarpMouseInWindow(handle, getSize().x / 2, getSize().y / 2);
 		while (SDL_PollEvent(&event)) {
-			SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
+
 			//    ImGui_ImplSDL2_ProcessEvent(&event);
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
 				auto size = getSize();
-				
-				this->onResizeCallback(size.x,size.y);
+
+				this->onResizeCallback(size.x, size.y);
 				//break;
 			}
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE) {
 				_isClose = true;
 			}
+
 		}
 
+		SDL_GetMouseState(&x, &y);
+
+		float deltaX = (float)x - getSize().x / 2;
+		float deltaY = getSize().y / 2 - (float)y;
+		*Input::lastX = deltaX;
+		*Input::lastY = deltaY;
+		state.x = x;
+		state.y = y;
+
+		Input::update(state);
 		Input::state = SDL_GetKeyboardState(NULL);
+
 
 	}
 	void BaseWindow::_onCreateWindow(int w, int h, const SurfaceType& type, const char* title)
@@ -56,6 +77,10 @@ namespace BEbraEngine {
 			flag = SDL_WINDOW_VULKAN;
 		}
 		handle = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flag | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
+
+		//SDL_SetRelativeMouseMode(SDL_TRUE);
+		//SDL_ShowCursor(0);
+		//SDL_SetWindowGrab(handle, SDL_TRUE);
 
 		Input::setWindow(handle);
 	}

@@ -10,6 +10,7 @@
 #include "IProxyGameObjectFactory.hpp"
 namespace BEbraEngine {
 	class WorkSpace;
+
 	class ScriptManager
 	{
 	private:

@@ -14,6 +14,19 @@ namespace BEbraEngine {
 	class Collider : public GameObjectComponent { DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class ColliderFactory;
+
+		struct ColliderCreateInfo {
+		public:
+			enum class Type {
+				Box,
+				Sphere,
+				Mesh //≈·Û?
+			};
+		public:
+			Vector3 scale{};
+			Vector3 position{};
+			Type type{};
+		};
 	public:
 		btCollisionObject* get() { return _collider.get(); }
 
@@ -22,7 +35,9 @@ namespace BEbraEngine {
 		Vector3& getSize() {
 			return size;
 		}
-		void setPosition(const Vector3& size);
+		void setPosition(const Vector3& position);
+
+		void setMass(float mass);
 
 		Vector3 getPosition();
 

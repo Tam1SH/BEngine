@@ -29,6 +29,7 @@ namespace BEbraEngine {
 	private:
 
 		asIScriptEngine* engine;
+
 		IProxyGameObjectFactory* factory;
 		
 	};

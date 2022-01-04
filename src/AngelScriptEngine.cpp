@@ -7,6 +7,7 @@
 #include <add_on/scriptbuilder/scriptbuilder.h>
 #include <add_on/weakref/weakref.h>
 #include <add_on/scripthandle/scripthandle.h>
+#include <add_on/scriptarray/scriptarray.h>
 #include "AngelScript.hpp"
 #include "ScriptWrappers.hpp"
 namespace BEbraEngine {
@@ -39,17 +40,19 @@ namespace BEbraEngine {
 
 		RegisterScriptHandle(engine);
 		RegisterScriptWeakRef(engine);
-
+		RegisterScriptArray(engine,false);
 		int r = engine->SetMessageCallback(asFUNCTION(MessageCallback), 0, asCALL_CDECL); assert(r >= 0);
 		r = engine->RegisterGlobalFunction("void print(const string &in)", asFUNCTIONPR(print, (const std::string&), void), asCALL_CDECL); assert(r >= 0);
 		r = engine->RegisterGlobalFunction("void print(float &in)", asFUNCTIONPR(print, (const float&), void), asCALL_CDECL); assert(r >= 0);
 
 
 		Wrappers::_Vector3::registerObj(engine);
+		Wrappers::_GameObjectComponent::registerObj(engine);
 		Wrappers::_GameObject::registerObj(engine);
 		Wrappers::_Input::registerObj(engine);
 		Wrappers::_Input::getInstance();
-		Wrappers::_GameObject::factory = factory;
+		
+		Wrappers::_GameObject::factory = static_cast<ScriptObjectFactory*>(factory);
 	}
 
 	AngelScriptEngine::~AngelScriptEngine()
@@ -92,7 +95,7 @@ namespace BEbraEngine {
 			std::stringstream ss;
 			ss << "ScriptException: ";
 			ss << ctx->GetExceptionString();
-			Debug::log("an exception has occurred", script, script->getName(), Debug::ObjectType::Script, Debug::MessageType::Error);
+			Debug::log(ss.str(), script, script->getName(), Debug::ObjectType::Script, Debug::MessageType::Error);
 		}
 	}
 	AngelScript* AngelScriptEngine::CreateScript(std::string code)

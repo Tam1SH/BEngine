@@ -1,13 +1,16 @@
 #pragma once
-#include "CreateInfoStructures.hpp"
+#include "stdafx.h"
+#include "Collider.hpp"
+
 class btCollisionShape;
+
 namespace std {
 	template<class T>
 	class shared_ptr;
 }
+
 namespace BEbraEngine {
 	class Physics;
-	class Collider;
 }
 
 namespace BEbraEngine {
@@ -16,9 +19,9 @@ namespace BEbraEngine {
 	public:
 		ColliderFactory(Physics* physics);
 
-		Collider* create(ColliderInfo* info);
+		std::optional<Collider*> create(const Collider::ColliderCreateInfo& info);
 
-		void destroyCollider(std::shared_ptr<Collider> col);
+		void destroyCollider(Collider* col);
 
 		void setShape(Collider* collider, btCollisionShape* newShape);
 	private:

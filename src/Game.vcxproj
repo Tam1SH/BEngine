@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
@@ -60,7 +60,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -107,7 +107,7 @@
     <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(SolutionDir)Include\KHR;$(IncludePath);C:\boost</IncludePath>
     <PublicIncludeDirectories>
     </PublicIncludeDirectories>
-    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;C:\boost\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -242,7 +242,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;libboost_filesystem-vc142-mt-gd-x64-1_77.lib;tbb12.lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Opengl32.Lib;vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;glfw3_$(Configuration).lib;d3d11.lib;d3dx11.lib;angelscript64_$(Configuration).lib;tbb12.lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <EntryPointName>VS</EntryPointName>
@@ -441,9 +441,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Tutorial03.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -16,6 +16,12 @@ namespace BEbraEngine {
     public:
         friend class TransformFactory;
 
+        struct TransformCreateInfo {
+
+            Vector3 position{};
+            Vector3 scale{ 1 };
+            //Quartion quat;
+        };
     public:
 
         void updatePosition(const Vector3& position, const Vector4& quat);

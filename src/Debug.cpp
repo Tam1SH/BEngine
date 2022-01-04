@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Debug.hpp"
+#include <iomanip>
 namespace BEbraEngine {
 	std::vector<Debug::ObjectType> Debug::_disableLog;
 	std::mutex Debug::m;
@@ -40,10 +41,29 @@ namespace BEbraEngine {
 			_disableLog.erase(item);
 
 	}
-	void Debug::log(std::string text)
+	void Debug::log(const std::stringstream& stream) {
+		time_t t = std::time(nullptr);
+		std::tm tm;
+		localtime_s(&tm, &t);
+
+		std::stringstream str;
+		str << "INFO: ";
+		str << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": ";
+
+		str << stream.str();
+		_log(str.str());
+	}
+	void Debug::log(const std::string&& text)
 	{
 		std::stringstream str;
-		str << "INFO: " << text;
+		time_t t = std::time(nullptr);
+		std::tm tm;
+		localtime_s(&tm, &t);
+
+
+		str << "INFO: ";
+		str << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": ";
+		str << text;
 		_log(str.str());
 	}
 	void Debug::log(const std::string&& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType)
@@ -53,8 +73,11 @@ namespace BEbraEngine {
 		if (auto item = std::find(_disableLog.begin(), _disableLog.end(), oType);
 			item == _disableLog.end())
 		{
+			time_t t = std::time(nullptr);
+			std::tm tm;
+			localtime_s(&tm, &t);
 
-			str << to_string(mType) << ": "
+			str << to_string(mType) << ": " << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": "
 				<< text << " | ";
 
 			if (handle)

@@ -43,12 +43,6 @@
     <Filter Include="Файлы ресурсов\Shaders\Vulkan">
       <UniqueIdentifier>{4dfd22de-5eea-429f-87df-3ec307a7b9b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы ресурсов\Shaders\GL">
-      <UniqueIdentifier>{e92bfe43-7631-4706-a5b5-44d5dacf0bc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы ресурсов\Shaders\DX">
-      <UniqueIdentifier>{7b280c19-536c-4f6d-8f07-5bb938be1e41}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\Render">
       <UniqueIdentifier>{9983e18b-45e6-482e-b604-88740bfd248e}</UniqueIdentifier>
     </Filter>
@@ -448,10 +442,5 @@
     <Text Include="..\CMakeLists.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Tutorial03.hlsl">
-      <Filter>Файлы ресурсов\Shaders\DX</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

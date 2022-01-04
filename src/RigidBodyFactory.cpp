@@ -9,19 +9,20 @@ namespace BEbraEngine {
 	{
 		this->physics = physics;
 	}
-    RigidBody* RigidBodyFactory::create(Collider* collider)
+    std::optional<RigidBody*> RigidBodyFactory::create(const RigidBody::RigidBodyCreateInfo& info)
 	{
         auto rigidBody = new RigidBody();
-        Collider* shape;
-        if (!collider) {
-            ColliderInfo info{};
-            shape = physics->getColliderFactory()->create(&info);
+        btCollisionObject* shape{};
+        if (info.collider) {
+            shape = info.collider->get();
         }
-        else
-            shape = collider;
-
         rigidBody->linearFactor = btVector3(1, 1, 1);
         rigidBody->AngularFactor = btVector3(1, 1, 1);
+
+        btScalar mass(1.f);
+        btVector3 localInertia(0, 0, 0);
+        /*
+        
         btScalar mass(1.f);
 
         //rigidbody is dynamic if and only if mass is non zero, otherwise static
@@ -29,26 +30,44 @@ namespace BEbraEngine {
 
         btVector3 localInertia(0, 0, 0);
         if (isDynamic)
-            shape->get()->getCollisionShape()->calculateLocalInertia(mass, localInertia);
-
+            shape->getCollisionShape()->calculateLocalInertia(mass, localInertia);
+            */
         btTransform startTransform;
         startTransform.setIdentity();
-        startTransform.setOrigin(btVector3(0, 0, 0));
+        startTransform.setOrigin(info.position);
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape->get()->getCollisionShape(), localInertia);
-        rigidBody->body = std::make_unique<btRigidBody>(rbInfo);
+        if (shape) {
+            shape->getCollisionShape()->calculateLocalInertia(mass, localInertia);
+
+            btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape->getCollisionShape(), localInertia);
+            rigidBody->body = std::make_unique<btRigidBody>(rbInfo);
+        }
+        else {
+            btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, 0, localInertia);
+            rigidBody->body = std::make_unique<btRigidBody>(rbInfo);
+        }
 
         rigidBody->setName("RigidBody");
 
-        return rigidBody;
+        return std::optional<RigidBody*>(rigidBody);
 	}
-    void RigidBodyFactory::destroy(std::shared_ptr<RigidBody> body)
+    void RigidBodyFactory::destroy(RigidBody* body)
     {
+        if (body)
+        {
 #ifdef _DEBUG
-        body->isDestroyed = true;
+            body->isDestroyed = true;
 #endif // _DEBUG
-
+        }
+    }
+    void RigidBodyFactory::setCollder(RigidBody* body, Collider* collider)
+    {
+        body->collider = collider;
+    }
+    Collider* RigidBodyFactory::getCollider(RigidBody* body)
+    {
+        return body->collider;
     }
 }
 

@@ -3,6 +3,7 @@
 // TODO: сделать кластерный рендер
 //TODO: начать делать хотя бы что-то со звуком 
 //TODO: реализовать систему частиц(партикле сустемXD) 
+//TODO: привести все фабричные методы к одному виду
 /*
 TODO: подумать над реализацей:
 ****************************************************************************************
@@ -42,48 +43,60 @@ namespace BEbraEngine {
         std::shared_ptr<Physics> physics;
         std::unique_ptr<BaseWindow> window1;
         std::shared_ptr<WorkSpace> workspace1;
-        std::unique_ptr<GameLogic> gameLogic1;
+        std::unique_ptr<ScriptState> gameLogic1;
         bool multiThreading = true;
     public:
         void init() {
             render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
             window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
-            window1->createWindow(Vector2(800, 700), "BEEEBRA!!!");
+            window1->createWindow(Vector2(1000, 1000), "BEEEBRA!!!");
             physics = std::shared_ptr<Physics>(new Physics());
             workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
-            gameLogic1 = std::unique_ptr<GameLogic>(new GameLogic(render1, workspace1, physics));
+            gameLogic1 = std::unique_ptr<ScriptState>(new ScriptState(render1, workspace1, physics));
         }
         void start() {
 
             while (!window1->isClose()) {
                 Time::updateTime();
                 if (multiThreading) {
-
-
+                    
+                    
                     tbb::flow::graph g;
                     tbb::flow::broadcast_node<tbb::flow::continue_msg> input(g);
                     tbb::flow::continue_node<tbb::flow::continue_msg>
-                        _input(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
+                        _window(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
-                        _render(g, [&](const tbb::flow::continue_msg&) { render1->drawFrame(); });
+                        _render(g, [&](const tbb::flow::continue_msg&) { 
+                      //  Debug::log("Render begin");
+                        render1->drawFrame();
+                      //  Debug::log("Render end");
+                            });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _physics(g, [&](const tbb::flow::continue_msg&) { physics->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _gameLogic(g, [&](const tbb::flow::continue_msg&) { gameLogic1->update(); });
 
+
                     tbb::flow::make_edge(input, _physics);
                     tbb::flow::make_edge(input, _render);
                     tbb::flow::make_edge(input, _gameLogic);
-                    tbb::flow::make_edge(input, _input);
-
+                    tbb::flow::make_edge(input, _window);
                     input.try_put(tbb::flow::continue_msg());
                     g.wait_for_all();
+                    gameLogic1->updateState();
+
                 }
                 else {
+                    
+                    
                     window1->update();
+                    Debug::log("Render begin");
+
                     render1->drawFrame();
+                    Debug::log("Render end");
                     physics->update();
                     gameLogic1->update();
+                    gameLogic1->updateState();
                 }
 
             }
@@ -105,9 +118,7 @@ namespace BEbraEngine {
 
 
 
-size_t operator"" lol(size_t t) {
-    return t;
-}
+
 #ifndef __ANDROID__
 #undef main
 #endif
@@ -121,7 +132,7 @@ int main()
     engine.init();
     engine.start();
 
-    return 0x1337228lol;
+    return 1337228;
 }
 
 

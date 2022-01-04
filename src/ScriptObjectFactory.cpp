@@ -3,46 +3,103 @@
 #include "GameObject.hpp"
 #include "Vector3.hpp"
 #include "GameObjectFactory.hpp"
+#include "GameLogic.hpp"
+
+using std::shared_ptr;
+using std::unique_ptr;
+using std::optional;
+using std::string;
+
 namespace BEbraEngine {
 
-    std::shared_ptr<GameObject> ScriptObjectFactory::create(const Vector3& position)
+    ScriptObjectFactory::ScriptObjectFactory(GameObjectFactory* factory)
     {
-        return realFactory->create(position);
+        realFactory_ = factory;
     }
 
-    std::shared_ptr<PointLight> ScriptObjectFactory::createLight(const Vector3& position)
+    void ScriptObjectFactory::setContext(ScriptState* logic)
     {
-        return realFactory->createLight(position);
+        logic_ = logic;
     }
 
-    std::shared_ptr<DirectionLight> ScriptObjectFactory::createDirLight(const Vector3& direction)
+    shared_ptr<GameObject> ScriptObjectFactory::create(const Vector3& position)
     {
-        return realFactory->createDirLight(direction);
+        GameObject::GameObjectCreateInfo info{};
+        Transform::TransformCreateInfo transformInfo{};
+        Collider::ColliderCreateInfo colliderInfo{};
+        RigidBody::RigidBodyCreateInfo rigidBodyInfo{};
+        RenderObject::RenderObjectCreateInfo renderInfo{};
+
+        transformInfo.position = position;
+
+        colliderInfo.position = position;
+        colliderInfo.scale = transformInfo.scale;
+        colliderInfo.type = Collider::ColliderCreateInfo::Type::Box;
+
+        rigidBodyInfo.mass = 1.f;
+        rigidBodyInfo.position = transformInfo.position;
+
+        info.colliderInfo = &colliderInfo;
+        info.renderInfo = &renderInfo;
+        info.transformInfo = &transformInfo;
+        info.rigidBodyInfo = &rigidBodyInfo;
+        return create(info).value();
     }
 
-    void ScriptObjectFactory::destroyObject(GameObject* object)
+    optional<shared_ptr<GameObject>> ScriptObjectFactory::create(const GameObject::GameObjectCreateInfo& info)
     {
-        realFactory->destroyObject(object);
+        auto optObj = realFactory_->create(info);
+
+        if (optObj.has_value()) {
+            auto obj = optObj.value();
+            logic_->addObject(obj, info);
+        }
+
+
+        return optObj;
     }
 
-    void ScriptObjectFactory::destroyObject(std::shared_ptr<GameObject> object)
+    shared_ptr<PointLight> ScriptObjectFactory::createLight(const Vector3& position)
     {
-        realFactory->destroyObject(object);
+        auto light = realFactory_->createLight(position);
+        logic_->addLight(light);
+        return light;
     }
 
-    void ScriptObjectFactory::destroyPointLight(std::shared_ptr<PointLight> light)
+    shared_ptr<DirectionLight> ScriptObjectFactory::createDirLight(const Vector3& direction)
     {
-        realFactory->destroyPointLight(light);
+        auto light = realFactory_->createDirLight(direction);
+        logic_->addDirLight(light);
+        return light;
     }
 
-    std::shared_ptr<Camera> ScriptObjectFactory::createCamera(const Vector3& position)
+    void ScriptObjectFactory::destroyObject(shared_ptr<GameObject> object)
     {
-        return realFactory->createCamera(position);
+        logic_->removeObject(object);
+        realFactory_->destroyObject(object);
     }
 
-    void ScriptObjectFactory::destroyCamera(std::shared_ptr<Camera> camera)
+
+    void ScriptObjectFactory::destroyPointLight(shared_ptr<PointLight> light)
     {
-        realFactory->destroyCamera(camera);
+        realFactory_->destroyPointLight(light);
+    }
+
+    shared_ptr<Camera> ScriptObjectFactory::createCamera(const Vector3& position)
+    {
+        auto camera = realFactory_->createCamera(position);
+        logic_->addCamera(camera);
+        return camera;
+    }
+
+    void ScriptObjectFactory::destroyCamera(shared_ptr<Camera> camera)
+    {
+        realFactory_->destroyCamera(camera);
+    }
+
+    void ScriptObjectFactory::setModel(GameObject* object, const string& path)
+    {
+        realFactory_->setModel(object, path);
     }
 
 }

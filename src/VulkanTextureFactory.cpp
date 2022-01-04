@@ -14,7 +14,7 @@ namespace BEbraEngine {
         auto str = ((path.parent_path().string() / path.stem()).string() + "_low");
         auto str1 = path.extension().string();
         auto path_low = str + str1;
-        auto image = create(path_low,false);
+        auto image = create(path_low, false);
 
         tbb::task_arena g;
         g.enqueue([=] {
@@ -41,8 +41,9 @@ namespace BEbraEngine {
 
         if (!pixels)
         {
-            Debug::log("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
-                image, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
+            if(!path.string().empty())
+                Debug::log("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
+                    image, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
             pixels = new unsigned char[4]{ 255,255,255 };
             texWidth = 1, texHeight = 1;
             imageSize = 4;
@@ -53,6 +54,7 @@ namespace BEbraEngine {
             image->mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
         else
             image->mipLevels = 1;
+
         render->createVkImage(pixels, image, imageSize);
         image->imageView = render->createImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
         stbi_image_free(pixels);
@@ -60,6 +62,10 @@ namespace BEbraEngine {
         render->createTextureSampler(image);
 
         return image;
+    }
+    Texture* VulkanTextureFactory::createEmpty()
+    {
+        return create("", false);
     }
     VulkanTextureFactory::VulkanTextureFactory(AbstractRender* render) : render(dynamic_cast<VulkanRender*>(render))
     { 

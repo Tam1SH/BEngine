@@ -8,6 +8,6 @@ namespace BEbraEngine {
     }
     Texture::~Texture()
     {
-        DEBUG_DESTROY_CHECK("texture has not destroyed", this, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
+        DEBUG_DESTROY_CHECK("texture has not destroyed", this, "", Debug::ObjectType::Empty, Debug::MessageType::Info);
     }
 }

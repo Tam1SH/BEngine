@@ -18,15 +18,13 @@ namespace BEbraEngine {
     }
 
 
-
-    void RigidBody::setTransform(std::shared_ptr<Transform> transform)
+    void RigidBody::setTransform(Transform* transform)
     {
         this->transform = transform;
     }
 
-    void RigidBody::setShape(btCollisionShape* newShape)
+    void RigidBody::setMass(float mass)
     {
-
     }
 
     void RigidBody::setDynamic(bool isActive)

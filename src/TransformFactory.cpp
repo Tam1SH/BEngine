@@ -2,11 +2,12 @@
 #include "TransformFactory.hpp"
 #include "Transform.hpp"
 namespace BEbraEngine {
-    Transform* TransformFactory::create(const glm::vec3& position)
+    std::optional<Transform*> TransformFactory::create(const Transform::TransformCreateInfo& info)
     {
-        auto trans = new Transform(position);
+        auto trans = new Transform(info.position);
+        trans->setScale(info.scale);
         trans->setName("Transform");
-        return trans;
+        return std::optional<Transform*>(trans);
     }
 
     TransformFactory::TransformFactory()

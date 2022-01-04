@@ -7,7 +7,7 @@
 #include "RigidBoby.hpp"
 #include <angelscript.h>
 #include "RigidBodyFactory.hpp"
-#include "IProxyGameObjectFactory.hpp"
+#include "ScriptObjectFactory.hpp"
 #include <typeinfo>
 #include "Input.hpp"
 namespace BEbraEngine {
@@ -75,68 +75,9 @@ namespace BEbraEngine {
 
 		_Input* _Input::instance;
 
-		class _GameObject : public AbstractScriptObject {
-		public:
-
-			static IProxyGameObjectFactory* factory;
-
-			static void registerObj(asIScriptEngine* engine) {
-
-				int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
-
-				r = engine->RegisterObjectBehaviour(__name,
-					asBEHAVE_FACTORY, "GameObject@ f()", asFUNCTION(gameObjectFactory), asCALL_CDECL); assert(r >= 0);
-
-				r = engine->RegisterObjectBehaviour(__name,
-					asBEHAVE_RELEASE, "void f()", asMETHOD(_GameObject, release1), asCALL_THISCALL); assert(r >= 0);
-
-				r = engine->RegisterObjectBehaviour(__name,
-					asBEHAVE_ADDREF, "void f()", asMETHOD(_GameObject, addRef), asCALL_THISCALL); assert(r >= 0);
-
-				r = engine->RegisterObjectMethod(__name,
-					"void Create()", asMETHOD(_GameObject, create), asCALL_THISCALL); assert(r >= 0);
-
-			}
-		private:
-			_GameObject() {}
-			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObject)
-
-			std::shared_ptr<GameObject> instance;
-
-			static constexpr const char* __name = "GameObject";
-			
-
-			static _GameObject* gameObjectFactory() {
-				auto o = new _GameObject();
-				o->refCount = 1;
-				return o;
-			}
-
-			int release1() {
-				if (--refCount == 0)
-				{
-					if (instance.get()) {
-						factory->destroyObject(instance);
-						instance.reset();
-					}
-
-					delete this;
-					return 0;
-				}
-				return refCount;
-
-			}
-			void create() {
-				instance = factory->create(Vector3());
-			}
 
 
-			
-
-		};
-		IProxyGameObjectFactory* _GameObject::factory;
-
-		class _Transform : public AbstractScriptObject {
+		class _Transform {
 
 		};
 
@@ -155,11 +96,35 @@ namespace BEbraEngine {
 
 		};
 
-		class _Vector3 : public AbstractScriptObject {
+		//template<typename T> 
+		//class proxyGameObjectComponent : std::enable_if<std::is_base_of<GameObjectComponent, T>> {
+//
+		//};
+
+
+		class _Vector3 {
 		public:
 			static constexpr const char* __name = "Vector3";
 
 			Vector3 instance{};
+
+			static _Vector3* create(float& x, float& y, float& z) {
+				auto vec = new _Vector3();
+				vec->instance = { x,y,z };
+				return vec;
+			}
+
+			static _Vector3* create(float& x, float& y) {
+				auto vec = new _Vector3();
+				vec->instance = { x,y,0 };
+				return vec;
+			}
+
+			static _Vector3* create(float& all) {
+				auto vec = new _Vector3();
+				vec->instance = { all };
+				return vec;
+			}
 
 			static void registerObj(asIScriptEngine* engine) {
 
@@ -167,7 +132,15 @@ namespace BEbraEngine {
 					sizeof(_Vector3), asOBJ_REF | asOBJ_SCOPED); assert(r >= 0);
 
 				r = engine->RegisterObjectBehaviour(__name,
-					asBEHAVE_FACTORY, "Vector3@ f()", asFUNCTION(defaultFactory<_Vector3>), asCALL_CDECL); assert(r >= 0);
+					asBEHAVE_FACTORY, "Vector3@ f(float& in, float& in, float& in)", asFUNCTIONPR(create, (float& x,float& y, float& z), _Vector3*), asCALL_CDECL); assert(r >= 0);
+				
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_FACTORY, "Vector3@ f(float& in, float& in)", asFUNCTIONPR(create, (float& x, float& y), _Vector3*), asCALL_CDECL); assert(r >= 0);
+				
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_FACTORY, "Vector3@ f(float& in)", asFUNCTIONPR(create, (float& all), _Vector3*), asCALL_CDECL); assert(r >= 0);
+
+
 
 				r = engine->RegisterObjectBehaviour(__name,
 					asBEHAVE_RELEASE, "void f()", asFUNCTION(defaultRelease<_Vector3>), asCALL_CDECL_OBJLAST); assert(r >= 0);
@@ -252,5 +225,97 @@ namespace BEbraEngine {
 				return this;
 			}
 		};
+
+
+		class _GameObjectComponent {
+		public:
+
+			static constexpr const char* __name = "GameObjectComponent";
+
+			std::shared_ptr<GameObjectComponent> instance;
+
+			static void registerObj(asIScriptEngine* engine) {
+			//	int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
+
+			}
+		private:
+			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObjectComponent)
+		};
+
+		class _GameObject {
+		public:
+
+			static ScriptObjectFactory* factory;
+
+			static void registerObj(asIScriptEngine* engine) {
+
+				int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
+
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_FACTORY, "GameObject@ f(const Vector3& in)", asFUNCTION(gameObjectFactory), asCALL_CDECL); assert(r >= 0);
+
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_RELEASE, "void f()", asMETHOD(_GameObject, release1), asCALL_THISCALL); assert(r >= 0);
+
+				r = engine->RegisterObjectBehaviour(__name,
+					asBEHAVE_ADDREF, "void f()", asMETHOD(_GameObject, addRef), asCALL_THISCALL); assert(r >= 0);
+
+			////	r = engine->RegisterObjectMethod(__name,
+			//		"GameObjectComponent@ getComponentByName(const string& in)", asMETHOD(_GameObject, getComponentByName), asCALL_THISCALL); assert(r >= 0);
+
+			}
+		private:
+		
+			_GameObjectComponent* getComponentByName(const std::string& in) {
+				
+				auto _comp = instance->getComponentByName(in);
+				if (_comp.get()) {
+					auto comp = new _GameObjectComponent();
+					comp->instance = _comp;
+					return comp;
+				}
+				else
+					return 0;
+			}
+			_GameObject(const _Vector3& position) {
+				instance = factory->create(position.instance);
+				//Debug::log("create script game object");
+
+			}
+			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObject)
+
+				std::shared_ptr<GameObject> instance;
+
+			static constexpr const char* __name = "GameObject";
+
+
+			static _GameObject* gameObjectFactory(const _Vector3& in) {
+				auto o = new _GameObject(in);
+				o->refCount = 1;
+				return o;
+			}
+
+			int release1() {
+				if (--refCount == 0)
+				{
+					if (instance.get()) {
+						factory->destroyObject(instance);
+					}
+
+					delete this;
+					return 0;
+				}
+				return refCount;
+
+			}
+			void create() {
+
+			}
+
+
+
+
+		};
+		ScriptObjectFactory* _GameObject::factory;
 	}
 }

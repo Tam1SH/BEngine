@@ -1,10 +1,11 @@
 #pragma once
+#include "stdafx.h"
 #include <glm/glm.hpp>
+#include "Transform.hpp"
 namespace BEbraEngine {
-    class Transform;
     class TransformFactory {
     public:
-        Transform* create(const glm::vec3& position);
+        std::optional<Transform*> create(const Transform::TransformCreateInfo& info);
 
         TransformFactory();
     private:

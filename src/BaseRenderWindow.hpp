@@ -14,8 +14,6 @@ namespace BEbraEngine {
 			Hidden
 		};
 		enum class SurfaceType {
-			DirectX,
-			OpenGL,
 			Vulkan
 			//Metal - Метал? блять анал
 		};

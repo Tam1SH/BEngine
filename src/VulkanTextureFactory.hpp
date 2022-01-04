@@ -17,6 +17,8 @@ namespace BEbraEngine {
 
         Texture* create(const boost::filesystem::path& path, bool generateMip) override;
 
+        Texture* createEmpty() override;
+
         void destroyTexture(Texture* texture) override;
 
         VulkanTextureFactory(AbstractRender* render);

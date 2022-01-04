@@ -3,43 +3,66 @@
 #include <iostream>
 namespace BEbraEngine {
 
-    int* Input::mouse_x = new int();
+    float* Input::mouseX = new float();
+
+    float* Input::lastX = new float();
+
+    float* Input::lastY = new float();
 
     const uint8_t* Input::state;
 
-    const uint8_t* Input::old_state;
+    const uint8_t* Input::oldState;
 
-    int* Input::mouse_y = new int();
+    float* Input::mouseY = new float();
 
-    int* Input::scroll_x = new int();
+    float* Input::scrollX = new float();
 
-    int* Input::scroll_y = new int();
+    float* Input::scrollY = new float();
 
     SDL_Window* Input::window;
+
+    void Input::update(InputState& state)
+    {
+        *scrollX = state.scrollX;
+        *scrollY = state.scrollY;
+        
+        *mouseX = state.x;
+        *mouseY = state.y;
+    }
 
     void Input::setKeyBoardState(const Uint8* state)
     {
         Input::state = state;
     }
 
-    int Input::getScrollX()
+    float Input::getScrollX()
     {
-        return *Input::scroll_x;
+        return *Input::scrollX;
     }
 
-    int Input::getScrollY()
+    float Input::getScrollY()
     {
-        return *Input::scroll_y;
+        return *Input::scrollY;
     }
 
-    int Input::getX()
+    float Input::getX()
     {
-        return *Input::mouse_x;
+        return *Input::mouseX;
     }
 
-    int Input::getY()
+    float Input::getY()
     {
-        return *Input::mouse_y;
+        return *Input::mouseY;
+    }
+
+    float Input::getOffsetX()
+    {
+        return *Input::lastX;
+    }
+
+    float Input::getOffsetY()
+    {
+        return *Input::lastY;
     }
 
     bool Input::isKeyPressed(KEY_CODE key)
@@ -58,10 +81,8 @@ namespace BEbraEngine {
 
     void Input::setWindow(WindowHandle* window)
     {
-        
-        SDL_GetMouseState(Input::mouse_x, Input::mouse_y);
         Input::state = SDL_GetKeyboardState(NULL);
-        Input::old_state = SDL_GetKeyboardState(NULL);
+        Input::oldState = SDL_GetKeyboardState(NULL);
         Input::window = window;
     }
 
