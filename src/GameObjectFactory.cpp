@@ -2,22 +2,12 @@
 #define NOMINMAX
 #include "GameObjectFactory.hpp"
 #include "TransformFactory.hpp"
-#include "VulkanRenderObjectFactory.hpp"
+#include "IRenderObjectFactory.hpp"
 #include "GameObject.hpp"
-#include "RigidBoby.hpp"
-#include "RenderObject.hpp"
-#include "Transform.hpp"
-#include "VulkanRender.hpp"
 #include "Physics.hpp"
-#include "WorkSpace.hpp"
-#include "Collider.hpp"
 #include "AbstractRender.hpp"
-#include "Camera.hpp"
 
-using std::shared_ptr;
-using std::unique_ptr;
-using std::optional;
-using std::string;
+
 
 namespace BEbraEngine {
 
@@ -31,12 +21,17 @@ namespace BEbraEngine {
 
 	}
 
-	optional<shared_ptr<GameObject>> GameObjectFactory::create(const GameObject::GameObjectCreateInfo& info)
+	optional<shared_ptr<GameComponent>> GameObjectFactory::create(const GameComponentCreateInfo& info)
 	{
+		shared_ptr<GameComponent> comp;
+
+		optional<PointLight*> opt_light;
+		optional<DirectionLight*> opt_dirLight;
 		optional<RenderObject*> opt_renderObj;
 		optional<Collider*> opt_collider;
 		optional<RigidBody*> opt_rigidBody;
 		optional<Transform*> opt_transform;
+
 		if (info.colliderInfo) {
 	//		Collider::ColliderCreateInfo cinfo{};
 		//	cinfo.scale = info.transformInfo->scale;
@@ -66,7 +61,6 @@ namespace BEbraEngine {
 			Debug::log("renderInfo doesn't exist in GameObjectCreateInfo");
 		}
 
-
 		if (info.transformInfo)
 			opt_transform = transFactory->create(*info.transformInfo);
 		else {
@@ -77,7 +71,7 @@ namespace BEbraEngine {
 
 
 
-		shared_ptr<GameObject> obj;
+		
 		shared_ptr<RenderObject> renderObj;
 		shared_ptr<Transform> transform;
 		shared_ptr<Collider> collider;
@@ -85,39 +79,38 @@ namespace BEbraEngine {
 
 
 
-		obj = shared_ptr<GameObject>(new GameObject());
+		comp = shared_ptr<GameComponent>(new GameObject());
 
 		if (opt_renderObj.has_value()) {
 			renderObj = shared_ptr<RenderObject>(opt_renderObj.value());
-			obj->addComponent(renderObj);
+			comp->addComponent(renderObj);
 		}
 
 		if (opt_transform.has_value()) {
 			transform = shared_ptr<Transform>(opt_transform.value());
-			obj->addComponent(transform);
+			comp->addComponent(transform);
 		}
 
 		if (opt_renderObj.has_value() && opt_transform.has_value()) {
 			renderFactory->bindTransform(renderObj, transform);
-
 		}
 
 		if (info.rigidBodyInfo) {
 			collider = shared_ptr<Collider>(opt_collider.value());
 			rigidbody = shared_ptr<RigidBody>(opt_rigidBody.value());
 			rigidbody->setTransform(transform.get());
-			obj->addComponent(collider);
-			obj->addComponent(rigidbody);
+			comp->addComponent(collider);
+			comp->addComponent(rigidbody);
 		}
 
 		if (opt_renderObj.has_value() && 
 			opt_transform.has_value()) {
 
-			return optional<shared_ptr<GameObject>>(obj);
+			return optional<shared_ptr<GameComponent>>(comp);
 		}
 		else {
 			Debug::log("Can't create a object", 0, "Xyu znaet", Debug::ObjectType::GameObject, Debug::MessageType::Error);
-			return optional<shared_ptr<GameObject>>();
+			return optional<shared_ptr<GameComponent>>();
 		}
 
 	}
@@ -156,40 +149,92 @@ namespace BEbraEngine {
 		renderFactory->setModel(object->getComponent<RenderObject>().get(), path);
 	}
 
-	void GameObjectFactory::destroyObject(shared_ptr<GameObject> object)
+	void GameObjectFactory::destroy(GameComponent* object)
 	{
-		renderFactory->destroyObject(object->getComponent<RenderObject>());
-		colliderFactory->destroyCollider(object->getComponent<Collider>().get());
-		rigidBodyFactory->destroy(object->getComponent<RigidBody>().get());
+		object->destroy(this);
 
-#ifdef _DEBUG
-		object->isDestroyed = true;
-#endif // _DEBUG
+		//renderFactory->destroyObject(object->getComponent<RenderObject>());
+		//colliderFactory->destroyCollider(object->getComponent<Collider>().get());
+		//rigidBodyFactory->destroy(object->getComponent<RigidBody>().get());
+
 
 	}
 
-	void GameObjectFactory::destroyPointLight(shared_ptr<PointLight> light)
+	void GameObjectFactory::destroy(GameObject* object)
+	{
+		object->destroy(this);
+	}
+
+	void GameObjectFactory::destroyPointLight(PointLight* light)
 	{
 		light->release();
 		renderFactory->destroyPointLight(light);
 	}
 
-	void GameObjectFactory::SetWorkSpace(shared_ptr<WorkSpace> workspace)
-	{
-		//this->workspace = workspace;
-	}
-
 	GameObjectFactory::~GameObjectFactory()
 	{
 	}
-	std::shared_ptr<Camera> GameObjectFactory::createCamera(const Vector3& position)
+
+	void GameObjectFactory::destroyRenderComponent(RenderObject* comp)
 	{
-		auto camera = shared_ptr<Camera>(renderFactory->createCamera(position));
+		renderFactory->destroyObject(comp);
+#ifdef _DEBUG
+		comp->isDestroyed = true;
+#endif // _DEBUG
+	}
+	void GameObjectFactory::destroyRigidBodyComponent(RigidBody* comp)
+	{
+		rigidBodyFactory->destroy(comp);
+#ifdef _DEBUG
+		comp->isDestroyed = true;
+#endif // _DEBUG
+	}
+	void GameObjectFactory::destroyColliderComponent(Collider* comp)
+	{
+		colliderFactory->destroyCollider(comp);
+#ifdef _DEBUG
+		comp->isDestroyed = true;
+#endif // _DEBUG
+	}
+	void GameObjectFactory::destroyMaterialComponent(Texture* comp)
+	{
+#ifdef _DEBUG
+		comp->isDestroyed = true;
+#endif // _DEBUG
+	}
+	void GameObjectFactory::destroyTransformComponent(Transform* comp)
+	{
+
+	}
+	void GameObjectFactory::destroyPointLightComponent(PointLight* comp)
+	{
+		renderFactory->destroyPointLight(comp);
+
+	}
+	void GameObjectFactory::destroyDirectionLightComponent(DirectionLight* comp)
+	{
+		//renderFactory->des
+
+	}
+	void GameObjectFactory::destroyCameraComponent(SimpleCamera* comp)
+	{
+		renderFactory->destroyCamera(comp);
+
+	}
+	void GameObjectFactory::destroyGameObject(GameObject* comp)
+	{
+#ifdef _DEBUG
+		comp->isDestroyed = true;
+#endif // _DEBUG
+	}
+	std::shared_ptr<SimpleCamera> GameObjectFactory::createCamera(const Vector3& position)
+	{
+		auto camera = shared_ptr<SimpleCamera>(renderFactory->createCamera(position));
 	//	render->addCamera(camera);
 	//	render->selectMainCamera(camera.get());
 		return camera;
 	}
-	void GameObjectFactory::destroyCamera(shared_ptr<Camera> camera)
+	void GameObjectFactory::destroyCamera(SimpleCamera* camera)
 	{
 	}
 }

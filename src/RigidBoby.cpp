@@ -4,6 +4,7 @@
 #include "Physics.hpp"
 #include "Vector3.hpp"
 #include <Physics/btBulletCollisionCommon.h>
+#include "IVisitorGameComponentDestroyer.hpp"
 namespace BEbraEngine {
 
     void RigidBody::resetState()
@@ -76,5 +77,10 @@ namespace BEbraEngine {
     RigidBody::~RigidBody()
     {
         DEBUG_DESTROY_CHECK("RigidBody has not destroyed", this, "", Debug::ObjectType::RigidBody, Debug::MessageType::Info);
+    }
+
+    void RigidBody::destroy(IVisitorGameComponentDestroyer* destroyer)
+    {
+        destroyer->destroyRigidBodyComponent(this);
     }
 }

@@ -22,7 +22,7 @@ void Start()
 }
 void Update()
 {
-	GameObject obj(Vector3(0,40,0));
+	//GameObject obj(Vector3(0,40,0));
 
 	if(Input::isKeyPressed(KEY_Q)) {
 		print("I LOVE YOU");

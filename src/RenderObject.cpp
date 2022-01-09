@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "RenderObject.hpp"
 #include "Transform.hpp"
-#include "Image.hpp"
+#include "Texture.hpp"
 #include "VkBuffer.hpp"
 #include "VulkanRenderObjectFactory.hpp"
+#include "IVisitorGameComponentDestroyer.hpp"
 namespace BEbraEngine {
     void RenderObject::update()
     {
@@ -55,4 +56,18 @@ namespace BEbraEngine {
         else
             Debug::log(getName() + " has invalid data");
     }
+    void PointLight::destroy(IVisitorGameComponentDestroyer* destroyer)
+    {
+        destroyer->destroyPointLightComponent(this);
+    }
+    void RenderObject::destroy(IVisitorGameComponentDestroyer* destroyer)
+    {
+        destroyer->destroyRenderComponent(this);
+    }
+    void DirectionLight::destroy(IVisitorGameComponentDestroyer* destroyer)
+    {
+        destroyer->destroyDirectionLightComponent(this);
+    }
 }
+
+

@@ -13,7 +13,7 @@
 
 namespace BEbraEngine {
     class DXWindow;
-    class Camera;
+    class SimpleCamera;
     class RenderBuffer;
     class Vertex;
     class RenderObject;
@@ -30,14 +30,14 @@ namespace BEbraEngine {
         RenderBuffer* createStorageBuffer(uint32_t size) override;
         void destroyBuffer(RenderBuffer* buffer) override;
 
-        void selectMainCamera(Camera* camera) override;
+        void selectMainCamera(SimpleCamera* camera) override;
         void addObject(std::shared_ptr<RenderObject> object) override;
         void addLight(std::shared_ptr<PointLight> light) override;
         void removeObject(std::shared_ptr<RenderObject> object) override;
         void removeLight(std::shared_ptr<PointLight> light) override;
         void addGlobalLight(std::shared_ptr<DirectionLight> globalLight) override;
-        void addCamera(std::shared_ptr<Camera> camera) override;
-        void removeCamera(std::shared_ptr<Camera> camera) override;
+        void addCamera(std::shared_ptr<SimpleCamera> camera) override;
+        void removeCamera(std::shared_ptr<SimpleCamera> camera) override;
         IRenderObjectFactory* getRenderObjectFactory() override;
         uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type) override;
         void drawFrame() override;

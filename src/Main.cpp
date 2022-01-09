@@ -24,7 +24,7 @@ TODO: подумать над реализацей:
 #include "Physics.hpp"
 #include "WorkSpace.hpp"
 
-#include "GameLogic.hpp"
+#include "ScriptState.hpp"
 #include "Vector2.hpp"
 #include "VulkanWindow.hpp"
 #include "VulkanRender.hpp"
@@ -66,11 +66,7 @@ namespace BEbraEngine {
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _window(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
-                        _render(g, [&](const tbb::flow::continue_msg&) { 
-                      //  Debug::log("Render begin");
-                        render1->drawFrame();
-                      //  Debug::log("Render end");
-                            });
+                        _render(g, [&](const tbb::flow::continue_msg&) { render1->drawFrame(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _physics(g, [&](const tbb::flow::continue_msg&) { physics->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
@@ -90,10 +86,7 @@ namespace BEbraEngine {
                     
                     
                     window1->update();
-                    Debug::log("Render begin");
-
                     render1->drawFrame();
-                    Debug::log("Render end");
                     physics->update();
                     gameLogic1->update();
                     gameLogic1->updateState();

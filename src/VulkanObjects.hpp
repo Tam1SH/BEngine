@@ -3,7 +3,7 @@
 #include "Camera.hpp"
 
 namespace BEbraEngine {
-    class VulkanRenderObject : public RenderObject {
+    class VulkanRenderObject final : public RenderObject {
 
     public:
         void release() override;
@@ -30,9 +30,9 @@ namespace BEbraEngine {
         VkDescriptorSet descriptor;
         ~VulkanDirLight() {}
     };
-    class VulkanCamera : public Camera {
+    class VulkanCamera : public SimpleCamera {
     public:
-        VulkanCamera(const Vector2& size, const Vector3& position) : Camera(size, position) {}
+        VulkanCamera(const Vector2& size, const Vector3& position) : SimpleCamera(size, position) {}
 
         VkDescriptorSet descriptor;
 

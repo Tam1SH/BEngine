@@ -1,18 +1,19 @@
 #pragma once
-#include "AbstractComponent.hpp"
-#include <vulkan/vulkan.h>
+#include "GameComponent.hpp"
 #include "Vector3.hpp"
 #include "matrix.hpp"
-#include "RenderBuffer.hpp"
 #include <glm/gtx/quaternion.hpp>
+
+#ifdef _DEBUG 
 #include "Debug.hpp"
+#endif
 namespace BEbraEngine {
     class TransformFactory;
-
+    class IVisitorGameComponentDestroyer;
 }
 namespace BEbraEngine {
 
-    class Transform : public GameObjectComponent {
+    class Transform final : public GameComponent {
     public:
         friend class TransformFactory;
 
@@ -23,6 +24,8 @@ namespace BEbraEngine {
             //Quartion quat;
         };
     public:
+
+        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
 
         void updatePosition(const Vector3& position, const Vector4& quat);
 
@@ -47,6 +50,8 @@ namespace BEbraEngine {
         Vector3 position{};
 
         Vector3 scale{};
+
+
 
     };
 }

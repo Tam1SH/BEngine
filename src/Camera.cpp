@@ -12,7 +12,7 @@
 #include "Math.hpp"
 namespace BEbraEngine {
 
-    Camera::Camera(const Vector2& size, const Vector3& position , Vector3 up , float yaw, float pitch)
+    SimpleCamera::SimpleCamera(const Vector2& size, const Vector3& position , Vector3 up , float yaw, float pitch)
         : MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     {
         rectViewport = size;
@@ -27,7 +27,7 @@ namespace BEbraEngine {
     }
 
 
-    glm::mat4 Camera::getViewMatrix()
+    glm::mat4 SimpleCamera::getViewMatrix()
     {
         glm::vec3 _pos = Position;
         glm::vec3 pos_f = Position + Front;
@@ -35,7 +35,7 @@ namespace BEbraEngine {
         return glm::lookAt(_pos, pos_f, up);
     }
 
-    void Camera::processKeyboard(Camera_Movement direction, float deltaTime)
+    void SimpleCamera::processKeyboard(Camera_Movement direction, float deltaTime)
     {
 
         float velocity = MovementSpeed * deltaTime;
@@ -49,7 +49,7 @@ namespace BEbraEngine {
             Position += Right * velocity;
     }
 
-    void Camera::_move(float& x, float& y)
+    void SimpleCamera::_move(float& x, float& y)
     {
         
         x = Input::getOffsetX();
@@ -58,7 +58,7 @@ namespace BEbraEngine {
 
     }
 
-    void Camera::processMouseMovement(bool constrainPitch)
+    void SimpleCamera::processMouseMovement(bool constrainPitch)
     {
         float xoffset;
         float yoffset;
@@ -81,7 +81,7 @@ namespace BEbraEngine {
         updateCameraVectors();
     }
 
-    void Camera::processMouseScroll(float yoffset)
+    void SimpleCamera::processMouseScroll(float yoffset)
     {
         if (Zoom >= 1.0f && Zoom <= 45.0f)
             Zoom -= yoffset;
@@ -92,7 +92,7 @@ namespace BEbraEngine {
     }
 
 
-    void Camera::update()
+    void SimpleCamera::update()
     {
 
         ShaderData vp;
@@ -103,19 +103,19 @@ namespace BEbraEngine {
         cameraData->setData(&vp, sizeof(ShaderData));
     }
 
-    void Camera::resize(Vector2 newSize)
+    void SimpleCamera::resize(Vector2 newSize)
     {
         rectViewport = newSize;
     }
 
-    void Camera::lookAt(const Vector3& at)
+    void SimpleCamera::lookAt(const Vector3& at)
     {
         Front = BEbraMath::normalize(at - Position);
     }
 
 
 
-    void Camera::updateCameraVectors()
+    void SimpleCamera::updateCameraVectors()
     {
         Vector3 front;
         front.x = cos(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
@@ -125,10 +125,13 @@ namespace BEbraEngine {
         Right = BEbraMath::normalize(BEbraMath::cross(Front, WorldUp));  
         Up = BEbraMath::normalize(BEbraMath::cross(Right, Front));
     }
-    void Camera::release()
+    void SimpleCamera::destroy(IVisitorGameComponentDestroyer* destroyer)
     {
     }
-    Camera::~Camera() {
+    void SimpleCamera::release()
+    {
+    }
+    SimpleCamera::~SimpleCamera() {
         this->cameraData->buffer->destroy();
     }
 }

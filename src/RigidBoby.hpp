@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-#include "AbstractComponent.hpp"
+#include "GameComponent.hpp"
 #include <Physics/btBulletDynamicsCommon.h>
 #include "Debug.hpp"
 #include "Vector3.hpp"
@@ -15,7 +15,7 @@ namespace BEbraEngine {
 
 namespace BEbraEngine {
 
-	class RigidBody : public GameObjectComponent { DEBUG_DESTROY_CHECK_DECL()
+	class RigidBody : public GameComponent { DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class RigidBodyFactory;
 
@@ -25,6 +25,8 @@ namespace BEbraEngine {
 			float mass{};
 		};
 	public:
+
+		void destroy(IVisitorGameComponentDestroyer* destroyer) override;
 
 		void resetState();
 
@@ -36,7 +38,7 @@ namespace BEbraEngine {
 
 		void setDynamic(bool isActive);
 
-		bool getDynamic() { return isActive; }
+		bool& getDynamic() { return isActive; }
 
 		void setPosition(const Vector3& position);
 
@@ -64,6 +66,7 @@ namespace BEbraEngine {
 
 
 		bool isActive = true;
+	
 
 	};
 }

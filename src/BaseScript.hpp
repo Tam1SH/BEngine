@@ -1,9 +1,9 @@
 #pragma once
 #include "IScript.hpp"
-#include "AbstractComponent.hpp"
+#include "GameComponent.hpp"
 #include "WorkSpace.hpp"
 namespace BEbraEngine {
-	class BaseScript : public GameObjectComponent, public IScript {
+	class BaseScript : public GameComponent, public IScript {
 	private:
 		bool isEnable;
 	protected:

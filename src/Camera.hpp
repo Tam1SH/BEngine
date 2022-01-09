@@ -1,5 +1,5 @@
 #pragma once
-#include "AbstractComponent.hpp"
+#include "GameComponent.hpp"
 #include "matrix.hpp"
 #include "Vector3.hpp"
 #include "Vector2.hpp"
@@ -26,7 +26,7 @@ namespace BEbraEngine {
     const float ZOOM = 45.0f;
 
    
-    class Camera : public GameObjectComponent, public IReusable
+    class SimpleCamera : public GameComponent, public IReusable
     {
     public:
         struct ShaderData {
@@ -44,10 +44,13 @@ namespace BEbraEngine {
         Vector3 Right{};
         Vector3 WorldUp{};
 
-        Camera() {}
-        ~Camera();
-        Camera(const Vector2& size, const Vector3& position = Vector3(0.0f, 0.0f, 0.0f), Vector3 up = Vector3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
+    public:
 
+        SimpleCamera() {}
+        ~SimpleCamera();
+        SimpleCamera(const Vector2& size, const Vector3& position = Vector3(0.0f, 0.0f, 0.0f), Vector3 up = Vector3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
+
+        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
 
         glm::mat4 getViewMatrix();
         
@@ -85,10 +88,13 @@ namespace BEbraEngine {
         int lastX{};
         int lastY{};
 
-        int cursorX;
-        int cursorY;
+        int cursorX{};
+        int cursorY{};
         bool _isMain{};
         Vector2 rectViewport{};
+
+
+        
 
     };
 }

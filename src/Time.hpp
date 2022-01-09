@@ -4,7 +4,7 @@ namespace BEbraEngine {
     class Time {
     public:
         Time() { }
-        static float time() {
+        static float& time() {
             return _totalTime;
         }
         static void updateTime() {

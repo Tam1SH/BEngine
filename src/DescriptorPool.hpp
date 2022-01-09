@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 namespace BEbraEngine {
-    class DescriptorPool {
+    class DescriptorPool final {
 
     public:
 

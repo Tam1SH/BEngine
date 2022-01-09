@@ -1,5 +1,5 @@
 #pragma once
-#include "AbstractComponent.hpp"
+#include "GameComponent.hpp"
 #include "Vector3.hpp"
 #include "Debug.hpp"
 class btCollisionObject;
@@ -11,7 +11,7 @@ namespace std {
 }
 namespace BEbraEngine {
 
-	class Collider : public GameObjectComponent { DEBUG_DESTROY_CHECK_DECL()
+	class Collider : public GameComponent { DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class ColliderFactory;
 
@@ -28,6 +28,9 @@ namespace BEbraEngine {
 			Type type{};
 		};
 	public:
+
+		void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+
 		btCollisionObject* get() { return _collider.get(); }
 
 		void setScale(const Vector3& size);
@@ -48,6 +51,8 @@ namespace BEbraEngine {
 	private:
 		std::unique_ptr<btCollisionObject> _collider;
 		Vector3 size;
+
+		
 	};
 }
 

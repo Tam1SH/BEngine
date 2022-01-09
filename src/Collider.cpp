@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Collider.hpp"
 #include <Physics/btBulletCollisionCommon.h>
+#include "IVisitorGameComponentDestroyer.hpp"
 #include "Debug.hpp"
 namespace BEbraEngine {
 	void Collider::setScale(const Vector3& size)
@@ -30,6 +31,10 @@ namespace BEbraEngine {
 	Collider::~Collider()
 	{
 		DEBUG_DESTROY_CHECK("Collider has not destroyed", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
+	}
+	void Collider::destroy(IVisitorGameComponentDestroyer* destroyer)
+	{
+		destroyer->destroyColliderComponent(this);
 	}
 }
 

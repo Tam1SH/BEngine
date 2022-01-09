@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "BaseScriptEngine.hpp"
 #include "AngelScript.hpp"
-#include "IProxyGameObjectFactory.hpp"
+
 class asIScriptEngine;
 namespace std {
 	template<class T, class D>
@@ -10,14 +10,14 @@ namespace std {
 }
 
 namespace BEbraEngine {
-
+	class ObjectFactoryFacade;
 }
 
 namespace BEbraEngine {
-	class AngelScriptEngine : public BaseScriptEngine
+	class AngelScriptEngine final : public BaseScriptEngine
 	{
 	public:
-		AngelScriptEngine(IProxyGameObjectFactory* factory);
+		AngelScriptEngine(ObjectFactoryFacade* factory);
 
 		~AngelScriptEngine();
 
@@ -30,7 +30,7 @@ namespace BEbraEngine {
 
 		asIScriptEngine* engine;
 
-		IProxyGameObjectFactory* factory;
+		ObjectFactoryFacade* factory;
 		
 	};
 }

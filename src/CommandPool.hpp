@@ -5,7 +5,7 @@
 
 //TODO: этот хуй бесполезен, ну почти.
 namespace BEbraEngine {
-    class CommandPool {
+    class CommandPool final {
 
     public:
 

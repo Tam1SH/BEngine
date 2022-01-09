@@ -22,4 +22,13 @@ namespace BEbraEngine {
     {
         DEBUG_DESTROY_CHECK("GameObject has not destroyed", this, name, Debug::ObjectType::GameObject, Debug::MessageType::Info);
     }
+    void GameObject::destroy(IVisitorGameComponentDestroyer* destroyer)
+    {
+        for (auto& comp : components_) {
+            comp->destroy(destroyer);
+        }
+        //WARN ёпта - изи рекурсия если плохо пососать.
+        destroyer->destroyGameObject(this);
+        
+    }
 }

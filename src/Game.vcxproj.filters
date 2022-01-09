@@ -93,7 +93,7 @@
     <ClCompile Include="VkBuffer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
+    <ClCompile Include="Texture.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="DebugUI.cpp">
@@ -126,7 +126,7 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="GameLogic.cpp">
+    <ClCompile Include="ScriptState.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
@@ -141,9 +141,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="GameObjectMediator.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="DescriptorSet.cpp">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
@@ -153,7 +150,7 @@
     <ClCompile Include="MeshFactory.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptObjectFactory.cpp">
+    <ClCompile Include="ObjectFactoryFacade.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="CommandBuffer.cpp">
@@ -203,7 +200,7 @@
     <ClInclude Include="Input.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Image.hpp">
+    <ClInclude Include="Texture.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.hpp">
@@ -284,7 +281,7 @@
     <ClInclude Include="Time.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="GameLogic.hpp">
+    <ClInclude Include="ScriptState.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Vector4.hpp">
@@ -300,9 +297,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="platform_window.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Listener.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="RenderBuffer.hpp">
@@ -321,9 +315,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectMediator.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="MediatorComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="IRenderBufferPool.hpp">
@@ -350,14 +341,11 @@
     <ClInclude Include="IDraweable.hpp">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptObjectFactory.hpp">
+    <ClInclude Include="ObjectFactoryFacade.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="VulkanTextureFactory.hpp">
       <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="IProxyGameObjectFactory.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="IRenderObjectFactory.hpp">
       <Filter>Файлы заголовков\Interfaces</Filter>
@@ -368,7 +356,7 @@
     <ClInclude Include="ICreatable.hpp">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="AbstractComponent.hpp">
+    <ClInclude Include="GameComponent.hpp">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="AbstractRender.hpp">
@@ -412,6 +400,12 @@
     </ClInclude>
     <ClInclude Include="Shader.hpp">
       <Filter>Файлы заголовков\Render\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="IVisitorGameComponentDestroyer.hpp">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="GameComponentCreateInfo.hpp">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

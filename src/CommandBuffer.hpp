@@ -5,7 +5,7 @@ namespace BEbraEngine {
     class CommandPool;
 }
 namespace BEbraEngine {
-    class CommandBuffer {
+    class CommandBuffer final {
     public:
         friend class CommandPool;
 

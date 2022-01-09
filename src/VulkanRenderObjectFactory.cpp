@@ -4,13 +4,12 @@
 #include "CreateInfoStructures.hpp"
 #include "VulkanRender.hpp"
 #include "VulkanTextureFactory.hpp"
-#include "Image.hpp"
+#include "Texture.hpp"
 #include "Transform.hpp"
 #include "DXRender.hpp"
 #include "VkBuffer.hpp"
 #include "VulkanObjects.hpp"
 #include "Vertex.hpp"
-#include "Image.hpp"
 #include "VulkanRenderBufferPool.hpp"
 #include "Debug.hpp"
 #include "MeshFactory.hpp"
@@ -66,9 +65,6 @@ namespace BEbraEngine {
         else throw std::runtime_error("");
         auto light = new VulkanPointLight();
         light->setColor(color);
-        std::cout << "range: " << object_view->availableRange << std::endl;
-        std::cout << "offset: " << object_view->offset << std::endl;
-        std::cout << "buffer: " << object_view->buffer << std::endl;
         light->data = object_view;
 
         return light;
@@ -129,27 +125,34 @@ namespace BEbraEngine {
         info.type = LightDescriptorInfo::Type::Point;
     }
 
-    void VulkanRenderObjectFactory::destroyObject(std::shared_ptr<RenderObject> object)
+    void VulkanRenderObjectFactory::destroyObject(RenderObject* object)
     {
-        auto obj = std::static_pointer_cast<VulkanRenderObject>(object); 
-        render->freeDescriptor(obj.get());
+        auto obj = static_cast<VulkanRenderObject*>(object); 
+        render->freeDescriptor(obj);
         _poolofObjects->free(obj->matrix);
-        
+        auto texture = obj->texture;
         //создание текстурки пихается в очередь и не факт, что данные ешё остануться. Соответственно лучше перестраховаться нахуй.
-        render->executeQueues_Objects.addTask([=] { textureFactory->destroyTexture(obj->texture.get()); });
+        render->executeQueues_Objects.addTask([=] { 
+            if (texture.get())
+                textureFactory->destroyTexture(texture.get());
+            else
+                Debug::log("Texture lost");
+            
+            });
+
 #ifdef _DEBUG
         object->isDestroyed = true;
 #endif // _DEBUG
 
     }
 
-    void VulkanRenderObjectFactory::destroyPointLight(std::shared_ptr<PointLight> light)
+    void VulkanRenderObjectFactory::destroyPointLight(PointLight* light)
     {
-        auto light_ = std::static_pointer_cast<VulkanPointLight>(light);
+        auto light_ = static_cast<VulkanPointLight*>(light);
         _poolofPointLights->free(light_->data);
     }
 
-    void VulkanRenderObjectFactory::destroyCamera(std::shared_ptr<Camera> camera)
+    void VulkanRenderObjectFactory::destroyCamera(SimpleCamera* camera)
     {
     }
 
@@ -219,12 +222,12 @@ namespace BEbraEngine {
 
     }
 
-    Camera* VulkanRenderObjectFactory::createCamera(const Vector3& position)
+    SimpleCamera* VulkanRenderObjectFactory::createCamera(const Vector3& position)
     {
         auto camera = new VulkanCamera(render->getCurrentRenderResolution(), position);
         auto view = new RenderBufferView();
-        view->availableRange = sizeof(Camera::ShaderData);
-        view->buffer = std::shared_ptr<RenderBuffer>(render->createStorageBuffer(sizeof(Camera::ShaderData)));
+        view->availableRange = sizeof(SimpleCamera::ShaderData);
+        view->buffer = std::shared_ptr<RenderBuffer>(render->createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
         camera->cameraData = view;
         camera->descriptor = render->createDescriptor(camera->cameraData->buffer.get());
         return camera;

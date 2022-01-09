@@ -11,7 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <optional>
-#include "Image.hpp"
+#include "Texture.hpp"
 #include "Vertex.hpp"
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {

@@ -5,7 +5,7 @@
 #include "VkBuffer.hpp"
 #include "Camera.hpp"
 #include "matrix.hpp"
-#include "Image.hpp"
+#include "Texture.hpp"
 #include "DescriptorSetLayouts.hpp"
 #include "RenderBuffer.hpp"
 #include "RenderObject.hpp"
@@ -376,7 +376,7 @@ namespace BEbraEngine {
             poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
             poolSize.descriptorCount = 1;
             camera.types[0] = poolSize;
-            camera.layout = layouts[DescriptorLayoutType::Camera];
+            camera.layout = layouts[DescriptorLayoutType::SimpleCamera];
 
 
             texture.types.resize(2);
@@ -439,7 +439,7 @@ namespace BEbraEngine {
         }
         executeQueues_Objects.execute();
         for (auto& object : objects) {
-            factory->destroyObject(object);
+            factory->destroyObject(object.get());
         }
         executeQueues_Objects.execute();
 
@@ -1219,7 +1219,7 @@ namespace BEbraEngine {
 
             VkDescriptorSetLayout layouts[] = {
                 this->layouts[DescriptorLayoutType::Object],
-                this->layouts[DescriptorLayoutType::Camera],
+                this->layouts[DescriptorLayoutType::SimpleCamera],
                 this->layouts[DescriptorLayoutType::LightPoint],
                 this->layouts[DescriptorLayoutType::DirectionLight],
                 this->layouts[DescriptorLayoutType::Attachments]
@@ -1433,7 +1433,7 @@ namespace BEbraEngine {
         if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &layout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create descriptor set layout!");
         }
-        layouts[DescriptorLayoutType::Camera] = layout;
+        layouts[DescriptorLayoutType::SimpleCamera] = layout;
     }
 
     void VulkanRender::createSyncObjects()
@@ -1573,20 +1573,31 @@ namespace BEbraEngine {
     {
         RenderBuffers.resize(swapChainFramebuffers.size());
 
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = _commandPool;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandBufferCount = static_cast<uint32_t>(RenderBuffers.size());
+        for (int i = 0; i < RenderBuffers.size(); i++) {
+            RenderBuffers[i] = swapChainRenderCommandPool->createCommandBuffer(CommandBuffer::Type::Primary,
+                VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
+        }
 
 
     }
 
     void VulkanRender::drawFrame()
     {
+        for (auto& camera : cameras) {
+            camera->update();
+        }
+        
+        for (auto light = lights.begin(); light != lights.end(); ++light) {
+            (*light)->update();
+        }
+        for (auto object = objects.begin(); object != objects.end(); ++object) {
+            (*object)->update();
+        }
 
-        updateCmdBuffers();
-
+        totalTime += Time::time();
+       // if(needCmdBuffersUpdate)
+            updateCmdBuffers();
+        needCmdBuffersUpdate = false;
         
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -1628,7 +1639,9 @@ namespace BEbraEngine {
             buffersRender.push_back(buffer);
             bufDestroy.push_back(buffer);
         }
-
+        for (auto& buffer : RenderBuffers) {
+            buffersRender.push_back(buffer);
+        }
         while (!BufferTransferQueue.empty()) {
             CommandBuffer buffer;
             BufferTransferQueue.try_pop(buffer);
@@ -1701,16 +1714,7 @@ namespace BEbraEngine {
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-        for (auto& camera : cameras) {
-            camera->update();
-        }
 
-        for (auto light = lights.begin(); light != lights.end(); ++light) {
-            (*light)->update();
-        }
-        for (auto object = objects.begin(); object != objects.end(); ++object) {
-            (*object)->update();
-        }
         for (int i = 0; i < swapChainFramebuffers.size(); i++) {
 
             VkRenderPassBeginInfo renderPassInfo{};
@@ -1732,9 +1736,6 @@ namespace BEbraEngine {
             renderPassInfo.pClearValues = clearValues.data();
             
             
-            auto buffer = concurrentCommandPools_RenderQueue[getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
-                VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-            buffer.startRecord();
             
             VkRect2D rsr = {};
             VkViewport vpr = {};
@@ -1745,35 +1746,37 @@ namespace BEbraEngine {
             vpr.width = (float)currentRenderResolution.width ;
             vpr.height = -(float)(currentRenderResolution.height );
             vpr.maxDepth = (float)1.0f;
-            vkCmdSetViewport(buffer, 0, 1, &vpr);
-            vkCmdSetScissor(buffer, 0, 1, &rsr);
-            vkCmdBeginRenderPass(buffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
+            RenderBuffers[i].startRecord();
+            vkCmdBeginRenderPass(RenderBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdSetViewport(RenderBuffers[i], 0, 1, &vpr);
+            vkCmdSetScissor(RenderBuffers[i], 0, 1, &rsr);
+            vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
             uint32_t count = lights.size();
-            vkCmdPushConstants(buffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t), &count);
+            vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t), &count);
             
             {
                 
-                vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLightSet, 0, 0);
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLightSet, 0, 0);
                 
-                vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &pointLightsSet, 0, nullptr);
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &pointLightsSet, 0, nullptr);
 
-                vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
 
                 if(!objects.empty())
-                    vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &(*objects.begin())->descriptor, 0, nullptr);
+                    vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &(*objects.begin())->descriptor, 0, nullptr);
                 //tbb::parallel_for<size_t>(0, 12, [](size_t i) {
                 for (auto light = lights.begin(); light != lights.end(); ++light) {
                                     }
                 for (auto object = objects.begin(); object != objects.end(); ++object) {
-                    (*object)->draw(buffer);
+                    if(object != objects.end())
+                        (*object)->draw(RenderBuffers[i]);
                 }
 
-                vkCmdNextSubpass(buffer, VK_SUBPASS_CONTENTS_INLINE);
-                vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline2);
-                int time1 = Time::deltaTime() * 100000;
-                vkCmdPushConstants(buffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(uint32_t), sizeof(float), &time1);
+                vkCmdNextSubpass(RenderBuffers[i], VK_SUBPASS_CONTENTS_INLINE);
+                vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline2);
+                vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(uint32_t), sizeof(float), &totalTime);
                 rsr.extent.width = currentRenderResolution.width;
                 rsr.extent.height = currentRenderResolution.height;
 
@@ -1781,14 +1784,14 @@ namespace BEbraEngine {
                 vpr.width = (float)currentRenderResolution.width;
                 vpr.height = -(float)(currentRenderResolution.height);
                 vpr.maxDepth = (float)1.0f;
-                vkCmdSetViewport(buffer, 0, 1, &vpr);
-                vkCmdSetScissor(buffer, 0, 1, &rsr);
+                vkCmdSetViewport(RenderBuffers[i], 0, 1, &vpr);
+                vkCmdSetScissor(RenderBuffers[i], 0, 1, &rsr);
 
 
-                vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 4, 1, &attachmentsSets[i], 0, NULL);
-                vkCmdDraw(buffer, 3, 1, 0, 0);
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 4, 1, &attachmentsSets[i], 0, NULL);
+                vkCmdDraw(RenderBuffers[i], 3, 1, 0, 0);
 
-                vkCmdEndRenderPass(buffer);
+                vkCmdEndRenderPass(RenderBuffers[i]);
                 
                 //      auto data = ImGui::GetDrawData();
                  //     if (data)
@@ -1797,8 +1800,7 @@ namespace BEbraEngine {
                 
             }
 
-            vkEndCommandBuffer(buffer);
-            BufferRenderQueue.push(buffer);
+            vkEndCommandBuffer(RenderBuffers[i]);
         }
 
     }
@@ -2036,7 +2038,7 @@ namespace BEbraEngine {
         }
     }
 
-    void VulkanRender::addCamera(std::shared_ptr<Camera> camera)
+    void VulkanRender::addCamera(std::shared_ptr<SimpleCamera> camera)
     {
         camera->resize({ static_cast<float>(currentRenderResolution.width), 
                          static_cast<float>(currentRenderResolution.height) });
@@ -2044,14 +2046,14 @@ namespace BEbraEngine {
     
     }
 
-    void VulkanRender::selectMainCamera(Camera* camera)
+    void VulkanRender::selectMainCamera(SimpleCamera* camera)
     {
         auto vCamera = static_cast<VulkanCamera*>(camera);
         setMainCamera = vCamera->descriptor;
         vCamera->setMain(true);
     }
 
-    void VulkanRender::removeCamera(std::shared_ptr<Camera> camera)
+    void VulkanRender::removeCamera(std::shared_ptr<SimpleCamera> camera)
     {
         cameras.remove(std::dynamic_pointer_cast<VulkanCamera>(camera));
     }
@@ -2104,7 +2106,7 @@ namespace BEbraEngine {
 
     void VulkanRender::createCameraSet()
     {
-        cameraPlug = std::shared_ptr<RenderBuffer>(createStorageBuffer(sizeof(Camera::ShaderData)));
+        cameraPlug = std::shared_ptr<RenderBuffer>(createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
         setMainCamera = createDescriptor(cameraPlug.get());
 
     }
@@ -2183,7 +2185,6 @@ namespace BEbraEngine {
         createAllDescriptorLayouts();
         createGraphicsPipeline();
         createFramebuffers();
-        createCmdBuffers();
         createSyncObjects();
         FamilyIndices = findQueueFamilies(physicalDevice);
 
@@ -2197,6 +2198,9 @@ namespace BEbraEngine {
             concurrentCommandPools_RenderQueue[i]->create(FamilyIndices.graphicsFamily.value());
             concurrentCommandPools_TransferQueue[i]->create(FamilyIndices.transferFamily.value());
         }
+        swapChainRenderCommandPool = std::make_unique<CommandPool>();
+        swapChainRenderCommandPool->create(FamilyIndices.graphicsFamily.value());
+        createCmdBuffers();
         factory->setContext(this);
 
         createPointAndDirectionLightsSets();
@@ -2389,22 +2393,29 @@ namespace BEbraEngine {
     void VulkanRender::addObject(std::shared_ptr<RenderObject> object)
     {
         objects.push_back(std::static_pointer_cast<VulkanRenderObject>(object));
+        needCmdBuffersUpdate = true;
     }
     void VulkanRender::addLight(std::shared_ptr<PointLight> light)
     {
         lights.push_back(std::static_pointer_cast<VulkanPointLight>(light));
+        needCmdBuffersUpdate = true;
     }
 
     void VulkanRender::removeObject(std::shared_ptr<RenderObject> object)
     {
         auto item = std::remove(objects.begin(), objects.end(), object);
-        objects.erase(item);
+        if (item != objects.end())
+            objects.erase(item);
+        else
+            Debug::log("lost object");
+        needCmdBuffersUpdate = true;
     }
 
     void VulkanRender::removeLight(std::shared_ptr<PointLight> light)
     {
         auto item = std::remove(lights.begin(), lights.end(), light);
         lights.erase(item);
+        needCmdBuffersUpdate = true;
     }
     VulkanRender::VulkanRender() {}
 

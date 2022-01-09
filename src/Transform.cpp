@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #define NOMINMAX
+#include "IVisitorGameComponentDestroyer.hpp"
 #include "Transform.hpp"
 #include "TransformFactory.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -27,6 +28,11 @@ namespace BEbraEngine {
     {
         this->position = position;
         scale = Vector3(1);
+    }
+
+    void Transform::destroy(IVisitorGameComponentDestroyer* destroyer)
+    {
+        destroyer->destroyTransformComponent(this);
     }
 
     void Transform::updatePosition(const Vector3& position, const Vector4& quat)

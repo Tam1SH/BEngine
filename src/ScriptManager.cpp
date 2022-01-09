@@ -10,7 +10,7 @@ namespace BEbraEngine {
 	{
 		ScriptManager::workspace = workspace;
 	}
-	std::optional<std::shared_ptr<AngelScript>> ScriptManager::getScriptByName(std::string name)
+	std::optional<std::shared_ptr<AngelScript>> ScriptManager::getScriptByName(const std::string& name)
 	{
 		for (auto& script : scripts) {
 			if (script->getName() == name) {
@@ -83,7 +83,7 @@ namespace BEbraEngine {
 
 		
 	}
-	ScriptManager::ScriptManager(IProxyGameObjectFactory* factory)
+	ScriptManager::ScriptManager(ObjectFactoryFacade* factory)
 	{
 		this->factory = factory;
 		engine = std::unique_ptr<AngelScriptEngine>(new AngelScriptEngine(factory));

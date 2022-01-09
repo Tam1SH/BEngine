@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
-#include "Image.hpp"
+#include "Texture.hpp"
 #include "ITextureFactory.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 

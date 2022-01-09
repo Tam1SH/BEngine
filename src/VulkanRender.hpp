@@ -15,7 +15,7 @@ namespace BEbraEngine {
     class VulkanTexture;
     class Matrix4;
     class VulkanWindow;
-    class Camera;
+    class SimpleCamera;
     class VulkanCamera;
     class RenderBuffer;
     class Vertex;
@@ -45,7 +45,7 @@ namespace std {
 namespace BEbraEngine {
 
 
-    class VulkanRender : public AbstractRender
+    class VulkanRender final : public AbstractRender
     {
     public:
        
@@ -69,11 +69,11 @@ namespace BEbraEngine {
 
         void removeLight(std::shared_ptr<PointLight> light) override;
 
-        void addCamera(std::shared_ptr<Camera> camera) override;
+        void addCamera(std::shared_ptr<SimpleCamera> camera) override;
 
-        void selectMainCamera(Camera* camera) override;
+        void selectMainCamera(SimpleCamera* camera) override;
 
-        void removeCamera(std::shared_ptr<Camera> camera) override;
+        void removeCamera(std::shared_ptr<SimpleCamera> camera) override;
 
         AbstractRender::Type getType() override { return AbstractRender::Type::Vulkan; }
 
@@ -125,7 +125,7 @@ namespace BEbraEngine {
     public:
         enum class DescriptorLayoutType {
             Object,
-            Camera,
+            SimpleCamera,
             LightPoint,
             DirectionLight,
             Attachments
@@ -162,6 +162,11 @@ namespace BEbraEngine {
 
     
     private:
+
+        bool needCmdBuffersUpdate{ true };
+
+        float totalTime;
+
         std::unique_ptr<VulkanRenderObjectFactory> factory;
 
         std::vector<std::shared_ptr<VulkanRenderObject>> objects;
@@ -191,6 +196,8 @@ namespace BEbraEngine {
         std::unique_ptr<DescriptorPool> lightPool;
 
         std::vector<std::unique_ptr<CommandPool>> concurrentCommandPools_RenderQueue;
+
+        std::unique_ptr<CommandPool> swapChainRenderCommandPool;
 
         std::vector<std::unique_ptr<CommandPool>> concurrentCommandPools_TransferQueue;
 

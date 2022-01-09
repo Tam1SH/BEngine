@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-#include "AbstractComponent.hpp"
+#include "GameComponent.hpp"
 #include "RenderBuffer.hpp"
 #include "IReusable.hpp"
 #include "Model.hpp"
@@ -14,43 +14,8 @@ namespace BEbraEngine {
 //TODO: draw is bad bleat.
 namespace BEbraEngine {
 
-    class RenderObject : public GameObjectComponent, public IReusable { DEBUG_DESTROY_CHECK_DECL()
-    public:
-        struct ShaderData {
-            Matrix4 model;
-            alignas(16) Vector3 color;
-        };
 
-        struct RenderObjectCreateInfo { };
-    public:
-
-        //бесполезная хуйня
-        std::unique_ptr<Texture> texture;
-
-        std::shared_ptr<Model> model;
-
-        std::shared_ptr<RenderBufferView> matrix;
-
-        std::shared_ptr<Transform> transform;
-
-        void update();
-
-        virtual ~RenderObject();
-
-        RenderObject();
-
-        void setColor(const Vector3& color) {
-
-            _color = color;
-        }
-        Vector3& getColor() {
-            return _color;
-        }
-    private:
-        Vector3 _color;
-    };
-
-    class PointLight : public GameObjectComponent, public IReusable {
+    class PointLight : public GameComponent, public IReusable {
     public:
         struct ShaderData {
             alignas(16) Vector3 position;
@@ -73,6 +38,9 @@ namespace BEbraEngine {
             float quadratic{};
         };
     public:
+
+        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+
         std::weak_ptr<RenderBufferView> data;
 
         std::weak_ptr<Transform> transform;
@@ -93,10 +61,11 @@ namespace BEbraEngine {
         virtual ~PointLight() {}
     private:
         Vector3 color;
+
     };
 
 
-    class DirectionLight : public GameObjectComponent {
+    class DirectionLight : public GameComponent {
     public:
         struct ShaderData {
             alignas(16) Vector3 direction;
@@ -148,6 +117,53 @@ namespace BEbraEngine {
     private:
         Vector3 color;
         Vector3 _direction;
+
+        // Унаследовано через GameObjectComponent
+        virtual void destroy(IVisitorGameComponentDestroyer* destroyer) override;
     };
 
+    class RenderObject : public GameComponent, public IReusable {
+        DEBUG_DESTROY_CHECK_DECL()
+    public:
+        struct ShaderData {
+            Matrix4 model;
+            alignas(16) Vector3 color;
+
+        };
+
+        struct RenderObjectCreateInfo {
+
+            const PointLight::PointLightCreateInfo* pointLightInfo;
+            const DirectionLight::DirectionLightCreateInfo* directionLightInfo;
+        };
+    public:
+
+
+        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+
+        //бесполезная хуйня
+        std::shared_ptr<Texture> texture;
+
+        std::shared_ptr<Model> model;
+
+        std::shared_ptr<RenderBufferView> matrix;
+
+        std::shared_ptr<Transform> transform;
+
+        void update();
+
+        virtual ~RenderObject();
+
+        RenderObject();
+
+        void setColor(const Vector3& color) {
+
+            _color = color;
+        }
+        Vector3& getColor() {
+            return _color;
+        }
+    private:
+        Vector3 _color;
+    };
 }

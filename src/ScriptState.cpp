@@ -1,19 +1,14 @@
 #include "stdafx.h"
-#include "GameLogic.hpp"
+#include "ScriptState.hpp"
 #include "ScriptManager.hpp"
-#include "Collider.hpp"
-#include "GameObjectFactory.hpp"
 #include "Time.hpp"
 #include "Camera.hpp"
 #include "Physics.hpp"
-#include "VulkanRender.hpp"
 #include "Input.hpp"
-#include "Vector3.hpp"
-#include "RigidBoby.hpp"
-#include "GameObject.hpp"
+#include "ObjectFactoryFacade.hpp"
+#include "AbstractRender.hpp"
+#include "GameObjectFactory.hpp"
 #include "RenderObject.hpp"
-#include "Transform.hpp"
-#include "ScriptObjectFactory.hpp"
 namespace BEbraEngine {
 
 
@@ -21,10 +16,10 @@ namespace BEbraEngine {
     {
         this->physics = physics;
         this->render = render;
-        auto scriptsss = new ScriptObjectFactory(new GameObjectFactory(render, physics));
+        auto scriptsss = new ObjectFactoryFacade(new GameObjectFactory(render, physics));
         scriptsss->setContext(this);
 
-        scriptObjectFactory = std::unique_ptr<ScriptObjectFactory>(scriptsss);
+        scriptObjectFactory = std::unique_ptr<ObjectFactoryFacade>(scriptsss);
         scriptManager = std::make_unique<ScriptManager>(scriptObjectFactory.get());
 
         scriptManager->LoadScripts();
@@ -94,7 +89,7 @@ namespace BEbraEngine {
 
             std::shared_ptr<GameObject> obj;
             obj = objects.back();
-            scriptObjectFactory->destroyObject(obj);
+            scriptObjectFactory->destroy(obj);
             objects.remove(obj);
             obj.reset();
 
@@ -130,7 +125,7 @@ namespace BEbraEngine {
             {
                 std::shared_ptr<PointLight> light1;
                 light1 = lights.front();
-                scriptObjectFactory->destroyPointLight(light1);
+                scriptObjectFactory->destroyPointLight(light1.get());
                 light1.reset();
                 lights.remove(light1);
             }
@@ -165,9 +160,9 @@ namespace BEbraEngine {
     }
     void ScriptState::update()
     {
-        auto obj = scriptObjectFactory->create(Vector3(0));
-        scriptObjectFactory->destroyObject(obj);
-     //   scriptManager->runScripts();
+        //auto obj = scriptObjectFactory->create(Vector3(0));
+        //scriptObjectFactory->destroy(obj);
+        scriptManager->runScripts();
         float speed = 1;
         if (Input::isKeyPressed(KEY_CODE::KEY_LEFT_SHIFT)) {
             speed = 20;
@@ -201,7 +196,7 @@ namespace BEbraEngine {
     }
 
 
-    void ScriptState::addObject(shared_ptr<GameObject> object, const GameObject::GameObjectCreateInfo& info)
+    void ScriptState::addObject(shared_ptr<GameObject> object, const GameComponentCreateInfo& info)
     {
         queues.addTask([=] {
             
@@ -224,20 +219,19 @@ namespace BEbraEngine {
 
     }
 
-    void ScriptState::removeObject(shared_ptr<GameObject> object)
+    void ScriptState::removeObject(shared_ptr<GameObject> object, 
+        //я ебал, тупое решение, ну и хуй с ним.
+        std::function<void()> callback)
     {
-        queues.addTask([this, object] {
-            if (object.get()) {
-               // Debug::log("object removed from render", object->getComponent<RenderObject>().get(), object->getName(), Debug::ObjectType::GameObject, Debug::MessageType::Info);
+        queues.addTask([=] {
+                
                 physics->removeRigidBody(object->getComponent<RigidBody>());
                 render->removeObject(object->getComponent<RenderObject>());
-            }
-            else
-                Debug::log("object pointer is invalid", &object, "", Debug::ObjectType::GameObject, Debug::MessageType::Error);
+                callback();
             });
     }
 
-    void ScriptState::addCamera(shared_ptr<Camera> camera)
+    void ScriptState::addCamera(shared_ptr<SimpleCamera> camera)
     {
         queues.addTask([this, camera] {
             render->addCamera(camera);
@@ -262,10 +256,10 @@ namespace BEbraEngine {
     ScriptState::~ScriptState()
     {
         for (auto& object : bounds) {
-            scriptObjectFactory->destroyObject(object);
+            scriptObjectFactory->destroy(object);
         }
         for (auto& object : objects) {
-            scriptObjectFactory->destroyObject(object);
+            scriptObjectFactory->destroy(object);
         }
     }
 }

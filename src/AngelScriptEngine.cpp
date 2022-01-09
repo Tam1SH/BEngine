@@ -30,7 +30,7 @@ namespace BEbraEngine {
 		std::cout << in << std::endl;
 	}
 
-	AngelScriptEngine::AngelScriptEngine(IProxyGameObjectFactory* factory)
+	AngelScriptEngine::AngelScriptEngine(ObjectFactoryFacade* factory)
 	{
 		this->factory = factory;
 
@@ -52,7 +52,7 @@ namespace BEbraEngine {
 		Wrappers::_Input::registerObj(engine);
 		Wrappers::_Input::getInstance();
 		
-		Wrappers::_GameObject::factory = static_cast<ScriptObjectFactory*>(factory);
+		Wrappers::_GameObject::factory = static_cast<ObjectFactoryFacade*>(factory);
 	}
 
 	AngelScriptEngine::~AngelScriptEngine()

@@ -2,14 +2,17 @@
 
 #include <map>
 #include <string>
-#include "AbstractComponent.hpp"
+#include "GameComponent.hpp"
 #include "BaseScript.hpp"
 #include "BaseScriptEngine.hpp"
 #include "AngelScriptEngine.hpp"
 #include "AngelScript.hpp"
-#include "IProxyGameObjectFactory.hpp"
+
 namespace BEbraEngine {
-	class WorkSpace;
+	class ObjectFactoryFacade;
+}
+
+namespace BEbraEngine {
 
 	class ScriptManager
 	{
@@ -20,12 +23,12 @@ namespace BEbraEngine {
 
 		std::shared_ptr<WorkSpace> workspace;
 
-		IProxyGameObjectFactory* factory;
+		ObjectFactoryFacade* factory;
 
 	public:
 		void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
 
-		std::optional<std::shared_ptr<AngelScript>> getScriptByName(std::string name);
+		std::optional<std::shared_ptr<AngelScript>> getScriptByName(const std::string& name);
 
 		void runScripts();
 
@@ -33,7 +36,7 @@ namespace BEbraEngine {
 
 		void LoadScripts();
 
-		ScriptManager(IProxyGameObjectFactory* factory);
+		ScriptManager(ObjectFactoryFacade* factory);
 
 		ScriptManager() {}
 

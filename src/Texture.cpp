@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Image.hpp"
+#include "Texture.hpp"
 #include "VulkanRender.hpp"
 #include "Debug.hpp"
 namespace BEbraEngine {
@@ -9,5 +9,8 @@ namespace BEbraEngine {
     Texture::~Texture()
     {
         DEBUG_DESTROY_CHECK("texture has not destroyed", this, "", Debug::ObjectType::Empty, Debug::MessageType::Info);
+    }
+    void Texture::destroy(IVisitorGameComponentDestroyer* destroyer)
+    {
     }
 }

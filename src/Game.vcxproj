@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
@@ -60,7 +60,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -313,7 +313,7 @@
     <ClCompile Include="CommandBuffer.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="RigidBodyFactory.cpp" />
-    <ClCompile Include="ScriptObjectFactory.cpp" />
+    <ClCompile Include="ObjectFactoryFacade.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="VulkanObjects.cpp" />
     <ClCompile Include="VulkanRender.cpp" />
@@ -325,11 +325,10 @@
     <ClCompile Include="DescriptorSet.cpp" />
     <ClCompile Include="DescriptorSetLayout.cpp" />
     <ClCompile Include="FileSystem.cpp" />
-    <ClCompile Include="GameLogic.cpp" />
+    <ClCompile Include="ScriptState.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
-    <ClCompile Include="GameObjectMediator.cpp" />
-    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VulkanTextureFactory.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="MeshFactory.cpp" />
@@ -356,7 +355,7 @@
     <ClCompile Include="WorkSpace.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AbstractComponent.hpp" />
+    <ClInclude Include="GameComponent.hpp" />
     <ClInclude Include="AbstractRender.hpp" />
     <ClInclude Include="AbstractScriptObject.hpp" />
     <ClInclude Include="AngelScript.hpp" />
@@ -368,13 +367,14 @@
     <ClInclude Include="Collider.hpp" />
     <ClInclude Include="ColliderFactory.hpp" />
     <ClInclude Include="ExecuteQueues.hpp" />
+    <ClInclude Include="GameComponentCreateInfo.hpp" />
     <ClInclude Include="IDraweable.hpp" />
     <ClInclude Include="ITextureFactory.hpp" />
+    <ClInclude Include="IVisitorGameComponentDestroyer.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Quaternion.hpp" />
     <ClInclude Include="RigidBodyFactory.hpp" />
-    <ClInclude Include="IProxyGameObjectFactory.hpp" />
-    <ClInclude Include="ScriptObjectFactory.hpp" />
+    <ClInclude Include="ObjectFactoryFacade.hpp" />
     <ClInclude Include="ScriptWrappers.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="VulkanObjects.hpp" />
@@ -387,20 +387,18 @@
     <ClInclude Include="GameObjectMediator.h" />
     <ClInclude Include="IRenderBufferPool.hpp" />
     <ClInclude Include="IReusable.hpp" />
-    <ClInclude Include="Listener.hpp" />
     <ClInclude Include="matrix.hpp" />
-    <ClInclude Include="MediatorComponent.h" />
     <ClInclude Include="MeshFactory.hpp" />
     <ClInclude Include="platform.hpp" />
     <ClInclude Include="DebugUI.hpp" />
     <ClInclude Include="DescriptorPool.hpp" />
     <ClInclude Include="DescriptorSetLayouts.hpp" />
     <ClInclude Include="FileSystem.hpp" />
-    <ClInclude Include="GameLogic.hpp" />
+    <ClInclude Include="ScriptState.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="GameObjectFactory.hpp" />
     <ClInclude Include="ICreatable.hpp" />
-    <ClInclude Include="Image.hpp" />
+    <ClInclude Include="Texture.hpp" />
     <ClInclude Include="VulkanTextureFactory.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="IScript.hpp" />

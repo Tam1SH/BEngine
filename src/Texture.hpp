@@ -1,21 +1,27 @@
 
 #pragma once
 #include "stdafx.h"
-#include "AbstractComponent.hpp"
+#include "GameComponent.hpp"
 #include "Debug.hpp"
 //TODO: Ну, понятно.
 namespace BEbraEngine {
     
-    class Texture : public GameObjectComponent { DEBUG_DESTROY_CHECK_DECL()
+    class Texture : public GameComponent { DEBUG_DESTROY_CHECK_DECL()
     public:
         Texture();
         ~Texture();
         uint32_t width() { return width_; }
         uint32_t height() { return height_; }
+
+        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+
     protected:
         uint32_t width_{};
         uint32_t height_{};
 
+
+
+        
 
     };
 

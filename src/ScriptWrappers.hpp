@@ -7,7 +7,7 @@
 #include "RigidBoby.hpp"
 #include <angelscript.h>
 #include "RigidBodyFactory.hpp"
-#include "ScriptObjectFactory.hpp"
+#include "ObjectFactoryFacade.hpp"
 #include <typeinfo>
 #include "Input.hpp"
 namespace BEbraEngine {
@@ -232,7 +232,7 @@ namespace BEbraEngine {
 
 			static constexpr const char* __name = "GameObjectComponent";
 
-			std::shared_ptr<GameObjectComponent> instance;
+			std::shared_ptr<GameComponent> instance;
 
 			static void registerObj(asIScriptEngine* engine) {
 			//	int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
@@ -245,7 +245,7 @@ namespace BEbraEngine {
 		class _GameObject {
 		public:
 
-			static ScriptObjectFactory* factory;
+			static ObjectFactoryFacade* factory;
 
 			static void registerObj(asIScriptEngine* engine) {
 
@@ -299,7 +299,7 @@ namespace BEbraEngine {
 				if (--refCount == 0)
 				{
 					if (instance.get()) {
-						factory->destroyObject(instance);
+						factory->destroy(instance);
 					}
 
 					delete this;
@@ -316,6 +316,6 @@ namespace BEbraEngine {
 
 
 		};
-		ScriptObjectFactory* _GameObject::factory;
+		ObjectFactoryFacade* _GameObject::factory;
 	}
 }

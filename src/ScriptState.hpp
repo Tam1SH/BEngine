@@ -1,25 +1,28 @@
 #pragma once
 #include "stdafx.h"
-#include "IProxyGameObjectFactory.hpp"
-#include "VulkanRenderObjectFactory.hpp"
 #include "ExecuteQueues.hpp"
 #include <queue>
-
+#include "Vector3.hpp"
 using std::shared_ptr;
 using std::unique_ptr;
 using std::optional;
 using std::string;
 
 namespace BEbraEngine {
+    class AbstractRender;
     class VulkanRender;
     class WorkSpace;
     class Physics;
     class GameObjectFactory;
     class ScriptManager;
     class Render;
-    class Camera;
+    class SimpleCamera;
+    class GameObject;
+    class DirectionLight;
     class Time;
-    class ScriptObjectFactory;
+    class PointLight;
+    class ObjectFactoryFacade;
+    class GameComponentCreateInfo;
 }
 namespace std {
     template<class _Ty, class _Dx>
@@ -46,11 +49,11 @@ namespace BEbraEngine {
 
         void updateState();
 
-        void addObject(shared_ptr<GameObject> object, const GameObject::GameObjectCreateInfo& info = {});
+        void addObject(shared_ptr<GameObject> object, const GameComponentCreateInfo& info);
 
-        void removeObject(shared_ptr<GameObject> object);
+        void removeObject(shared_ptr<GameObject> object, std::function<void()> callback);
 
-        void addCamera(shared_ptr<Camera> camera);
+        void addCamera(shared_ptr<SimpleCamera> camera);
 
         void addLight(shared_ptr<PointLight> light);
 
@@ -68,11 +71,11 @@ namespace BEbraEngine {
 
         std::shared_ptr<Physics> physics;
 
-        std::unique_ptr<ScriptObjectFactory> scriptObjectFactory;
+        std::unique_ptr<ObjectFactoryFacade> scriptObjectFactory;
 
         std::unique_ptr<ScriptManager> scriptManager;
 
-        std::shared_ptr<Camera> camera;
+        std::shared_ptr<SimpleCamera> camera;
 
         std::shared_ptr<DirectionLight> globalLight;
 

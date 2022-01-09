@@ -15,7 +15,7 @@ namespace BEbraEngine {
     class VulkanRenderBufferPool;
     class MeshFactory;
     class Transform;
-    class Camera;
+    class SimpleCamera;
 }
 using std::shared_ptr;
 using std::weak_ptr;
@@ -50,15 +50,15 @@ namespace BEbraEngine {
 
         DirectionLight* createDirLight(const Vector3& color, const Vector3& direction) override;
 
-        Camera* createCamera(const Vector3& position) override;
+        SimpleCamera* createCamera(const Vector3& position) override;
 
         void setContext(AbstractRender* render) override;
        
-        void destroyObject(std::shared_ptr<RenderObject> object) override;
+        void destroyObject(RenderObject* object) override;
 
-        void destroyPointLight(std::shared_ptr<PointLight> light) override;
+        void destroyPointLight(PointLight* light) override;
 
-        void destroyCamera(std::shared_ptr<Camera> camera) override;
+        void destroyCamera(SimpleCamera* camera) override;
 
         void setModel(RenderObject* object, const std::string& path) override;
 

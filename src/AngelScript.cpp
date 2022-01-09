@@ -22,4 +22,7 @@ namespace BEbraEngine {
 	{
 		this->context = context;
 	}
+	void AngelScript::destroy(IVisitorGameComponentDestroyer* destroyer)
+	{
+	}
 }
