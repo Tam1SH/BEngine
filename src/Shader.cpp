@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Shader.hpp"
 #include "Debug.hpp"
 namespace BEbraEngine {
@@ -8,7 +8,7 @@ namespace BEbraEngine {
         std::ifstream file(path.string(), std::ios::ate | std::ios::binary);
 
         if (!file.is_open()) {
-            Debug::log("failed to open file with path: " + path.string());
+            DEBUG_LOG1("failed to open file with path: " + path.string());
             throw std::runtime_error("");
         }
 
@@ -31,7 +31,7 @@ namespace BEbraEngine {
         createInfo.pCode = reinterpret_cast<const uint32_t*>(data.data());
 
         if (vkCreateShaderModule(device, &createInfo, nullptr, &module) != VK_SUCCESS) {
-            Debug::log("failed to create shader module!");
+            DEBUG_LOG1("failed to create shader module!");
             throw std::runtime_error("");
         }
     }

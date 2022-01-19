@@ -3,9 +3,7 @@
 #include "Input.hpp"
 #include "Vector2.hpp"
 #include <SDL_vulkan.h>
-#include "GLWindow.hpp"
 #include "Debug.hpp"
-#include <glad/glad.h>
 #ifdef BEBRA_USE_SDL
 namespace BEbraEngine {
 	void BaseWindow::vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface)

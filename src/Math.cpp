@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Math.hpp"
 #include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
@@ -65,7 +65,7 @@ namespace BEbraEngine {
 			return glm::cross(static_cast<glm::vec3>(left), static_cast<glm::vec3>(right));
 		}
 
-		float radians(const float value)
+		float radians(float value)
 		{
 			return glm::radians(value);
 		}

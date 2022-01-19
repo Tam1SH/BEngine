@@ -26,17 +26,10 @@
 #include "Pipeline.hpp"
 #include "Time.hpp"
 #include "VulkanRenderBufferPool.hpp"
+#include "utils.hpp"
 namespace BEbraEngine {
     
-    int getCurrentThreadIndex()
-    {
 
-        int index = tbb::this_task_arena::current_thread_index();
-        if (index >= tbb::this_task_arena::max_concurrency())
-            index = 0;
-
-        return index;
-    }
 
     VkDevice VulkanRender::device;
 
@@ -94,7 +87,7 @@ namespace BEbraEngine {
                 0, nullptr,
                 1, &barrier);
 
-            auto buffer1 = concurrentCommandPools_RenderQueue[getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
+            auto buffer1 = concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
                 VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
             VkImageBlit blit{};
@@ -144,7 +137,7 @@ namespace BEbraEngine {
         barrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
         barrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
 
-        auto buffer1 = concurrentCommandPools_RenderQueue[getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
+        auto buffer1 = concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
             VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
 
@@ -185,7 +178,7 @@ namespace BEbraEngine {
                 VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 
-        auto buffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+        auto buffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         buffer.startRecord();
 
         transitionImageLayout(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
@@ -247,11 +240,11 @@ namespace BEbraEngine {
 
         //auto& dec1 = globalLight.lock()->descriptor;
         auto info1 = LightDescriptorInfo();
-        info1.bufferView = globalLight.lock()->data.lock().get();
+        info1.bufferView = globalLight->data.lock().get();
         info1.type = LightDescriptorInfo::Type::Direction;
 
-        freeDescriptor(globalLight.lock().get());
-        globalLight.lock()->descriptor = createDescriptor(&info1);
+        freeDescriptor(globalLight);
+        globalLight->descriptor = createDescriptor(&info1);
         for (auto& camera : cameras) {
             camera->descriptor = createDescriptor(camera->cameraData->buffer.get());
             if (camera->isMain())
@@ -264,15 +257,15 @@ namespace BEbraEngine {
         for (auto light = lights.begin(); light != lights.end(); ++light) {
             
             auto info = LightDescriptorInfo();
-            info.bufferView = (*light)->data.lock().get();
+            info.bufferView = (*light)->data.get();
             info.type = LightDescriptorInfo::Type::Point;
 
-            freeDescriptor((*light).get());
+            freeDescriptor((*light));
             (*light)->descriptor = createDescriptor(&info);
 
         }
         for (auto object = objects.begin(); object != objects.end(); ++object) {
-             factory->CreateObjectSet((*object).get());
+             factory->CreateObjectSet((*object));
 
         }
     }
@@ -439,7 +432,7 @@ namespace BEbraEngine {
         }
         executeQueues_Objects.execute();
         for (auto& object : objects) {
-            factory->destroyObject(object.get());
+            factory->destroyObject(*object);
         }
         executeQueues_Objects.execute();
 
@@ -530,7 +523,7 @@ namespace BEbraEngine {
 
     void VulkanRender::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
     {
-        auto commandBuffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(
+        auto commandBuffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
             CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
         commandBuffer.startRecord();
@@ -947,7 +940,7 @@ namespace BEbraEngine {
 
     void VulkanRender::createRenderPass()
     {
-        Debug::log("Start createRenderPass \n\n\n\n\n\n");
+        DEBUG_LOG1("Start createRenderPass \n\n\n\n\n\n");
         for (int i = 0; i < swapChainImages.size(); i++) {
             createAttachment(VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, colorAttachments[i].get());
             createAttachment(findDepthFormat(), VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, depthAttachments[i].get());
@@ -1059,7 +1052,7 @@ namespace BEbraEngine {
         if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
             throw std::runtime_error("failed to create render pass!");
         }
-        Debug::log("End createRenderPass \n\n\n\n\n\n");
+        DEBUG_LOG1("End createRenderPass \n\n\n\n\n\n");
     }
 
     void VulkanRender::createAttachmentsSet()
@@ -1538,7 +1531,7 @@ namespace BEbraEngine {
             sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
             destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
             
-            auto buffer1 = concurrentCommandPools_RenderQueue[getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
+            auto buffer1 = concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
                 VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
             buffer1.startRecord();
@@ -1981,8 +1974,8 @@ namespace BEbraEngine {
             std::stringstream ss;
             ss << pCallbackData->pMessage << std::endl;
 
-            Debug::log(ss.str());
-            Debug::log("\n\n\n\n\n");
+            DEBUG_LOG1(ss.str());
+            DEBUG_LOG1("\n\n\n\n\n");
         }
         else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
         {
@@ -2038,24 +2031,24 @@ namespace BEbraEngine {
         }
     }
 
-    void VulkanRender::addCamera(std::shared_ptr<SimpleCamera> camera)
+    void VulkanRender::addCamera(SimpleCamera& camera)
     {
-        camera->resize({ static_cast<float>(currentRenderResolution.width), 
+        camera.resize({ static_cast<float>(currentRenderResolution.width), 
                          static_cast<float>(currentRenderResolution.height) });
-        cameras.push_back(std::dynamic_pointer_cast<VulkanCamera>(camera));
+        cameras.push_back(dynamic_cast<VulkanCamera*>(&camera));
     
     }
 
-    void VulkanRender::selectMainCamera(SimpleCamera* camera)
+    void VulkanRender::selectMainCamera(SimpleCamera& camera)
     {
-        auto vCamera = static_cast<VulkanCamera*>(camera);
+        auto vCamera = static_cast<VulkanCamera*>(&camera);
         setMainCamera = vCamera->descriptor;
         vCamera->setMain(true);
     }
 
-    void VulkanRender::removeCamera(std::shared_ptr<SimpleCamera> camera)
+    void VulkanRender::removeCamera(SimpleCamera& camera)
     {
-        cameras.remove(std::dynamic_pointer_cast<VulkanCamera>(camera));
+        cameras.remove(dynamic_cast<VulkanCamera*>(&camera));
     }
 
 
@@ -2075,7 +2068,7 @@ namespace BEbraEngine {
 
         _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer->self, buffer->memory);
 
-        auto commandBuffer = concurrentCommandPools_TransferQueue[getCurrentThreadIndex()]->createCommandBuffer(
+        auto commandBuffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
             CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         commandBuffer.startRecord();
 
@@ -2244,7 +2237,7 @@ namespace BEbraEngine {
 
         }
         else
-            Debug::log("DescriptorPool is empty (Lights)",
+            DEBUG_LOG2("DescriptorPool is empty (Lights)",
                 VulkanRenderBufferPool.get(),
                 "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
         
@@ -2277,7 +2270,7 @@ namespace BEbraEngine {
             vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
         }
         else
-            Debug::log("DescriptorPool is empty (Camera)",
+            DEBUG_LOG2("DescriptorPool is empty (Camera)",
                 VulkanRenderBufferPool.get(),
                 "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
         return set;
@@ -2288,9 +2281,9 @@ namespace BEbraEngine {
         return factory.get();
     }
     
-    void VulkanRender::addGlobalLight(std::shared_ptr<DirectionLight> globalLight)
+    void VulkanRender::addGlobalLight(DirectionLight& globalLight)
     {
-        this->globalLight = std::static_pointer_cast<VulkanDirLight>(globalLight);
+        this->globalLight = dynamic_cast<VulkanDirLight*>(&globalLight);
     }
 
     VkDescriptorSet VulkanRender::createDescriptor(VulkanDescriptorSetInfo* info)
@@ -2332,7 +2325,7 @@ namespace BEbraEngine {
             vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
         }
         else
-            Debug::log("DescriptorPool is empty (RenderObject)", 
+            DEBUG_LOG2("DescriptorPool is empty (RenderObject)", 
                 VulkanRenderBufferPool.get(), 
                 "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
 
@@ -2340,10 +2333,10 @@ namespace BEbraEngine {
 
         return set;
     }
-    void VulkanRender::freeDescriptor(VulkanRenderObject* set)
+    void VulkanRender::freeDescriptor(VulkanRenderObject& set)
     {
-        VulkanRenderBufferPool->free(set->descriptor);
-        set->descriptor = 0;
+        VulkanRenderBufferPool->free(set.descriptor);
+        set.descriptor = 0;
     }
     void VulkanRender::freeDescriptor(VulkanDirLight* set)
     {
@@ -2390,30 +2383,30 @@ namespace BEbraEngine {
     {
         return createBufferAsync(vertices.data(), sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
-    void VulkanRender::addObject(std::shared_ptr<RenderObject> object)
+    void VulkanRender::addObject(RenderObject& object)
     {
-        objects.push_back(std::static_pointer_cast<VulkanRenderObject>(object));
+        objects.push_back(dynamic_cast<VulkanRenderObject*>(&object));
         needCmdBuffersUpdate = true;
     }
-    void VulkanRender::addLight(std::shared_ptr<PointLight> light)
+    void VulkanRender::addLight(PointLight& light)
     {
-        lights.push_back(std::static_pointer_cast<VulkanPointLight>(light));
+        lights.push_back(dynamic_cast<VulkanPointLight*>(&light));
         needCmdBuffersUpdate = true;
     }
 
-    void VulkanRender::removeObject(std::shared_ptr<RenderObject> object)
+    void VulkanRender::removeObject(RenderObject& object)
     {
-        auto item = std::remove(objects.begin(), objects.end(), object);
+        auto item = std::remove(objects.begin(), objects.end(), &object);
         if (item != objects.end())
             objects.erase(item);
         else
-            Debug::log("lost object");
+            DEBUG_LOG1("lost object");
         needCmdBuffersUpdate = true;
     }
 
-    void VulkanRender::removeLight(std::shared_ptr<PointLight> light)
+    void VulkanRender::removeLight(PointLight& light)
     {
-        auto item = std::remove(lights.begin(), lights.end(), light);
+        auto item = std::remove(lights.begin(), lights.end(), &light);
         lights.erase(item);
         needCmdBuffersUpdate = true;
     }

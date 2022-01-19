@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "RigidBodyFactory.hpp"
 #include "Vector3.hpp"
 #include "Physics.hpp"
@@ -9,12 +9,13 @@ namespace BEbraEngine {
 	{
 		this->physics = physics;
 	}
-    std::optional<RigidBody*> RigidBodyFactory::create(const RigidBody::RigidBodyCreateInfo& info)
+
+    optional<RigidBody*> RigidBodyFactory::create(const RigidBody::RigidBodyCreateInfo& info)
 	{
         auto rigidBody = new RigidBody();
         btCollisionObject* shape{};
         if (info.collider) {
-            shape = info.collider->get();
+            shape = &info.collider->get();
         }
         rigidBody->linearFactor = btVector3(1, 1, 1);
         rigidBody->AngularFactor = btVector3(1, 1, 1);
@@ -50,24 +51,24 @@ namespace BEbraEngine {
 
         rigidBody->setName("RigidBody");
 
-        return std::optional<RigidBody*>(rigidBody);
+        return optional<RigidBody*>(rigidBody);
 	}
-    void RigidBodyFactory::destroy(RigidBody* body)
+
+    void RigidBodyFactory::destroy(RigidBody& body)
     {
-        if (body)
-        {
 #ifdef _DEBUG
-            body->isDestroyed = true;
+        body.isDestroyed = true;
 #endif // _DEBUG
-        }
     }
-    void RigidBodyFactory::setCollder(RigidBody* body, Collider* collider)
+
+    void RigidBodyFactory::setCollder(RigidBody& body, Collider* collider)
     {
-        body->collider = collider;
+        body.collider = collider;
     }
-    Collider* RigidBodyFactory::getCollider(RigidBody* body)
+
+    Collider& RigidBodyFactory::getCollider(RigidBody& body)
     {
-        return body->collider;
+        return *body.collider;
     }
 }
 

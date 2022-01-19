@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "ScriptState.hpp"
 #include "ScriptManager.hpp"
 #include "Time.hpp"
@@ -9,18 +9,19 @@
 #include "AbstractRender.hpp"
 #include "GameObjectFactory.hpp"
 #include "RenderObject.hpp"
+#include "GameObject.hpp"
 namespace BEbraEngine {
 
 
-    ScriptState::ScriptState(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, std::shared_ptr<Physics> physics)
+    ScriptState::ScriptState(AbstractRender& render, Physics& physics)
     {
-        this->physics = physics;
-        this->render = render;
+        this->physics = &physics;
+        this->render = &render;
         auto scriptsss = new ObjectFactoryFacade(new GameObjectFactory(render, physics));
         scriptsss->setContext(this);
 
         scriptObjectFactory = std::unique_ptr<ObjectFactoryFacade>(scriptsss);
-        scriptManager = std::make_unique<ScriptManager>(scriptObjectFactory.get());
+        scriptManager = std::unique_ptr<ScriptManager>(new ScriptManager(scriptObjectFactory.get()));
 
         scriptManager->LoadScripts();
 
@@ -37,7 +38,6 @@ namespace BEbraEngine {
         object->getComponent<RigidBody>()->setDynamic(false);
         object->getComponent<Collider>()->setScale(Vector3(100, 100, 1));
         object->getComponent<Transform>()->setScale(Vector3(100, 100, 1));
-
 
         auto object2 = scriptObjectFactory->create(Vector3(0, 100, 100));
         auto d = object2->getComponentByName("RigidBody");
@@ -68,13 +68,8 @@ namespace BEbraEngine {
         sphere->getComponent<RigidBody>()->setDynamic(false);
 
 
-        scriptObjectFactory->setModel(sphere.get(), "C:/.BEbraEngine/src/Models/HighSphere.fbx");
-        bounds.push_back(object4);
-        bounds.push_back(object3);
-        bounds.push_back(object2);
-        bounds.push_back(object5);
-        bounds.push_back(object);
-        bounds.push_back(sphere);
+        scriptObjectFactory->setModel(*sphere, "C:/.BEbraEngine/src/Models/HighSphere.fbx");
+
 
         globalLight = scriptObjectFactory->createDirLight(Vector3(0, -0.5f, 0));
         light = scriptObjectFactory->createLight(Vector3(0, 20, 0));
@@ -84,18 +79,8 @@ namespace BEbraEngine {
     }
 
 
-    void ScriptState::clearObjects() {
-        if (!objects.empty()) {
+    void ScriptState::clearObjects() { }
 
-            std::shared_ptr<GameObject> obj;
-            obj = objects.back();
-            scriptObjectFactory->destroy(obj);
-            objects.remove(obj);
-            obj.reset();
-
-        }
-
-    }
     void ScriptState::fixedUpdate() {
         globalLight->setColor(Vector3(0.1));
         //step++;
@@ -104,32 +89,9 @@ namespace BEbraEngine {
        // if (step < 128) lightColor.z = (1 - lightColor.x); lightColor.z = (1 - lightColor.y);
        // if (step >= 255)
        //     step = 0;
-        if (false) {
 
-
-            auto obj = scriptObjectFactory->create(camera->Position + (camera->Front * 5.f));
-            //obj->getComponent<RigidBody>()->applyImpulse(camera->Front * 40.f, camera->Front);
-            Vector3 random_color = Vector3(
-                (rand() % 255) / 255.f, (rand() % 255) / 255.f, (rand() % 255) / 255.f
-            );
-            auto renderobj = obj->getComponent<RenderObject>();
-            renderobj->setColor(random_color);
-            objects.push_back(obj);
-        }
         if (Input::isKeyPressed(KEY_CODE::KEY_T)) {
             //clearObjects();
-        }
-
-        if (Input::isKeyPressed(KEY_CODE::KEY_C)) {
-            if (!lights.empty())
-            {
-                std::shared_ptr<PointLight> light1;
-                light1 = lights.front();
-                scriptObjectFactory->destroyPointLight(light1.get());
-                light1.reset();
-                lights.remove(light1);
-            }
-
         }
 
         if (Input::isKeyPressed(KEY_CODE::KEY_E)) {
@@ -196,70 +158,77 @@ namespace BEbraEngine {
     }
 
 
-    void ScriptState::addObject(shared_ptr<GameObject> object, const GameComponentCreateInfo& info)
+    void ScriptState::addObject(GameObject& object, const GameComponentCreateInfo& info)
     {
-        queues.addTask([=] {
-            
-            if (object.get()) {
-
-                auto renderObj = object->getComponent<RenderObject>();
-                render->addObject(renderObj);
+        auto pObject = &object;
+        queues.addTask(ExecuteType::Single, 
+            [=] {
+                auto renderObj = pObject->getComponent<RenderObject>();
+                render->addObject(*renderObj);
 
                 if (info.rigidBodyInfo) {
-                    auto rigidBody = object->getComponent<RigidBody>();
+                    auto rigidBody = pObject->getComponent<RigidBody>();
 
-                    physics->addRigidBody(rigidBody);
+                    physics->addRigidBody(*rigidBody);
                 }
             }
-            else
-                Debug::log("object has destroyed", &object, "", Debug::ObjectType::GameObject, Debug::MessageType::Error);
-
-            }
+            
         );
 
     }
 
-    void ScriptState::removeObject(shared_ptr<GameObject> object, 
-        //я ебал, тупое решение, ну и хуй с ним.
-        std::function<void()> callback)
+    void ScriptState::removeObject(GameObject& object,
+
+        std::function<void(GameObject&)> callback)
     {
-        queues.addTask([=] {
-                
-                physics->removeRigidBody(object->getComponent<RigidBody>());
-                render->removeObject(object->getComponent<RenderObject>());
-                callback();
+        auto pObject = &object;
+        queues.addTask(ExecuteType::Single,
+             [this, pObject, callback] () {
+                physics->removeRigidBody(*pObject->getComponent<RigidBody>());
+                render->removeObject(*pObject->getComponent<RenderObject>());
+                callback(*pObject);
             });
+            
     }
 
-    void ScriptState::addCamera(shared_ptr<SimpleCamera> camera)
+    void ScriptState::addCamera(SimpleCamera& camera)
     {
-        queues.addTask([this, camera] {
-            render->addCamera(camera);
-            render->selectMainCamera(camera.get());
-            });
+        auto pCamera = &camera;
+        queues.addTask(ExecuteType::Single,
+            [=] {
+            render->addCamera(*pCamera);
+            render->selectMainCamera(*pCamera);
+            }
+        );
     }
 
-    void ScriptState::addLight(shared_ptr<PointLight> light)
+    void ScriptState::addLight(PointLight& light)
     {
-        queues.addTask([this, light] {
-            render->addLight(light);
-            });
+        auto pLight = &light;
+        queues.addTask(ExecuteType::Single,
+            [=] {
+            render->addLight(*pLight);
+            }
+        );
     }
 
-    void ScriptState::addDirLight(shared_ptr<DirectionLight> light)
+    void ScriptState::addDirLight(DirectionLight& light)
     {
-        queues.addTask([this, light] {
-            render->addGlobalLight(light);
-            });
+        auto pLight = &light;
+        queues.addTask(ExecuteType::Single,
+            [=] {
+            render->addGlobalLight(*pLight);
+            }
+        );
     }
 
     ScriptState::~ScriptState()
     {
         for (auto& object : bounds) {
-            scriptObjectFactory->destroy(object);
+            scriptObjectFactory->destroy(*object);
         }
         for (auto& object : objects) {
-            scriptObjectFactory->destroy(object);
+            scriptObjectFactory->destroy(*object);
         }
     }
 }

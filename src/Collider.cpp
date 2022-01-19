@@ -26,15 +26,15 @@ namespace BEbraEngine {
 	}
 	Collider::Collider()
 	{
-		name = "Collider";
+		name_ = "Collider";
 	}
 	Collider::~Collider()
 	{
 		DEBUG_DESTROY_CHECK("Collider has not destroyed", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
 	}
-	void Collider::destroy(IVisitorGameComponentDestroyer* destroyer)
+	void Collider::destroy(IVisitorGameComponentDestroyer& destroyer)
 	{
-		destroyer->destroyColliderComponent(this);
+		destroyer.destroyColliderComponent(*this);
 	}
 }
 

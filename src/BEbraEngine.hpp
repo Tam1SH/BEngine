@@ -1,0 +1,16 @@
+#pragma once
+#include "CreateInfoStructures.hpp"
+#include "BaseRenderWindow.hpp"
+#include "DebugUI.hpp"
+#include "Physics.hpp"
+
+#include "ScriptState.hpp"
+#include "Vector2.hpp"
+#include "VulkanWindow.hpp"
+#include "VulkanRender.hpp"
+#include "VulkanObjects.hpp"
+#include "Input.hpp"
+#include "Time.hpp"
+#include "Camera.hpp"
+#include "AngelScriptEngine.hpp"
+#include "ScriptManager.hpp"

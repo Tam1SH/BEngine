@@ -114,9 +114,6 @@
     <ClCompile Include="RenderObject.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="WorkSpace.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptManager.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -192,6 +189,12 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="GameComponentDestroyer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.hpp">
@@ -265,9 +268,6 @@
     </ClInclude>
     <ClInclude Include="Transform.hpp">
       <Filter>Файлы заголовков\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="WorkSpace.hpp">
-      <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="VkBuffer.hpp">
       <Filter>Файлы заголовков\Render\Vulkan</Filter>
@@ -405,6 +405,15 @@
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="GameComponentCreateInfo.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="GameComponentDestroyer.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="BEbraEngine.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

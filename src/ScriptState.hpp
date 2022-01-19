@@ -37,7 +37,7 @@ namespace BEbraEngine {
     class ScriptState {
     public:
 
-        ScriptState(std::shared_ptr<AbstractRender> render, std::shared_ptr<WorkSpace> workspace, std::shared_ptr<Physics> physics);
+        ScriptState(AbstractRender& render, Physics& physics);
 
         void scriptInit();
 
@@ -49,15 +49,15 @@ namespace BEbraEngine {
 
         void updateState();
 
-        void addObject(shared_ptr<GameObject> object, const GameComponentCreateInfo& info);
+        void addObject(GameObject& object, const GameComponentCreateInfo& info);
 
-        void removeObject(shared_ptr<GameObject> object, std::function<void()> callback);
+        void removeObject(GameObject& object, std::function<void(GameObject&)> callback);
 
-        void addCamera(shared_ptr<SimpleCamera> camera);
+        void addCamera(SimpleCamera& camera);
 
-        void addLight(shared_ptr<PointLight> light);
+        void addLight(PointLight& light);
 
-        void addDirLight(shared_ptr<DirectionLight> light);
+        void addDirLight(DirectionLight& light);
 
         ~ScriptState();
 
@@ -67,9 +67,9 @@ namespace BEbraEngine {
 
         ExecuteQueues<std::function<void()>> queues;
 
-        std::shared_ptr<AbstractRender> render;
+        AbstractRender* render;
 
-        std::shared_ptr<Physics> physics;
+        Physics* physics;
 
         std::unique_ptr<ObjectFactoryFacade> scriptObjectFactory;
 

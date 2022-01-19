@@ -13,60 +13,69 @@ namespace BEbraEngine {
 		using Queue = tbb::concurrent_queue<Function>;
 
 
-		void setStrategy(ExecuteType type) {
-			this->type = type;
+		void setStrategy(ExecuteType) { }
+
+		void addTask(const Function& func) {
+			parallelQueues[getCurrentThreadIndex()].push(func);
 		}
-		void addTask(Function&& func) {
-			queues[getCurrentThreadIndex()].push(func);
+		void addTask(ExecuteType type, Function&& func) {
+			if (type == ExecuteType::Single)
+				singleQueue.push(func);
+			if (type == ExecuteType::Multi)
+				parallelQueues[getCurrentThreadIndex()].push(func);
 		}
 		void reset() {
-			for (auto& queue : queues) {
+			for (auto& queue : parallelQueues) {
 				queue.clear();
 			}
 		}
 
 		template<typename... Args>
 		void execute(Args&&... args) {
+
 			auto f = [&](size_t i) {
 				Function func;
-				while (!queues[i].empty())
-					if (queues[i].try_pop(func))
+				while (!parallelQueues[i].empty())
+					if (parallelQueues[i].try_pop(func))
 						func(std::forward<Args&&>(args));
 
 			};
 
-			if(type == ExecuteType::Multi)
-				tbb::parallel_for(
-					tbb::blocked_range<size_t>(0, queues.size()),
-					[&](size_t i) 
-					{ f(i); });
+			tbb::parallel_for(
+				tbb::blocked_range<size_t>(0, parallelQueues.size()),
+					[&](size_t i) { f(i); });
 
-			if (type == ExecuteType::Single)
-				for (int i = 0; i < queues.size(); i++)
-					f(i);
+
+			while (!singleQueue.empty()) {
+				Function func;
+				if (singleQueue.try_pop(func))
+					func(std::forward<Args&&>(args));
+			}
 			
 		}
 		void execute() {
+
 			auto f = [&](size_t i) {
 				Function func;
-				while (!queues[i].empty())
-					if (queues[i].try_pop(func))
+				while (!parallelQueues[i].empty())
+					if (parallelQueues[i].try_pop(func))
 						func();
 
 			};
 
-			if (type == ExecuteType::Multi)
-				tbb::parallel_for<size_t>(
-					0, queues.size(),
-					[&](size_t i) { f(i); });
-
-			if (type == ExecuteType::Single)
-				for (int i = 0; i < queues.size(); i++)
-					f(i);
+			tbb::parallel_for<size_t>(
+				0, parallelQueues.size(),
+				[&](size_t i) { f(i); });
+				
+			while (!singleQueue.empty()) {
+				Function func;
+				if (singleQueue.try_pop(func))
+					func();
+			}
 
 		}
 		ExecuteQueues() {
-			queues.resize(tbb::this_task_arena::max_concurrency());
+			parallelQueues.resize(tbb::this_task_arena::max_concurrency());
 		}
 	private:
 		int getCurrentThreadIndex()
@@ -80,7 +89,7 @@ namespace BEbraEngine {
 		}
 
 	private:
-		std::vector<Queue> queues;
-		ExecuteType type;
+		std::vector<Queue> parallelQueues;
+		Queue singleQueue;
 	};
 }

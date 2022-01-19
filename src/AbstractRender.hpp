@@ -52,14 +52,14 @@ namespace BEbraEngine {
 		virtual RenderBuffer* createStorageBuffer(uint32_t size) = 0;
 		virtual void destroyBuffer(RenderBuffer* buffer) = 0;
 		
-		virtual void selectMainCamera(SimpleCamera* camera) = 0;
-		virtual void addObject(std::shared_ptr<RenderObject> object) = 0;
-		virtual void addLight(std::shared_ptr<PointLight> light) = 0;
-		virtual void removeObject(std::shared_ptr<RenderObject> object) = 0;
-		virtual void removeLight(std::shared_ptr<PointLight> light) = 0;
-		virtual void addGlobalLight(std::shared_ptr<DirectionLight> globalLight) = 0;
-		virtual void addCamera(std::shared_ptr<SimpleCamera> camera) = 0; 
-		virtual void removeCamera(std::shared_ptr<SimpleCamera> camera) = 0;
+		virtual void selectMainCamera(SimpleCamera& camera) = 0;
+		virtual void addObject(RenderObject& object) = 0;
+		virtual void addLight(PointLight& light) = 0;
+		virtual void removeObject(RenderObject& object) = 0;
+		virtual void removeLight(PointLight& light) = 0;
+		virtual void addGlobalLight(DirectionLight& globalLight) = 0;
+		virtual void addCamera(SimpleCamera& camera) = 0; 
+		virtual void removeCamera(SimpleCamera& camera) = 0;
 
 		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
 		virtual void drawFrame() = 0;

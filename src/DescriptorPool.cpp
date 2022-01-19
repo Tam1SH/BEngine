@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "VulkanRender.hpp"
 
 #include "DescriptorPool.hpp"
@@ -19,7 +19,7 @@ namespace BEbraEngine {
         VkResult result;
 
         if (result = vkCreateDescriptorPool(VulkanRender::device, &poolInfo, nullptr, &pool); result != VK_SUCCESS) {
-            Debug::log("Failed to create decsriptor pool", this, "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
+            DEBUG_LOG2("Failed to create decsriptor pool", this, "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
             return;
         }
 
@@ -38,7 +38,6 @@ namespace BEbraEngine {
     {
 
         {
-            //пахнет хуем как бы. Есть ли вообще смысл, в данном случае, отслеживать эти ебливые дескрипторы? 
             std::lock_guard g(mutex);
             std::remove(setsUses.begin(), setsUses.end(), set);
         }

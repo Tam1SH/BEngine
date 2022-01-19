@@ -18,6 +18,6 @@ namespace BEbraEngine {
 		Vector4 clamp(const Vector4& x, float minValue, float maxValue);
 		Vector2 clamp(const Vector2& x, float minValue, float maxValue);
 		Vector3 cross(const Vector3& left, const Vector3& right);
-		float radians(const float value);
+		float radians(float value);
 	}
 }

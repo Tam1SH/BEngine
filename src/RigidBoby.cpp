@@ -19,9 +19,9 @@ namespace BEbraEngine {
     }
 
 
-    void RigidBody::setTransform(Transform* transform)
+    void RigidBody::setTransform(Transform& transform)
     {
-        this->transform = transform;
+        this->transform = &transform;
     }
 
     void RigidBody::setMass(float mass)
@@ -79,8 +79,8 @@ namespace BEbraEngine {
         DEBUG_DESTROY_CHECK("RigidBody has not destroyed", this, "", Debug::ObjectType::RigidBody, Debug::MessageType::Info);
     }
 
-    void RigidBody::destroy(IVisitorGameComponentDestroyer* destroyer)
+    void RigidBody::destroy(IVisitorGameComponentDestroyer& destroyer)
     {
-        destroyer->destroyRigidBodyComponent(this);
+        destroyer.destroyRigidBodyComponent(*this);
     }
 }

@@ -3,6 +3,8 @@
 #include "RenderObject.hpp"
 
 using std::shared_ptr;
+using std::unique_ptr;
+using std::optional;
 
 namespace BEbraEngine {
 	class Transform;
@@ -18,15 +20,15 @@ namespace BEbraEngine {
 	class IRenderObjectFactory {
 	public:
 
-		virtual std::optional<RenderObject*> create(const RenderObject::RenderObjectCreateInfo& info) = 0;
+		virtual optional<RenderObject*> create(const RenderObject::RenderObjectCreateInfo& info) = 0;
 
-		virtual void bindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform) = 0;
+		virtual void bindTransform(PointLight& light, Transform& transform) = 0;
 
-		virtual void bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) = 0;
+		virtual void bindTransform(RenderObject& object, Transform& transform) = 0;
 
 		virtual void setTexture(shared_ptr<RenderObject> object, const boost::filesystem::path& path) = 0;
 
-		virtual void setTexture(RenderObject* object, Texture const* path) = 0;
+		virtual void setTexture(shared_ptr<RenderObject> object, Texture const& path) = 0;
 
 
 		virtual PointLight* createLight(const Vector3& color, const Vector3& position) = 0;
@@ -37,13 +39,13 @@ namespace BEbraEngine {
 
 		virtual void setContext(AbstractRender* render) = 0;
 
-		virtual void destroyObject(RenderObject* object) = 0;
+		virtual void destroyObject(RenderObject& object) = 0;
 
-		virtual void destroyPointLight(PointLight* light) = 0;
+		virtual void destroyPointLight(PointLight& light) = 0;
 
-		virtual void destroyCamera(SimpleCamera* camera) = 0;
+		virtual void destroyCamera(SimpleCamera& camera) = 0;
 
-		virtual void setModel(RenderObject* object, const std::string& path) = 0;
+		virtual void setModel(RenderObject& object, const std::string& path) = 0;
 
 	};
 }

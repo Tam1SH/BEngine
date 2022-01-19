@@ -4,6 +4,8 @@
 //TODO: начать делать хотя бы что-то со звуком 
 //TODO: реализовать систему частиц(партикле сустемXD) 
 //TODO: привести все фабричные методы к одному виду
+//TODO: Уменьшить кол-во дескрипторов.
+//TODO: заменить все shared_ptr на unique потому что так шевцов сказал?
 /*
 TODO: подумать над реализацей:
 ****************************************************************************************
@@ -22,7 +24,6 @@ TODO: подумать над реализацей:
 #include "BaseRenderWindow.hpp"
 #include "DebugUI.hpp"
 #include "Physics.hpp"
-#include "WorkSpace.hpp"
 
 #include "ScriptState.hpp"
 #include "Vector2.hpp"
@@ -39,10 +40,9 @@ namespace BEbraEngine {
 
     class Engine {
     public:
-        std::shared_ptr<AbstractRender> render1;
-        std::shared_ptr<Physics> physics;
+        std::unique_ptr<AbstractRender> render1;
+        std::unique_ptr<Physics> physics;
         std::unique_ptr<BaseWindow> window1;
-        std::shared_ptr<WorkSpace> workspace1;
         std::unique_ptr<ScriptState> gameLogic1;
         bool multiThreading = true;
     public:
@@ -50,9 +50,9 @@ namespace BEbraEngine {
             render1 = std::unique_ptr<VulkanRender>(new VulkanRender());
             window1 = std::unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
             window1->createWindow(Vector2(1000, 1000), "BEEEBRA!!!");
-            physics = std::shared_ptr<Physics>(new Physics());
-            workspace1 = std::shared_ptr<WorkSpace>(new WorkSpace());
-            gameLogic1 = std::unique_ptr<ScriptState>(new ScriptState(render1, workspace1, physics));
+            physics = std::unique_ptr<Physics>(new Physics());
+            gameLogic1 = std::unique_ptr<ScriptState>(new ScriptState(*render1, *physics));
+            Debug::enableAll();
         }
         void start() {
 

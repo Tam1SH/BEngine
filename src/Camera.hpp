@@ -50,7 +50,7 @@ namespace BEbraEngine {
         ~SimpleCamera();
         SimpleCamera(const Vector2& size, const Vector3& position = Vector3(0.0f, 0.0f, 0.0f), Vector3 up = Vector3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 
-        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+        void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
         glm::mat4 getViewMatrix();
         

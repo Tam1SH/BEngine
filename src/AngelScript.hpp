@@ -14,7 +14,7 @@ namespace BEbraEngine {
 		asIScriptContext* getContext();
 		AngelScript(asIScriptContext* context);
 
-		void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+		void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 		
 	private:
 		asIScriptContext* context;

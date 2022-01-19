@@ -140,7 +140,7 @@
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;;$(SolutionDir)Include\glad\include;$(SolutionDir)Include\json</AdditionalIncludeDirectories>
       <AdditionalOptions>
@@ -227,7 +227,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -311,10 +311,12 @@
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderFactory.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
+    <ClCompile Include="GameComponentDestroyer.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="RigidBodyFactory.cpp" />
     <ClCompile Include="ObjectFactoryFacade.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="utils.cpp" />
     <ClCompile Include="VulkanObjects.cpp" />
     <ClCompile Include="VulkanRender.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -352,9 +354,9 @@
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="VkBuffer.cpp" />
     <ClCompile Include="VulkanWindow.cpp" />
-    <ClCompile Include="WorkSpace.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BEbraEngine.hpp" />
     <ClInclude Include="GameComponent.hpp" />
     <ClInclude Include="AbstractRender.hpp" />
     <ClInclude Include="AbstractScriptObject.hpp" />
@@ -368,6 +370,7 @@
     <ClInclude Include="ColliderFactory.hpp" />
     <ClInclude Include="ExecuteQueues.hpp" />
     <ClInclude Include="GameComponentCreateInfo.hpp" />
+    <ClInclude Include="GameComponentDestroyer.hpp" />
     <ClInclude Include="IDraweable.hpp" />
     <ClInclude Include="ITextureFactory.hpp" />
     <ClInclude Include="IVisitorGameComponentDestroyer.hpp" />
@@ -377,6 +380,7 @@
     <ClInclude Include="ObjectFactoryFacade.hpp" />
     <ClInclude Include="ScriptWrappers.hpp" />
     <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="utils.hpp" />
     <ClInclude Include="VulkanObjects.hpp" />
     <ClInclude Include="VulkanRender.hpp" />
     <ClInclude Include="CommandBuffer.hpp" />
@@ -425,7 +429,6 @@
     <ClInclude Include="Vertex.hpp" />
     <ClInclude Include="VkBuffer.hpp" />
     <ClInclude Include="VulkanWindow.hpp" />
-    <ClInclude Include="WorkSpace.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

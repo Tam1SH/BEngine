@@ -61,25 +61,25 @@ namespace BEbraEngine {
 
         RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices) override;
 
-        void addObject(std::shared_ptr<RenderObject> object) override;
+        void addObject(RenderObject& object) override;
 
-        void addLight(std::shared_ptr<PointLight> light) override;
+        void addLight(PointLight& light) override;
 
-        void removeObject(std::shared_ptr<RenderObject> object) override;
+        void removeObject(RenderObject& object) override;
 
-        void removeLight(std::shared_ptr<PointLight> light) override;
+        void removeLight(PointLight& light) override;
 
-        void addCamera(std::shared_ptr<SimpleCamera> camera) override;
+        void addCamera(SimpleCamera& camera) override;
 
-        void selectMainCamera(SimpleCamera* camera) override;
+        void selectMainCamera(SimpleCamera& camera) override;
 
-        void removeCamera(std::shared_ptr<SimpleCamera> camera) override;
+        void removeCamera(SimpleCamera& camera) override;
 
         AbstractRender::Type getType() override { return AbstractRender::Type::Vulkan; }
 
         IRenderObjectFactory* getRenderObjectFactory() override;
 
-        void addGlobalLight(std::shared_ptr<DirectionLight> globalLight) override;
+        void addGlobalLight(DirectionLight& globalLight) override;
 
         void drawFrame() override;
 
@@ -98,7 +98,7 @@ namespace BEbraEngine {
 
         VkDescriptorSet createDescriptor(RenderBuffer* buffer);
 
-        void freeDescriptor(VulkanRenderObject* set);
+        void freeDescriptor(VulkanRenderObject& set);
 
         void freeDescriptor(VulkanDirLight* set);
 
@@ -169,13 +169,13 @@ namespace BEbraEngine {
 
         std::unique_ptr<VulkanRenderObjectFactory> factory;
 
-        std::vector<std::shared_ptr<VulkanRenderObject>> objects;
+        std::vector<VulkanRenderObject*> objects;
 
-        std::list<std::shared_ptr<VulkanPointLight>> lights;
+        std::list<VulkanPointLight*> lights;
 
-        std::list<std::shared_ptr<VulkanCamera>> cameras;
+        std::list<VulkanCamera*> cameras;
 
-        std::weak_ptr<VulkanDirLight> globalLight;
+        VulkanDirLight* globalLight;
 
         VulkanWindow* window;
 

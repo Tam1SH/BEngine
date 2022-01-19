@@ -4,6 +4,9 @@
 
 class btCollisionShape;
 
+using std::optional;
+using std::unique_ptr;
+
 namespace std {
 	template<class T>
 	class shared_ptr;
@@ -14,18 +17,20 @@ namespace BEbraEngine {
 }
 
 namespace BEbraEngine {
+
 	class ColliderFactory
 	{
 	public:
 		ColliderFactory(Physics* physics);
 
-		std::optional<Collider*> create(const Collider::ColliderCreateInfo& info);
+		optional<Collider*> create(const Collider::ColliderCreateInfo& info);
 
-		void destroyCollider(Collider* col);
+		void destroyCollider(Collider& col);
 
-		void setShape(Collider* collider, btCollisionShape* newShape);
+		void setShape(Collider& collider, btCollisionShape& newShape);
 	private:
 		Physics* physics;
 	};
+
 }
 

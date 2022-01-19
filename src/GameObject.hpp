@@ -4,52 +4,48 @@
 #include <typeinfo>
 #include "Vector3.hpp"
 
-#ifdef _DEBUG
 #include "Debug.hpp"
-#endif 
 
+using std::shared_ptr;
+using std::string;
 
-namespace BEbraEngine {
-}
 namespace BEbraEngine {
 
 
     class GameObject : public GameComponent { 
-#ifdef _DEBUG
         DEBUG_DESTROY_CHECK_DECL()
-#endif
     public:
 
-        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+        void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
-        template<typename T>
-        std::shared_ptr<T> getComponent() {
-            for (auto component : components_) {
-                if (std::dynamic_pointer_cast<T>(component)) {
-                    return std::static_pointer_cast<T>(component);
+        template<typename T, class _ = typename std::enable_if<std::is_base_of<GameComponent, T>::value>::type>
+        T* getComponent() {
+            for (auto& component : components_) {
+                if (dynamic_cast<T*>(component.get())) {
+                    return static_cast<T*>(component.get());
                 }
             }
-            return std::shared_ptr<T>();
+            return nullptr;
         }
 
-        std::shared_ptr<GameComponent> getComponentByName(const std::string& name) {
-            for (auto component : components_) {
+        GameComponent* getComponentByName(const string& name) {
+            for (auto& component : components_) {
 
                 //TODO: нестрогое сравнение названий классов, в будущем могу на этом пососать.
-                std::string componentName = typeid(*component.get()).name();
+                string componentName = typeid(*component).name();
                 
-                if (componentName.find(name) != std::string::npos) {
-                    return component;
+                if (componentName.find(name) != string::npos) {
+                    return component.get();
                 }
             }
-            return std::shared_ptr<GameComponent>();
+            return nullptr;
         }
 
         bool isComposite() const override;
 
         GameObject();
 
-        GameObject(const std::string& name);
+        GameObject(const string& name);
 
         ~GameObject();
 

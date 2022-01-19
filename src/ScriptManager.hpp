@@ -8,6 +8,11 @@
 #include "AngelScriptEngine.hpp"
 #include "AngelScript.hpp"
 
+using std::string; 
+using std::shared_ptr;
+using std::unique_ptr;
+using std::optional;
+
 namespace BEbraEngine {
 	class ObjectFactoryFacade;
 }
@@ -17,18 +22,15 @@ namespace BEbraEngine {
 	class ScriptManager
 	{
 	private:
-		std::unique_ptr<AngelScriptEngine> engine;
+		unique_ptr<AngelScriptEngine> engine;
 
-		std::vector<std::shared_ptr<AngelScript>> scripts;
-
-		std::shared_ptr<WorkSpace> workspace;
+		std::vector<shared_ptr<AngelScript>> scripts;
 
 		ObjectFactoryFacade* factory;
 
 	public:
-		void SetWorkSpace(std::shared_ptr<WorkSpace> workspace);
 
-		std::optional<std::shared_ptr<AngelScript>> getScriptByName(const std::string& name);
+		optional<shared_ptr<AngelScript>> getScriptByName(const string& name);
 
 		void runScripts();
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "RenderObject.hpp"
 #include "VulkanRenderObjectFactory.hpp"
 #include "CreateInfoStructures.hpp"
@@ -6,7 +6,6 @@
 #include "VulkanTextureFactory.hpp"
 #include "Texture.hpp"
 #include "Transform.hpp"
-#include "DXRender.hpp"
 #include "VkBuffer.hpp"
 #include "VulkanObjects.hpp"
 #include "Vertex.hpp"
@@ -17,24 +16,25 @@
 
 namespace BEbraEngine {
 
-    std::optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObject::RenderObjectCreateInfo& info)
+    optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObject::RenderObjectCreateInfo& info)
     {
 
         auto maybe_object_view = _poolofObjects->get();
-        std::shared_ptr<RenderBufferView> object_view;
+        shared_ptr<RenderBufferView> object_view;
 
         if (maybe_object_view.has_value()) {
-            object_view = maybe_object_view.value().lock();
+            object_view = maybe_object_view.value();
         }
         else {
-            Debug::log("BufferPool is empty", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
-            return std::optional<RenderObject*>();
+
+            DEBUG_LOG2("BufferPool is empty", &*_poolofObjects, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            return optional<RenderObject*>();
         }
 
         auto obj = new VulkanRenderObject();
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
-        obj->texture = std::unique_ptr<Texture>(textureFactory->createEmpty());
+        obj->texture = unique_ptr<Texture>(textureFactory->createEmpty());
 
         obj->matrix = object_view;
 
@@ -47,20 +47,20 @@ namespace BEbraEngine {
 
         obj->descriptor = render->createDescriptor(&setinfo);
         if (!obj->descriptor) {
-            Debug::log("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            DEBUG_LOG2("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
             delete obj;
-            return std::optional<RenderObject*>();
+            return optional<RenderObject*>();
         }
         obj->layout = &render->pipelineLayout;
-        return std::optional<RenderObject*>(obj);
+        return optional<RenderObject*>(obj);
     }
 
     PointLight* VulkanRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)
     {
         auto maybe_object_view = _poolofPointLights->get();
-        std::shared_ptr<RenderBufferView> object_view;
+        shared_ptr<RenderBufferView> object_view;
         if (maybe_object_view.has_value()) {
-            object_view = maybe_object_view.value().lock();
+            object_view = maybe_object_view.value();
         }
         else throw std::runtime_error("");
         auto light = new VulkanPointLight();
@@ -73,10 +73,10 @@ namespace BEbraEngine {
     DirectionLight* VulkanRenderObjectFactory::createDirLight(const Vector3& color, const Vector3& direction)
     {
         auto maybe_light_view = _poolofDirLights->get();
-        std::shared_ptr<RenderBufferView> view;
+        shared_ptr<RenderBufferView> view;
 
         if (maybe_light_view.has_value()) {
-            view = maybe_light_view.value().lock();
+            view = maybe_light_view.value();
         }
 
         auto light = new VulkanDirLight();
@@ -125,49 +125,49 @@ namespace BEbraEngine {
         info.type = LightDescriptorInfo::Type::Point;
     }
 
-    void VulkanRenderObjectFactory::destroyObject(RenderObject* object)
+    void VulkanRenderObjectFactory::destroyObject(RenderObject& object)
     {
-        auto obj = static_cast<VulkanRenderObject*>(object); 
+        auto& obj = static_cast<VulkanRenderObject&>(object); 
         render->freeDescriptor(obj);
-        _poolofObjects->free(obj->matrix);
-        auto texture = obj->texture;
-        //создание текстурки пихается в очередь и не факт, что данные ешё остануться. Соответственно лучше перестраховаться нахуй.
-        render->executeQueues_Objects.addTask([=] { 
+        _poolofObjects->free(obj.matrix);
+        auto texture = obj.texture;
+
+        render->executeQueues_Objects.addTask(ExecuteType::Multi,
+            [=] {
             if (texture.get())
                 textureFactory->destroyTexture(texture.get());
             else
-                Debug::log("Texture lost");
-            
+                DEBUG_LOG2("Texture lost", 0, "", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
             });
 
 #ifdef _DEBUG
-        object->isDestroyed = true;
+        object.isDestroyed = true;
 #endif // _DEBUG
 
     }
 
-    void VulkanRenderObjectFactory::destroyPointLight(PointLight* light)
+    void VulkanRenderObjectFactory::destroyPointLight(PointLight& light)
     {
-        auto light_ = static_cast<VulkanPointLight*>(light);
-        _poolofPointLights->free(light_->data);
+        auto& light_ = static_cast<VulkanPointLight&>(light);
+        _poolofPointLights->free(light_.data);
     }
 
-    void VulkanRenderObjectFactory::destroyCamera(SimpleCamera* camera)
+    void VulkanRenderObjectFactory::destroyCamera(SimpleCamera& camera)
     {
     }
 
-    void VulkanRenderObjectFactory::bindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform)
+    void VulkanRenderObjectFactory::bindTransform(PointLight& light, Transform& transform)
     {
-        light->transform = transform;
+        light.transform = &transform;
     }
-    void VulkanRenderObjectFactory::bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform)
+    void VulkanRenderObjectFactory::bindTransform(RenderObject& object, Transform& transform)
     {
-        object->transform = transform;
+        object.transform = &transform;
     }
 
     void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)
     {
-        render->freeDescriptor(obj);
+        render->freeDescriptor(*obj);
         VulkanDescriptorSetInfo setinfo{};
         auto vTex = static_cast<VulkanTexture*>(obj->texture.get());
         setinfo.sampler = vTex->sampler;
@@ -188,18 +188,19 @@ namespace BEbraEngine {
 
     void VulkanRenderObjectFactory::setTexture(shared_ptr<RenderObject> object, const boost::filesystem::path& path)
     {
-        weak_ptr<VulkanRenderObject> obj = std::static_pointer_cast<VulkanRenderObject>(object);
+        shared_ptr<VulkanRenderObject> obj = std::static_pointer_cast<VulkanRenderObject>(object);
 
 
         Texture* _texture = textureFactory->createAsync(path,
             [=](Texture* texture) {
-                render->executeQueues_Objects.addTask([=] {
-                    if (obj.expired()) {
-                        auto eba = obj.lock().get();
+                render->executeQueues_Objects.addTask(ExecuteType::Multi,
+                    [=] {
+                    if (obj.get()) {
+                        auto eba = obj.get();
                         textureFactory->destroyTexture(eba->texture.get());
                         eba->texture.reset();
-                        eba->texture = std::unique_ptr<Texture>(texture);
-                        render->freeDescriptor(eba);
+                        eba->texture = unique_ptr<Texture>(texture);
+                        render->freeDescriptor(*eba);
                         VulkanDescriptorSetInfo setinfo{};
 
                         auto vTex = static_cast<VulkanTexture*>(eba->texture.get());
@@ -209,15 +210,15 @@ namespace BEbraEngine {
                         eba->descriptor = render->createDescriptor(&setinfo);
                     }
                     else
-                        Debug::log("Object has destroyed when it was being updated texture", 
+                        DEBUG_LOG2("Object has destroyed when it was being updated texture", 
                             texture,"", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
                     });
             });
 
-        object->texture = std::unique_ptr<Texture>(_texture);
+        object->texture = unique_ptr<Texture>(_texture);
     }
 
-    void VulkanRenderObjectFactory::setTexture(RenderObject* object, Texture const* path)
+    void VulkanRenderObjectFactory::setTexture(shared_ptr<RenderObject> object, Texture const& path)
     {
 
     }
@@ -227,18 +228,18 @@ namespace BEbraEngine {
         auto camera = new VulkanCamera(render->getCurrentRenderResolution(), position);
         auto view = new RenderBufferView();
         view->availableRange = sizeof(SimpleCamera::ShaderData);
-        view->buffer = std::shared_ptr<RenderBuffer>(render->createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
+        view->buffer = shared_ptr<RenderBuffer>(render->createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
         camera->cameraData = view;
         camera->descriptor = render->createDescriptor(camera->cameraData->buffer.get());
         return camera;
     }
 
-    void VulkanRenderObjectFactory::setModel(RenderObject* object, const std::string& path)
+    void VulkanRenderObjectFactory::setModel(RenderObject& object, const std::string& path)
     {
-        object->model.reset();
-        auto m =  meshFactory->create(path);
+        object.model.reset();
+        auto m = meshFactory->create(path);
         if (m.has_value()) {
-            object->model = std::shared_ptr<Model>(m.value());
+            object.model = shared_ptr<Model>(m.value());
         }
     }
 }

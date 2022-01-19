@@ -39,11 +39,11 @@ namespace BEbraEngine {
         };
     public:
 
-        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+        void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
-        std::weak_ptr<RenderBufferView> data;
+        std::shared_ptr<RenderBufferView> data;
 
-        std::weak_ptr<Transform> transform;
+        Transform* transform;
 
         void release() override;
 
@@ -57,7 +57,7 @@ namespace BEbraEngine {
         void update();
 
 
-        PointLight() { name = "Light"; }
+        PointLight() { name_ = "Light"; }
         virtual ~PointLight() {}
     private:
         Vector3 color;
@@ -101,7 +101,7 @@ namespace BEbraEngine {
                 data.lock()->setData(&data1, sizeof(ShaderData));
             }
             else
-                Debug::log(getName() + " has invalid data");
+                DEBUG_LOG1(getName() + " has invalid data");
 
         }
         Vector3& getDirection() {
@@ -111,15 +111,16 @@ namespace BEbraEngine {
             return color;
         }
 
-        DirectionLight() { name = "DirectionLight"; }
+        DirectionLight() { name_ = "DirectionLight"; }
         virtual ~DirectionLight() {}
 
+
+        virtual void destroy(IVisitorGameComponentDestroyer& destroyer) override;
     private:
         Vector3 color;
         Vector3 _direction;
 
-        // Унаследовано через GameObjectComponent
-        virtual void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+
     };
 
     class RenderObject : public GameComponent, public IReusable {
@@ -139,7 +140,7 @@ namespace BEbraEngine {
     public:
 
 
-        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+        void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
         //бесполезная хуйня
         std::shared_ptr<Texture> texture;
@@ -148,7 +149,7 @@ namespace BEbraEngine {
 
         std::shared_ptr<RenderBufferView> matrix;
 
-        std::shared_ptr<Transform> transform;
+        Transform* transform;
 
         void update();
 

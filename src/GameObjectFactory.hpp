@@ -1,9 +1,6 @@
-
 #pragma once
-//#include "AbstractComponent.hpp"
 #include "stdafx.h"
 
-#include "IVisitorGameComponentDestroyer.hpp"
 #include "GameComponentCreateInfo.hpp"
 
 using std::shared_ptr;
@@ -15,6 +12,7 @@ namespace std {
 	 template<class T> 
 	 class shared_ptr;
 }
+
 namespace BEbraEngine {
 	class Physics;
 	class Render;
@@ -27,25 +25,24 @@ namespace BEbraEngine {
 	class RigidBodyFactory;
 	class IRenderObjectFactory;
 	class GameComponentCreateInfo;
+	class IVisitorGameComponentDestroyer;
 	class GameComponent;
 	class SimpleCamera;
 	class Vector3;
+	class GameObject;
 }
 
 namespace BEbraEngine {
 
 
-	class GameObjectFactory : public IVisitorGameComponentDestroyer {
+	class GameObjectFactory {
 	public:
-		//TODO: бля, ну мне кажется это будем единственным хуем торчащим, 
-		//т.к плодить методы на каждый новый объект в движке ну хуй знает
-		//хотя по сути я делаю монструозным параметры конструктора... ну тип
-		//хотя можно унифицировать создание этих объектов и плесать от одного единственного метода. хуй.(одно и тоже написал пока думал)
-		optional<shared_ptr<GameComponent>> create(const GameComponentCreateInfo& info);
 
-		void destroy(GameComponent* object);
+		optional<GameComponent*> create(const GameComponentCreateInfo& info);
 
-		void destroy(GameObject* object);
+		void destroy(GameComponent& object);
+
+		void destroy(GameObject& object);
 
 		shared_ptr<PointLight> createLight(const Vector3& position);
 
@@ -53,37 +50,19 @@ namespace BEbraEngine {
 
 		shared_ptr<SimpleCamera> createCamera(const Vector3& position);
 
-		void setModel(GameObject* object, const std::string& path);
+		void setModel(GameObject& object, const string& path);
 
-		void destroyCamera(SimpleCamera* camera);
+		void destroyCamera(SimpleCamera& camera);
 
-		void destroyPointLight(PointLight* light);
+		void destroyPointLight(PointLight& light);
 
-		GameObjectFactory(shared_ptr<AbstractRender> render, shared_ptr<Physics> physics);
+		GameObjectFactory(AbstractRender& render, Physics& physics);
 
 		~GameObjectFactory();
-	private:
-
-		void destroyGameObject(GameObject* comp) override;
-
-		void destroyRenderComponent(RenderObject* comp) override;
-
-		void destroyRigidBodyComponent(RigidBody* comp) override;
-
-		void destroyColliderComponent(Collider* comp) override;
-
-		void destroyMaterialComponent(Texture* comp) override;
-
-		void destroyTransformComponent(Transform* comp) override;
-
-		void destroyPointLightComponent(PointLight* comp) override;
-
-		void destroyDirectionLightComponent(DirectionLight* comp) override;
-
-		void destroyCameraComponent(SimpleCamera* comp) override;
 
 	private:
 		unique_ptr<TransformFactory> transFactory;
+		unique_ptr<IVisitorGameComponentDestroyer> destroyer;
 		IRenderObjectFactory* renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;

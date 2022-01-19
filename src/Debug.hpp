@@ -1,23 +1,22 @@
 #pragma once
 #include "stdafx.h"
-namespace BEbraEngine {
+
+#define DEBUG_LOG1(msg) BEbraEngine::Debug::log(__LINE__, __FILE__, msg);
+#define DEBUG_LOG2(msg, handle, name, oType, mType) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, handle, name, oType, mType)
 
 
 #ifdef _DEBUG
 #define DEBUG_DESTROY_CHECK_DECL() public: bool isDestroyed; private:
-#else
-#define DEBUG_DESTROY_CHECK_DECL()
-#endif
+#define DEBUG_DESTROY_CHECK(msg, handle, name, oType, mType) if(!isDestroyed) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, handle, name, oType, mType)	
 
-
-
-#ifdef _DEBUG
-#define DEBUG_DESTROY_CHECK(msg, handle, name, oType, mType) if(!isDestroyed) Debug::log(msg, handle, name, oType, mType)		
 #else
 #define DEBUG_DESTROY_CHECK(msg, handle, name, oType, mType) 
+#define DEBUG_DESTROY_CHECK_DECL()
 #endif
+namespace BEbraEngine {
 
-   
+
+
 
 	class Debug
 	{
@@ -51,9 +50,15 @@ namespace BEbraEngine {
 
 		static void log(const std::stringstream& stream);
 
-		static void log(const std::string&& text);
+		static void log(const std::string& text);
 
-		static void log(const std::string&& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType);
+		static void log(int line, const char* nameFile, const std::string&& text);
+
+
+		static void log(int line, const char* nameFile,
+			const std::string& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType);
+
+		static void log(const std::string& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType);
 
 	private:
 		static void _log(const std::string& str);

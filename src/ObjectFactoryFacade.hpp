@@ -3,6 +3,7 @@
 #include "Vector3.hpp"
 
 using std::shared_ptr;
+using std::unique_ptr;
 using std::string;
 
 namespace std {
@@ -30,19 +31,17 @@ namespace BEbraEngine {
 
         shared_ptr<DirectionLight> createDirLight(const Vector3& direction);
 
-        void destroy(shared_ptr<GameObject> object);
+        void destroy(GameObject& object);
 
-        void destroyPointLight(PointLight* light);
+        void destroyPointLight(PointLight& light);
 
         shared_ptr<SimpleCamera> createCamera(const Vector3& position);
 
-        void destroyCamera(SimpleCamera* camera);
+        void destroyCamera(SimpleCamera& camera);
 
-        void setModel(GameObject* object, const string& path);
+        void setModel(GameObject& object, const string& path);
 
         void setContext(ScriptState* logic);
-
-        
 
         ObjectFactoryFacade() {}
 

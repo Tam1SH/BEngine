@@ -4,7 +4,6 @@
 namespace BEbraEngine {
     void VulkanRenderObject::release()
     {
-        transform.reset();
         matrix.reset();
     }
 

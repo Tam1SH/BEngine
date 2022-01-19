@@ -125,7 +125,7 @@ namespace BEbraEngine {
         Right = BEbraMath::normalize(BEbraMath::cross(Front, WorldUp));  
         Up = BEbraMath::normalize(BEbraMath::cross(Right, Front));
     }
-    void SimpleCamera::destroy(IVisitorGameComponentDestroyer* destroyer)
+    void SimpleCamera::destroy(IVisitorGameComponentDestroyer& destroyer)
     {
     }
     void SimpleCamera::release()

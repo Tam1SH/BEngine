@@ -10,7 +10,7 @@ namespace BEbraEngine {
     {
         DEBUG_DESTROY_CHECK("texture has not destroyed", this, "", Debug::ObjectType::Empty, Debug::MessageType::Info);
     }
-    void Texture::destroy(IVisitorGameComponentDestroyer* destroyer)
+    void Texture::destroy(IVisitorGameComponentDestroyer& destroyer)
     {
     }
 }

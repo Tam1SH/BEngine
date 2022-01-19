@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "ScriptManager.hpp"
 #include "AngelScriptEngine.hpp"
 #include <filesystem>
@@ -6,22 +6,20 @@
 namespace BEbraEngine {
 	
 
-	void ScriptManager::SetWorkSpace(std::shared_ptr<WorkSpace> workspace)
-	{
-		ScriptManager::workspace = workspace;
-	}
-	std::optional<std::shared_ptr<AngelScript>> ScriptManager::getScriptByName(const std::string& name)
+
+	optional<shared_ptr<AngelScript>> ScriptManager::getScriptByName(const string& name)
 	{
 		for (auto& script : scripts) {
 			if (script->getName() == name) {
 				return std::make_optional(script);
 			}
 		}
-		return std::optional<std::shared_ptr<AngelScript>>();
+		return optional<shared_ptr<AngelScript>>();
 	}
 	void ScriptManager::runScripts()
 	{
 		static float time = 0.f;
+		
 		tbb::task_group task;
 		task.run([&] {
 			tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
@@ -62,8 +60,8 @@ namespace BEbraEngine {
 		json j;
 		stream >> j;
 		for (int i = 0; i < j["scripts"].size(); i++) {
-			std::string name;
-			std::string path;
+			string name;
+			string path;
 			for (auto& [key, value] : j["scripts"][i].items()) {
 				if (key == "name") {
 					name = value;
@@ -86,7 +84,7 @@ namespace BEbraEngine {
 	ScriptManager::ScriptManager(ObjectFactoryFacade* factory)
 	{
 		this->factory = factory;
-		engine = std::unique_ptr<AngelScriptEngine>(new AngelScriptEngine(factory));
+		engine = unique_ptr<AngelScriptEngine>(new AngelScriptEngine(factory));
 
 	}
 

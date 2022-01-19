@@ -53,7 +53,7 @@ namespace BEbraEngine {
 		str << stream.str();
 		_log(str.str());
 	}
-	void Debug::log(const std::string&& text)
+	void Debug::log(const std::string& text)
 	{
 		std::stringstream str;
 		time_t t = std::time(nullptr);
@@ -64,11 +64,15 @@ namespace BEbraEngine {
 		str << "INFO: ";
 		str << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": ";
 		str << text;
-		_log(str.str());
-	}
-	void Debug::log(const std::string&& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType)
-	{
 
+		log(-1, "", str.str(), 0, "", ObjectType::Empty, MessageType::Info);
+	}
+	void Debug::log(int line, const char* nameFile, const std::string&& text)
+	{
+		log(line, nameFile, text, 0, "", ObjectType::Empty, MessageType::Info);
+	}
+	void Debug::log(int line, const char* nameFile, const std::string& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType)
+	{
 		std::stringstream str;
 		if (auto item = std::find(_disableLog.begin(), _disableLog.end(), oType);
 			item == _disableLog.end())
@@ -89,6 +93,10 @@ namespace BEbraEngine {
 				str << "type = " << to_string(oType);
 			_log(str.str());
 		}
+	}
+	void Debug::log(const std::string& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType)
+	{
+		log(-1, "", text, handle, name, ObjectType::Empty, MessageType::Info);
 	}
 	void Debug::_log(const std::string& str)
 	{

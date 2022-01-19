@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Physics.hpp"
 #include "RigidBoby.hpp"
 #include "GameObject.hpp"
@@ -141,31 +141,27 @@ namespace BEbraEngine {
         queues.execute();
 
     }
-    void Physics::updateData(const PhysicsData& data)
-    {
-        bodies.insert(bodies.end(), data.bodies.begin(), data.bodies.end());
 
-    }
-    void Physics::addRigidBody(shared_ptr<RigidBody> body)
+    void Physics::addRigidBody(RigidBody& body)
     {
-        dynamicsWorld->addRigidBody(body->getRigidBody());
-        bodies.push_back(body);
+        dynamicsWorld->addRigidBody(body.getRigidBody());
+        bodies.push_back(&body);
     }
-    void Physics::removeRigidBody(shared_ptr<RigidBody> body)
+    void Physics::removeRigidBody(RigidBody& body)
     {
-        rigidBodyFactory->destroy(body.get());
-        dynamicsWorld->removeRigidBody(body->getRigidBody());
-        bodies.remove(body);
+        rigidBodyFactory->destroy(body);
+        dynamicsWorld->removeRigidBody(body.getRigidBody());
+        bodies.remove(&body);
     }
     void Physics::removeCollider(Collider* col)
     {
-        dynamicsWorld->removeCollisionObject(col->get());
+        dynamicsWorld->removeCollisionObject(&col->get());
     }
     void Physics::setCollder(RigidBody* body, Collider* collider)
     {
-        colliderFactory->destroyCollider(rigidBodyFactory->getCollider(body));
+        colliderFactory->destroyCollider(rigidBodyFactory->getCollider(*body));
 
-        rigidBodyFactory->setCollder(body, collider);
+        rigidBodyFactory->setCollder(*body, collider);
     }
     Physics::Physics()
     {
@@ -174,7 +170,7 @@ namespace BEbraEngine {
         rigidBodyFactory = std::unique_ptr<RigidBodyFactory>(new RigidBodyFactory(this));
         if (false) {
 
-            mgr = std::make_unique<btTaskSchedulerManager>();
+            mgr = std::unique_ptr<btTaskSchedulerManager>(new btTaskSchedulerManager());
             mgr->init();
 
             btDefaultCollisionConstructionInfo cci;
@@ -193,9 +189,9 @@ namespace BEbraEngine {
                 {
                     solvers[i] = createSolverByType(poolSolverType);
                 }
-                solverPool = std::make_unique<btConstraintSolverPoolMt>(solvers, maxThreadCount);
+                solverPool = std::unique_ptr<btConstraintSolverPoolMt>(new btConstraintSolverPoolMt(solvers, maxThreadCount));
             }
-            solver = std::make_unique<btSequentialImpulseConstraintSolverMt>();
+            solver = std::unique_ptr<btSequentialImpulseConstraintSolverMt>(new btSequentialImpulseConstraintSolverMt());
 
             btAssert(btGetTaskScheduler() != NULL);
 
@@ -213,12 +209,12 @@ namespace BEbraEngine {
 
             overlappingPairCache = std::unique_ptr<btDbvtBroadphase>(new btDbvtBroadphase());
 
-            dispatcher = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
+            dispatcher = std::unique_ptr<btCollisionDispatcher>(new btCollisionDispatcher(collisionConfiguration.get()));
 
-            dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(),
+            dynamicsWorld = std::unique_ptr<btDiscreteDynamicsWorld>(new btDiscreteDynamicsWorld(dispatcher.get(),
                 overlappingPairCache.get(),
                 solver.get(),
-                collisionConfiguration.get());
+                collisionConfiguration.get()));
         }
         queues.setStrategy(ExecuteType::Single);
 
@@ -226,7 +222,7 @@ namespace BEbraEngine {
     Physics::~Physics()
     {
         for (auto& body : bodies) {
-            rigidBodyFactory->destroy(body.get());
+            rigidBodyFactory->destroy(*body);
         }
         dynamicsWorld.reset();
     }

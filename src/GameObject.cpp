@@ -1,7 +1,8 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "GameObject.hpp"
 #include "GameObjectFactory.hpp"
 #include "Debug.hpp"
+#include "IVisitorGameComponentDestroyer.hpp"
 namespace BEbraEngine {
 
     bool GameObject::isComposite() const
@@ -11,24 +12,25 @@ namespace BEbraEngine {
 
     GameObject::GameObject()
     {
-        name = "GameObject";
+        name_ = "GameObject";
 
     }
-    GameObject::GameObject(const std::string& name)
+    GameObject::GameObject(const string& name)
     {
-        this->name = name;
+        this->name_ = name;
     }
     GameObject::~GameObject()
     {
-        DEBUG_DESTROY_CHECK("GameObject has not destroyed", this, name, Debug::ObjectType::GameObject, Debug::MessageType::Info);
+        DEBUG_DESTROY_CHECK("GameObject has not destroyed", this, name_, Debug::ObjectType::GameObject, Debug::MessageType::Info);
     }
-    void GameObject::destroy(IVisitorGameComponentDestroyer* destroyer)
+
+    void GameObject::destroy(IVisitorGameComponentDestroyer& destroyer)
     {
         for (auto& comp : components_) {
             comp->destroy(destroyer);
         }
-        //WARN ёпта - изи рекурсия если плохо пососать.
-        destroyer->destroyGameObject(this);
+
+        destroyer.destroyGameObject(*this);
         
     }
 }

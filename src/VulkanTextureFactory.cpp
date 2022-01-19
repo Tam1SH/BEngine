@@ -1,4 +1,4 @@
-
+﻿
 #include "stdafx.h"
 
 #include "VulkanTextureFactory.hpp"
@@ -42,7 +42,7 @@ namespace BEbraEngine {
         if (!pixels)
         {
             if(!path.string().empty())
-                Debug::log("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
+                DEBUG_LOG2("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
                     image, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
             pixels = new unsigned char[4]{ 255,255,255 };
             texWidth = 1, texHeight = 1;

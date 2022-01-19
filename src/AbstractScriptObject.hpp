@@ -2,8 +2,8 @@
 class asILockableSharedBool;
 #define DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(ObjectType)	\
 int refCount{};										\
-void ObjectType::addRef() { ++refCount; }			\
-int ObjectType::release() {						\
+void addRef() { ++refCount; }			\
+int release() {						\
 		if (--refCount == 0)						\
 		{											\
 			delete this;							\

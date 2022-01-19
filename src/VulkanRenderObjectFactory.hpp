@@ -3,6 +3,20 @@
 
 #include "Model.hpp"
 #include "IRenderObjectFactory.hpp"
+
+using std::shared_ptr;
+using std::unique_ptr;
+using std::optional;
+namespace std {
+    template<typename T>
+    class shared_ptr;
+    template<typename T, class D>
+    class unique_ptr;
+    template<typename T>
+    class weak_ptr;
+
+}
+
 namespace BEbraEngine {
     class VulkanBuffer;
     class AbstractRender;
@@ -17,18 +31,7 @@ namespace BEbraEngine {
     class Transform;
     class SimpleCamera;
 }
-using std::shared_ptr;
-using std::weak_ptr;
-namespace std {
-    template<typename T>
-    class shared_ptr;
-    template<typename T, class D>
-    class unique_ptr;
-    template<typename T>
-    class weak_ptr;
 
-
-}
 namespace BEbraEngine {
 
     class VulkanRenderObjectFactory : public IRenderObjectFactory
@@ -36,15 +39,15 @@ namespace BEbraEngine {
     public:
         friend class VulkanRender;
 
-        void bindTransform(std::shared_ptr<PointLight> light, std::shared_ptr<Transform> transform) override;
+        void bindTransform(PointLight& light, Transform& transform) override;
 
-        void bindTransform(std::shared_ptr<RenderObject> object, std::shared_ptr<Transform> transform) override;
+        void bindTransform(RenderObject& object, Transform& transform) override;
 
-        void setTexture(shared_ptr<RenderObject> object, const boost::filesystem::path& path) override;
+        void setTexture(shared_ptr<RenderObject>  object, const boost::filesystem::path& path) override;
 
-        void setTexture(RenderObject* object, Texture const* path) override;
+        void setTexture(shared_ptr<RenderObject>  object, Texture const& path) override;
 
-        std::optional<RenderObject*> create(const RenderObject::RenderObjectCreateInfo& info) override;
+        optional<RenderObject*> create(const RenderObject::RenderObjectCreateInfo& info) override;
 
         PointLight* createLight(const Vector3& color, const Vector3& position) override;
 
@@ -54,13 +57,13 @@ namespace BEbraEngine {
 
         void setContext(AbstractRender* render) override;
        
-        void destroyObject(RenderObject* object) override;
+        void destroyObject(RenderObject& object) override;
 
-        void destroyPointLight(PointLight* light) override;
+        void destroyPointLight(PointLight& light) override;
 
-        void destroyCamera(SimpleCamera* camera) override;
+        void destroyCamera(SimpleCamera& camera) override;
 
-        void setModel(RenderObject* object, const std::string& path) override;
+        void setModel(RenderObject& object, const std::string& path) override;
 
         void CreateObjectSet(VulkanRenderObject* obj);
 
@@ -69,9 +72,9 @@ namespace BEbraEngine {
 
         void SetImgsCreator(VulkanTextureFactory* Creator) { textureFactory = Creator; }
     private:
-        std::unique_ptr<VulkanRenderBufferPool> _poolofObjects;
-        std::unique_ptr<VulkanRenderBufferPool> _poolofPointLights;
-        std::unique_ptr<VulkanRenderBufferPool> _poolofDirLights;
+        unique_ptr<VulkanRenderBufferPool> _poolofObjects;
+        unique_ptr<VulkanRenderBufferPool> _poolofPointLights;
+        unique_ptr<VulkanRenderBufferPool> _poolofDirLights;
 
         std::shared_ptr<RenderBufferView> storage;
 

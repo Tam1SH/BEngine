@@ -59,8 +59,7 @@ namespace BEbraEngine {
 
 				r = engine->RegisterGlobalProperty("_Input@ input", &instance); assert(r >= 0);
 			}
-		private:
-
+		private:								
 			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_Input)
 			bool isKeyPressed(int key) {
 				return Input::isKeyPressed((KEY_CODE)key);
@@ -232,7 +231,7 @@ namespace BEbraEngine {
 
 			static constexpr const char* __name = "GameObjectComponent";
 
-			std::shared_ptr<GameComponent> instance;
+			GameComponent* instance;
 
 			static void registerObj(asIScriptEngine* engine) {
 			//	int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
@@ -269,7 +268,7 @@ namespace BEbraEngine {
 			_GameObjectComponent* getComponentByName(const std::string& in) {
 				
 				auto _comp = instance->getComponentByName(in);
-				if (_comp.get()) {
+				if (_comp) {
 					auto comp = new _GameObjectComponent();
 					comp->instance = _comp;
 					return comp;
@@ -278,8 +277,17 @@ namespace BEbraEngine {
 					return 0;
 			}
 			_GameObject(const _Vector3& position) {
-				instance = factory->create(position.instance);
-				//Debug::log("create script game object");
+				try {
+					instance = factory->create(position.instance);
+				}
+				catch (const std::exception& ex) {
+					int s;
+					int d = std::move(s);
+					__LINE__;
+					__FILE__;
+					__func__;
+				}
+				//DEBUG_LOG("create script game object");
 
 			}
 			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObject)
@@ -299,7 +307,7 @@ namespace BEbraEngine {
 				if (--refCount == 0)
 				{
 					if (instance.get()) {
-						factory->destroy(instance);
+						factory->destroy(*instance);
 					}
 
 					delete this;

@@ -20,7 +20,7 @@ namespace BEbraEngine {
 			type = "INFO";
 		std::stringstream ss;
 		ss << msg.section << " (" << msg.row << ", " << msg.col << ") : " << type << " : " << msg.message;
-		Debug::log(ss.str());
+		DEBUG_LOG1(ss.str());
 
 	}
 	static void print(const std::string& in) {
@@ -68,7 +68,7 @@ namespace BEbraEngine {
 		builder.AddSectionFromFile(path.c_str());
 		int r = builder.BuildModule();
 		if (r < 0) {
-			Debug::log("Can't create a script. Params : " + path + " | " + name, 0, 
+			DEBUG_LOG2("Can't create a script. Params : " + path + " | " + name, 0, 
 				"ScriptEngine", Debug::ObjectType::Script, Debug::MessageType::Error);
 			return std::optional<AngelScript*>();
 		}
@@ -86,8 +86,9 @@ namespace BEbraEngine {
 		{
 			return;
 		}
-
+		
 		asIScriptContext* ctx = script->getContext();
+		
 		ctx->Prepare(func);
 		int r = ctx->Execute();
 		if (r != asEXECUTION_FINISHED && r == asEXECUTION_EXCEPTION)
@@ -95,7 +96,7 @@ namespace BEbraEngine {
 			std::stringstream ss;
 			ss << "ScriptException: ";
 			ss << ctx->GetExceptionString();
-			Debug::log(ss.str(), script, script->getName(), Debug::ObjectType::Script, Debug::MessageType::Error);
+			DEBUG_LOG2(ss.str(), script, script->getName(), Debug::ObjectType::Script, Debug::MessageType::Error);
 		}
 	}
 	AngelScript* AngelScriptEngine::CreateScript(std::string code)

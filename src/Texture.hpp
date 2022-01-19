@@ -13,7 +13,7 @@ namespace BEbraEngine {
         uint32_t width() { return width_; }
         uint32_t height() { return height_; }
 
-        void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+        void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
     protected:
         uint32_t width_{};

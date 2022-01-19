@@ -26,13 +26,13 @@ namespace BEbraEngine {
 		};
 	public:
 
-		void destroy(IVisitorGameComponentDestroyer* destroyer) override;
+		void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
 		void resetState();
 
 		btRigidBody* getRigidBody() { return body.get(); }
 
-		void setTransform(Transform* transform);
+		void setTransform(Transform& transform);
 
 		void setMass(float mass);
 
