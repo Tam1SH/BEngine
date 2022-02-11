@@ -49,7 +49,7 @@ namespace BEbraEngine {
             auto obj = dynamic_cast<GameObject*>(opt_comp.value());
             if (obj) {
                 auto sObj = shared_ptr<GameObject>(obj);
-                state_->addObject(*obj, info);
+                state_->addObject(sObj, info);
                 return sObj;
             }
             else throw std::exception();
@@ -72,7 +72,7 @@ namespace BEbraEngine {
         return light;
     }
 
-    void ObjectFactoryFacade::destroy(GameObject& object)
+    void ObjectFactoryFacade::destroy(shared_ptr<GameObject>& object)
     {
         state_->removeObject(object, [=](GameObject& obj) { realFactory_->destroy(obj); });
     }

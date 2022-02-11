@@ -1,11 +1,19 @@
-﻿#include "BebraAndroid.h"
+﻿
+#include "BEbraAndroid.h"
+#include <vulkan/vulkan.h>
+#include <oneapi/tbb.h>
+#include "Engine.hpp"
+#include "AbstractRender.hpp"
+#include <Physics/btBulletCollisionCommon.h>
+#include "Physics.hpp"
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "BEbraAndroid", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "BEbraAndroid", __VA_ARGS__))
 
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "BebraAndroid", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "BebraAndroid", __VA_ARGS__))
-
+#include "platform.hpp"
 extern "C" {
+
 	/* Эта тривиальная функция возвращает ABI платформы, для которой скомпилирована эта динамическая библиотека с машинным кодом.*/
-	const char * BebraAndroid::getPlatformABI()
+	const char * BEbraAndroid::getPlatformABI()
 	{
 	#if defined(__arm__)
 	#if defined(__ARM_ARCH_7A__)
@@ -22,19 +30,24 @@ extern "C" {
 	#else
 		#define ABI "unknown"
 	#endif
+		btVector3 d;
 		LOGI("This dynamic shared library is compiled with ABI: %s", ABI);
+		vkCmdDraw(0, 0, 0, 0, 0);
+		tbb::parallel_for(0, 0, [](size_t) {});
+		BEbraEngine::Engine eng;
+		eng.Main();
 		return "This native library is compiled with ABI: %s" ABI ".";
 	}
 
-	void BebraAndroid()
+	void BEbraAndroid()
 	{
 	}
 
-	BebraAndroid::BebraAndroid()
+	BEbraAndroid::BEbraAndroid()
 	{
 	}
 
-	BebraAndroid::~BebraAndroid()
+	BEbraAndroid::~BEbraAndroid()
 	{
 	}
 }

@@ -158,9 +158,10 @@ namespace BEbraEngine {
     }
 
 
-    void ScriptState::addObject(GameObject& object, const GameComponentCreateInfo& info)
+    void ScriptState::addObject(shared_ptr<GameObject> object, const GameComponentCreateInfo& info)
     {
-        auto pObject = &object;
+
+        auto pObject = object;
         queues.addTask(ExecuteType::Single, 
             [=] {
                 auto renderObj = pObject->getComponent<RenderObject>();
@@ -171,22 +172,25 @@ namespace BEbraEngine {
 
                     physics->addRigidBody(*rigidBody);
                 }
+                objects_.push_back(object);
             }
             
+
         );
 
     }
 
-    void ScriptState::removeObject(GameObject& object,
+    void ScriptState::removeObject(shared_ptr<GameObject> object,
 
         std::function<void(GameObject&)> callback)
     {
-        auto pObject = &object;
         queues.addTask(ExecuteType::Single,
-             [this, pObject, callback] () {
-                physics->removeRigidBody(*pObject->getComponent<RigidBody>());
-                render->removeObject(*pObject->getComponent<RenderObject>());
-                callback(*pObject);
+             [this, object, callback] () {
+                physics->removeRigidBody(*object->getComponent<RigidBody>());
+                render->removeObject(*object->getComponent<RenderObject>());
+                std::remove(objects_.begin(), objects_.end(), object);
+               
+                callback(*object);
             });
             
     }
@@ -225,10 +229,10 @@ namespace BEbraEngine {
     ScriptState::~ScriptState()
     {
         for (auto& object : bounds) {
-            scriptObjectFactory->destroy(*object);
+            scriptObjectFactory->destroy(object);
         }
         for (auto& object : objects) {
-            scriptObjectFactory->destroy(*object);
+            scriptObjectFactory->destroy(object);
         }
     }
 }

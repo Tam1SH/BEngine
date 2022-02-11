@@ -2,6 +2,7 @@
 #pragma once
 #include "stdafx.h"
 #define NOMINMAX
+
 #include "Camera.hpp"
 #include "Input.hpp"
 #include "VulkanRender.hpp"

@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-class BebraAndroid
+class BEbraAndroid
 {
 public:
 	const char * getPlatformABI();
-	BebraAndroid();
-	~BebraAndroid();
+	BEbraAndroid();
+	~BEbraAndroid();
 };
 

@@ -35,9 +35,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{dee839b4-6ce9-434c-94c0-78e2baf7442b}</ProjectGuid>
+    <ProjectGuid>{f88ba4e0-995a-4d14-9c7e-610027610b01}</ProjectGuid>
     <Keyword>Android</Keyword>
-    <RootNamespace>BebraAndroid</RootNamespace>
+    <RootNamespace>BEbraAndroid</RootNamespace>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <ApplicationType>Android</ApplicationType>
     <ApplicationTypeRevision>3.0</ApplicationTypeRevision>
@@ -47,41 +47,55 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <AndroidAPILevel>android-24</AndroidAPILevel>
+    <UseOfStl>c++_shared</UseOfStl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <AndroidAPILevel>android-24</AndroidAPILevel>
+    <UseOfStl>c++_shared</UseOfStl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <AndroidAPILevel>android-24</AndroidAPILevel>
+    <UseOfStl>c++_shared</UseOfStl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <AndroidAPILevel>android-24</AndroidAPILevel>
+    <UseOfStl>c++_shared</UseOfStl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Clang_5_0</PlatformToolset>
+    <AndroidAPILevel>android-24</AndroidAPILevel>
+    <UseOfStl>c++_shared</UseOfStl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>Clang_5_0</PlatformToolset>
+    <AndroidAPILevel>android-24</AndroidAPILevel>
+    <UseOfStl>c++_shared</UseOfStl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <AndroidAPILevel>android-24</AndroidAPILevel>
+    <UseOfStl>c++_shared</UseOfStl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <AndroidAPILevel>android-24</AndroidAPILevel>
+    <UseOfStl>c++_shared</UseOfStl>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -89,76 +103,228 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\.BEbraEngine\src;$(IncludePath)</IncludePath>
+    <IncludePath>C:\.BEbraEngine\Include;C:\boost;$(IncludePath)</IncludePath>
+    <UseMultiToolTask>true</UseMultiToolTask>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\.BEbraEngine\Include;C:\boost;$(IncludePath)</IncludePath>
+    <UseMultiToolTask>true</UseMultiToolTask>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <IncludePath>C:\.BEbraEngine\Include;C:\boost;$(IncludePath)</IncludePath>
+    <UseMultiToolTask>true</UseMultiToolTask>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <IncludePath>C:\.BEbraEngine\Include;C:\boost;$(IncludePath)</IncludePath>
+    <UseMultiToolTask>true</UseMultiToolTask>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <IncludePath>C:\.BEbraEngine\Include;C:\boost;$(IncludePath)</IncludePath>
+    <UseMultiToolTask>true</UseMultiToolTask>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <IncludePath>C:\.BEbraEngine\Include;C:\boost;$(IncludePath)</IncludePath>
+    <UseMultiToolTask>true</UseMultiToolTask>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <IncludePath>C:\.BEbraEngine\Include;C:\boost;C:\.BEbraEngine\headers;$(IncludePath)</IncludePath>
+    <UseMultiToolTask>true</UseMultiToolTask>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <IncludePath>C:\.BEbraEngine\Include;C:\boost;C:\.BEbraEngine\headers;$(IncludePath)</IncludePath>
+    <UseMultiToolTask>true</UseMultiToolTask>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\.BEbraEngine\Include\Physics;C:\.BEbraEngine\Include\SDL;C:\.BEbraEngine\headers;C:\.BEbraEngine\src;C:\.BEbraEngine\Include\angelscript;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <EnableNeonCodegen>true</EnableNeonCodegen>
+      <FloatABI>soft</FloatABI>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <ShowProgress>true</ShowProgress>
+      <LibraryDependencies>vulkan;tbb_debug;tbbmalloc_debug;BulletCollision;BulletDynamics;LinearMath;SDL2;%(LibraryDependencies)</LibraryDependencies>
+      <AdditionalLibraryDirectories>C:\.BEbraEngine\platform\libs\$(Configuration)\android\$(TargetArchAbi)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\.BEbraEngine\Include\Physics;C:\.BEbraEngine\Include\SDL;C:\.BEbraEngine\headers;C:\.BEbraEngine\src;C:\.BEbraEngine\Include\angelscript;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <EnableNeonCodegen>true</EnableNeonCodegen>
+      <FloatABI>soft</FloatABI>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\.BEbraEngine\platform\libs\$(Configuration)\android\$(TargetArchAbi)</AdditionalLibraryDirectories>
+      <ShowProgress>true</ShowProgress>
+      <LibraryDependencies>vulkan;tbb_debug;tbbmalloc_debug;BulletCollision;BulletDynamics;LinearMath;SDL2;%(LibraryDependencies)</LibraryDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\.BEbraEngine\Include\Physics;C:\.BEbraEngine\Include\SDL;C:\.BEbraEngine\headers;C:\.BEbraEngine\src;C:\.BEbraEngine\Include\angelscript;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <EnableNeonCodegen>true</EnableNeonCodegen>
+      <FloatABI>soft</FloatABI>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <ShowProgress>true</ShowProgress>
+      <LibraryDependencies>vulkan;tbb_debug;tbbmalloc_debug;BulletCollision;BulletDynamics;LinearMath;SDL2;%(LibraryDependencies)</LibraryDependencies>
+      <AdditionalLibraryDirectories>C:\.BEbraEngine\platform\libs\$(Configuration)\android\$(TargetArchAbi)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\.BEbraEngine\Include\Physics;C:\.BEbraEngine\Include\SDL;C:\.BEbraEngine\headers;C:\.BEbraEngine\src;C:\.BEbraEngine\Include\angelscript;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <EnableNeonCodegen>true</EnableNeonCodegen>
+      <FloatABI>soft</FloatABI>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\.BEbraEngine\platform\libs\$(Configuration)\android\$(TargetArchAbi)</AdditionalLibraryDirectories>
+      <ShowProgress>true</ShowProgress>
+      <LibraryDependencies>vulkan;tbb_debug;tbbmalloc_debug;BulletCollision;BulletDynamics;LinearMath;SDL2;%(LibraryDependencies)</LibraryDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\.BEbraEngine\Include\Physics;C:\.BEbraEngine\Include\SDL;C:\.BEbraEngine\headers;C:\.BEbraEngine\src;C:\.BEbraEngine\Include\angelscript;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <EnableNeonCodegen>true</EnableNeonCodegen>
+      <FloatABI>soft</FloatABI>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <ShowProgress>true</ShowProgress>
+      <LibraryDependencies>vulkan;tbb_debug;tbbmalloc_debug;BulletCollision;BulletDynamics;LinearMath;SDL2;%(LibraryDependencies)</LibraryDependencies>
+      <AdditionalLibraryDirectories>C:\.BEbraEngine\platform\libs\$(Configuration)\android\$(TargetArchAbi)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\.BEbraEngine\Include\Physics;C:\.BEbraEngine\Include\SDL;C:\.BEbraEngine\headers;C:\.BEbraEngine\src;C:\.BEbraEngine\Include\angelscript;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <EnableNeonCodegen>true</EnableNeonCodegen>
+      <FloatABI>soft</FloatABI>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\.BEbraEngine\platform\libs\$(Configuration)\android\$(TargetArchAbi)</AdditionalLibraryDirectories>
+      <ShowProgress>true</ShowProgress>
+      <LibraryDependencies>vulkan;tbb_debug;tbbmalloc_debug;BulletCollision;BulletDynamics;LinearMath;SDL2;%(LibraryDependencies)</LibraryDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\.BEbraEngine\Include\Physics;C:\.BEbraEngine\Include\SDL;C:\.BEbraEngine\headers;C:\.BEbraEngine\src;C:\.BEbraEngine\Include\angelscript;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <EnableNeonCodegen>true</EnableNeonCodegen>
+      <FloatABI>soft</FloatABI>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <LibraryDependencies>vulkan;tbb_debug;tbbmalloc_debug;BulletCollision;BulletDynamics;LinearMath;SDL2;angelscript;%(LibraryDependencies)</LibraryDependencies>
+      <ShowProgress>true</ShowProgress>
+      <SharedLibrarySearchPath>%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+      <AdditionalLibraryDirectories>C:\.BEbraEngine\platform\libs\$(Configuration)\android\$(TargetArchAbi)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\.BEbraEngine\Include\Physics;C:\.BEbraEngine\Include\SDL;C:\.BEbraEngine\headers;C:\.BEbraEngine\src;C:\.BEbraEngine\Include\angelscript;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <EnableNeonCodegen>true</EnableNeonCodegen>
+      <FloatABI>soft</FloatABI>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\.BEbraEngine\platform\libs\$(Configuration)\android\$(TargetArchAbi)</AdditionalLibraryDirectories>
+      <ShowProgress>true</ShowProgress>
+      <LibraryDependencies>vulkan;tbb_debug;tbbmalloc_debug;BulletCollision;BulletDynamics;LinearMath;SDL2;%(LibraryDependencies)</LibraryDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BebraAndroid.cpp" />
+    <ClCompile Include="..\src\AbstractScriptObject.cpp" />
+    <ClCompile Include="..\src\AngelScript.cpp" />
+    <ClCompile Include="..\src\AngelScriptEngine.cpp" />
+    <ClCompile Include="..\src\AudioSystem.cpp" />
+    <ClCompile Include="..\src\BaseRenderWindow.cpp" />
+    <ClCompile Include="..\src\Camera.cpp" />
+    <ClCompile Include="..\src\Collider.cpp" />
+    <ClCompile Include="..\src\ColliderFactory.cpp" />
+    <ClCompile Include="..\src\CommandBuffer.cpp" />
+    <ClCompile Include="..\src\CommandPool.cpp" />
+    <ClCompile Include="..\src\Debug.cpp" />
+    <ClCompile Include="..\src\DebugUI.cpp" />
+    <ClCompile Include="..\src\DescriptorPool.cpp" />
+    <ClCompile Include="..\src\DescriptorSet.cpp" />
+    <ClCompile Include="..\src\DescriptorSetLayout.cpp" />
+    <ClCompile Include="..\src\FileSystem.cpp" />
+    <ClCompile Include="..\src\GameComponentDestroyer.cpp" />
+    <ClCompile Include="..\src\GameObject.cpp" />
+    <ClCompile Include="..\src\GameObjectFactory.cpp" />
+    <ClCompile Include="..\src\Input.cpp" />
+    <ClCompile Include="..\src\Main.cpp" />
+    <ClCompile Include="..\src\Math.cpp" />
+    <ClCompile Include="..\src\MeshFactory.cpp" />
+    <ClCompile Include="..\src\Model.cpp" />
+    <ClCompile Include="..\src\Network.cpp" />
+    <ClCompile Include="..\src\ObjectFactoryFacade.cpp" />
+    <ClCompile Include="..\src\Physics.cpp" />
+    <ClCompile Include="..\src\Pipeline.cpp" />
+    <ClCompile Include="..\src\PythonEngine.cpp" />
+    <ClCompile Include="..\src\PythonScript.cpp" />
+    <ClCompile Include="..\src\RenderBufferPool.cpp" />
+    <ClCompile Include="..\src\RenderObject.cpp" />
+    <ClCompile Include="..\src\RigidBoby.cpp" />
+    <ClCompile Include="..\src\RigidBodyFactory.cpp" />
+    <ClCompile Include="..\src\ScriptManager.cpp" />
+    <ClCompile Include="..\src\ScriptState.cpp" />
+    <ClCompile Include="..\src\Shader.cpp" />
+    <ClCompile Include="..\src\Texture.cpp" />
+    <ClCompile Include="..\src\Time.cpp" />
+    <ClCompile Include="..\src\Transform.cpp" />
+    <ClCompile Include="..\src\TransformFactory.cpp" />
+    <ClCompile Include="..\src\utils.cpp" />
+    <ClCompile Include="..\src\Vertex.cpp" />
+    <ClCompile Include="..\src\VkBuffer.cpp" />
+    <ClCompile Include="..\src\VulkanObjects.cpp" />
+    <ClCompile Include="..\src\VulkanRender.cpp" />
+    <ClCompile Include="..\src\VulkanRenderObjectFactory.cpp" />
+    <ClCompile Include="..\src\VulkanTextureFactory.cpp" />
+    <ClCompile Include="..\src\VulkanWindow.cpp" />
+    <ClCompile Include="BEbraAndroid.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BebraAndroid.h" />
+    <ClInclude Include="BEbraAndroid.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

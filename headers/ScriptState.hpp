@@ -1,0 +1,108 @@
+#pragma once
+#include "stdafx.h"
+#include "platform.hpp"
+#include "ExecuteQueues.hpp"
+#include <queue>
+#include "Vector3.hpp"
+using BE_STD::shared_ptr;
+using BE_STD::unique_ptr;
+using BE_STD::optional;
+using BE_STD::string;
+using BE_STD::function;
+using BE_STD::vector;
+using BE_STD::list;
+
+BE_NAMESPACE_STD_BEGIN
+
+    template<class _Ty, class _Dx>
+    class unique_ptr;
+    template<class T>
+    class shared_ptr;
+    template<class T, class Alloc>
+    class vector;
+    template<class T, class Alloc>
+    class list;
+
+BE_NAMESPACE_STD_END
+
+namespace BEbraEngine {
+    class AbstractRender;
+    class VulkanRender;
+    class WorkSpace;
+    class Physics;
+    class GameObjectFactory;
+    class ScriptManager;
+    class Render;
+    class SimpleCamera;
+    class GameObject;
+    class DirectionLight;
+    class Time;
+    class PointLight;
+    class ObjectFactoryFacade;
+    class GameComponentCreateInfo;
+}
+
+namespace BEbraEngine {
+    //TODO: полигон блять для испытаний(делай скрипты)
+    
+    class ScriptState {
+    public:
+
+        ScriptState(AbstractRender& render, Physics& physics);
+
+        void scriptInit();
+
+        void clearObjects();
+
+        void fixedUpdate();
+
+        void update();
+
+        void updateState();
+
+        void addObject(shared_ptr<GameObject> object, const GameComponentCreateInfo& info);
+
+        void removeObject(shared_ptr<GameObject> object, function<void(GameObject&)> callback);
+
+        void addCamera(SimpleCamera& camera);
+
+        void addLight(PointLight& light);
+
+        void addDirLight(DirectionLight& light);
+
+        ~ScriptState();
+
+    private:
+
+        vector<shared_ptr<GameObject>> objects_;
+
+        ExecuteQueues<function<void()>> queues;
+
+        AbstractRender* render;
+
+        Physics* physics;
+
+        unique_ptr<ObjectFactoryFacade> scriptObjectFactory;
+
+        unique_ptr<ScriptManager> scriptManager;
+
+        shared_ptr<SimpleCamera> camera;
+
+        shared_ptr<DirectionLight> globalLight;
+
+        shared_ptr<PointLight> light;
+        list<shared_ptr<GameObject>> bounds;
+        list<shared_ptr<GameObject>> objects;
+        list<shared_ptr<PointLight>> lights;
+        Vector3 scale;
+        Vector3 rotate;
+        Vector3 lightColor;
+        int step;
+        bool addred = true;
+        bool addblue;
+        bool addgreen;
+
+        bool lookatobject;
+        Vector3* posofobject;
+    };
+}

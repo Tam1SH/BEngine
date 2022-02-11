@@ -11,12 +11,12 @@ namespace BEbraEngine {
 		SDL_Vulkan_CreateSurface(handle, instance, surface);
 
 	}
-	std::vector<const char*> BaseWindow::vulkan_GetInstanceExtensions()
+	vector<const char*> BaseWindow::vulkan_GetInstanceExtensions()
 	{
 		unsigned int count;
 		SDL_Vulkan_GetInstanceExtensions(handle, &count, nullptr);
 
-		std::vector<const char*> extensions = { };
+		vector<const char*> extensions = { };
 		size_t additional_extension_count = extensions.size();
 		extensions.resize(additional_extension_count + count);
 

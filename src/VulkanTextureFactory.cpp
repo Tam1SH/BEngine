@@ -2,7 +2,8 @@
 #include "stdafx.h"
 
 #include "VulkanTextureFactory.hpp"
-#include "stb_image.h"
+#include <stb-master/stb_image.h>
+
 #include "VulkanRender.hpp"
 #include "Debug.hpp"
 

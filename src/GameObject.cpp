@@ -4,7 +4,19 @@
 #include "Debug.hpp"
 #include "IVisitorGameComponentDestroyer.hpp"
 namespace BEbraEngine {
+    GameComponent* GameObject::getComponentByName(const string& name) const noexcept
+    {
+        for (auto& component : components_) {
 
+            //TODO: нестрогое сравнение названий классов, в будущем могу на этом пососать.
+            const string componentName = typeid(*component).name();
+
+            if (componentName.find(name) != string::npos) {
+                return component.get();
+            }
+        }
+        return nullptr;
+    }
     bool GameObject::isComposite() const
     {
         return true;

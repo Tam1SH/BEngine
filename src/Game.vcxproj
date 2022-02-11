@@ -35,6 +35,7 @@
     <RootNamespace>src</RootNamespace>
     <TargetFramework>net5.0</TargetFramework>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>BebraEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -54,7 +55,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -104,7 +105,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(SolutionDir)Include\KHR;$(IncludePath);C:\boost</IncludePath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;$(SolutionDir)Include\KHR;$(IncludePath);C:\boost</IncludePath>
     <PublicIncludeDirectories>
     </PublicIncludeDirectories>
     <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;C:\boost\stage\lib;$(LibraryPath)</LibraryPath>
@@ -122,7 +123,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;C:\DirectXSDK\Include;$(IncludePath);C:\boost</IncludePath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;$(IncludePath);C:\boost</IncludePath>
     <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -140,9 +141,9 @@
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;;$(SolutionDir)Include\glad\include;$(SolutionDir)Include\json</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers</AdditionalIncludeDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
       <EnableModules>true</EnableModules>
@@ -227,12 +228,12 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\assimp;$(SolutionDir)Include\glad\include;$(SolutionDir)Include\json</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\assimp;$(SolutionDir)Include\glad\include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -311,6 +312,8 @@
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderFactory.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
+    <ClCompile Include="DXRender.cpp" />
+    <ClCompile Include="GameComponent.cpp" />
     <ClCompile Include="GameComponentDestroyer.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="RigidBodyFactory.cpp" />
@@ -356,81 +359,6 @@
     <ClCompile Include="VulkanWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BEbraEngine.hpp" />
-    <ClInclude Include="GameComponent.hpp" />
-    <ClInclude Include="AbstractRender.hpp" />
-    <ClInclude Include="AbstractScriptObject.hpp" />
-    <ClInclude Include="AngelScript.hpp" />
-    <ClInclude Include="AngelScriptEngine.hpp" />
-    <ClInclude Include="AudioSystem.hpp" />
-    <ClInclude Include="BaseRenderWindow.hpp" />
-    <ClInclude Include="BaseScript.hpp" />
-    <ClInclude Include="BaseScriptEngine.hpp" />
-    <ClInclude Include="Collider.hpp" />
-    <ClInclude Include="ColliderFactory.hpp" />
-    <ClInclude Include="ExecuteQueues.hpp" />
-    <ClInclude Include="GameComponentCreateInfo.hpp" />
-    <ClInclude Include="GameComponentDestroyer.hpp" />
-    <ClInclude Include="IDraweable.hpp" />
-    <ClInclude Include="ITextureFactory.hpp" />
-    <ClInclude Include="IVisitorGameComponentDestroyer.hpp" />
-    <ClInclude Include="Math.hpp" />
-    <ClInclude Include="Quaternion.hpp" />
-    <ClInclude Include="RigidBodyFactory.hpp" />
-    <ClInclude Include="ObjectFactoryFacade.hpp" />
-    <ClInclude Include="ScriptWrappers.hpp" />
-    <ClInclude Include="Shader.hpp" />
-    <ClInclude Include="utils.hpp" />
-    <ClInclude Include="VulkanObjects.hpp" />
-    <ClInclude Include="VulkanRender.hpp" />
-    <ClInclude Include="CommandBuffer.hpp" />
-    <ClInclude Include="CommandPool.hpp" />
-    <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="Debug.hpp" />
-    <ClInclude Include="DescriptorSet.hpp" />
-    <ClInclude Include="GameObjectMediator.h" />
-    <ClInclude Include="IRenderBufferPool.hpp" />
-    <ClInclude Include="IReusable.hpp" />
-    <ClInclude Include="matrix.hpp" />
-    <ClInclude Include="MeshFactory.hpp" />
-    <ClInclude Include="platform.hpp" />
-    <ClInclude Include="DebugUI.hpp" />
-    <ClInclude Include="DescriptorPool.hpp" />
-    <ClInclude Include="DescriptorSetLayouts.hpp" />
-    <ClInclude Include="FileSystem.hpp" />
-    <ClInclude Include="ScriptState.hpp" />
-    <ClInclude Include="GameObject.hpp" />
-    <ClInclude Include="GameObjectFactory.hpp" />
-    <ClInclude Include="ICreatable.hpp" />
-    <ClInclude Include="Texture.hpp" />
-    <ClInclude Include="VulkanTextureFactory.hpp" />
-    <ClInclude Include="Input.hpp" />
-    <ClInclude Include="IScript.hpp" />
-    <ClInclude Include="Model.hpp" />
-    <ClInclude Include="Network.hpp" />
-    <ClInclude Include="Physics.hpp" />
-    <ClInclude Include="Pipeline.hpp" />
-    <ClInclude Include="platform_window.hpp" />
-    <ClInclude Include="RenderBuffer.hpp" />
-    <ClInclude Include="RenderObject.hpp" />
-    <ClInclude Include="VulkanRenderObjectFactory.hpp" />
-    <ClInclude Include="IRenderObjectFactory.hpp" />
-    <ClInclude Include="CreateInfoStructures.hpp" />
-    <ClInclude Include="VulkanRenderBufferPool.hpp" />
-    <ClInclude Include="RigidBoby.hpp" />
-    <ClInclude Include="ScriptManager.hpp" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Time.hpp" />
-    <ClInclude Include="Transform.hpp" />
-    <ClInclude Include="TransformFactory.hpp" />
-    <ClInclude Include="Vector4.hpp" />
-    <ClInclude Include="Vector2.hpp" />
-    <ClInclude Include="Vector3.hpp" />
-    <ClInclude Include="Vertex.hpp" />
-    <ClInclude Include="VkBuffer.hpp" />
-    <ClInclude Include="VulkanWindow.hpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="cpp.hint" />
     <None Include="scripts\BEbraEngine.as" />
     <None Include="scripts\test.as" />
@@ -442,6 +370,80 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\headers\AbstractRender.hpp" />
+    <ClInclude Include="..\headers\AbstractScriptObject.hpp" />
+    <ClInclude Include="..\headers\AngelScript.hpp" />
+    <ClInclude Include="..\headers\AngelScriptEngine.hpp" />
+    <ClInclude Include="..\headers\AudioSystem.hpp" />
+    <ClInclude Include="..\headers\BaseRenderWindow.hpp" />
+    <ClInclude Include="..\headers\BaseScript.hpp" />
+    <ClInclude Include="..\headers\BaseScriptEngine.hpp" />
+    <ClInclude Include="..\headers\Engine.hpp" />
+    <ClInclude Include="..\headers\Camera.hpp" />
+    <ClInclude Include="..\headers\Collider.hpp" />
+    <ClInclude Include="..\headers\ColliderFactory.hpp" />
+    <ClInclude Include="..\headers\CommandBuffer.hpp" />
+    <ClInclude Include="..\headers\CommandPool.hpp" />
+    <ClInclude Include="..\headers\CreateInfoStructures.hpp" />
+    <ClInclude Include="..\headers\Debug.hpp" />
+    <ClInclude Include="..\headers\DebugUI.hpp" />
+    <ClInclude Include="..\headers\DescriptorPool.hpp" />
+    <ClInclude Include="..\headers\DescriptorSet.hpp" />
+    <ClInclude Include="..\headers\DescriptorSetLayouts.hpp" />
+    <ClInclude Include="..\headers\ExecuteQueues.hpp" />
+    <ClInclude Include="..\headers\FileSystem.hpp" />
+    <ClInclude Include="..\headers\GameComponent.hpp" />
+    <ClInclude Include="..\headers\GameComponentCreateInfo.hpp" />
+    <ClInclude Include="..\headers\GameComponentDestroyer.hpp" />
+    <ClInclude Include="..\headers\GameObject.hpp" />
+    <ClInclude Include="..\headers\GameObjectFactory.hpp" />
+    <ClInclude Include="..\headers\ICreatable.hpp" />
+    <ClInclude Include="..\headers\IDraweable.hpp" />
+    <ClInclude Include="..\headers\Input.hpp" />
+    <ClInclude Include="..\headers\IRenderBufferPool.hpp" />
+    <ClInclude Include="..\headers\IRenderObjectFactory.hpp" />
+    <ClInclude Include="..\headers\IReusable.hpp" />
+    <ClInclude Include="..\headers\ITextureFactory.hpp" />
+    <ClInclude Include="..\headers\IVisitorGameComponentDestroyer.hpp" />
+    <ClInclude Include="..\headers\Math.hpp" />
+    <ClInclude Include="..\headers\matrix.hpp" />
+    <ClInclude Include="..\headers\MeshFactory.hpp" />
+    <ClInclude Include="..\headers\Model.hpp" />
+    <ClInclude Include="..\headers\Network.hpp" />
+    <ClInclude Include="..\headers\ObjectFactoryFacade.hpp" />
+    <ClInclude Include="..\headers\Physics.hpp" />
+    <ClInclude Include="..\headers\Pipeline.hpp" />
+    <ClInclude Include="..\headers\platform.hpp" />
+    <ClInclude Include="..\headers\platform_window.hpp" />
+    <ClInclude Include="..\headers\Quaternion.hpp" />
+    <ClInclude Include="..\headers\RenderBuffer.hpp" />
+    <ClInclude Include="..\headers\RenderObject.hpp" />
+    <ClInclude Include="..\headers\RigidBoby.hpp" />
+    <ClInclude Include="..\headers\RigidBodyFactory.hpp" />
+    <ClInclude Include="..\headers\ScriptManager.hpp" />
+    <ClInclude Include="..\headers\ScriptState.hpp" />
+    <ClInclude Include="..\headers\ScriptWrappers.hpp" />
+    <ClInclude Include="..\headers\Shader.hpp" />
+    <ClInclude Include="..\headers\Texture.hpp" />
+    <ClInclude Include="..\headers\Time.hpp" />
+    <ClInclude Include="..\headers\Transform.hpp" />
+    <ClInclude Include="..\headers\TransformFactory.hpp" />
+    <ClInclude Include="..\headers\utils.hpp" />
+    <ClInclude Include="..\headers\Vector2.hpp" />
+    <ClInclude Include="..\headers\Vector3.hpp" />
+    <ClInclude Include="..\headers\Vector4.hpp" />
+    <ClInclude Include="..\headers\Vertex.hpp" />
+    <ClInclude Include="..\headers\VkBuffer.hpp" />
+    <ClInclude Include="..\headers\VulkanObjects.hpp" />
+    <ClInclude Include="..\headers\VulkanRender.hpp" />
+    <ClInclude Include="..\headers\VulkanRenderBufferPool.hpp" />
+    <ClInclude Include="..\headers\VulkanRenderObjectFactory.hpp" />
+    <ClInclude Include="..\headers\VulkanTextureFactory.hpp" />
+    <ClInclude Include="..\headers\VulkanWindow.hpp" />
+    <ClInclude Include="DXRender.hpp" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

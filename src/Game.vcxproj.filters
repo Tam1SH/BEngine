@@ -19,26 +19,11 @@
     <Filter Include="Файлы ресурсов\Scripts">
       <UniqueIdentifier>{b6b6dd5f-f4fe-40ac-acdc-df8586690c4e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\Script">
-      <UniqueIdentifier>{f6273014-3d0a-44b9-9607-f5a4b4ac9082}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\Script">
       <UniqueIdentifier>{c9bd4021-c189-4f9a-97f9-663ca6037685}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\Interfaces">
-      <UniqueIdentifier>{32589960-c03a-4e69-ad6d-52e183f0f192}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\Physics">
       <UniqueIdentifier>{26072a96-8552-4e48-8f9e-263887586f1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\Render">
-      <UniqueIdentifier>{781b191a-b72f-4440-80a8-d389e7f8e337}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\Render\Vulkan">
-      <UniqueIdentifier>{919b718a-d5e0-4aac-b907-f899a61bf29f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Файлы заголовков\Physics">
-      <UniqueIdentifier>{5f6bc11f-f81d-4498-bc1f-1a5ff96e8551}</UniqueIdentifier>
     </Filter>
     <Filter Include="Файлы ресурсов\Shaders\Vulkan">
       <UniqueIdentifier>{4dfd22de-5eea-429f-87df-3ec307a7b9b3}</UniqueIdentifier>
@@ -195,227 +180,12 @@
     <ClCompile Include="utils.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Camera.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandBuffer.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandPool.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="DescriptorPool.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="DescriptorSetLayouts.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="RigidBoby.hpp">
-      <Filter>Файлы заголовков\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.hpp">
-      <Filter>Файлы заголовков\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanRender.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioSystem.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Network.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseScriptEngine.hpp">
-      <Filter>Файлы заголовков\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="IScript.hpp">
-      <Filter>Файлы заголовков\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="FileSystem.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseRenderWindow.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugUI.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectFactory.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformFactory.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderObject.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.hpp">
-      <Filter>Файлы заголовков\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="VkBuffer.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptManager.hpp">
-      <Filter>Файлы заголовков\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseScript.hpp">
-      <Filter>Файлы заголовков\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="Time.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptState.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector4.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="platform.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="platform_window.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderBuffer.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="matrix.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="IReusable.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateInfoStructures.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectMediator.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderBufferPool.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="DescriptorSet.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="Debug.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshFactory.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ColliderFactory.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="RigidBodyFactory.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="IDraweable.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectFactoryFacade.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanTextureFactory.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderObjectFactory.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="ITextureFactory.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="ICreatable.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="GameComponent.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="AbstractRender.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Pipeline.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanWindow.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanRenderObjectFactory.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanObjects.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanRenderBufferPool.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="AngelScriptEngine.hpp">
-      <Filter>Файлы заголовков\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="AngelScript.hpp">
-      <Filter>Файлы заголовков\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="AbstractScriptObject.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptWrappers.hpp">
-      <Filter>Файлы заголовков\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Quaternion.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ExecuteQueues.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.hpp">
-      <Filter>Файлы заголовков\Render\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="IVisitorGameComponentDestroyer.hpp">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="GameComponentCreateInfo.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="GameComponentDestroyer.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="BEbraEngine.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="utils.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
+    <ClCompile Include="DXRender.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="GameComponent.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="TAA.vert">
@@ -445,5 +215,223 @@
     <Text Include="..\CMakeLists.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\headers\AbstractRender.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\AbstractScriptObject.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\AngelScript.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\AngelScriptEngine.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\AudioSystem.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\BaseRenderWindow.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\BaseScript.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\BaseScriptEngine.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Engine.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Camera.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Collider.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\ColliderFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\CommandBuffer.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\CommandPool.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\CreateInfoStructures.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Debug.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\DebugUI.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\DescriptorPool.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\DescriptorSet.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\DescriptorSetLayouts.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\ExecuteQueues.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\FileSystem.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\GameComponent.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\GameComponentCreateInfo.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\GameComponentDestroyer.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\GameObject.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\GameObjectFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\ICreatable.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\IDraweable.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Input.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\IRenderBufferPool.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\IRenderObjectFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\IReusable.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\ITextureFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\IVisitorGameComponentDestroyer.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Math.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\matrix.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\MeshFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Model.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Network.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\ObjectFactoryFacade.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Physics.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Pipeline.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\platform.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\platform_window.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Quaternion.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\RenderBuffer.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\RenderObject.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\RigidBoby.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\RigidBodyFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\ScriptManager.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\ScriptState.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\ScriptWrappers.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Shader.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Texture.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Time.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Transform.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\TransformFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\utils.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Vector2.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Vector3.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Vector4.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\Vertex.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\VkBuffer.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\VulkanObjects.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\VulkanRender.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\VulkanRenderBufferPool.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\VulkanRenderObjectFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\VulkanTextureFactory.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\headers\VulkanWindow.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="DXRender.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

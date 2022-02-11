@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Collider.hpp"
+
 #include <Physics/btBulletCollisionCommon.h>
 #include "IVisitorGameComponentDestroyer.hpp"
 #include "Debug.hpp"
@@ -17,11 +18,13 @@ namespace BEbraEngine {
 	}
 	void Collider::setMass(float mass)
 	{
+		//TODO: что это нахуй значит?
 		auto vec = btVector3(0,0,0);
 		_collider->getCollisionShape()->calculateLocalInertia(mass, vec);
 	}
-	Vector3 Collider::getPosition()
+	Vector3 Collider::getPosition() const
 	{
+
 		return _collider->getWorldTransform().getOrigin();
 	}
 	Collider::Collider()

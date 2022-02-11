@@ -2099,7 +2099,7 @@ namespace BEbraEngine {
 
     void VulkanRender::createCameraSet()
     {
-        cameraPlug = std::shared_ptr<RenderBuffer>(createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
+        cameraPlug = shared_ptr<RenderBuffer>(createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
         setMainCamera = createDescriptor(cameraPlug.get());
 
     }

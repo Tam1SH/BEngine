@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "RigidBoby.hpp"
 #include "Transform.hpp"
 #include "Physics.hpp"
@@ -28,7 +29,7 @@ namespace BEbraEngine {
     {
     }
 
-    void RigidBody::setDynamic(bool isActive)
+    void RigidBody::setDynamic(bool isActive) 
     {
         this->isActive = isActive;
         if (!isActive) {

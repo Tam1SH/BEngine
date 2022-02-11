@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "VkBuffer.hpp"
 #include "VulkanRender.hpp"
-//TODO: сделать не зависимым от граф. апи.
+
 namespace BEbraEngine {
 
     void VulkanBuffer::destroy()

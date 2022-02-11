@@ -1,9 +1,10 @@
 #include "stdafx.h"
+#include "platform.hpp"
 #include "Debug.hpp"
 #include <iomanip>
 namespace BEbraEngine {
-	std::vector<Debug::ObjectType> Debug::_disableLog;
-	std::mutex Debug::m;
+	BE_STD::vector<Debug::ObjectType> Debug::_disableLog;
+	BE_STD::mutex Debug::m;
 	void Debug::enableAll()
 	{
 		_disableLog.clear();
@@ -17,10 +18,10 @@ namespace BEbraEngine {
 	}
 	void Debug::disableLog(ObjectType type)
 	{
-		if (auto item = std::find(_disableLog.begin(), _disableLog.end(), type);
+		if (auto item = BE_STD::find(_disableLog.begin(), _disableLog.end(), type);
 			item == _disableLog.end())
 		{
-			std::stringstream str;
+			BE_STD::stringstream str;
 			str << "already disabled type (" << to_string(type) << ") or it is not in list";
 			log(str.str());
 		}
@@ -33,7 +34,7 @@ namespace BEbraEngine {
 		if (auto item = std::find(_disableLog.begin(), _disableLog.end(), type);
 			item != _disableLog.end())
 		{
-			std::stringstream str;
+			BE_STD::stringstream str;
 			str << "already enabled type (" << to_string(type) << ")";
 			log(str.str());
 		}
@@ -43,8 +44,11 @@ namespace BEbraEngine {
 	}
 	void Debug::log(const std::stringstream& stream) {
 		time_t t = std::time(nullptr);
-		std::tm tm;
+		BE_STD::tm tm{};
+#ifndef __ANDROID__
 		localtime_s(&tm, &t);
+#endif
+
 
 		std::stringstream str;
 		str << "INFO: ";
@@ -57,9 +61,10 @@ namespace BEbraEngine {
 	{
 		std::stringstream str;
 		time_t t = std::time(nullptr);
-		std::tm tm;
+		std::tm tm{};
+#ifndef __ANDROID__
 		localtime_s(&tm, &t);
-
+#endif
 
 		str << "INFO: ";
 		str << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": ";
@@ -78,8 +83,10 @@ namespace BEbraEngine {
 			item == _disableLog.end())
 		{
 			time_t t = std::time(nullptr);
-			std::tm tm;
+			std::tm tm{};
+#ifndef __ANDROID__
 			localtime_s(&tm, &t);
+#endif
 
 			str << to_string(mType) << ": " << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": "
 				<< text << " | ";
