@@ -27,6 +27,10 @@ namespace BEbraEngine {
 	{
 		SDL_SetWindowSize(handle, newSize.x, newSize.y);
 	}
+	string BaseWindow::getName() const noexcept
+	{
+		return SDL_GetWindowTitle(handle);
+	}
 	void BaseWindow::update() {
 
 		SDL_Event event;
@@ -56,10 +60,10 @@ namespace BEbraEngine {
 
 		SDL_GetMouseState(&x, &y);
 
-		float deltaX = (float)x - getSize().x / 2;
-		float deltaY = getSize().y / 2 - (float)y;
-		*Input::lastX = deltaX;
-		*Input::lastY = deltaY;
+		//float deltaX = (float)x - getSize().x / 2;
+		//float deltaY = getSize().y / 2 - (float)y;
+		//*Input::lastX = deltaX;
+		//*Input::lastY = deltaY;
 		state.x = x;
 		state.y = y;
 

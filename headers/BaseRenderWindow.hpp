@@ -5,6 +5,7 @@
 #include "Vector2.hpp"
 
 using BE_STD::vector;
+using BE_STD::string;
 
 namespace BEbraEngine {
 	class BaseWindow {
@@ -28,6 +29,7 @@ namespace BEbraEngine {
 		void update();
 		Vector2 getSize() const noexcept;
 		void setWindowSize(const Vector2& newSize) const noexcept;
+		string getName() const noexcept;
 		int width() const noexcept;
 		int height() const noexcept;
 		void setPosition(const Vector2& position) const noexcept;

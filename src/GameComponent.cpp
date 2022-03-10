@@ -4,6 +4,7 @@ namespace BEbraEngine {
 
 	void GameComponent::addComponent(shared_ptr<GameComponent> component)
 	{
+		components_.push_back(component);
 	}
 	void GameComponent::removeComponent(shared_ptr<GameComponent> component)
 	{

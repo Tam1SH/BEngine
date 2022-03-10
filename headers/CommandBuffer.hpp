@@ -1,12 +1,15 @@
 #pragma once
 #include <vulkan/vulkan.h>
 #include "platform.hpp"
+
 using BE_STD::function;
 
 namespace BEbraEngine {
     class CommandPool;
 }
+
 namespace BEbraEngine {
+
     class CommandBuffer final {
     public:
         friend class CommandPool;
@@ -17,6 +20,7 @@ namespace BEbraEngine {
         };
     public:
         CommandBuffer(){}
+
         CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type);
 
         operator VkCommandBuffer& () { return _buffer; }

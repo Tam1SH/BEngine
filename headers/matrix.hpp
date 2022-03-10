@@ -10,6 +10,7 @@
 namespace BEbraEngine {
 	class Matrix4 {
 	public:
+		alignas(16) Vector4 elements[4];
 
 		Vector4& operator[](size_t i) {
 			return elements[i];
@@ -37,17 +38,23 @@ namespace BEbraEngine {
 			elements[3] = mat[3];
 		}
 		Matrix4(float all) {
-			elements[0] = Vector4(all);
-			elements[1] = Vector4(all);
-			elements[2] = Vector4(all);
-			elements[3] = Vector4(all);
+			elements[0] = Vector4(1,0,0,0);
+			elements[1] = Vector4(0,1,0,0);
+			elements[2] = Vector4(0,0,1,0);
+			elements[3] = Vector4(0,0,0,1);
 		}
-		operator glm::mat4 () {
+
+		operator glm::mat4() const noexcept{
 			return glm::mat4(
 				elements[0], 
 				elements[1], 
 				elements[2], 
 				elements[3]);
+		}
+
+		Matrix4& operator*=(const Matrix4& other) {
+			*this = Matrix4(*this * other);
+			return *this;
 		}
 		Matrix4 operator*(const Matrix4& other) {
 			const glm::mat4& pizda = *this;
@@ -56,6 +63,7 @@ namespace BEbraEngine {
 			auto pizda228_1337 = pizda * pizda1;
 			return Matrix4(pizda228_1337);
 		}
+
 		Vector4 operator*(const Vector4& other) {
 			const glm::mat4& pizda = *this;
 			return Vector4(pizda * other);
@@ -71,7 +79,6 @@ namespace BEbraEngine {
 		bool operator!=(const Matrix4& other) noexcept {
 			return !(*this == other);
 		}
-	private:
-		Vector4 elements[4];
+		
 	};
 }

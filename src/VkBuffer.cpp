@@ -16,7 +16,7 @@ namespace BEbraEngine {
     {
         destroy();
     }
-    void VulkanBuffer::setData(void* data, uint32_t size, uint32_t offset)
+    void VulkanBuffer::setData(const void* data, uint32_t size, uint32_t offset)
     {
         void* _data;
         vkMapMemory(VulkanRender::device, memory, offset, size, 0, &_data);

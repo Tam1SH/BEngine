@@ -5,17 +5,19 @@
 #include "TransformFactory.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include "Math.hpp"
 namespace BEbraEngine {
 
 
     Matrix4 Transform::getBasis() const noexcept
     {
-        auto model = glm::mat4(1);
-        glm::vec3 _s = scale;
-        glm::vec3 _p = position;
-        model = glm::translate(model, _p);
-        model = glm::scale(model, _s);
-        model *= glm::toMat4(quartion);
+
+        auto model = Matrix4(1);
+
+        model = BEbraMath::translate(model, position);
+        model = BEbraMath::scale(model, scale);
+
+        model *= BEbraMath::toMat4(quat);
 
         return Matrix4(model);
     }
@@ -35,14 +37,9 @@ namespace BEbraEngine {
         destroyer.destroyTransformComponent(*this);
     }
 
-    void Transform::updatePosition(const Vector3& position, const Vector4& quat)
+    void Transform::updatePosition(const Vector3& position) noexcept
     {
         this->position = position;
-
-        quartion.x = quat.x;
-        quartion.y = quat.y;
-        quartion.z = quat.z;
-        quartion.w = quat.w;
 
     }
 
@@ -57,8 +54,17 @@ namespace BEbraEngine {
         this->scale = scale;
     }
 
+    void Transform::setQuat(const Quaternion& quat) noexcept
+    {
+        this->quat = quat;
+    }
+
     Vector3 Transform::getPosition() const noexcept
     {
         return position;
+    }
+    Quaternion Transform::getRotation() const noexcept
+    {
+        return quat;
     }
 }

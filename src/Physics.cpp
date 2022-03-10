@@ -3,6 +3,7 @@
 #include "RigidBoby.hpp"
 #include "GameObject.hpp"
 #include "Transform.hpp"
+#include "Quaternion.hpp"
 #include "Time.hpp"
 #include "Vector4.hpp"
 #include "Collider.hpp"
@@ -12,7 +13,8 @@
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.h"
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h"
 #include "BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h"
-
+#include "AbstractRender.hpp"
+#include <VulkanRender.hpp>
 namespace BEbraEngine {
     ATTRIBUTE_ALIGNED16(class)
     ParallelDiscreteDynamicsWorld : public btDiscreteDynamicsWorldMt
@@ -31,7 +33,18 @@ namespace BEbraEngine {
             btSimulationIslandManagerMt* islandMgr = static_cast<btSimulationIslandManagerMt*>(m_islandManager);
             islandMgr->setIslandDispatchFunction(btSimulationIslandManagerMt::parallelIslandDispatch);
         }
+
     };
+
+    void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
+    {
+        linesToDraw++;
+        render->drawLine(from, to, color);
+    }
+    DebugDrawer::DebugDrawer(AbstractRender& render)
+    {
+        this->render = &render;
+    }
 
     class btTaskSchedulerManager
     {
@@ -114,13 +127,14 @@ namespace BEbraEngine {
     }
     void Physics::update()
     {
+        dynamicsWorld->stepSimulation(Time::deltaTime(), 1);
+        dynamicsWorld->debugDrawWorld();
         
-        dynamicsWorld->stepSimulation(Time::deltaTime(), 0, 1 / 60.f);
         for (auto body = bodies.begin(); body != bodies.end(); ++body) {
 
             btTransform trans;
             auto _body = (*body);
-            _body->getRigidBody()->getMotionState()->getWorldTransform(trans);
+            _body->getRigidBody().getMotionState()->getWorldTransform(trans);
             auto quat = trans.getRotation();
             Vector4 quaat;
             quaat.x = quat.x();
@@ -133,8 +147,11 @@ namespace BEbraEngine {
             auto pos = glm::vec3(
                 vec.x(), vec.y(), vec.z()
             );
-            if(_body->getDynamic())
-                _body->getTransform()->updatePosition(pos, quaat);
+            if (_body->getDynamic()) {
+                
+                _body->getTransform().updatePosition(pos);
+                _body->getTransform().setQuat(Quaternion(quaat));
+            }
 
         }
 
@@ -142,20 +159,30 @@ namespace BEbraEngine {
 
     }
 
+    void Physics::setDebugDrawer(btIDebugDraw* drawer)
+    {
+        this->drawer = std::unique_ptr<btIDebugDraw>(drawer);
+        dynamicsWorld->setDebugDrawer(drawer);
+    }
+
     void Physics::addRigidBody(RigidBody& body)
     {
-        dynamicsWorld->addRigidBody(body.getRigidBody());
+        dynamicsWorld->addRigidBody(&body.getRigidBody());
         bodies.push_back(&body);
     }
     void Physics::removeRigidBody(RigidBody& body)
     {
         rigidBodyFactory->destroy(body);
-        dynamicsWorld->removeRigidBody(body.getRigidBody());
+        dynamicsWorld->removeRigidBody(&body.getRigidBody());
         bodies.remove(&body);
     }
     void Physics::removeCollider(Collider* col)
     {
         dynamicsWorld->removeCollisionObject(&col->get());
+    }
+    void Physics::debugDraw()
+    {
+        dynamicsWorld->debugDrawWorld();
     }
     void Physics::setCollder(RigidBody* body, Collider* collider)
     {

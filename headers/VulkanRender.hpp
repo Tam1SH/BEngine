@@ -5,12 +5,13 @@
 #include "AbstractRender.hpp"
 #include "ExecuteQueues.hpp"
 #include "Vector2.hpp"
+#include "RenderObject.hpp"
 #undef min
 #undef max
 
+class btIDrawDebug;
 
-
-const int MAX_FRAMES_IN_FLIGHT = 3;
+const int MAX_FRAMES_IN_FLIGHT = 1;
 
 namespace BEbraEngine {
     class VulkanTexture;
@@ -21,7 +22,7 @@ namespace BEbraEngine {
     class RenderBuffer;
     class Vertex;
     class RenderObject;
-    class PointLight;
+    class Light;
     class DirectionLight;
     class VulkanDescriptorSetInfo;
     class VulkanRenderObject;
@@ -33,7 +34,13 @@ namespace BEbraEngine {
     class VulkanDirLight;
     class VulkanPointLight;
     class VulkanRenderObjectFactory;
+
+    template<typename RenderData>
+    class VulkanRenderBufferPool;
+
     class RenderBufferView;
+    class Line;
+
 }
 
 
@@ -59,6 +66,27 @@ BE_NAMESPACE_STD_END
 
 namespace BEbraEngine {
 
+    class RenderWorld {
+    public:
+        void removeObject(RenderObject& object) {
+            std::remove(objects.begin(), objects.end(), &object);
+            updateRender();
+        }
+
+        void addObject(RenderObject& object) {
+            objects.push_back(&object);
+            updateRender();
+        }
+    private: 
+        void updateRender() {
+            RenderData data;
+            data.objects = objects;
+            render->updateState(data);
+        }
+    private:
+        vector<RenderObject*> objects;
+        AbstractRender* render;
+    };
 
     class VulkanRender final : public AbstractRender
     {
@@ -78,11 +106,11 @@ namespace BEbraEngine {
 
         void addObject(RenderObject& object) override;
 
-        void addLight(PointLight& light) override;
+        void addLight(Light& light) override;
 
         void removeObject(RenderObject& object) override;
 
-        void removeLight(PointLight& light) override;
+        void removeLight(Light& light) override;
 
         void addCamera(SimpleCamera& camera) override;
 
@@ -98,6 +126,13 @@ namespace BEbraEngine {
 
         void drawFrame() override;
 
+        void update() override;
+
+        void updateState(RenderData& data) override;
+
+        void drawLine(const Vector3& from, const Vector3& to, const Vector3& color) override;
+
+
         Vector2 getCurrentRenderResolution() { 
             return { 
             static_cast<float>(currentRenderResolution.width), 
@@ -110,6 +145,8 @@ namespace BEbraEngine {
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
 
         VkDescriptorSet createDescriptor(LightDescriptorInfo* info);
+
+        VkDescriptorSet createDescriptor2(RenderBufferView* buffer);
 
         VkDescriptorSet createDescriptor(RenderBuffer* buffer);
 
@@ -143,7 +180,8 @@ namespace BEbraEngine {
             SimpleCamera,
             LightPoint,
             DirectionLight,
-            Attachments
+            Attachments,
+            PhysicsDebug
         };
         struct QueueFamilyIndices {
             
@@ -161,10 +199,18 @@ namespace BEbraEngine {
             vector<VkPresentModeKHR> presentModes;
         };
 
+        struct ScreenAttachments {
+            unique_ptr<VulkanTexture> color;
+            unique_ptr<VulkanTexture> depth;
+            unique_ptr<VulkanTexture> normal;
+        };
+
         VulkanRender();
 
         ~VulkanRender();
 
+        size_t linesToDraw;
+        size_t debebebe{};
     public:
 
         static VkDevice device;
@@ -182,6 +228,16 @@ namespace BEbraEngine {
 
         float totalTime;
 
+        VkDescriptorSet lineSet;
+
+        vector<Line::ShaderData> linesMemory{ 30000 };
+
+        unique_ptr<RenderBuffer> nullVertexbuffer;
+
+        unique_ptr<RenderBuffer> lineDefault;
+
+        unique_ptr<VulkanRenderBufferPool<Line::ShaderData>> linePool;
+
         unique_ptr<VulkanRenderObjectFactory> factory;
 
         vector<VulkanRenderObject*> objects;
@@ -196,11 +252,13 @@ namespace BEbraEngine {
 
         VkPipeline graphicsPipeline;
 
+        VkPipeline linesDrawing;
+
         VkPipeline graphicsPipeline2;
 
         shared_ptr<RenderBuffer> cameraPlug;
 
-        unique_ptr<DescriptorPool> VulkanRenderBufferPool;
+        unique_ptr<DescriptorPool> vulkanRenderBufferPool;
 
         vector<unique_ptr<DescriptorPool>> renderObjectsPools;
 
@@ -209,6 +267,8 @@ namespace BEbraEngine {
         unique_ptr<DescriptorPool> attachmentsSetPool;
 
         unique_ptr<DescriptorPool> lightPool;
+
+        unique_ptr<DescriptorPool> PhysicsDebugPool;
 
         vector<unique_ptr<CommandPool>> concurrentCommandPools_RenderQueue;
 
@@ -224,6 +284,8 @@ namespace BEbraEngine {
 
         VkDescriptorSet pointLightsSet;
 
+        VkDescriptorSet physicsDebugSet;
+
         vector<VkDescriptorSet> attachmentsSets;
 
         vector<unique_ptr<VulkanTexture>> normalAttachments;
@@ -232,9 +294,9 @@ namespace BEbraEngine {
 
         vector<unique_ptr<VulkanTexture>> depthAttachments;
 
-        uint32_t MAX_COUNT_OF_OBJECTS = 10000;
+        uint32_t MAX_COUNT_OF_OBJECTS = 1000;
 
-        uint32_t MAX_COUNT_OF_LIGHTS = 1000;
+        uint32_t MAX_COUNT_OF_LIGHTS = 100;
 
         VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -378,6 +440,8 @@ namespace BEbraEngine {
 
         void createCommandPool();
 
+        void createPhysicsDebugDescriptorSetLayout();
+
         void createObjectDescriptorSetLayout();
 
         void createLightDescriptorSetLayout();
@@ -425,5 +489,6 @@ namespace BEbraEngine {
 
         const bool enableValidationLayers = true;
 
-};
+    };
+
 }

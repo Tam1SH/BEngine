@@ -9,7 +9,7 @@ namespace BEbraEngine {
         size_t size = 0;
 
         void destroy() override;
-        void setData(void* data, uint32_t size, uint32_t offset) override;
+        void setData(const void* data, uint32_t size, uint32_t offset) override;
         VulkanBuffer() { }
         ~VulkanBuffer();
     };

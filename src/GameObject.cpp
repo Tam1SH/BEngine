@@ -17,17 +17,17 @@ namespace BEbraEngine {
         }
         return nullptr;
     }
-    bool GameObject::isComposite() const
+    bool GameObject::isComposite() const noexcept
     {
         return true;
     }
 
-    GameObject::GameObject()
+    GameObject::GameObject() noexcept
     {
         name_ = "GameObject";
 
     }
-    GameObject::GameObject(const string& name)
+    GameObject::GameObject(const string& name) noexcept
     {
         this->name_ = name;
     }

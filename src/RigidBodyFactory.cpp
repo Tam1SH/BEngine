@@ -12,14 +12,17 @@ namespace BEbraEngine {
 
     optional<RigidBody*> RigidBodyFactory::create(const RigidBody::RigidBodyCreateInfo& info)
 	{
+        if (!info.collider) {
+            throw std::runtime_error("invalid pointer collider");
+        }
         auto rigidBody = new RigidBody();
         btCollisionObject* shape{};
-        if (info.collider) {
-            shape = &info.collider->get();
-        }
+        
+        shape = &info.collider->get();
+        info.collider->setRigidBody(*rigidBody);
         rigidBody->linearFactor = btVector3(1, 1, 1);
         rigidBody->AngularFactor = btVector3(1, 1, 1);
-
+        rigidBody->collider = info.collider;
         btScalar mass(1.f);
         btVector3 localInertia(0, 0, 0);
         /*
@@ -38,16 +41,10 @@ namespace BEbraEngine {
         startTransform.setOrigin(info.position);
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-        if (shape) {
-            shape->getCollisionShape()->calculateLocalInertia(mass, localInertia);
+        shape->getCollisionShape()->calculateLocalInertia(mass, localInertia);
 
-            btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape->getCollisionShape(), localInertia);
-            rigidBody->body = std::make_unique<btRigidBody>(rbInfo);
-        }
-        else {
-            btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, 0, localInertia);
-            rigidBody->body = std::make_unique<btRigidBody>(rbInfo);
-        }
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape->getCollisionShape(), localInertia);
+        rigidBody->body = std::make_unique<btRigidBody>(rbInfo);
 
         rigidBody->setName("RigidBody");
 

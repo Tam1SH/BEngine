@@ -7,19 +7,26 @@ using BE_STD::optional;
 using BE_STD::shared_ptr;
 using BE_STD::string;
 using BE_STD::map;
+using BE_STD::vector;
 
 namespace BEbraEngine {
     class AbstractRender;
+    class ITextureFactory;
 }
 namespace BEbraEngine {
+
     class MeshFactory {
     public:
 
-        optional<Model*> create(const string& path);
-        optional<Model*> createAsync(const string& path);
+        optional<Model*> create(const Model::ModelCreateInfo& info);
+
+        optional<Model*> createAsync(const Model::ModelCreateInfo& info);
+
         shared_ptr<Model> getDefaultModel(const string& name);
+
         MeshFactory(AbstractRender* render);
     private:
+
 
         void downloadDefaultModels();
         // Рекурсивная обработка узла. Обрабатываем каждый отдельный меш, расположенный в узле, и повторяем этот процесс для своих дочерних углов (если таковы вообще имеются)
@@ -31,11 +38,11 @@ namespace BEbraEngine {
         // Необходимая информация возвращается в виде структуры Texture
        vector<Texture*> loadMaterialTextures(Model* model, aiMaterial* mat, aiTextureType type, string typeName, const string& path);
 
-        VulkanTextureFactory* _textureFactory;
+       ITextureFactory* _textureFactory;
 
-        AbstractRender* render;
+       AbstractRender* render;
 
-        map<string, shared_ptr<Model>> default_models;
+       map<string, shared_ptr<Model>> default_models;
 
     };
 }

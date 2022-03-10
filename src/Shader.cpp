@@ -5,6 +5,7 @@ namespace BEbraEngine {
 
     VulkanShader* VulkanShader::createFromFile(const VkDevice& device, const boost::filesystem::path& path)
     {
+        DEBUG_LOG1(path.string());
         std::ifstream file(path.string(), std::ios::ate | std::ios::binary);
 
         if (!file.is_open()) {

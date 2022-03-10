@@ -2,6 +2,7 @@
 #include "stdafx.h"
 
 #include "GameComponentCreateInfo.hpp"
+#include "Collider.hpp"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -44,7 +45,7 @@ namespace BEbraEngine {
 
 		void destroy(GameObject& object);
 
-		shared_ptr<PointLight> createLight(const Vector3& position);
+		shared_ptr<Light> createLight(const Vector3& position);
 
 		shared_ptr<DirectionLight> createDirLight(const Vector3& direction);
 
@@ -52,9 +53,13 @@ namespace BEbraEngine {
 
 		void setModel(GameObject& object, const string& path);
 
+		void setCollider(Collider& col, Collider::Type type);
+
+		void setTexture(GameObject& object, const boost::filesystem::path& path);
+
 		void destroyCamera(SimpleCamera& camera);
 
-		void destroyPointLight(PointLight& light);
+		void destroyPointLight(Light& light);
 
 		GameObjectFactory(AbstractRender& render, Physics& physics);
 

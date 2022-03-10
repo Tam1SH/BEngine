@@ -3,6 +3,8 @@
 #include "Vector3.hpp"
 #include "Vector2.hpp"
 #include "Vector4.hpp"
+#include "matrix.hpp"
+#include "Quaternion.hpp"
 
 namespace BEbraEngine {
 	namespace BEbraMath {
@@ -18,6 +20,12 @@ namespace BEbraEngine {
 		Vector4 clamp(const Vector4& x, float minValue, float maxValue);
 		Vector2 clamp(const Vector2& x, float minValue, float maxValue);
 		Vector3 cross(const Vector3& left, const Vector3& right);
+		Quaternion toQuat(const Matrix4& mat);
+		Matrix4 toMat4(const Quaternion& quat);
+		Matrix4 scale(const Matrix4& mat, const Vector3& vec);
+		Matrix4 translate(const Matrix4& mat, const Vector3& vec);
 		float radians(float value);
+		Matrix4 rotate(const Matrix4& mat, float angle, const Vector3& vec);
+		Quaternion rotate(const Quaternion& quat, float angle, const Vector3& vec);
 	}
 }

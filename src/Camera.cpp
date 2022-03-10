@@ -1,4 +1,4 @@
-
+﻿
 #pragma once
 #include "stdafx.h"
 #define NOMINMAX
@@ -53,9 +53,10 @@ namespace BEbraEngine {
     void SimpleCamera::_move(float& x, float& y)
     {
         
-        x = Input::getOffsetX();
-        y = Input::getOffsetY();
-        
+        x = Input::getX() - lastX;
+        y = lastY - Input::getY();
+        lastX = Input::getX();
+        lastY = Input::getY();
 
     }
 

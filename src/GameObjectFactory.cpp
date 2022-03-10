@@ -8,6 +8,7 @@
 #include "AbstractRender.hpp"
 #include "GameComponentDestroyer.hpp"	
 #include "Camera.hpp"
+#include "Math.hpp"
 namespace BEbraEngine {
 
 	GameObjectFactory::GameObjectFactory(AbstractRender& render, Physics& physics)
@@ -25,7 +26,7 @@ namespace BEbraEngine {
 	{
 		GameComponent* comp;
 
-		optional<PointLight*> opt_light;
+		optional<Light*> opt_light;
 		optional<DirectionLight*> opt_dirLight;
 		optional<RenderObject*> opt_renderObj;
 		optional<Collider*> opt_collider;
@@ -33,10 +34,10 @@ namespace BEbraEngine {
 		optional<Transform*> opt_transform;
 
 		if (info.colliderInfo) {
-	//		Collider::ColliderCreateInfo cinfo{};
-		//	cinfo.scale = info.transformInfo->scale;
-		///	cinfo.position = info.transformInfo->position;
-		//	opt_collider = colliderFactory->create(cinfo);
+			Collider::ColliderCreateInfo cinfo{};
+			cinfo.scale = info.transformInfo->scale;
+			cinfo.position = info.transformInfo->position;
+			opt_collider = colliderFactory->create(cinfo);
 		}
 		if (info.rigidBodyInfo) {
 
@@ -96,6 +97,7 @@ namespace BEbraEngine {
 
 		if (opt_transform.has_value()) {
 			transform = shared_ptr<Transform>(opt_transform.value());
+
 			comp->addComponent(transform);
 		}
 
@@ -106,7 +108,10 @@ namespace BEbraEngine {
 		if (info.rigidBodyInfo) {
 			collider = shared_ptr<Collider>(opt_collider.value());
 			rigidbody = shared_ptr<RigidBody>(opt_rigidBody.value());
-			rigidbody->setTransform(*transform);
+			RigidBody::TransformSetInfo info{};
+			info.nevv = &*transform;
+			rigidbody->setTransform(info);
+			collider->setRotation(transform->getRotation());
 			comp->addComponent(collider);
 			comp->addComponent(rigidbody);
 		}
@@ -123,12 +128,12 @@ namespace BEbraEngine {
 
 	}
 
-	shared_ptr<PointLight> GameObjectFactory::createLight(const Vector3& position)
+	shared_ptr<Light> GameObjectFactory::createLight(const Vector3& position)
 	{
 		Transform::TransformCreateInfo info{};
 		info.position = position;
 		auto transform = shared_ptr<Transform>(transFactory->create(info).value());
-		auto light = shared_ptr<PointLight>(renderFactory->createLight(Vector3(1), position));
+		auto light = shared_ptr<Light>(renderFactory->createLight(Vector3(1), position));
 		light->addComponent(transform);
 
 		auto name = light->getName();
@@ -154,7 +159,17 @@ namespace BEbraEngine {
 
 	void GameObjectFactory::setModel(GameObject& object, const string& path)
 	{
-		renderFactory->setModel(*object.getComponent<RenderObject>(), path);
+		renderFactory->setModel(object.getComponentChecked<RenderObject>(), path);
+	}
+
+	void GameObjectFactory::setCollider(Collider& col, Collider::Type type)
+	{
+		colliderFactory->setShape(col, *colliderFactory->getShape(type));
+	}
+
+	void GameObjectFactory::setTexture(GameObject& object, const boost::filesystem::path& path)
+	{
+		renderFactory->setTexture(object.getComponentChecked<RenderObject>(), path);
 	}
 
 	void GameObjectFactory::destroy(GameComponent& object)
@@ -174,7 +189,7 @@ namespace BEbraEngine {
 	{
 	}
 
-	void GameObjectFactory::destroyPointLight(PointLight& light)
+	void GameObjectFactory::destroyPointLight(Light& light)
 	{
 		light.release();
 		renderFactory->destroyPointLight(light);

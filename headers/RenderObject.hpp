@@ -7,19 +7,58 @@
 #include "Model.hpp"
 #include "matrix.hpp"
 #include "Debug.hpp"
-
+#include "AbstractRender.hpp"
+#include "IRenderData.hpp"
 namespace BEbraEngine {
     class Transform;
     class Texture;
 }
 
 using BE_STD::weak_ptr;
-
+using BE_STD::unique_ptr;
 //TODO: draw is bad bleat.
 namespace BEbraEngine {
 
+    class Line : public IRenderData {
+    public:
+        struct ShaderData {
+            alignas(16) Vector3 from;
+            alignas(16) Vector3 to;
+            alignas(16) Vector3 color;
+        };
+    public:
+        ShaderData _data;
 
-    class PointLight : public GameComponent, public IReusable {
+        Line(const Vector3& from = Vector3(0), const Vector3& to = Vector3(0), const Vector3& color = Vector3(0)) :
+            from(from), to(to), color(color) { }
+        ~Line();
+
+        const void* getData() noexcept override {
+
+            _data.color = color;
+            _data.from = from;
+            _data.to = to;
+            return &data;
+        }
+        size_t getDataSize() const noexcept override {
+            return sizeof(ShaderData);
+        }
+
+        Vector3 from;
+        Vector3 to;
+        Vector3 color;
+
+        void create(AbstractRender& render);
+
+        void update();
+
+        shared_ptr<RenderBufferView> data;
+        shared_ptr<RenderBuffer> vertices;
+        shared_ptr<Transform> transform;
+        VkDescriptorSet set;
+    };
+
+    class Light : public GameComponent, public IReusable {
     public:
         struct ShaderData {
             alignas(16) Vector3 position;
@@ -61,8 +100,8 @@ namespace BEbraEngine {
         void update();
 
 
-        PointLight() { name_ = "Light"; }
-        virtual ~PointLight() {}
+        Light() { name_ = "Light"; }
+        virtual ~Light() {}
     private:
         Vector3 color;
 
@@ -138,7 +177,7 @@ namespace BEbraEngine {
 
         struct RenderObjectCreateInfo {
 
-            const PointLight::PointLightCreateInfo* pointLightInfo;
+            const Light::PointLightCreateInfo* pointLightInfo;
             const DirectionLight::DirectionLightCreateInfo* directionLightInfo;
         };
     public:
@@ -170,5 +209,14 @@ namespace BEbraEngine {
         }
     private:
         Vector3 _color;
+
+        // Унаследовано через IReusable
+        virtual void release() override;
+    };
+
+    class Material : public GameComponent {
+    private:
+        unique_ptr<Texture> specular;
+        unique_ptr<Texture> ambient;
     };
 }

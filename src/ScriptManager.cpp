@@ -3,6 +3,7 @@
 #include "AngelScriptEngine.hpp"
 #include <filesystem>
 #include "Time.hpp"
+#include "Debug.hpp"
 namespace BEbraEngine {
 	
 
@@ -16,6 +17,9 @@ namespace BEbraEngine {
 		}
 		return optional<shared_ptr<AngelScript>>();
 	}
+	/// <summary>
+	///  Вызывает все события в активных скриптах.
+	/// </summary>
 	void ScriptManager::runScripts()
 	{
 		static float time = 0.f;
@@ -49,34 +53,45 @@ namespace BEbraEngine {
 			
 			});
 	}
+	/// <summary>
+	/// Загружает все скрипты, указанные в жсон файле. 
+	/// </summary>
 	void ScriptManager::LoadScripts()
 	{
 		using namespace nlohmann;
 
-		auto currentPath = std::filesystem::current_path();
-		currentPath /= "scripts";
-		auto setup = currentPath / "setup.json";
-		std::ifstream stream(setup);
-		json j;
-		stream >> j;
-		for (int i = 0; i < j["scripts"].size(); i++) {
-			string name;
-			string path;
-			for (auto& [key, value] : j["scripts"][i].items()) {
-				if (key == "name") {
-					name = value;
-				}
-				if (key == "path") {
-					path = value;
-				}
-			}
-			auto opt_script = engine->createScript(path, name);
+		try {
 
-			if (opt_script.has_value()) {
-				auto script = std::shared_ptr<AngelScript>(opt_script.value());
-				script->SetActive(true);
-				scripts.push_back(script);
+
+			auto currentPath = std::filesystem::current_path();
+			currentPath /= "scripts";
+			auto setup = currentPath / "setup.json";
+			std::ifstream stream(setup);
+			json j;
+			stream >> j;
+			for (int i = 0; i < j["scripts"].size(); i++) {
+				string name;
+				string path;
+				for (auto& [key, value] : j["scripts"][i].items()) {
+					if (key == "name") {
+						name = value;
+					}
+					if (key == "path") {
+						path = value;
+					}
+				}
+				auto opt_script = engine->createScript(path, name);
+
+				if (opt_script.has_value()) {
+					auto script = std::shared_ptr<AngelScript>(opt_script.value());
+					script->SetActive(true);
+					scripts.push_back(script);
+				}
+
 			}
+		}
+		catch (std::exception& ex) {
+			DEBUG_LOG1(ex.what());
 		}
 
 		
@@ -91,7 +106,7 @@ namespace BEbraEngine {
 	ScriptManager::~ScriptManager()
 	{
 		for (auto& script : scripts) {
-			script->destroy();
+			//script->destroy();
 		}
 	}
 }

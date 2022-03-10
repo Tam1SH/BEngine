@@ -7,7 +7,6 @@
 
 #include <Physics/btBulletCollisionCommon.h>
 #include <Physics/btBulletDynamicsCommon.h>
-
 #include "ColliderFactory.hpp"
 #include "RigidBodyFactory.hpp"
 #include "ExecuteQueues.hpp"
@@ -29,6 +28,7 @@ BE_NAMESPACE_STD_END
 
 
 namespace BEbraEngine {
+    class AbstractRender;
     class RigidBody;
     class ParallelDiscreteDynamicsWorld;
     class btTaskSchedulerManager;
@@ -36,10 +36,33 @@ namespace BEbraEngine {
 
 namespace BEbraEngine {
 
+    class DebugDrawer : public btIDebugDraw {
+    public:
+
+        void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override;
+
+        DebugDrawer(AbstractRender& render);
+
+        void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color) override {}
+
+        void reportErrorWarning(const char* warningString) override { }
+
+        void draw3dText(const btVector3& location, const char* textString) override { }
+
+        void setDebugMode(int debugMode) override { }
+
+        int getDebugMode() const override { return btIDebugDraw::DBG_DrawWireframe; }
+    private:
+        AbstractRender* render;
+        uint32_t linesToDraw;
+    };
+
     class Physics {
     public:
 
         void update();
+
+        void setDebugDrawer(btIDebugDraw* drawer);
 
         ColliderFactory* getColliderFactory() { return colliderFactory.get(); }
 
@@ -50,6 +73,8 @@ namespace BEbraEngine {
         void removeRigidBody(RigidBody& body);
 
         void removeCollider(Collider* col);
+
+        void debugDraw();
 
         void setCollder(RigidBody* body, Collider* collider);
 
@@ -73,6 +98,8 @@ namespace BEbraEngine {
         unique_ptr<btTaskSchedulerManager> mgr;
 
         list<RigidBody*> bodies;
+
+        unique_ptr<btIDebugDraw> drawer;
 
         vector<RigidBody*> _bodies;
 

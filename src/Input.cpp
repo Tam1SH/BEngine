@@ -57,12 +57,12 @@ namespace BEbraEngine {
 
     float Input::getOffsetX()
     {
-        return *Input::lastX;
+        return *Input::mouseX;
     }
 
     float Input::getOffsetY()
     {
-        return *Input::lastY;
+        return *Input::mouseY;
     }
 
     bool Input::isKeyPressed(KEY_CODE key)

@@ -21,7 +21,7 @@ namespace BEbraEngine {
         unique_ptr<Physics> physics;
         unique_ptr<BaseWindow> window1;
         unique_ptr<ScriptState> gameLogic1;
-        bool multiThreading = true;
+        bool multiThreading = false;
     public:
         void Main() {
             init();
@@ -32,6 +32,8 @@ namespace BEbraEngine {
             window1 = unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
             window1->createWindow(Vector2(1000, 1000), "BEEEBRA!!!");
             physics = unique_ptr<Physics>(new Physics());
+            auto drawer = new DebugDrawer(*render1);
+            physics->setDebugDrawer(drawer);
             gameLogic1 = unique_ptr<ScriptState>(new ScriptState(*render1, *physics));
             Debug::enableAll();
         }
@@ -47,7 +49,7 @@ namespace BEbraEngine {
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _window(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
-                        _render(g, [&](const tbb::flow::continue_msg&) { render1->drawFrame(); });
+                        _render(g, [&](const tbb::flow::continue_msg&) { render1->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _physics(g, [&](const tbb::flow::continue_msg&) { physics->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
@@ -60,17 +62,20 @@ namespace BEbraEngine {
                     tbb::flow::make_edge(input, _window);
                     input.try_put(tbb::flow::continue_msg());
                     g.wait_for_all();
+                   
                     gameLogic1->updateState();
-
+                    render1->drawFrame();
                 }
                 else {
 
 
                     window1->update();
-                    render1->drawFrame();
                     physics->update();
+                    render1->update();
+
                     gameLogic1->update();
                     gameLogic1->updateState();
+                    render1->drawFrame();
                 }
 
             }

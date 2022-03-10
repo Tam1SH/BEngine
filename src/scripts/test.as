@@ -14,10 +14,10 @@ GameObject@ obj1;
 array<GameObject@> objects;
 void Start()
 {
-	GameObject obj(Vector3(0,40,0));
+	//GameObject obj(Vector3(0,40,0));
 
-	@obj1 = @obj;
-
+	//@obj1 = @obj;
+//
 	print("EBAL");
 }
 void Update()

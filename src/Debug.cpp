@@ -42,7 +42,7 @@ namespace BEbraEngine {
 			_disableLog.erase(item);
 
 	}
-	void Debug::log(const std::stringstream& stream) {
+	void Debug::log(int line, const char* nameFile, const std::stringstream& stream) {
 		time_t t = std::time(nullptr);
 		BE_STD::tm tm{};
 #ifndef __ANDROID__
@@ -51,8 +51,8 @@ namespace BEbraEngine {
 
 
 		std::stringstream str;
-		str << "INFO: ";
-		str << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": ";
+		str << "INFO: " << nameFile << "(" << line << ") | ";
+		str << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << " | ";
 
 		str << stream.str();
 		_log(str.str());

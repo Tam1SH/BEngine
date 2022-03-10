@@ -2,9 +2,11 @@
 #include "Math.hpp"
 #include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 namespace BEbraEngine {
 	namespace BEbraMath {
-
+		
 		Vector3 normalize(const Vector3& vec) noexcept
 		{
 			return glm::normalize(static_cast<glm::vec3>(vec));
@@ -64,10 +66,34 @@ namespace BEbraEngine {
 		{
 			return glm::cross(static_cast<glm::vec3>(left), static_cast<glm::vec3>(right));
 		}
+		Quaternion toQuat(const Matrix4& mat) {
+			return glm::toQuat(static_cast<glm::mat4>(mat));
+		}
+		Matrix4 toMat4(const Quaternion& quat) {
+			return glm::toMat4(static_cast<glm::quat>(quat));
+		}
+		Matrix4 scale(const Matrix4& mat, const Vector3& vec) {
+			return glm::scale(static_cast<glm::mat4>(mat), static_cast<glm::vec3>(vec));
+		}
+
+		Matrix4 translate(const Matrix4& mat, const Vector3& vec)
+		{
+			return glm::translate(static_cast<glm::mat4>(mat), static_cast<glm::vec3>(vec));
+		}
 
 		float radians(float value)
 		{
 			return glm::radians(value);
+		}
+
+		Matrix4 rotate(const Matrix4& mat, float angle, const Vector3& vec)
+		{
+			return glm::rotate(static_cast<glm::mat4>(mat), angle, static_cast<glm::vec3>(vec));
+		}
+
+		Quaternion rotate(const Quaternion& quat, float angle, const Vector3& vec)
+		{
+			return glm::rotate(static_cast<glm::mat4>(toMat4(quat)), angle, static_cast<glm::vec3>(vec));
 		}
 
 	}

@@ -1,4 +1,4 @@
-//TODO: сделать свою векторную матешу
+
 // TODO: скрипт двигло
 // TODO: сделать кластерный рендер
 //TODO: начать делать хотя бы что-то со звуком 
@@ -6,6 +6,8 @@
 //TODO: привести все фабричные методы к одному виду
 //TODO: Уменьшить кол-во дескрипторов.
 //TODO: заменить все shared_ptr на unique потому что так шевцов сказал?
+//TODO: подумать на толчке о своей модели асинхронных задач в рендере.
+//TODO: переделать RenderObject в Material. 
 /*
 TODO: подумать над реализацей:
 ****************************************************************************************
@@ -18,7 +20,7 @@ TODO: подумать над реализацей:
 
 #include "stdafx.h"
 #include "Engine.hpp"
-
+#include "Debug.hpp"
 
 #ifndef __ANDROID__
 #undef main
@@ -29,8 +31,15 @@ extern "C"
 
 int main(int argc, char* argv[])
 {
-    BEbraEngine::Engine engine;
-    engine.Main();
+    try {
+        DEBUG_LOG1("BEGIN OF PIZDEC");
+        BEbraEngine::Engine engine;
+        engine.Main();
+    }
+    catch(std::exception & ex) {
+        DEBUG_LOG1(ex.what());
+    }
+
 
     return 1337228;
 }

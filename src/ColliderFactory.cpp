@@ -3,20 +3,24 @@
 #include <Physics/btBulletCollisionCommon.h>
 #include "Collider.hpp"
 #include "Physics.hpp"
+#include "RigidBoby.hpp"
 namespace BEbraEngine {
+
 	ColliderFactory::ColliderFactory(Physics* physics) {
-		this->physics = physics;
+		if (physics)
+			this->physics = physics;
+		else
+			throw std::exception();
 	}
 
 	optional<Collider*> ColliderFactory::create(const Collider::ColliderCreateInfo& info)
 	{
 		auto col = new Collider();
 		btCollisionShape* shape;
+
 		col->_collider = unique_ptr<btCollisionObject>(new btCollisionObject());
-		if (static_cast<glm::vec3>(info.position) == static_cast<glm::vec3>(Vector3(0, 0, 0)))
-			shape = new btBoxShape(Vector3(1.));
-		else 
-			shape = new btBoxShape(Vector3(1.));
+
+		shape = getShape(info.type);
 
 		setShape(*col, *shape);
 		col->setScale(info.scale);
@@ -33,8 +37,38 @@ namespace BEbraEngine {
 
 	void ColliderFactory::setShape(Collider& collider, btCollisionShape& newShape)
 	{
-		delete collider._collider->getCollisionShape();
+		if(collider._collider->getCollisionShape())
+			delete collider._collider->getCollisionShape();
+		if(collider.body)
+			collider.body->getRigidBody().setCollisionShape(&newShape);
 		collider._collider->setCollisionShape(&newShape);
+	}
+
+	btCollisionShape* ColliderFactory::getShape(Collider::Type type)
+	{
+		switch (type)
+		{
+		case Collider::Type::Box:
+			return new btBoxShape(btVector3(1, 1, 1));
+			break;
+		case Collider::Type::Sphere:
+			return new btSphereShape(1);
+			break;
+		case Collider::Type::Capsule:
+			return new btCapsuleShape(1, 1);
+			break;
+		case Collider::Type::Cylinder:
+			return new btCylinderShape(btVector3(1, 1, 1));
+			break;
+		case Collider::Type::Cone:
+			return new btConeShape(1, 1);
+			break;
+		case Collider::Type::Mesh:
+			throw std::runtime_error("not implemented xyu");
+			break;
+		default:
+			break;
+		}
 	}
 
 }

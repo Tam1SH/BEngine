@@ -21,7 +21,7 @@ namespace BEbraEngine {
 
 		void destroyGameObject(GameObject& comp) const override;
 
-		void destroyPointLightComponent(PointLight& comp) const override;
+		void destroyPointLightComponent(Light& comp) const override;
 
 		void destroyDirectionLightComponent(DirectionLight& comp) const override;
 

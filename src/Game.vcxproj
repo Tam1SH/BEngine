@@ -307,6 +307,7 @@
     <ClCompile Include="AbstractScriptObject.cpp" />
     <ClCompile Include="AngelScript.cpp" />
     <ClCompile Include="AngelScriptEngine.cpp" />
+    <ClCompile Include="AsyncTask.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="BaseRenderWindow.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -362,6 +363,8 @@
     <None Include="cpp.hint" />
     <None Include="scripts\BEbraEngine.as" />
     <None Include="scripts\test.as" />
+    <None Include="shaders\Line.frag" />
+    <None Include="shaders\Line.vert" />
     <None Include="shaders\shaderRead.frag" />
     <None Include="shaders\shaderRead.vert" />
     <None Include="shaders\shaderWrite.frag" />
@@ -376,6 +379,7 @@
     <ClInclude Include="..\headers\AbstractScriptObject.hpp" />
     <ClInclude Include="..\headers\AngelScript.hpp" />
     <ClInclude Include="..\headers\AngelScriptEngine.hpp" />
+    <ClInclude Include="..\headers\AsyncTask.hpp" />
     <ClInclude Include="..\headers\AudioSystem.hpp" />
     <ClInclude Include="..\headers\BaseRenderWindow.hpp" />
     <ClInclude Include="..\headers\BaseScript.hpp" />

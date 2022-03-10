@@ -18,7 +18,7 @@ namespace BEbraEngine {
     };
 
 
-    class VulkanPointLight : public PointLight {
+    class VulkanPointLight : public Light {
     public:
 
         VkDescriptorSet descriptor;

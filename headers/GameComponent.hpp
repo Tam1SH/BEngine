@@ -11,7 +11,6 @@ BE_NAMESPACE_STD_BEGIN
     template<class T, class Alloc>
     class list;
 
-    class string;
 BE_NAMESPACE_STD_END
 
 namespace BEbraEngine {

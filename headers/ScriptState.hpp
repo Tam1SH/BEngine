@@ -37,7 +37,7 @@ namespace BEbraEngine {
     class GameObject;
     class DirectionLight;
     class Time;
-    class PointLight;
+    class Light;
     class ObjectFactoryFacade;
     class GameComponentCreateInfo;
 }
@@ -66,15 +66,21 @@ namespace BEbraEngine {
 
         void addCamera(SimpleCamera& camera);
 
-        void addLight(PointLight& light);
+        void addLight(Light& light);
 
         void addDirLight(DirectionLight& light);
 
+        shared_ptr<GameObject> getShared(const GameObject& object);
+
         ~ScriptState();
+
+        
 
     private:
 
         vector<shared_ptr<GameObject>> objects_;
+
+        tbb::concurrent_hash_map<const GameObject*, shared_ptr<GameObject>> objectsCache;
 
         ExecuteQueues<function<void()>> queues;
 
@@ -90,10 +96,12 @@ namespace BEbraEngine {
 
         shared_ptr<DirectionLight> globalLight;
 
-        shared_ptr<PointLight> light;
+        shared_ptr<Light> light;
+
+            shared_ptr<GameObject> sphere;
         list<shared_ptr<GameObject>> bounds;
         list<shared_ptr<GameObject>> objects;
-        list<shared_ptr<PointLight>> lights;
+        list<shared_ptr<Light>> lights;
         Vector3 scale;
         Vector3 rotate;
         Vector3 lightColor;

@@ -51,7 +51,7 @@ namespace BEbraEngine {
 	{
 
 	}
-	void GameComponentDestroyer::destroyPointLightComponent(PointLight& comp) const
+	void GameComponentDestroyer::destroyPointLightComponent(Light& comp) const
 	{
 		renderFactory->destroyPointLight(comp);
 

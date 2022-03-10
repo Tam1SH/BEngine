@@ -3,12 +3,34 @@
 #include "VulkanTextureFactory.hpp"
 #include "AbstractRender.hpp"
 namespace BEbraEngine {
-    std::optional<Model*> MeshFactory::create(const std::string& path)
+
+    optional<Model*> MeshFactory::create(const Model::ModelCreateInfo& info)
     {
+
         auto model = new Model();
+        auto name = info.path.filename().filename().string();
+        if (name == "Box") {
+            auto box = getDefaultModel("BOX");
+            if (box.get())
+                return optional<Model*>(&*box);
+        }
+
+        if (name == "Cylinder")
+        {
+            auto cylinder = getDefaultModel("Cylinder");
+            if (cylinder.get())
+                return optional<Model*>(&*cylinder);
+        }
+
+        if (name == "Sphere")
+        {
+            auto sphere = getDefaultModel("Sphere");
+            if(sphere.get())
+                return optional<Model*>(&*sphere);
+        }
         // Чтение файла с помощью Assimp
         Assimp::Importer imposter;
-        const aiScene* scene = imposter.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+        const aiScene* scene = imposter.ReadFile(info.path.string(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
         // Проверка на ошибки
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // если НЕ 0
@@ -20,11 +42,11 @@ namespace BEbraEngine {
         // Получение пути к файлу
         //directory = path.substr(0, path.find_last_of('/'));
         // Рекурсивная обработка корневого узла Assimp
-        processNode(model, scene->mRootNode, scene, path);
+        processNode(model, scene->mRootNode, scene, info.path.string());
         auto model_out = std::make_optional<Model*>(model);
         return model_out;
     }
-    std::optional<Model*> MeshFactory::createAsync(const std::string& path)
+    std::optional<Model*> MeshFactory::createAsync(const Model::ModelCreateInfo& info)
     {
         return std::optional<Model*>();
     }
@@ -36,24 +58,44 @@ namespace BEbraEngine {
         this->render = render;
         downloadDefaultModels(); 
     }
+
     void MeshFactory::downloadDefaultModels()
     {
-        default_models["BOX"] = std::shared_ptr<Model>(create("C:/.BEbraEngine/src/Models/BOX.fbx").value());
-        auto vertices_view = new RenderBufferView();
-        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models["BOX"]->meshes[0].vertices));
-        default_models["BOX"]->meshes[0].vertices_view = vertices_view;
-        auto indices_view = new RenderBufferView();
-        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models["BOX"]->meshes[0].indices));
-        default_models["BOX"]->meshes[0].indices_view = indices_view;
+        const char* box = "BOX";
+        const char* sphere = "SPHERE";
+        const char* cylinder = "CYLINDER";
 
-        default_models["SPHERE"] = std::shared_ptr<Model>(create("C:/.BEbraEngine/src/Models/HighSphere.fbx").value());
+        Model::ModelCreateInfo info = { };
+        
+        info.path = boost::filesystem::current_path() / "Models/Box.fbx";;
+        default_models[box] = std::shared_ptr<Model>(create(info).value());
+        auto vertices_view = new RenderBufferView();
+        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models[box]->meshes[0].vertices));
+        default_models[box]->meshes[0].vertices_view = vertices_view;
+        auto indices_view = new RenderBufferView();
+        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models[box]->meshes[0].indices));
+        default_models[box]->meshes[0].indices_view = indices_view;
+
+
+        info.path = boost::filesystem::current_path() / "Models/Sphere.fbx";;
+        default_models[sphere] = std::shared_ptr<Model>(create(info).value());
         vertices_view = new RenderBufferView();
-        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models["SPHERE"]->meshes[0].vertices));
-        default_models["SPHERE"]->meshes[0].vertices_view = vertices_view;
+        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models[sphere]->meshes[0].vertices));
+        default_models[sphere]->meshes[0].vertices_view = vertices_view;
         indices_view = new RenderBufferView();
-        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models["SPHERE"]->meshes[0].indices));
-        default_models["SPHERE"]->meshes[0].indices_view = indices_view;
+        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models[sphere]->meshes[0].indices));
+        default_models[sphere]->meshes[0].indices_view = indices_view;
+
+        info.path = boost::filesystem::current_path() / "Models/Cylinder.fbx";;
+        default_models[cylinder] = std::shared_ptr<Model>(create(info).value());
+        vertices_view = new RenderBufferView();
+        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models[cylinder]->meshes[0].vertices));
+        default_models[cylinder]->meshes[0].vertices_view = vertices_view;
+        indices_view = new RenderBufferView();
+        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models[cylinder]->meshes[0].indices));
+        default_models[cylinder]->meshes[0].indices_view = indices_view;
     }
+
     void MeshFactory::processNode(Model* model, aiNode* node, const aiScene* scene, const std::string& path)
     {
         // Обрабатываем каждый меш текущего узла
@@ -75,9 +117,9 @@ namespace BEbraEngine {
 
     {
         // Данные для заполнения
-        std::vector<Vertex> vertices;
-        std::vector<uint32_t> indices;
-        std::vector<Texture*> textures;
+        vector<Vertex> vertices;
+        vector<uint32_t> indices;
+        vector<Texture*> textures;
 
         // Цикл по всем вершинам меша
         for (unsigned int i = 0; i < mesh->mNumVertices; i++)

@@ -31,7 +31,10 @@ namespace BEbraEngine {
 		void destroyCollider(Collider& col);
 
 		void setShape(Collider& collider, btCollisionShape& newShape);
+
+		btCollisionShape* getShape(Collider::Type type);
 	private:
+
 		Physics* physics;
 	};
 

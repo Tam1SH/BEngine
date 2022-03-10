@@ -8,28 +8,36 @@
 #include "IVisitorGameComponentDestroyer.hpp"
 namespace BEbraEngine {
 
-    void RigidBody::resetState()
+    /// <summary>  
+    /// Обнуляются сила и гравитация и объект перемещается в позицию, полученную из привязанного transform
+    ///</summary>
+    void RigidBody::resetState() noexcept
     {
-        auto vec = transform->getPosition();
-        auto btvec = btVector3(
-            vec.x, vec.y, vec.z
-        );
+        
         body->clearForces();
         body->clearGravity();
-        body->getWorldTransform().setOrigin(btvec);
+        body->getWorldTransform().setOrigin(transform->getPosition());
+        body->getWorldTransform().setRotation(transform->getRotation());
     }
 
-
-    void RigidBody::setTransform(Transform& transform)
+    /// <summary>  
+    /// Устанавливается указатель на новый transform. Предыдущий должен быть переиспользован либо удалён.
+    /// </summary>
+    void RigidBody::setTransform(TransformSetInfo& info) noexcept
     {
-        this->transform = &transform;
+        if (info.nevv)
+            this->transform = info.nevv;
+        else DEBUG_LOG3("info.nevv is null", this);
     }
 
-    void RigidBody::setMass(float mass)
+    void RigidBody::setMass(float mass) noexcept
     {
     }
 
-    void RigidBody::setDynamic(bool isActive) 
+    /// <summary>  
+    /// Обнуляется линейный и угловой фактор(Factor)
+    /// </summary>
+    void RigidBody::setDynamic(bool isActive) noexcept
     {
         this->isActive = isActive;
         if (!isActive) {
@@ -42,20 +50,27 @@ namespace BEbraEngine {
         }
     }
 
-
-    void RigidBody::setPosition(const Vector3& position)
+    /// <summary>  
+    ///  Устанавливается в текущую позицию, обновляется привязанный tranform и обнуляется состояние объекта.
+    /// </summary>
+    void RigidBody::setPosition(const Vector3& position) noexcept
     {
-        transform->updatePosition(position, Vector4(0.f));
+        transform->updatePosition(position);
         resetState();
 
     }
+    void RigidBody::setRotation(const Quaternion& quat) noexcept {
+        transform->setQuat(quat);
+        resetState();
+    }
 
-    void RigidBody::applyImpulse(const Vector3& force, const Vector3& direction)
+    void RigidBody::applyImpulse(const Vector3& force, const Vector3& direction) noexcept
     {
         body->applyImpulse(force, direction);
         
     }
-    void RigidBody::applyImpulseToPoint(float force, const Vector3& point)
+
+    void RigidBody::applyImpulseToPoint(float force, const Vector3& point) noexcept
     {
         auto posBody = transform->getPosition();
         float dist = sqrt(
@@ -71,7 +86,7 @@ namespace BEbraEngine {
 
     }
 
-    RigidBody::RigidBody()
+    RigidBody::RigidBody() noexcept
     {
     }
 

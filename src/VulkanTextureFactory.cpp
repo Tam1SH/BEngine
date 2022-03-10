@@ -75,11 +75,17 @@ namespace BEbraEngine {
     void VulkanTextureFactory::destroyTexture(Texture* texture)
     {
         auto vTexture = static_cast<VulkanTexture*>(texture);
+        
+#ifdef _DEBUG
+        if (texture->isDestroyed) {
+            DEBUG_LOG3("А текстурка блять уже удалена", texture);
+        }
+        else
+            texture->isDestroyed = true;
+#endif 
         render->destroyTexture(vTexture);
 
-#ifdef _DEBUG
-        texture->isDestroyed = true;
-#endif 
+
 
 
     }

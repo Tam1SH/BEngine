@@ -6,7 +6,7 @@ namespace BEbraEngine {
 	class Texture;
 	class Collider;
 	class Transform;
-	class PointLight;
+	class Light;
 	class DirectionLight;
 	class SimpleCamera;
 	class GameObject;
@@ -16,7 +16,7 @@ namespace BEbraEngine {
 	class IVisitorGameComponentDestroyer {
 	public:
 		virtual void destroyGameObject(GameObject& comp) const = 0;
-		virtual void destroyPointLightComponent(PointLight& comp) const = 0;
+		virtual void destroyPointLightComponent(Light& comp) const = 0;
 		virtual void destroyDirectionLightComponent(DirectionLight& comp) const = 0;
 
 

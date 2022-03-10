@@ -3,6 +3,7 @@
 #include "platform.hpp"
 
 #include "Vector3.hpp"
+#include "Collider.hpp"
 
 using BE_STD::shared_ptr;
 using BE_STD::unique_ptr;
@@ -20,7 +21,7 @@ namespace BEbraEngine {
     class ScriptState;
     class SimpleCamera;
     class GameObject;
-    class PointLight;
+    class Light;
     class DirectionLight;
 }
 
@@ -31,19 +32,23 @@ namespace BEbraEngine {
 
         shared_ptr<GameObject> create(const Vector3& position);
 
-        shared_ptr<PointLight> createLight(const Vector3& position);
+        shared_ptr<Light> createLight(const Vector3& position);
 
         shared_ptr<DirectionLight> createDirLight(const Vector3& direction);
 
         void destroy(shared_ptr<GameObject>& object);
 
-        void destroyPointLight(PointLight& light);
+        void destroyPointLight(Light& light);
 
         shared_ptr<SimpleCamera> createCamera(const Vector3& position);
 
         void destroyCamera(SimpleCamera& camera);
 
         void setModel(GameObject& object, const string& path);
+        
+        void setCollider(Collider& col, Collider::Type type);
+
+        void setTexture(GameObject& object, const boost::filesystem::path& path);
 
         void setContext(ScriptState* logic);
 

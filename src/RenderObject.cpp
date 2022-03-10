@@ -3,7 +3,6 @@
 #include "Transform.hpp"
 #include "Texture.hpp"
 #include "VkBuffer.hpp"
-#include "VulkanRenderObjectFactory.hpp"
 #include "IVisitorGameComponentDestroyer.hpp"
 namespace BEbraEngine {
     void RenderObject::update()
@@ -23,9 +22,13 @@ namespace BEbraEngine {
     {
     }
 
+    void RenderObject::release()
+    {
+    }
+
     
 
-    void PointLight::release()
+    void Light::release()
     {
         ShaderData _data;
         _data.position = Vector3();
@@ -38,7 +41,7 @@ namespace BEbraEngine {
         data->setData(&_data, sizeof(ShaderData));
     }
 
-    void PointLight::update()
+    void Light::update()
     {
         ShaderData _data;
         _data.position = transform->getPosition();
@@ -51,18 +54,36 @@ namespace BEbraEngine {
         data->setData(&_data, sizeof(ShaderData));
 
     }
-    void PointLight::destroy(IVisitorGameComponentDestroyer& destroyer)
+
+    void Light::destroy(IVisitorGameComponentDestroyer& destroyer)
     {
         destroyer.destroyPointLightComponent(*this);
     }
+
     void RenderObject::destroy(IVisitorGameComponentDestroyer& destroyer)
     {
         destroyer.destroyRenderComponent(*this);
     }
+
     void DirectionLight::destroy(IVisitorGameComponentDestroyer& destroyer)
     {
         destroyer.destroyDirectionLightComponent(*this);
     }
+
+    Line::~Line()
+    {
+        
+    }
+
+    void Line::create(AbstractRender& render)
+    {
+    }
+    void Line::update()
+    {
+        _data = { from, to, color };
+
+    }
+
 }
 
 

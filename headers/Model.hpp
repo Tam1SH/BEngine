@@ -1,5 +1,5 @@
 #pragma once
-
+#include <boost/filesystem.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -15,7 +15,7 @@
 #include "Vertex.hpp"
 #include "RenderBuffer.hpp"
 namespace BEbraEngine {
-    class VulkanTextureFactory;
+
     class Mesh {
     public:
         std::vector<Vertex> vertices;
@@ -32,7 +32,10 @@ namespace BEbraEngine {
     };
     class Model
     {
-
+    public:
+        struct ModelCreateInfo {
+            boost::filesystem::path path{};
+        };
     public:
         std::vector<Texture*> textures_loaded; 
         //TODO: вынести представление для каждого меша и использовать только одно.

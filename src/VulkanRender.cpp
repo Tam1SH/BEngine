@@ -27,6 +27,7 @@
 #include "Time.hpp"
 #include "VulkanRenderBufferPool.hpp"
 #include "utils.hpp"
+#include <TransformFactory.hpp>
 namespace BEbraEngine {
     
 
@@ -49,43 +50,51 @@ namespace BEbraEngine {
             throw std::runtime_error("texture image format does not support linear blitting!");
         }
 
-        VkImageMemoryBarrier barrier{};
-        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        barrier.image = texture->image;
-        barrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
-        barrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
 
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount = 1;
-        barrier.subresourceRange.levelCount = 1;
 
         int32_t mipWidth = texture->width();
         int32_t mipHeight = texture->height();
-
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         for (uint32_t i = 1; i < texture->mipLevels; i++) {
-            barrier.subresourceRange.baseMipLevel = i - 1;
-            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-            barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-            barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+            DEBUG_LOG3((std::stringstream() << "texture mipmap" + std::to_string(i)).str(), texture);
+            
+            VkImageMemoryBarrier transferBarrier{};
+            transferBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            transferBarrier.image = texture->image;
+            transferBarrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
+            transferBarrier.dstQueueFamilyIndex = FamilyIndices.transferFamily.value();
 
+            transferBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            transferBarrier.subresourceRange.baseArrayLayer = 0;
+            transferBarrier.subresourceRange.layerCount = 1;
+            transferBarrier.subresourceRange.levelCount = 1;
+            transferBarrier.subresourceRange.baseMipLevel = i - 1;
+
+            auto queueToQueueBarrier = transferBarrier;    
+            
+            transferBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            transferBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+
+
+            transferBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            transferBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+            transferBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            transferBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
             vkCmdPipelineBarrier(buffer,
                 VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
                 0, nullptr,
                 0, nullptr,
-                1, &barrier);
+                1, &transferBarrier);
 
-            barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+            queueToQueueBarrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
+            queueToQueueBarrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
+
+            queueToQueueBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            queueToQueueBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            queueToQueueBarrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+            queueToQueueBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
             
-            vkCmdPipelineBarrier(buffer,
-                VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
-                0, nullptr,
-                0, nullptr,
-                1, &barrier);
+
 
             auto buffer1 = concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
                 VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
@@ -104,6 +113,13 @@ namespace BEbraEngine {
             blit.dstSubresource.baseArrayLayer = 0;
             blit.dstSubresource.layerCount = 1;
 
+            vkCmdPipelineBarrier(buffer,
+                VK_PIPELINE_STAGE_TRANSFER_BIT,
+                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+                0, nullptr,
+                0, nullptr,
+                1, &queueToQueueBarrier);
+
             buffer1.startRecord();
             {
 
@@ -116,7 +132,7 @@ namespace BEbraEngine {
                 vkCmdPipelineBarrier(buffer1,
                     VK_PIPELINE_STAGE_TRANSFER_BIT,
                     VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                    0, 0, nullptr, 0, nullptr, 1, &barrier);
+                   0, 0, nullptr, 0, nullptr, 1, &queueToQueueBarrier);
 
             }
             buffer1.endRecord();
@@ -126,6 +142,17 @@ namespace BEbraEngine {
             if (mipWidth > 1) mipWidth /= 2;
             if (mipHeight > 1) mipHeight /= 2;
         }
+
+        VkImageMemoryBarrier barrier{};
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.image = texture->image;
+        barrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
+        barrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
+
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount = 1;
+        barrier.subresourceRange.levelCount = 1;
 
         barrier.subresourceRange.baseMipLevel = texture->mipLevels - 1;
        // barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
@@ -333,61 +360,67 @@ namespace BEbraEngine {
         VulkanDescriptorPoolInfo light;
         VulkanDescriptorPoolInfo camera;
         VulkanDescriptorPoolInfo texture;
-        if (VulkanRenderBufferPool.get() && lightPool.get() && cameraPool.get() && attachmentsSetPool.get()) {
-            object = VulkanRenderBufferPool->getInfo();
+        VulkanDescriptorPoolInfo physics;
+        if (vulkanRenderBufferPool.get() && lightPool.get() && cameraPool.get() && attachmentsSetPool.get() && PhysicsDebugPool.get()) {
+            object = vulkanRenderBufferPool->getInfo();
             light = lightPool->getInfo();
             camera = cameraPool->getInfo();
             texture = attachmentsSetPool->getInfo();
+            physics = PhysicsDebugPool->getInfo();
         }
         else {
             object.types.resize(3);
             auto size = MAX_COUNT_OF_OBJECTS;
             VkDescriptorPoolSize poolSize;
             poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-            poolSize.descriptorCount = 1;
+            poolSize.descriptorCount = 1000;
             object.types[0] = poolSize;
             object.layout = layouts[DescriptorLayoutType::Object];
 
             poolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            poolSize.descriptorCount = 1;
+            poolSize.descriptorCount = 1000;
             object.types[1] = poolSize;
 
             poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-            poolSize.descriptorCount = 1;
+            poolSize.descriptorCount = 1000;
             object.types[2] = poolSize;
 
 
 
             light.types.resize(1);
             poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-            poolSize.descriptorCount = 1;
+            poolSize.descriptorCount = 1000;
             light.types[0] = poolSize;
             light.layout = layouts[DescriptorLayoutType::LightPoint];
 
 
             camera.types.resize(1);
             poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-            poolSize.descriptorCount = 1;
+            poolSize.descriptorCount = 1000;
             camera.types[0] = poolSize;
             camera.layout = layouts[DescriptorLayoutType::SimpleCamera];
 
 
             texture.types.resize(2);
             poolSize.type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
-            poolSize.descriptorCount = 1;
+            poolSize.descriptorCount = 1000;
             texture.types[0] = poolSize;
             poolSize.type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
-            poolSize.descriptorCount = 1;
+            poolSize.descriptorCount = 1000;
             texture.types[1] = poolSize;
-
             texture.layout = layouts[DescriptorLayoutType::Attachments];
 
 
+            physics.types.resize(1);
+            poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            poolSize.descriptorCount = linesMemory.size() * 2;
+            physics.types[0] = poolSize; 
+            physics.layout = layouts[DescriptorLayoutType::PhysicsDebug];
         }
 
-        VulkanRenderBufferPool.reset();
-        VulkanRenderBufferPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(object));
-        VulkanRenderBufferPool->allocate(MAX_COUNT_OF_OBJECTS);
+        vulkanRenderBufferPool.reset();
+        vulkanRenderBufferPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(object));
+        vulkanRenderBufferPool->allocate(MAX_COUNT_OF_OBJECTS);
 
         cameraPool.reset();
         cameraPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(camera));
@@ -401,6 +434,9 @@ namespace BEbraEngine {
         attachmentsSetPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(texture));
         attachmentsSetPool->allocate(100);
 
+        PhysicsDebugPool.reset();
+        PhysicsDebugPool = std::unique_ptr<DescriptorPool>(new DescriptorPool(physics));
+        PhysicsDebugPool->allocate(linesMemory.size() * 2);
     }
 
     void VulkanRender::cleanupSwapChain()
@@ -436,7 +472,7 @@ namespace BEbraEngine {
         }
         executeQueues_Objects.execute();
 
-        VulkanRenderBufferPool.reset();
+        vulkanRenderBufferPool.reset();
         cameraPool.reset();
         lightPool.reset();
         attachmentsSetPool.reset();
@@ -777,7 +813,7 @@ namespace BEbraEngine {
         }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
-
+        deviceFeatures.fillModeNonSolid = true;
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
@@ -1061,7 +1097,7 @@ namespace BEbraEngine {
         for (int i = 0; i < swapChainImages.size(); i++) {
             VkDescriptorSet setAttachments{};
             auto opt_setAttachments = attachmentsSetPool->get();
-            
+
             if (opt_setAttachments.has_value()) {
                 setAttachments = opt_setAttachments.value();
 
@@ -1092,6 +1128,7 @@ namespace BEbraEngine {
                 writeDescriptorSets[1].dstBinding = 1;
                 writeDescriptorSets[1].pImageInfo = &descriptors[1];
 
+
                 vkUpdateDescriptorSets(device, writeDescriptorSets.size(), writeDescriptorSets.data(), 0, nullptr);
 
             }
@@ -1106,8 +1143,8 @@ namespace BEbraEngine {
 
             VulkanShader* vertShaderModule{}, * fragShaderModule{};
 
-            vertShaderModule = VulkanShader::createFromFile(device, "writeVert.spv");
-            fragShaderModule = VulkanShader::createFromFile(device, "writeFrag.spv");
+            vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "writeVert.spv");
+            fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "writeFrag.spv");
 
             VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
             vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -1136,7 +1173,7 @@ namespace BEbraEngine {
 
             VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
             inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-            inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+            inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST; //VK_PRIMITIVE_TOPOLOGY_LINE_LIST //  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
             inputAssembly.primitiveRestartEnable = VK_FALSE;
 
             VkViewport viewport{};
@@ -1192,7 +1229,7 @@ namespace BEbraEngine {
             VkPipelineColorBlendStateCreateInfo colorBlending{};
             colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
             colorBlending.logicOpEnable = VK_FALSE;
-            colorBlending.logicOp = VK_LOGIC_OP_COPY;
+            colorBlending.logicOp = VK_LOGIC_OP_NO_OP;
             colorBlending.attachmentCount = 1;
             colorBlending.pAttachments = &colorBlendAttachment;
             colorBlending.blendConstants[0] = 0.0f;
@@ -1205,22 +1242,20 @@ namespace BEbraEngine {
 
             VkPushConstantRange push_constant;
             push_constant.offset = 0;
-            push_constant.size = sizeof(int) + sizeof(float);
-            push_constant.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+            push_constant.size = sizeof(int) + sizeof(float) + sizeof(int);
+            push_constant.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
 
 
 
-            VkDescriptorSetLayout layouts[] = {
-                this->layouts[DescriptorLayoutType::Object],
-                this->layouts[DescriptorLayoutType::SimpleCamera],
-                this->layouts[DescriptorLayoutType::LightPoint],
-                this->layouts[DescriptorLayoutType::DirectionLight],
-                this->layouts[DescriptorLayoutType::Attachments]
-            };
+            vector<VkDescriptorSetLayout> layouts;
+            for (auto& layout : this->layouts) {
+                layouts.push_back(layout.second);
+            }
+
             pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
             pipelineLayoutInfo.pNext = nullptr;
-            pipelineLayoutInfo.setLayoutCount = 5;
-            pipelineLayoutInfo.pSetLayouts = layouts;
+            pipelineLayoutInfo.setLayoutCount = layouts.size();
+            pipelineLayoutInfo.pSetLayouts = layouts.data();
             pipelineLayoutInfo.pPushConstantRanges = &push_constant;
             pipelineLayoutInfo.pushConstantRangeCount = 1;
 
@@ -1278,8 +1313,8 @@ namespace BEbraEngine {
             {
                 VulkanShader* vertShaderModule{}, * fragShaderModule{};
 
-                vertShaderModule = VulkanShader::createFromFile(device, "readVert.spv");
-                fragShaderModule = VulkanShader::createFromFile(device, "readFrag.spv");
+                vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "readVert.spv");
+                fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "readFrag.spv");
 
                 VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
                 vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -1298,11 +1333,72 @@ namespace BEbraEngine {
                 if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline2) != VK_SUCCESS) {
                     throw std::runtime_error("failed to create graphics pipeline!");
                 }
+
                 vkDestroyShaderModule(device, fragShaderModule->module, nullptr);
                 vkDestroyShaderModule(device, vertShaderModule->module, nullptr);
                 delete fragShaderModule;
                 delete vertShaderModule;
             }
+
+            
+            {
+
+                VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+                vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+                VkVertexInputBindingDescription bindingDescription = Vertex::getBindingDescription();
+                auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
+                vertexInputInfo.vertexBindingDescriptionCount = 1;
+                vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+                vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+                vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+                VulkanShader* vertShaderModule{}, * fragShaderModule{};
+
+                vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "LineVert.spv");
+                fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "LineFrag.spv");
+
+                VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+                vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+                vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+                vertShaderStageInfo.module = vertShaderModule->module;
+                vertShaderStageInfo.pName = "main";
+
+                VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+                fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+                fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+                fragShaderStageInfo.module = fragShaderModule->module;
+                fragShaderStageInfo.pName = "main";
+
+                inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+                inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST; //VK_PRIMITIVE_TOPOLOGY_LINE_LIST //  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
+                inputAssembly.primitiveRestartEnable = VK_FALSE;
+
+
+                VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+                pipelineInfo.pVertexInputState = &vertexInputInfo;
+                pipelineInfo.pStages = shaderStages;
+                rasterizer.cullMode = VK_CULL_MODE_NONE;
+                rasterizer.polygonMode = VK_POLYGON_MODE_LINE;
+                rasterizer.lineWidth = 1.0f;
+                pipelineInfo.pInputAssemblyState = &inputAssembly;
+                pipelineInfo.subpass = 0;
+                pipelineInfo.pRasterizationState = &rasterizer;
+                depthStencil.depthTestEnable = VK_FALSE;
+                depthStencil.depthWriteEnable = VK_FALSE;
+                pipelineInfo.pDepthStencilState = &depthStencil;
+
+                if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &linesDrawing) != VK_SUCCESS) {
+                    throw std::runtime_error("failed to create graphics pipeline!");
+                }
+
+                vkDestroyShaderModule(device, fragShaderModule->module, nullptr);
+                vkDestroyShaderModule(device, vertShaderModule->module, nullptr);
+                delete fragShaderModule;
+                delete vertShaderModule;
+            }
+            
         }
 
 
@@ -1350,7 +1446,29 @@ namespace BEbraEngine {
         }
     }
 
+    void VulkanRender::createPhysicsDebugDescriptorSetLayout() {
 
+        VkDescriptorSetLayout layout;
+        std::array<VkDescriptorSetLayoutBinding, 1> CameraLayoutBinding{};
+        CameraLayoutBinding[0].binding = 0;
+        CameraLayoutBinding[0].descriptorCount = 1;
+        CameraLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        CameraLayoutBinding[0].pImmutableSamplers = nullptr;
+        CameraLayoutBinding[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+
+        std::array<VkDescriptorSetLayoutBinding, 1> bindings = CameraLayoutBinding;
+        VkDescriptorSetLayoutCreateInfo layoutInfo{};
+        layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+        layoutInfo.pBindings = bindings.data();
+
+        if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &layout) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create descriptor set layout!");
+        }
+        layouts[DescriptorLayoutType::PhysicsDebug] = layout;
+
+    }
     void VulkanRender::createObjectDescriptorSetLayout()
     {
         VkDescriptorSetLayout layout;
@@ -1576,22 +1694,8 @@ namespace BEbraEngine {
 
     void VulkanRender::drawFrame()
     {
-        for (auto& camera : cameras) {
-            camera->update();
-        }
-        
-        for (auto light = lights.begin(); light != lights.end(); ++light) {
-            (*light)->update();
-        }
-        for (auto object = objects.begin(); object != objects.end(); ++object) {
-            (*object)->update();
-        }
+        updateCmdBuffers();
 
-        totalTime += Time::time();
-       // if(needCmdBuffersUpdate)
-            updateCmdBuffers();
-        needCmdBuffersUpdate = false;
-        
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
         
@@ -1693,13 +1797,55 @@ namespace BEbraEngine {
 
         
         
-        vkQueueWaitIdle(graphicsQueue);
+        
         vkQueueWaitIdle(transferQueue);
+        vkQueueWaitIdle(graphicsQueue);
         for (auto& buf : bufDestroy)
             buf.destroy();
         executeQueues_Objects.execute();
+        for (int i = 0; i < linesToDraw; i++) {
+           // linesMemory[i].vertices->destroy();
+        }
+        linesToDraw = 0;
+    }
+
+    void VulkanRender::update()
+    {
+        for (auto& camera : cameras) {
+            camera->update();
+
+            drawLine(camera->Front + camera->Position, (Vector3(0, 0, 1) / 100 + camera->Position), Vector3(1, 0, 0));
+            drawLine(camera->Front + camera->Position, (Vector3(0, 1, 0) / 100 + camera->Position), Vector3(0, 1, 0));
+            drawLine(camera->Front + camera->Position, (Vector3(1, 0, 0) / 100 + camera->Position), Vector3(0, 0, 1));
+        }
+
+        for (auto light = lights.begin(); light != lights.end(); ++light) {
+            (*light)->update();
+        }
+        for (auto object = objects.begin(); object != objects.end(); ++object) {
+            (*object)->update();
+        }
+        totalTime += Time::time();
+        // if(needCmdBuffersUpdate)
+       // updateCmdBuffers();
+
+        linePool->map();
+        needCmdBuffersUpdate = false;
+    }
+
+    void VulkanRender::updateState(RenderData& data)
+    {
+        updateCmdBuffers();
+    }
+
+    void VulkanRender::drawLine(const Vector3& from, const Vector3& to, const Vector3& color)
+    {
+        linesMemory[linesToDraw].from = from;
+        linesMemory[linesToDraw].to = to;
+        linesMemory[linesToDraw].color = color;
 
 
+        linesToDraw++;
     }
 
     void VulkanRender::updateCmdBuffers()
@@ -1732,11 +1878,11 @@ namespace BEbraEngine {
             
             VkRect2D rsr = {};
             VkViewport vpr = {};
-            rsr.extent.width = currentRenderResolution.width ;
-            rsr.extent.height = currentRenderResolution.height ;
+            rsr.extent.width = currentRenderResolution.width;
+            rsr.extent.height = currentRenderResolution.height;
 
             vpr.y = (float)currentRenderResolution.height;
-            vpr.width = (float)currentRenderResolution.width ;
+            vpr.width = (float)currentRenderResolution.width;
             vpr.height = -(float)(currentRenderResolution.height );
             vpr.maxDepth = (float)1.0f;
 
@@ -1744,54 +1890,72 @@ namespace BEbraEngine {
             vkCmdBeginRenderPass(RenderBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             vkCmdSetViewport(RenderBuffers[i], 0, 1, &vpr);
             vkCmdSetScissor(RenderBuffers[i], 0, 1, &rsr);
-            vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-
-            uint32_t count = lights.size();
-            vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t), &count);
             
-            {
+            vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+            
+            uint32_t count = lights.size();
+            vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(uint32_t), &count);
+            
+            //vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, 1, &physicsDebugSet, 0, nullptr);
+            
                 
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLightSet, 0, 0);
+            vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &globalLightSet, 0, 0);
                 
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &pointLightsSet, 0, nullptr);
+            vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &pointLightsSet, 0, nullptr);
 
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
+            vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
 
-                if(!objects.empty())
-                    vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &(*objects.begin())->descriptor, 0, nullptr);
-                //tbb::parallel_for<size_t>(0, 12, [](size_t i) {
-                for (auto light = lights.begin(); light != lights.end(); ++light) {
-                                    }
-                for (auto object = objects.begin(); object != objects.end(); ++object) {
-                    if(object != objects.end())
-                        (*object)->draw(RenderBuffers[i]);
-                }
-
-                vkCmdNextSubpass(RenderBuffers[i], VK_SUBPASS_CONTENTS_INLINE);
-                vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline2);
-                vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(uint32_t), sizeof(float), &totalTime);
-                rsr.extent.width = currentRenderResolution.width;
-                rsr.extent.height = currentRenderResolution.height;
-
-                vpr.y = (float)currentRenderResolution.height;
-                vpr.width = (float)currentRenderResolution.width;
-                vpr.height = -(float)(currentRenderResolution.height);
-                vpr.maxDepth = (float)1.0f;
-                vkCmdSetViewport(RenderBuffers[i], 0, 1, &vpr);
-                vkCmdSetScissor(RenderBuffers[i], 0, 1, &rsr);
+            if(!objects.empty())
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &(*objects.begin())->descriptor, 0, nullptr);
 
 
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 4, 1, &attachmentsSets[i], 0, NULL);
-                vkCmdDraw(RenderBuffers[i], 3, 1, 0, 0);
 
-                vkCmdEndRenderPass(RenderBuffers[i]);
+            for (auto object = objects.begin(); object != objects.end(); ++object) {
+                if(object != objects.end())
+                    (*object)->draw(RenderBuffers[i]);
+            }
+            
+            vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, linesDrawing);
+            vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
+            
+            //vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, 1, &physicsDebugSet, 0, nullptr);
+            VkDeviceSize offset[] = { 0 };
+            
+            //vkCmdBindVertexBuffers(RenderBuffers[i], 0, 1, &static_cast<VulkanBuffer*>(nullVertexbuffer.get())->self, offset);
+
+            vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, 1, &lineSet, 0, nullptr);
+            vkCmdDraw(RenderBuffers[i], 2, linesToDraw, 0, 0);
+
+
+
+            vkCmdNextSubpass(RenderBuffers[i], VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline2);
+            vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT, sizeof(uint32_t), sizeof(float), &totalTime);
+            rsr.extent.width = currentRenderResolution.width;
+            rsr.extent.height = currentRenderResolution.height;
+
+            vpr.y = (float)currentRenderResolution.height;
+            vpr.width = (float)currentRenderResolution.width;
+            vpr.height = -(float)(currentRenderResolution.height);
+            vpr.maxDepth = (float)1.0f;
+            vkCmdSetViewport(RenderBuffers[i], 0, 1, &vpr);
+            vkCmdSetScissor(RenderBuffers[i], 0, 1, &rsr);
+
+
+            vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 4, 1, &attachmentsSets[i], 0, NULL);
+            vkCmdDraw(RenderBuffers[i], 3, 1, 0, 0);
+
+
+
+
+            vkCmdEndRenderPass(RenderBuffers[i]);
                 
                 //      auto data = ImGui::GetDrawData();
                  //     if (data)
                  //         ImGui_ImplVulkan_RenderDrawData(data, RenderBuffers[i]);
 
                 
-            }
+            
 
             vkEndCommandBuffer(RenderBuffers[i]);
         }
@@ -2102,13 +2266,36 @@ namespace BEbraEngine {
         cameraPlug = shared_ptr<RenderBuffer>(createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
         setMainCamera = createDescriptor(cameraPlug.get());
 
+        auto buf = createStorageBuffer(sizeof(Line::ShaderData) * 10000);
+
+        physicsDebugSet = PhysicsDebugPool->get().value();
+
+
+        auto _buf = static_cast<VulkanBuffer*>(buf);
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = _buf->self;
+        bufferInfo.offset = 0;
+        bufferInfo.range = _buf->size;
+
+        std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
+
+        descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[0].dstSet = physicsDebugSet;
+        descriptorWrites[0].dstBinding = 0;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+        vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
 
     void VulkanRender::createPointAndDirectionLightsSets()
     {
         auto v = RenderBufferView();
+        
         v.buffer = factory->_poolofPointLights->getBuffer();
-        v.availableRange = sizeof(PointLight::ShaderData) * 100;
+        v.availableRange = sizeof(Light::ShaderData) * 100;
 
         LightDescriptorInfo info = LightDescriptorInfo();
         info.bufferView = &v;
@@ -2133,6 +2320,7 @@ namespace BEbraEngine {
         createCameraDescriptorSetLayout();
         createLightDescriptorSetLayout();
         createTextureDescriptorSetLayout();
+        createPhysicsDebugDescriptorSetLayout();
     }
     void VulkanRender::createTextureDescriptorSetLayout()
     {
@@ -2199,8 +2387,17 @@ namespace BEbraEngine {
         createPointAndDirectionLightsSets();
         createCameraSet();
 
+        linePool = std::unique_ptr<VulkanRenderBufferPool<Line::ShaderData>>(new VulkanRenderBufferPool<Line::ShaderData>());
+        linePool->setContext(this);
+        linePool->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
+        linePool->allocate(10000, sizeof(Line::ShaderData) * 10000, AbstractRender::TypeBuffer::Storage);
+
 
         executeQueues_Objects.setStrategy(ExecuteType::Single);
+        auto view = linePool->get();
+        lineSet = createDescriptor2(view->get());
+        linePool->free(*view);
+        linePool->bindData(linesMemory);
     }
 
     RenderBuffer* VulkanRender::createIndexBuffer(std::vector<uint32_t> indices)
@@ -2238,12 +2435,44 @@ namespace BEbraEngine {
         }
         else
             DEBUG_LOG2("DescriptorPool is empty (Lights)",
-                VulkanRenderBufferPool.get(),
+                vulkanRenderBufferPool.get(),
                 "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
         
 
         return set;
     }
+    VkDescriptorSet VulkanRender::createDescriptor2(RenderBufferView* buffer)
+    {
+        VkDescriptorSet set{};
+        auto opt_set = PhysicsDebugPool->get();
+        if (opt_set.has_value()) {
+            set = opt_set.value();
+
+            auto _buf = static_cast<VulkanBuffer*>(buffer->buffer.get());
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = _buf->self;
+            bufferInfo.offset = 0;
+            bufferInfo.range = _buf->size;
+
+            std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
+
+            descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[0].dstSet = set;
+            descriptorWrites[0].dstBinding = 0;
+            descriptorWrites[0].dstArrayElement = 0;
+            descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            descriptorWrites[0].descriptorCount = 1;
+            descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+            vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+        }
+        else
+            DEBUG_LOG2("DescriptorPool is empty (Camera)",
+                vulkanRenderBufferPool.get(),
+                "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
+        return set;
+    }
+
     VkDescriptorSet VulkanRender::createDescriptor(RenderBuffer* buffer)
     {
         VkDescriptorSet set{};
@@ -2271,7 +2500,7 @@ namespace BEbraEngine {
         }
         else
             DEBUG_LOG2("DescriptorPool is empty (Camera)",
-                VulkanRenderBufferPool.get(),
+                vulkanRenderBufferPool.get(),
                 "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
         return set;
     }
@@ -2289,7 +2518,7 @@ namespace BEbraEngine {
     VkDescriptorSet VulkanRender::createDescriptor(VulkanDescriptorSetInfo* info)
     {
         VkDescriptorSet set{};
-        auto opt_set = VulkanRenderBufferPool->get();
+        auto opt_set = vulkanRenderBufferPool->get();
         if (opt_set.has_value()) {
             set = opt_set.value();
 
@@ -2306,7 +2535,7 @@ namespace BEbraEngine {
 
             std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 
-            auto types = VulkanRenderBufferPool->getInfo().types;
+            auto types = vulkanRenderBufferPool->getInfo().types;
             descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             descriptorWrites[0].dstSet = set;
             descriptorWrites[0].dstBinding = 0;
@@ -2326,7 +2555,7 @@ namespace BEbraEngine {
         }
         else
             DEBUG_LOG2("DescriptorPool is empty (RenderObject)", 
-                VulkanRenderBufferPool.get(), 
+                vulkanRenderBufferPool.get(), 
                 "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
 
        
@@ -2335,7 +2564,7 @@ namespace BEbraEngine {
     }
     void VulkanRender::freeDescriptor(VulkanRenderObject& set)
     {
-        VulkanRenderBufferPool->free(set.descriptor);
+        vulkanRenderBufferPool->free(set.descriptor);
         set.descriptor = 0;
     }
     void VulkanRender::freeDescriptor(VulkanDirLight* set)
@@ -2349,10 +2578,15 @@ namespace BEbraEngine {
     void VulkanRender::destroyTexture(VulkanTexture* texture)
     {
 
-        vkFreeMemory(device, texture->memory, 0);
-        vkDestroyImage(device, texture->image, 0);
-        vkDestroySampler(device, texture->sampler, 0);
-        vkDestroyImageView(device, texture->imageView, 0);
+        if (texture->image != nullptr) {
+
+
+            vkFreeMemory(device, texture->memory, 0);
+            vkDestroyImage(device, texture->image, 0);
+            vkDestroySampler(device, texture->sampler, 0);
+            vkDestroyImageView(device, texture->imageView, 0);
+        }
+        else DEBUG_LOG3("texture memory is invalid", texture);
         texture->memory = 0;
         texture->image = 0;
         texture->sampler = 0;
@@ -2388,7 +2622,7 @@ namespace BEbraEngine {
         objects.push_back(dynamic_cast<VulkanRenderObject*>(&object));
         needCmdBuffersUpdate = true;
     }
-    void VulkanRender::addLight(PointLight& light)
+    void VulkanRender::addLight(Light& light)
     {
         lights.push_back(dynamic_cast<VulkanPointLight*>(&light));
         needCmdBuffersUpdate = true;
@@ -2404,7 +2638,7 @@ namespace BEbraEngine {
         needCmdBuffersUpdate = true;
     }
 
-    void VulkanRender::removeLight(PointLight& light)
+    void VulkanRender::removeLight(Light& light)
     {
         auto item = std::remove(lights.begin(), lights.end(), &light);
         lights.erase(item);

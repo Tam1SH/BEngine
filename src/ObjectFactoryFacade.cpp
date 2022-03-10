@@ -34,7 +34,7 @@ namespace BEbraEngine {
 
         colliderInfo.position = position;
         colliderInfo.scale = transformInfo.scale;
-        colliderInfo.type = Collider::ColliderCreateInfo::Type::Box;
+        colliderInfo.type = Collider::Type::Box;
 
         rigidBodyInfo.mass = 1.f;
         rigidBodyInfo.position = transformInfo.position;
@@ -58,7 +58,7 @@ namespace BEbraEngine {
 
     }
 
-    shared_ptr<PointLight> ObjectFactoryFacade::createLight(const Vector3& position)
+    shared_ptr<Light> ObjectFactoryFacade::createLight(const Vector3& position)
     {
         auto light = realFactory_->createLight(position);
         state_->addLight(*light);
@@ -78,7 +78,7 @@ namespace BEbraEngine {
     }
 
 
-    void ObjectFactoryFacade::destroyPointLight(PointLight& light)
+    void ObjectFactoryFacade::destroyPointLight(Light& light)
     {
         realFactory_->destroyPointLight(light);
     }
@@ -98,6 +98,16 @@ namespace BEbraEngine {
     void ObjectFactoryFacade::setModel(GameObject& object, const string& path)
     {
         realFactory_->setModel(object, path);
+    }
+
+    void ObjectFactoryFacade::setCollider(Collider& col, Collider::Type type)
+    {
+        realFactory_->setCollider(col, type);
+    }
+
+    void ObjectFactoryFacade::setTexture(GameObject& object, const boost::filesystem::path& path)
+    {
+        realFactory_->setTexture(object, path);
     }
 
 }

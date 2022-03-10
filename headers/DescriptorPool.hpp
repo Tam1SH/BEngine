@@ -37,7 +37,7 @@ namespace BEbraEngine {
         std::list<VkDescriptorSet> setsUses;
         std::mutex mutex;
 
-        uint32_t countDescriptors{};
+        uint32_t countDescriptors{ 0 };
 
     };
 
