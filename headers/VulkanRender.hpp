@@ -66,27 +66,6 @@ BE_NAMESPACE_STD_END
 
 namespace BEbraEngine {
 
-    class RenderWorld {
-    public:
-        void removeObject(RenderObject& object) {
-            std::remove(objects.begin(), objects.end(), &object);
-            updateRender();
-        }
-
-        void addObject(RenderObject& object) {
-            objects.push_back(&object);
-            updateRender();
-        }
-    private: 
-        void updateRender() {
-            RenderData data;
-            data.objects = objects;
-            render->updateState(data);
-        }
-    private:
-        vector<RenderObject*> objects;
-        AbstractRender* render;
-    };
 
     class VulkanRender final : public AbstractRender
     {
@@ -230,7 +209,9 @@ namespace BEbraEngine {
 
         VkDescriptorSet lineSet;
 
-        vector<Line::ShaderData> linesMemory{ 30000 };
+        VkDescriptorSet objectSet;
+
+        vector<Line::ShaderData> linesMemory{ 100000 };
 
         unique_ptr<RenderBuffer> nullVertexbuffer;
 
@@ -452,7 +433,7 @@ namespace BEbraEngine {
 
         void createCmdBuffers();
 
-        void updateCmdBuffers();
+        void updateCmdBuffers(RenderData& data);
 
         VkShaderModule createShaderModule(const vector<char>& code);
 

@@ -21,6 +21,7 @@ namespace BEbraEngine {
 	class RigidBody : public GameComponent { DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class RigidBodyFactory;
+		friend class Physics;
 
 		struct RigidBodyCreateInfo {
 			Collider* collider{};
@@ -34,7 +35,20 @@ namespace BEbraEngine {
 		};
 	public:
 
+
 		void destroy(IVisitorGameComponentDestroyer& destroyer) override;
+
+		void moveTo(const Vector3& point) noexcept;
+
+		void lockRotateX(bool yesno);
+
+		void lockRotateY(bool yesno);
+
+		void lockRotateZ(bool yesno);
+
+		void setMaxVelocity(float velocity);
+
+		float getMaxVelocity();
 
 		void resetState() noexcept;
 
@@ -44,6 +58,10 @@ namespace BEbraEngine {
 
 		void setMass(float mass) noexcept;
 
+		Vector3 getVelocity() noexcept;
+
+		Vector3 getDirection() noexcept;
+
 		void setDynamic(bool isActive) noexcept;
 
 		bool getDynamic() const noexcept { return isActive; }
@@ -51,6 +69,8 @@ namespace BEbraEngine {
 		void setPosition(const Vector3& position) noexcept;
 
 		void setRotation(const Quaternion& quat) noexcept;
+
+		void applyExplosionImpulse(float force, float radius, const Vector3& point) noexcept;
 
 		void applyImpulse(const Vector3& force, const Vector3& direction) noexcept;
 
@@ -65,6 +85,8 @@ namespace BEbraEngine {
 		RigidBody() noexcept;
 
 		unique_ptr<btRigidBody> body;
+
+		float maxVelocity { 200 };
 
 		Collider* collider{};
 

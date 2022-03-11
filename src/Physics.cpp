@@ -15,6 +15,7 @@
 #include "BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h"
 #include "AbstractRender.hpp"
 #include <VulkanRender.hpp>
+#include "Math.hpp"
 namespace BEbraEngine {
     ATTRIBUTE_ALIGNED16(class)
     ParallelDiscreteDynamicsWorld : public btDiscreteDynamicsWorldMt
@@ -39,7 +40,7 @@ namespace BEbraEngine {
     void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
     {
         linesToDraw++;
-        render->drawLine(from, to, color);
+        //render->drawLine(from, to, color);
     }
     DebugDrawer::DebugDrawer(AbstractRender& render)
     {
@@ -129,7 +130,7 @@ namespace BEbraEngine {
     {
         dynamicsWorld->stepSimulation(Time::deltaTime(), 1);
         dynamicsWorld->debugDrawWorld();
-        
+        //dynamicsWorld->setGravity(Vector3(0));
         for (auto body = bodies.begin(); body != bodies.end(); ++body) {
 
             btTransform trans;
@@ -141,16 +142,22 @@ namespace BEbraEngine {
             quaat.y = quat.y();
             quaat.z = quat.z();
             quaat.w = quat.w();
-                
+            
             auto vec = trans.getOrigin();
 
             auto pos = glm::vec3(
                 vec.x(), vec.y(), vec.z()
             );
+            auto& rigidbody = _body->getRigidBody();
+            if (BEbraMath::length(rigidbody.getLinearVelocity()) > _body->getMaxVelocity()) {
+                rigidbody.setLinearVelocity(BEbraMath::normalize(rigidbody.getLinearVelocity()) * _body->getMaxVelocity());
+            }
             if (_body->getDynamic()) {
-                
                 _body->getTransform().updatePosition(pos);
                 _body->getTransform().setQuat(Quaternion(quaat));
+            }
+            else {
+                //_body->resetState();
             }
 
         }

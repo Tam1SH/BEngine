@@ -35,7 +35,9 @@ namespace BEbraEngine {
         void setQuat(const Quaternion& quat) noexcept;
 
 
-        Vector3 getPosition() const noexcept;
+        Vector3& getPosition() noexcept;
+
+        const Vector3& getPosition() const noexcept;
 
         Quaternion getRotation() const noexcept;
 

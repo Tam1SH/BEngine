@@ -267,11 +267,12 @@ namespace BEbraEngine {
 
         //auto& dec1 = globalLight.lock()->descriptor;
         auto info1 = LightDescriptorInfo();
-        info1.bufferView = globalLight->data.lock().get();
+        info1.bufferView = globalLight->data.get();
         info1.type = LightDescriptorInfo::Type::Direction;
 
         freeDescriptor(globalLight);
         globalLight->descriptor = createDescriptor(&info1);
+
         for (auto& camera : cameras) {
             camera->descriptor = createDescriptor(camera->cameraData->buffer.get());
             if (camera->isMain())
@@ -1343,16 +1344,6 @@ namespace BEbraEngine {
             
             {
 
-                VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-                vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-
-                VkVertexInputBindingDescription bindingDescription = Vertex::getBindingDescription();
-                auto attributeDescriptions = Vertex::getAttributeDescriptions();
-
-                vertexInputInfo.vertexBindingDescriptionCount = 1;
-                vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-                vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-                vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
                 VulkanShader* vertShaderModule{}, * fragShaderModule{};
 
@@ -1377,7 +1368,7 @@ namespace BEbraEngine {
 
 
                 VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
-                pipelineInfo.pVertexInputState = &vertexInputInfo;
+                
                 pipelineInfo.pStages = shaderStages;
                 rasterizer.cullMode = VK_CULL_MODE_NONE;
                 rasterizer.polygonMode = VK_POLYGON_MODE_LINE;
@@ -1694,7 +1685,7 @@ namespace BEbraEngine {
 
     void VulkanRender::drawFrame()
     {
-        updateCmdBuffers();
+        //updateCmdBuffers();
 
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -1803,9 +1794,7 @@ namespace BEbraEngine {
         for (auto& buf : bufDestroy)
             buf.destroy();
         executeQueues_Objects.execute();
-        for (int i = 0; i < linesToDraw; i++) {
-           // linesMemory[i].vertices->destroy();
-        }
+
         linesToDraw = 0;
     }
 
@@ -1825,6 +1814,8 @@ namespace BEbraEngine {
         for (auto object = objects.begin(); object != objects.end(); ++object) {
             (*object)->update();
         }
+        if(globalLight)
+        globalLight->update();
         totalTime += Time::time();
         // if(needCmdBuffersUpdate)
        // updateCmdBuffers();
@@ -1835,7 +1826,7 @@ namespace BEbraEngine {
 
     void VulkanRender::updateState(RenderData& data)
     {
-        updateCmdBuffers();
+        updateCmdBuffers(data);
     }
 
     void VulkanRender::drawLine(const Vector3& from, const Vector3& to, const Vector3& color)
@@ -1848,7 +1839,7 @@ namespace BEbraEngine {
         linesToDraw++;
     }
 
-    void VulkanRender::updateCmdBuffers()
+    void VulkanRender::updateCmdBuffers(RenderData& data)
     {
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1893,7 +1884,7 @@ namespace BEbraEngine {
             
             vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
             
-            uint32_t count = lights.size();
+            uint32_t count = data.lights.size();
             vkCmdPushConstants(RenderBuffers[i], pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(uint32_t), &count);
             
             //vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, 1, &physicsDebugSet, 0, nullptr);
@@ -1905,14 +1896,16 @@ namespace BEbraEngine {
 
             vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
 
-            if(!objects.empty())
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &(*objects.begin())->descriptor, 0, nullptr);
+            vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &objectSet, 0, nullptr);
 
 
 
-            for (auto object = objects.begin(); object != objects.end(); ++object) {
-                if(object != objects.end())
-                    (*object)->draw(RenderBuffers[i]);
+            for (auto object = data.objects.begin(); object != data.objects.end(); ++object) {
+                if (object != data.objects.end()) {
+                    const auto& obj = static_cast<VulkanRenderObject*>(*object);
+                    obj->draw(RenderBuffers[i]);
+
+                }
             }
             
             vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, linesDrawing);
@@ -1922,7 +1915,6 @@ namespace BEbraEngine {
             VkDeviceSize offset[] = { 0 };
             
             //vkCmdBindVertexBuffers(RenderBuffers[i], 0, 1, &static_cast<VulkanBuffer*>(nullVertexbuffer.get())->self, offset);
-
             vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, 1, &lineSet, 0, nullptr);
             vkCmdDraw(RenderBuffers[i], 2, linesToDraw, 0, 0);
 
@@ -2307,6 +2299,8 @@ namespace BEbraEngine {
         info.type = LightDescriptorInfo::Type::Direction;
         info.bufferView = &v;
         globalLightSet = createDescriptor(&info);
+       // globalLight = static_cast<VulkanDirLight*>(factory->createDirLight(Vector3(0,0.5,0), Vector3(0, 0.5, 0)));
+        
     }
 
     VkQueue VulkanRender::getGraphicsQueue()
@@ -2390,14 +2384,16 @@ namespace BEbraEngine {
         linePool = std::unique_ptr<VulkanRenderBufferPool<Line::ShaderData>>(new VulkanRenderBufferPool<Line::ShaderData>());
         linePool->setContext(this);
         linePool->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
-        linePool->allocate(10000, sizeof(Line::ShaderData) * 10000, AbstractRender::TypeBuffer::Storage);
+        linePool->allocate(100000, sizeof(Line::ShaderData), AbstractRender::TypeBuffer::Storage);
 
 
         executeQueues_Objects.setStrategy(ExecuteType::Single);
         auto view = linePool->get();
         lineSet = createDescriptor2(view->get());
-        linePool->free(*view);
-        linePool->bindData(linesMemory);
+
+        static auto obj = static_cast<VulkanRenderObject*>(factory->create({}).value());
+        objectSet = obj->descriptor;
+        factory->destroyObject(*obj);
     }
 
     RenderBuffer* VulkanRender::createIndexBuffer(std::vector<uint32_t> indices)

@@ -9,7 +9,7 @@
 #include "VulkanRender.hpp"
 #include "VulkanWindow.hpp"
 #include "Time.hpp"
-
+#include "Input.hpp"
 using std::unique_ptr;
 
 namespace BEbraEngine {
@@ -37,6 +37,7 @@ namespace BEbraEngine {
             gameLogic1 = unique_ptr<ScriptState>(new ScriptState(*render1, *physics));
             Debug::enableAll();
         }
+        bool physicsEnabled = true;
         void start() {
 
             while (!window1->isClose()) {
@@ -70,9 +71,11 @@ namespace BEbraEngine {
 
 
                     window1->update();
-                    physics->update();
-                    render1->update();
 
+                    
+                     physics->update();
+                    
+                    render1->update();
                     gameLogic1->update();
                     gameLogic1->updateState();
                     render1->drawFrame();

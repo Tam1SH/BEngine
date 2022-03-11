@@ -24,17 +24,8 @@ void Update()
 {
 	//GameObject obj(Vector3(0,40,0));
 
-	if(Input::isKeyPressed(KEY_Q)) {
-		print("I LOVE YOU");
-	}
-	if(Input::isKeyPressed(KEY_Z)) {
-		GameObject obj(Vector3(0,40,0));
-		objects.insertLast(obj);
-	}
-	if(Input::isKeyPressed(KEY_T)) {
-		if(objects.length() != 0)
-			objects.removeLast();
-	}
+
+
 	//Input input;
 	//GameObject obj1;
 	//if(input.isKeyPressed(KEY_CODE.KEY_0)){

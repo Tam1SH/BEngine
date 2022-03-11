@@ -59,7 +59,11 @@ namespace BEbraEngine {
         this->quat = quat;
     }
 
-    Vector3 Transform::getPosition() const noexcept
+    Vector3& Transform::getPosition() noexcept
+    {
+        return position;
+    }
+    const Vector3& Transform::getPosition() const noexcept
     {
         return position;
     }

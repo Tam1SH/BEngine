@@ -11,6 +11,7 @@ namespace BEbraEngine {
 		Vector3 normalize(const Vector3& vec) noexcept;
 		Vector4 normalize(const Vector4& vec) noexcept;
 		Vector2 normalize(const Vector2& vec) noexcept;
+		float length(const Vector3& vec) noexcept;
 		float distance(const Vector2& left, const Vector2& right) noexcept;
 		float distance(const Vector3& left, const Vector3& right) noexcept;
 		float distance(const Vector4& left, const Vector4& right) noexcept;

@@ -125,7 +125,7 @@ namespace BEbraEngine {
 
 
     public:
-        weak_ptr<RenderBufferView> data;
+        shared_ptr<RenderBufferView> data;
 
         void setColor(const Vector3& color) {
 
@@ -136,16 +136,11 @@ namespace BEbraEngine {
         }
         void update() {
             ShaderData data1;
-            if (!data.expired()) {
-                data1.direction = _direction;
-                data1.ambient = color;
-                data1.diffuse = color;
-                data1.specular = color;
-                data.lock()->setData(&data1, sizeof(ShaderData));
-            }
-            else
-                DEBUG_LOG1(getName() + " has invalid data");
-
+            data1.direction = _direction;
+            data1.ambient = color;
+            data1.diffuse = color;
+            data1.specular = color;
+            data->setData(&data1, sizeof(ShaderData));
         }
         Vector3& getDirection() {
             return _direction;

@@ -26,7 +26,7 @@ namespace BEbraEngine {
 
         virtual void addComponent(shared_ptr<GameComponent> component);
 
-        virtual void removeComponent(shared_ptr<GameComponent> component);
+        virtual shared_ptr<GameComponent> removeComponent(shared_ptr<GameComponent> component);
 
         void setParent(GameComponent& parent) noexcept;
 

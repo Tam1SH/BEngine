@@ -22,6 +22,11 @@ namespace BEbraEngine {
 			return glm::normalize(static_cast<glm::vec2>(vec));
 		}
 
+		float length(const Vector3& vec) noexcept
+		{
+			return glm::length(static_cast<glm::vec3>(vec));
+		}
+
 		float distance(const Vector2& left, const Vector2& right) noexcept
 		{
 			return glm::distance(static_cast<glm::vec2>(left), static_cast<glm::vec2>(right));

@@ -34,6 +34,7 @@ namespace BEbraEngine {
 	class RenderData {
 	public:
 		vector<RenderObject*> objects;
+		vector<Light*> lights;
 	};
 	class RenderSettings {
 	public:

@@ -36,6 +36,11 @@ namespace BEbraEngine {
         return glm::lookAt(_pos, pos_f, up);
     }
 
+    void SimpleCamera::moveTo(const Vector3& newPos)
+    {
+        Position = newPos;
+    }
+
     void SimpleCamera::processKeyboard(Camera_Movement direction, float deltaTime)
     {
 

@@ -4,6 +4,7 @@
 #include "ExecuteQueues.hpp"
 #include <queue>
 #include "Vector3.hpp"
+#include "RenderWorld.hpp"
 using BE_STD::shared_ptr;
 using BE_STD::unique_ptr;
 using BE_STD::optional;
@@ -37,6 +38,7 @@ namespace BEbraEngine {
     class GameObject;
     class DirectionLight;
     class Time;
+    class RigidBody;
     class Light;
     class ObjectFactoryFacade;
     class GameComponentCreateInfo;
@@ -87,10 +89,14 @@ namespace BEbraEngine {
         AbstractRender* render;
 
         Physics* physics;
+        
+        unique_ptr<RenderWorld> renderWorld;
 
         unique_ptr<ObjectFactoryFacade> scriptObjectFactory;
 
         unique_ptr<ScriptManager> scriptManager;
+
+
 
         shared_ptr<SimpleCamera> camera;
 
@@ -98,7 +104,10 @@ namespace BEbraEngine {
 
         shared_ptr<Light> light;
 
-            shared_ptr<GameObject> sphere;
+        shared_ptr<GameObject> sphere;
+
+        shared_ptr<GameObject> player;
+
         list<shared_ptr<GameObject>> bounds;
         list<shared_ptr<GameObject>> objects;
         list<shared_ptr<Light>> lights;
@@ -112,5 +121,9 @@ namespace BEbraEngine {
 
         bool lookatobject;
         Vector3* posofobject;
+
+        Vector3* pos;
+        Vector3* direction;
+        RigidBody* body;
     };
 }

@@ -52,6 +52,8 @@ namespace BEbraEngine {
 
         void setContext(ScriptState* logic);
 
+        void destroyComponent(GameComponent& component);
+
         ObjectFactoryFacade() {}
 
         ObjectFactoryFacade(GameObjectFactory* factory);

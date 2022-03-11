@@ -13,6 +13,7 @@ namespace BEbraEngine {
 }
 
 namespace BEbraEngine {
+
 	class IVisitorGameComponentDestroyer {
 	public:
 		virtual void destroyGameObject(GameObject& comp) const = 0;

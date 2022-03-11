@@ -22,6 +22,11 @@ namespace BEbraEngine {
         state_ = state;
     }
 
+    void ObjectFactoryFacade::destroyComponent(GameComponent& component)
+    {
+        realFactory_->destroy(component);
+    }
+
     shared_ptr<GameObject> ObjectFactoryFacade::create(const Vector3& position)
     {
         GameComponentCreateInfo info{};

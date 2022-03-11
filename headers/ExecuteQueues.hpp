@@ -84,7 +84,8 @@ namespace BEbraEngine {
 			int index = tbb::this_task_arena::current_thread_index();
 			if (index >= tbb::this_task_arena::max_concurrency())
 				index = 0;
-
+			if (index < 0)
+				index = 0;
 			return index;
 		}
 

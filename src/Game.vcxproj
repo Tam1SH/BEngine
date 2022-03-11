@@ -317,6 +317,7 @@
     <ClCompile Include="GameComponent.cpp" />
     <ClCompile Include="GameComponentDestroyer.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="RenderWorld.cpp" />
     <ClCompile Include="RigidBodyFactory.cpp" />
     <ClCompile Include="ObjectFactoryFacade.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -424,6 +425,7 @@
     <ClInclude Include="..\headers\Quaternion.hpp" />
     <ClInclude Include="..\headers\RenderBuffer.hpp" />
     <ClInclude Include="..\headers\RenderObject.hpp" />
+    <ClInclude Include="..\headers\RenderWorld.hpp" />
     <ClInclude Include="..\headers\RigidBoby.hpp" />
     <ClInclude Include="..\headers\RigidBodyFactory.hpp" />
     <ClInclude Include="..\headers\ScriptManager.hpp" />

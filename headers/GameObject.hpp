@@ -21,6 +21,16 @@ namespace BEbraEngine {
         void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
         template<typename T, class _ = typename BE_STD::enable_if<BE_STD::is_base_of<GameComponent, T>::value>::type>
+        shared_ptr<T> getComponentCheckedPtr() const noexcept {
+            for (auto& component : components_) {
+                if (std::dynamic_pointer_cast<T>(component)) {
+                    return std::static_pointer_cast<T>(component);
+                }
+            }
+            throw std::exception();
+        }
+
+        template<typename T, class _ = typename BE_STD::enable_if<BE_STD::is_base_of<GameComponent, T>::value>::type>
         T& getComponentChecked() const noexcept {
             for (auto& component : components_) {
                 if (dynamic_cast<T*>(component.get())) {

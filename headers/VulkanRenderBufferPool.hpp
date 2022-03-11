@@ -74,7 +74,7 @@ namespace BEbraEngine {
 	{
 		uint32_t new_size = totalCount + count;
 		uint32_t alignsizeofData = 0;
-		dataSize = sizeofData;
+		dataSize = sizeofData * count;
 
 
 		if (_usage == RenderBufferPoolUsage::SeparateOneBuffer) {
@@ -115,8 +115,8 @@ namespace BEbraEngine {
 	template<typename RenderData>
 	inline void VulkanRenderBufferPool<RenderData>::map()
 	{
-
-		_buffer->setData(_data->data(), dataSize, 0);
+		if(_data)
+			_buffer->setData(_data->data(), dataSize, 0);
 
 	}
 
@@ -152,11 +152,11 @@ namespace BEbraEngine {
 	template<typename RenderData>
 	inline void VulkanRenderBufferPool<RenderData>::free(shared_ptr<RenderBufferView> view)
 	{
-		if (obj->buffer != _buffer) {
+		if (view->buffer != _buffer) {
 			DEBUG_LOG1("The view does not belong to this buffer");
 			throw std::exception();
 		}
-		_pool.push(obj);
+		_pool.push(view);
 
 	}
 
