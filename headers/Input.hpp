@@ -4,7 +4,7 @@
 
 namespace BEbraEngine {
     
-    enum class KEY_CODE {
+    enum class KeyCode {
         
         KEY_0 = SDL_SCANCODE_0,
         KEY_1 = SDL_SCANCODE_1,
@@ -103,9 +103,9 @@ namespace BEbraEngine {
 
         static void setWindow(WindowHandle* window);
 
-        static bool isKeyPressed(KEY_CODE key);
+        static bool isKeyPressed(KeyCode key);
 
-        static bool isKeyReleased(KEY_CODE key);
+        static bool isKeyReleased(KeyCode key);
 
         Input();
 

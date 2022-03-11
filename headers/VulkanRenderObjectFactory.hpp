@@ -48,6 +48,8 @@ namespace BEbraEngine {
     public:
         friend class VulkanRender;
 
+        ITextureFactory& getTextureFactory() override;
+
         void bindTransform(Light& light, Transform& transform) override;
 
         void bindTransform(RenderObject& object, Transform& transform) override;
@@ -79,7 +81,6 @@ namespace BEbraEngine {
         VulkanRenderObjectFactory();
         ~VulkanRenderObjectFactory();
 
-        void SetImgsCreator(VulkanTextureFactory* Creator) { textureFactory = Creator; }
     private:
         unique_ptr<VulkanRenderBufferPool<RenderObject::ShaderData>> _poolofObjects;
         unique_ptr<VulkanRenderBufferPool<Light::ShaderData>> _poolofPointLights;

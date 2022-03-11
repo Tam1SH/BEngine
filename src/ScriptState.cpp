@@ -71,6 +71,7 @@ namespace BEbraEngine {
         player = scriptObjectFactory->create(Vector3(-30, 30, 0));
         player->getComponentChecked<Transform>().setScale(Vector3(2));
         player->getComponentChecked<Collider>().setScale(Vector3(2));
+       // player->getComponentChecked<RenderObject>()
         auto& body = player->getComponentChecked<RigidBody>();
         body.setMaxVelocity(20);
         body.lockRotateX(true);
@@ -140,8 +141,17 @@ namespace BEbraEngine {
 
        // scriptObjectFactory->setModel(*sphere, (boost::filesystem::current_path() / "Models/Box.fbx").string());
         globalLight = scriptObjectFactory->createDirLight(Vector3(0, -0.5f, 0));
-        light = scriptObjectFactory->createLight(Vector3(0, 20, 0));
-        ///light->setColor(Vector3(0));
+
+        auto object6 = scriptObjectFactory->create(Vector3(20, 33, 0));
+        object6->getComponentChecked<RigidBody>().setDynamic(false);
+        object6->removeComponent(object6->getComponentCheckedPtr<Collider>());
+        object6->removeComponent(object6->getComponentCheckedPtr<RigidBody>());
+
+        object6->getComponentChecked<Transform>().setScale(Vector3(2));
+        scriptObjectFactory->setModel(*object6, (boost::filesystem::current_path() / "Models/Sphere.fbx").string());
+
+        light = scriptObjectFactory->createLight(Vector3(20, 33, 0));
+        light->setColor(Vector3(2));
 
         rotate = Vector3(0, -0.5f, 0);
 
@@ -159,16 +169,16 @@ namespace BEbraEngine {
        // if (step >= 255)
        //     step = 0;
 
-        if (Input::isKeyPressed(KEY_CODE::KEY_T)) {
+        if (Input::isKeyPressed(KeyCode::KEY_T)) {
             //clearObjects();
         }
 
-        if (Input::isKeyPressed(KEY_CODE::KEY_1)) {
+        if (Input::isKeyPressed(KeyCode::KEY_1)) {
 
             rotate.y = 0.5f;
             globalLight->setDirection(rotate);
         }
-        if (Input::isKeyPressed(KEY_CODE::KEY_2)) {
+        if (Input::isKeyPressed(KeyCode::KEY_2)) {
             rotate.y = -0.5f;
             globalLight->setDirection(rotate);
         }
@@ -192,15 +202,15 @@ namespace BEbraEngine {
         //scriptObjectFactory->destroy(obj);
         auto pos = player->getComponentChecked<Transform>().getPosition();
        // pos.y += 10;
-        camera->moveTo(pos);
+        //camera->moveTo(pos);
 
         scriptManager->runScripts();
         float speed = 1;
-        if (Input::isKeyPressed(KEY_CODE::KEY_LEFT_SHIFT)) {
+        if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT)) {
             speed = 20;
         }
 
-        if (Input::isKeyPressed(KEY_CODE::KEY_G)) {
+        if (Input::isKeyPressed(KeyCode::KEY_G)) {
             int rand = dice_rand();
             auto obj = scriptObjectFactory->create(Vector3(0, 40, 0));
             
@@ -224,7 +234,7 @@ namespace BEbraEngine {
             objects.push_back(obj);
         }
 
-        if (Input::isKeyPressed(KEY_CODE::KEY_Q)) {
+        if (Input::isKeyPressed(KeyCode::KEY_Q)) {
             camera->moveTo(Vector3(0, 40, 0));
         }
         
@@ -247,7 +257,7 @@ namespace BEbraEngine {
 
 
         
-        if (Input::isKeyPressed(KEY_CODE::KEY_H)) {
+        if (Input::isKeyPressed(KeyCode::KEY_H)) {
             if (objects.size() != 0) {
 
                 auto obj = objects.back();
@@ -258,29 +268,34 @@ namespace BEbraEngine {
         static bool inFly = false;
 
         auto& rigidBodyPlayer = player->getComponentChecked<RigidBody>();
-        if (Input::isKeyPressed(KEY_CODE::KEY_T)) {
+        if (Input::isKeyPressed(KeyCode::KEY_T)) {
             rigidBodyPlayer.moveTo(Vector3(-30, 30, 0));
         }
-        if (Input::isKeyPressed(KEY_CODE::KEY_A) && !inFly) {
-            //camera->processKeyboard(LEFT, Time::deltaTime() * speed);
+        if (Input::isKeyPressed(KeyCode::KEY_A) && !inFly) {
+            camera->processKeyboard(LEFT, Time::deltaTime() * speed);
             auto pos = camera->Right;
             pos.y = 0;
             rigidBodyPlayer.applyImpulse(-pos, (camera->Right * Time::deltaTime() * speed));
         }
-        if (Input::isKeyPressed(KEY_CODE::KEY_D) && !inFly ) {
-            //camera->processKeyboard(RIGHT, Time::deltaTime() * speed);
+        if (Input::isKeyPressed(KeyCode::KEY_D) && !inFly ) {
+            camera->processKeyboard(RIGHT, Time::deltaTime() * speed);
             auto pos = camera->Right;
             pos.y = 0;
             rigidBodyPlayer.applyImpulse(pos, (camera->Right * Time::deltaTime() * speed));
         }
-        if (Input::isKeyPressed(KEY_CODE::KEY_S) && !inFly) {
-            //camera->processKeyboard(BACKWARD, Time::deltaTime() * speed);
+        if (Input::isKeyPressed(KeyCode::KEY_S) && !inFly) {
+            camera->processKeyboard(BACKWARD, Time::deltaTime() * speed);
             auto pos = camera->Front;
             pos.y = 0;
             rigidBodyPlayer.applyImpulse(-pos, (camera->Front * Time::deltaTime() * speed));
         }
-        if (Input::isKeyPressed(KEY_CODE::KEY_W) && !inFly) {
-            //camera->processKeyboard(FORWARD, Time::deltaTime() * speed);
+        if (Input::isKeyPressed(KeyCode::KEY_F)) {
+            auto pos = camera->Position;
+            pos.y -= 1;
+            rigidBodyPlayer.applyExplosionImpulse(10, 10, pos);
+        }
+        if (Input::isKeyPressed(KeyCode::KEY_W) && !inFly) {
+            camera->processKeyboard(FORWARD, Time::deltaTime() * speed);
             auto pos = camera->Front;
             pos.y = 0;
             rigidBodyPlayer.applyImpulse(pos, (camera->Front * Time::deltaTime() * speed));
@@ -291,7 +306,7 @@ namespace BEbraEngine {
         if (y <= 0.01 && y >= 0)
         {
             inFly = false;
-            if (Input::isKeyPressed(KEY_CODE::KEY_SPACE)) {
+            if (Input::isKeyPressed(KeyCode::KEY_SPACE)) {
                 auto pos = camera->Up;
                 pos.x = rigidBodyPlayer.getVelocity().x;
                 pos.z = rigidBodyPlayer.getVelocity().y;
@@ -301,7 +316,7 @@ namespace BEbraEngine {
             }
         }
         else inFly = true;
-
+        inFly = false;
         static float time = 0;
         time += Time::deltaTime();
         if (time > 1 / 60.f) {
@@ -311,12 +326,12 @@ namespace BEbraEngine {
         static float time1 = 0;
         static float count = 0;
         time1 += Time::deltaTime();
-        if (time1 > 0.1) {
-            if (count < 100) {
-
+        if (time1 > 0.001) {
+            if (count < 0) {
+                DEBUG_LOG1(std::to_string(count));
 
                 int rand = dice_rand();
-                auto obj = scriptObjectFactory->create(Vector3(0, 40, 0));
+                auto obj = scriptObjectFactory->create(Vector3(0, 200, 0));
 
                 scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand));
                 scriptObjectFactory->setModel(*obj, getPath(rand).string());
@@ -346,9 +361,9 @@ namespace BEbraEngine {
             if (pos.y < 0) {
                 body.moveTo(Vector3(pos.x, 110, pos.z));
             }
-            if (pos.y > 110) {
-                body.moveTo(Vector3(pos.x, 0, pos.z));
-            }
+            //if (pos.y > 110) {
+            //    body.moveTo(Vector3(pos.x, 0, pos.z));
+           // }
 
             if (pos.x > 10) {
                 body.moveTo(Vector3(-10, pos.y, pos.z));

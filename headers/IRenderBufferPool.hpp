@@ -40,6 +40,8 @@ namespace BEbraEngine {
 
 		virtual void setContext(AbstractRender* render) = 0;
 
+		virtual void bindData(const vector<RenderData>& data) = 0;
+
 		virtual shared_ptr<RenderBuffer> getBuffer() = 0;
 
 		virtual void setUsage(RenderBufferPoolUsage usage) = 0;

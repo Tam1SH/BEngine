@@ -33,7 +33,8 @@ namespace BEbraEngine {
         VkDescriptorPool pool{};
 
         tbb::concurrent_queue<VkDescriptorSet> sets;
-        //производительно нахуй? не то слово блять
+        
+
         std::list<VkDescriptorSet> setsUses;
         std::mutex mutex;
 

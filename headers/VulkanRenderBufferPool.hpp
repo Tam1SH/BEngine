@@ -38,16 +38,7 @@ namespace BEbraEngine {
 		
 		size_t getCount() override;
 		
-		void bindData(const vector<RenderData>& data) {
-			if (data.size() * sizeof(RenderData) > dataSize) {
-				DEBUG_LOG1(
-					BE_STD::stringstream() << "The allocated memory in the pool is less than the memory located in the bound data | "
-					<< "available size : " << dataSize << " byte"
-					<< " | bound data size : " << data.size() * sizeof(RenderData) << " byte.");
-			}
-
-			_data = &data;
-		}
+		void bindData(const vector<RenderData>& data) override;
 
 		void setUsage(RenderBufferPoolUsage usage) override { _usage = usage; }
 
@@ -147,6 +138,19 @@ namespace BEbraEngine {
 	inline size_t VulkanRenderBufferPool<RenderData>::getCount()
 	{
 		return _pool.unsafe_size();
+	}
+
+	template<typename RenderData>
+	inline void VulkanRenderBufferPool<RenderData>::bindData(const vector<RenderData>& data)
+	{
+		if (data.size() * sizeof(RenderData) > dataSize) {
+			DEBUG_LOG1(
+				BE_STD::stringstream() << "The allocated memory in the pool is less than the memory located in the bound data | "
+				<< "available size : " << dataSize << " byte"
+				<< " | bound data size : " << data.size() * sizeof(RenderData) << " byte.");
+		}
+
+		_data = &data;
 	}
 
 	template<typename RenderData>

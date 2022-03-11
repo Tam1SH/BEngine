@@ -84,6 +84,18 @@ namespace BEbraEngine {
 
     }
 
+    Material::Material(Texture* ambient, Texture* specular, Texture* normal)
+    {
+
+    }
+
+    void Material::destroy(IVisitorGameComponentDestroyer& destroyer)
+    {
+        destroyer.destroyMaterialComponent(*ambient);
+        destroyer.destroyMaterialComponent(*specular);
+        destroyer.destroyMaterialComponent(*normal);
+    }
+
 }
 
 

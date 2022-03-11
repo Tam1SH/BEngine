@@ -45,7 +45,6 @@ namespace BEbraEngine {
 }
 
 namespace BEbraEngine {
-    //TODO: полигон блять для испытаний(делай скрипты)
     
     class ScriptState {
     public:

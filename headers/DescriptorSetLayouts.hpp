@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-//TODO: А эта хуйня не сильно полезная.
+
 class DescriptorSetLayouts
 {
 public:

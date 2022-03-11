@@ -30,6 +30,10 @@ namespace BEbraEngine {
 		RenderBufferView* bufferView;
 		VkSampler sampler;
 		VkImageView imageView;
+
+		const VulkanTexture* image;
+		const VulkanTexture* specular;
+		const VulkanTexture* normal;
 	};
 	class VulkanDescriptorPoolInfo {
 	public:

@@ -32,7 +32,8 @@ layout(std140, set = 4, binding = 0) uniform SpotLightData {
 
 
 layout(binding = 1) uniform sampler2D texSampler;
-
+layout(binding = 2) uniform sampler2D texSamplerSpecular;
+layout(binding = 3) uniform sampler2D texSamplerNormal;
 
 layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
@@ -78,6 +79,7 @@ vec3 CalcPointLight(_PointLight pLight, vec3 normal, vec3 viewDir);
 void main() {
 
 
+    //vec3 norm = normalize(texture(texSamplerNormal, fragTexCoord).rgb * 2.0 - 1.0);
     vec3 norm = normalize(fNormal);
     vec3 viewDir = normalize(cameraPosition - fragPosition);
     
@@ -93,7 +95,7 @@ void main() {
     vec4 FragColor = vec4(result * objectColor,1.0f);
 
     //outColor =  vec4(vec3(1.0 - texture(texSampler, fragTexCoord)), 1.0);
-    outColor = texture(texSampler, fragTexCoord) * FragColor; 
+    outColor = vec4(texture(texSampler, fragTexCoord).rgb,1) * FragColor; 
     //outColor = FragColor; 
 }
 
@@ -111,7 +113,7 @@ vec3 CalcPointLight(_PointLight pLight, vec3 normal, vec3 viewDir)
     float specularStrength = 0.5f;
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * pLight.specular; 
+    vec3 specular = specularStrength * spec * pLight.specular * texture(texSamplerSpecular, fragTexCoord).rgb; 
     
     float distance = length(pLight.position - fragPosition);
     float attenuation = 1.0 / (pLight.constant + pLight.linear * distance + pLight.quadratic * (distance * distance));    

@@ -31,8 +31,7 @@ namespace BEbraEngine {
 			Capsule,
 			Cylinder,
 			Cone,
-
-			Mesh //≈·Û?
+			Mesh 
 		};
 
 		struct ColliderCreateInfo 

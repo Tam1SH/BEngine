@@ -54,7 +54,7 @@ namespace BEbraEngine {
 			opt_rigidBody = rigidBodyFactory->create(RigidBodyInfo);
 		}
 
-		if (info.renderInfo)
+		if (info.renderInfo) 
 			opt_renderObj = renderFactory->create(*info.renderInfo);
 		else {
 			RenderObject::RenderObjectCreateInfo info{};

@@ -8,7 +8,7 @@ namespace BEbraEngine {
     class RenderBufferView;
 
 }
-//TODO: ну, почти.
+
 namespace BEbraEngine {
         enum Camera_Movement {
         FORWARD,

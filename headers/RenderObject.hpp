@@ -63,12 +63,10 @@ namespace BEbraEngine {
         struct ShaderData {
             alignas(16) Vector3 position;
 
-            //компоненты света
             alignas(16) Vector3 ambient;
             alignas(16) Vector3 diffuse;
             alignas(16) Vector3 specular;
 
-            //TODO: мне кажетс€, что стоит перейти на другую модель расчЄта дальности света
             alignas(4) float constant;
             alignas(4) float linear;
             alignas(4) float quadratic;
@@ -113,7 +111,6 @@ namespace BEbraEngine {
         struct ShaderData {
             alignas(16) Vector3 direction;
 
-            //компоненты света
             alignas(16) Vector3 ambient;
             alignas(16) Vector3 diffuse;
             alignas(16) Vector3 specular;
@@ -161,6 +158,21 @@ namespace BEbraEngine {
 
     };
 
+    class Material : public GameComponent {
+    public:
+        Material(Texture* ambient,
+            Texture* specular,
+            Texture* normal);
+    private:
+
+        Texture* ambient;
+        Texture* specular;
+        Texture* normal;
+
+        // ”наследовано через GameComponent
+        virtual void destroy(IVisitorGameComponentDestroyer& destroyer) override;
+    };
+
     class RenderObject : public GameComponent, public IReusable {
         DEBUG_DESTROY_CHECK_DECL()
     public:
@@ -184,6 +196,8 @@ namespace BEbraEngine {
         shared_ptr<Texture> texture;
 
         shared_ptr<Model> model;
+
+        Material* material;
 
         shared_ptr<RenderBufferView> matrix;
 
@@ -209,9 +223,5 @@ namespace BEbraEngine {
         virtual void release() override;
     };
 
-    class Material : public GameComponent {
-    private:
-        unique_ptr<Texture> specular;
-        unique_ptr<Texture> ambient;
-    };
+
 }

@@ -62,7 +62,7 @@ namespace BEbraEngine {
 		private:								
 			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_Input)
 			bool isKeyPressed(int key) {
-				return Input::isKeyPressed((KEY_CODE)key);
+				return Input::isKeyPressed((KeyCode)key);
 			}
 
 		private:

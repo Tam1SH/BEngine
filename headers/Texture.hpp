@@ -3,7 +3,8 @@
 #include "stdafx.h"
 #include "GameComponent.hpp"
 #include "Debug.hpp"
-//TODO: Ну, понятно.
+
+
 namespace BEbraEngine {
     
     class Texture : public GameComponent { DEBUG_DESTROY_CHECK_DECL()

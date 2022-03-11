@@ -13,15 +13,18 @@ namespace BEbraEngine {
 	class Vector3;
 	class DirectionLight;
 	class AbstractRender;
-
+	class ITextureFactory;
 	class SimpleCamera; 
 }
 
 namespace BEbraEngine {
 	class IRenderObjectFactory {
 	public:
+		virtual ~IRenderObjectFactory() {}
 
 		virtual optional<RenderObject*> create(const RenderObject::RenderObjectCreateInfo& info) = 0;
+
+		virtual ITextureFactory& getTextureFactory() = 0;
 
 		virtual void bindTransform(Light& light, Transform& transform) = 0;
 

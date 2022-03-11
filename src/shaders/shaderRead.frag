@@ -54,19 +54,21 @@ float random( vec4  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
 
 void main() {
 
-	if(subpassLoad(inputDepth).r >= 1) {
-    outColor = vec4(subpassLoad(inputColor).rgb,1.f);
+	if(subpassLoad(inputDepth).r >= 0.1) {
+        float depth = subpassLoad(inputDepth).r;
+        vec3 color = vec3((depth - 0.8) * 1.0 / (1 - 0.8));
+        outColor = vec4(  subpassLoad(inputColor).rgb - color / 2, 1.0f);
 	}
 	else 
     {
-    
-    
-      
-    }
-    vec3  inputs = vec3( gl_FragCoord.xy, time ); // Spatial and temporal inputs
+        vec3  inputs = vec3( gl_FragCoord.xy, time ); // Spatial and temporal inputs
     float rand   = random( inputs );              // Random per-pixel value
     vec3 color = subpassLoad(inputColor).rgb;
     outColor = vec4(color,1.f) + (rand / 50);
+        
+      
+    }
+
 	//outColor *= vec4(0.1);
 	//float depth = subpassLoad(inputDepth).r;
 	//outColor.rgb = vec3((depth - 1) * 1.0 / (1 - 1.1));

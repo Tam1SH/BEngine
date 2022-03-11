@@ -4,7 +4,7 @@
 #include "platform.hpp"
 using BE_STD::vector;
 
-//TODO: этот хуй бесполезен, ну почти.
+
 namespace BEbraEngine {
     class CommandPool final {
 

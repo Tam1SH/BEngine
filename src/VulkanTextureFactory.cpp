@@ -45,9 +45,12 @@ namespace BEbraEngine {
             if(!path.string().empty())
                 DEBUG_LOG2("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
                     image, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
-            pixels = new unsigned char[4]{ 255,255,255 };
-            texWidth = 1, texHeight = 1;
-            imageSize = 4;
+            pixels = new unsigned char[4 * 300 * 300];
+            for (int i = 0; i < 4 * 300 * 300; i++) {
+                pixels[i] = 255;
+            }
+            texWidth = 300, texHeight = 300;
+            imageSize = 4 * texWidth * texHeight;
             image->setHeight(texHeight);
             image->setWidth(texWidth);
         }

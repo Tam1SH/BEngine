@@ -56,25 +56,12 @@ namespace BEbraEngine {
         btTaskSchedulerManager() {}
         void init()
         {
-
-            addTaskScheduler(btGetSequentialTaskScheduler());
-            if (btITaskScheduler* ts = btCreateDefaultTaskScheduler())
-            {
-                m_allocatedTaskSchedulers.push_back(ts);
-                addTaskScheduler(ts);
-            }
-            addTaskScheduler(btGetOpenMPTaskScheduler());
+            this;
+            std::cout << btGetTBBTaskScheduler() << std::endl;
+            
             addTaskScheduler(btGetTBBTaskScheduler());
-            addTaskScheduler(btGetPPLTaskScheduler());
-            if (getNumTaskSchedulers() > 1)
-            {
-                // prefer a non-sequential scheduler if available
-                btSetTaskScheduler(m_taskSchedulers[1]);
-            }
-            else
-            {
-                btSetTaskScheduler(m_taskSchedulers[0]);
-            }
+            btSetTaskScheduler(m_taskSchedulers[0]);
+
         }
         void shutdown()
         {
@@ -96,7 +83,9 @@ namespace BEbraEngine {
                     ts->setNumThreads(ts->getMaxNumThreads());
                 }
                 m_taskSchedulers.push_back(ts);
+                btSetTaskScheduler(m_taskSchedulers[0]);
             }
+            //else throw std::exception();
         }
         int getNumTaskSchedulers() const { return m_taskSchedulers.size(); }
         btITaskScheduler* getTaskScheduler(int i) { return m_taskSchedulers[i]; }
@@ -126,41 +115,60 @@ namespace BEbraEngine {
 
         return NULL;
     }
+    optional<Collider*> BEbraEngine::Physics::getObjectRayCast(const Vector3& start, Vector3& end)
+    {
+        btCollisionWorld::ClosestRayResultCallback result(start, end);
+        dynamicsWorld->rayTest(start, Vector3(0), result);
+        auto collider = static_cast<Collider*>(result.m_collisionObject->getUserPointer());
+        return optional<Collider*>(collider);
+    }
+    void* BEbraEngine::Physics::rayCastWorld(const Vector3& start, Vector3& end, Vector3& normal)
+    {
+        btCollisionWorld::ClosestRayResultCallback result(start, end);
+        dynamicsWorld->rayTest(start, Vector3(0), result);
+        auto collider = static_cast<Collider*>(result.m_collisionObject->getUserPointer());
+        return nullptr;
+    }
     void Physics::update()
     {
+
         dynamicsWorld->stepSimulation(Time::deltaTime(), 1);
+
+
+
         dynamicsWorld->debugDrawWorld();
         //dynamicsWorld->setGravity(Vector3(0));
-        for (auto body = bodies.begin(); body != bodies.end(); ++body) {
-
+        
+        tbb::parallel_for<size_t>(0, bodies.size(), [this](int i) {
+            
+            auto& body = bodies[i];
             btTransform trans;
-            auto _body = (*body);
-            _body->getRigidBody().getMotionState()->getWorldTransform(trans);
+            body->getRigidBody().getMotionState()->getWorldTransform(trans);
             auto quat = trans.getRotation();
             Vector4 quaat;
             quaat.x = quat.x();
             quaat.y = quat.y();
             quaat.z = quat.z();
             quaat.w = quat.w();
-            
+
             auto vec = trans.getOrigin();
 
             auto pos = glm::vec3(
                 vec.x(), vec.y(), vec.z()
             );
-            auto& rigidbody = _body->getRigidBody();
-            if (BEbraMath::length(rigidbody.getLinearVelocity()) > _body->getMaxVelocity()) {
-                rigidbody.setLinearVelocity(BEbraMath::normalize(rigidbody.getLinearVelocity()) * _body->getMaxVelocity());
+            auto& rigidbody = body->getRigidBody();
+            if (BEbraMath::length(rigidbody.getLinearVelocity()) > body->getMaxVelocity()) {
+                rigidbody.setLinearVelocity(BEbraMath::normalize(rigidbody.getLinearVelocity()) * body->getMaxVelocity());
             }
-            if (_body->getDynamic()) {
-                _body->getTransform().updatePosition(pos);
-                _body->getTransform().setQuat(Quaternion(quaat));
+            if (body->getDynamic()) {
+                body->getTransform().updatePosition(pos);
+                body->getTransform().setQuat(Quaternion(quaat));
             }
             else {
                 //_body->resetState();
             }
+            });
 
-        }
 
         queues.execute();
 
@@ -181,7 +189,8 @@ namespace BEbraEngine {
     {
         rigidBodyFactory->destroy(body);
         dynamicsWorld->removeRigidBody(&body.getRigidBody());
-        bodies.remove(&body);
+        auto iter = std::remove(bodies.begin(), bodies.end(), &body);
+        bodies.erase(iter);
     }
     void Physics::removeCollider(Collider* col)
     {
@@ -202,7 +211,7 @@ namespace BEbraEngine {
 
         colliderFactory = std::unique_ptr<ColliderFactory>(new ColliderFactory(this));
         rigidBodyFactory = std::unique_ptr<RigidBodyFactory>(new RigidBodyFactory(this));
-        if (false) {
+        if (true) {
 
             mgr = std::unique_ptr<btTaskSchedulerManager>(new btTaskSchedulerManager());
             mgr->init();
@@ -215,21 +224,25 @@ namespace BEbraEngine {
             overlappingPairCache = std::unique_ptr<btDbvtBroadphase>(new btDbvtBroadphase());
 
 
+            
+            SolverType poolSolverType = SOLVER_TYPE_SEQUENTIAL_IMPULSE_MT;
+            btConstraintSolver* solvers[BT_MAX_THREAD_COUNT];
+            int maxThreadCount = BT_MAX_THREAD_COUNT;
+            for (int i = 0; i < maxThreadCount; ++i)
             {
-                SolverType poolSolverType = SOLVER_TYPE_SEQUENTIAL_IMPULSE;
-                btConstraintSolver* solvers[BT_MAX_THREAD_COUNT];
-                int maxThreadCount = BT_MAX_THREAD_COUNT;
-                for (int i = 0; i < maxThreadCount; ++i)
-                {
-                    solvers[i] = createSolverByType(poolSolverType);
-                }
-                solverPool = std::unique_ptr<btConstraintSolverPoolMt>(new btConstraintSolverPoolMt(solvers, maxThreadCount));
+                solvers[i] = createSolverByType(poolSolverType);
             }
+            solverPool = std::unique_ptr<btConstraintSolverPoolMt>(new btConstraintSolverPoolMt(solvers, maxThreadCount));
+            
             solver = std::unique_ptr<btSequentialImpulseConstraintSolverMt>(new btSequentialImpulseConstraintSolverMt());
 
             btAssert(btGetTaskScheduler() != NULL);
-
-            dispatcher = std::unique_ptr<btCollisionDispatcherMt>(new btCollisionDispatcherMt(collisionConfiguration.get(), 40));
+            
+            auto hrthr = btGetTaskScheduler();//mgr->getTaskScheduler(0);
+            hrthr->activate();
+            auto hd = collisionConfiguration.get();
+            auto regr = new btCollisionDispatcherMt(hd, 40);
+            dispatcher = std::unique_ptr<btCollisionDispatcherMt>(new btCollisionDispatcherMt(hd, 40));
             dynamicsWorld = std::unique_ptr<ParallelDiscreteDynamicsWorld>(
                 new ParallelDiscreteDynamicsWorld(dispatcher.get(),
                     overlappingPairCache.get(),

@@ -19,8 +19,8 @@ namespace BEbraEngine {
 		};
 		enum class SurfaceType {
 			Vulkan
-			//DX12 - ну и хуетень, чем я занимаюсь
-			//Metal - Метал? блять анал
+			//DX12 - РЅСѓ Рё С…СѓРµС‚РµРЅСЊ, С‡РµРј СЏ Р·Р°РЅРёРјР°СЋСЃСЊ
+			//Metal - РњРµС‚Р°Р»? Р±Р»СЏС‚СЊ Р°РЅР°Р»
 		};
 	public:
 		virtual void createWindow(const Vector2& size, const std::string& title) = 0;

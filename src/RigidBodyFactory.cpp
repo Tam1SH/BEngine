@@ -47,7 +47,7 @@ namespace BEbraEngine {
         rigidBody->body = std::make_unique<btRigidBody>(rbInfo);
 
         rigidBody->setName("RigidBody");
-
+        rigidBody->body->activate();
         return optional<RigidBody*>(rigidBody);
 	}
 

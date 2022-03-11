@@ -29,20 +29,18 @@ namespace BEbraEngine {
 
 
         void downloadDefaultModels();
-        // –екурсивна€ обработка узла. ќбрабатываем каждый отдельный меш, расположенный в узле, и повтор€ем этот процесс дл€ своих дочерних углов (если таковы вообще имеютс€)
+        
         void processNode(Model* model, aiNode* node, const aiScene* scene, const string& path);
 
         Mesh processMesh(Model* model, aiMesh* mesh, const aiScene* scene, const string& path);
 
-        // ѕровер€ем все текстуры материалов заданного типа и загружам текстуры, если они еще не были загружены.
-        // Ќеобходима€ информаци€ возвращаетс€ в виде структуры Texture
-       vector<Texture*> loadMaterialTextures(Model* model, aiMaterial* mat, aiTextureType type, string typeName, const string& path);
+        vector<Texture*> loadMaterialTextures(Model* model, aiMaterial* mat, aiTextureType type, string typeName, const string& path);
 
-       ITextureFactory* _textureFactory;
+        ITextureFactory* _textureFactory;
 
-       AbstractRender* render;
+        AbstractRender* render;
 
-       map<string, shared_ptr<Model>> default_models;
+        map<string, shared_ptr<Model>> default_models;
 
     };
 }

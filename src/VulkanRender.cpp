@@ -370,7 +370,7 @@ namespace BEbraEngine {
             physics = PhysicsDebugPool->getInfo();
         }
         else {
-            object.types.resize(3);
+            object.types.resize(4);
             auto size = MAX_COUNT_OF_OBJECTS;
             VkDescriptorPoolSize poolSize;
             poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
@@ -382,9 +382,13 @@ namespace BEbraEngine {
             poolSize.descriptorCount = 1000;
             object.types[1] = poolSize;
 
-            poolSize.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            poolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSize.descriptorCount = 1000;
             object.types[2] = poolSize;
+
+            poolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            poolSize.descriptorCount = 1000;
+            object.types[3] = poolSize;
 
 
 
@@ -1463,21 +1467,34 @@ namespace BEbraEngine {
     void VulkanRender::createObjectDescriptorSetLayout()
     {
         VkDescriptorSetLayout layout;
-        std::array<VkDescriptorSetLayoutBinding, 2> uboLayoutBinding{};
+        std::array<VkDescriptorSetLayoutBinding, 4> uboLayoutBinding{};
         uboLayoutBinding[0].binding = 0;
         uboLayoutBinding[0].descriptorCount = 1;
         uboLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         uboLayoutBinding[0].pImmutableSamplers = nullptr;
         uboLayoutBinding[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
+        //texture
         uboLayoutBinding[1].binding = 1;
         uboLayoutBinding[1].descriptorCount = 1;
         uboLayoutBinding[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         uboLayoutBinding[1].pImmutableSamplers = nullptr;
         uboLayoutBinding[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+        //specular map
+        uboLayoutBinding[2].binding = 2;
+        uboLayoutBinding[2].descriptorCount = 1;
+        uboLayoutBinding[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        uboLayoutBinding[2].pImmutableSamplers = nullptr;
+        uboLayoutBinding[2].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+        //normal map
+        uboLayoutBinding[3].binding = 3;
+        uboLayoutBinding[3].descriptorCount = 1;
+        uboLayoutBinding[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        uboLayoutBinding[3].pImmutableSamplers = nullptr;
+        uboLayoutBinding[3].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 
-        std::array<VkDescriptorSetLayoutBinding, 2> bindings = uboLayoutBinding;
+        std::array<VkDescriptorSetLayoutBinding, 4> bindings = uboLayoutBinding;
         VkDescriptorSetLayoutCreateInfo layoutInfo{};
         layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
@@ -2524,10 +2541,27 @@ namespace BEbraEngine {
             bufferInfo.offset = info->bufferView->offset;
             bufferInfo.range = info->bufferView->availableRange;
 
-            VkDescriptorImageInfo imageInfo{};
-            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfo.imageView = info->imageView;
-            imageInfo.sampler = info->sampler;
+            VkDescriptorImageInfo image{};
+            image.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            image.imageView = info->imageView;
+            image.sampler = info->sampler;
+
+            VkDescriptorImageInfo specular{};
+            if (info->specular) {
+                specular.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                specular.imageView = info->specular->imageView;
+                specular.sampler = info->specular->sampler;
+            }
+
+
+            VkDescriptorImageInfo normal{};
+            if (info->normal) {
+                normal.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                normal.imageView = info->normal->imageView;
+                normal.sampler = info->normal->sampler;
+            }
+
+
 
             std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 
@@ -2546,7 +2580,30 @@ namespace BEbraEngine {
             descriptorWrites[1].dstArrayElement = 0;
             descriptorWrites[1].descriptorType = types[1].type;
             descriptorWrites[1].descriptorCount = 1;
-            descriptorWrites[1].pImageInfo = &imageInfo;
+            descriptorWrites[1].pImageInfo = &image;
+            if (info->specular) {
+
+
+                descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                descriptorWrites[2].dstSet = set;
+                descriptorWrites[2].dstBinding = 2;
+                descriptorWrites[2].dstArrayElement = 0;
+                descriptorWrites[2].descriptorType = types[2].type;
+                descriptorWrites[2].descriptorCount = 1;
+                descriptorWrites[2].pImageInfo = &specular;
+            }
+            if (info->normal) {
+
+
+                descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                descriptorWrites[3].dstSet = set;
+                descriptorWrites[3].dstBinding = 3;
+                descriptorWrites[3].dstArrayElement = 0;
+                descriptorWrites[3].descriptorType = types[3].type;
+                descriptorWrites[3].descriptorCount = 1;
+                descriptorWrites[3].pImageInfo = &normal;
+            }
+
             vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
         }
         else

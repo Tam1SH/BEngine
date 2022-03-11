@@ -21,7 +21,7 @@ namespace BEbraEngine {
 		col->_collider = unique_ptr<btCollisionObject>(new btCollisionObject());
 
 		shape = getShape(info.type);
-
+		col->_collider->setUserPointer(col);
 		setShape(*col, *shape);
 		col->setScale(info.scale);
 		col->setPosition(info.position);

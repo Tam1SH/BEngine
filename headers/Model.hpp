@@ -38,7 +38,7 @@ namespace BEbraEngine {
         };
     public:
         std::vector<Texture*> textures_loaded; 
-        //TODO: вынести представление для каждого меша и использовать только одно.
+        
         std::vector<Mesh> meshes;
 
         Model() {}

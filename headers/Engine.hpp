@@ -21,7 +21,7 @@ namespace BEbraEngine {
         unique_ptr<Physics> physics;
         unique_ptr<BaseWindow> window1;
         unique_ptr<ScriptState> gameLogic1;
-        bool multiThreading = false;
+        bool multiThreading = true;
     public:
         void Main() {
             init();
@@ -37,7 +37,7 @@ namespace BEbraEngine {
             gameLogic1 = unique_ptr<ScriptState>(new ScriptState(*render1, *physics));
             Debug::enableAll();
         }
-        bool physicsEnabled = true;
+        
         void start() {
 
             while (!window1->isClose()) {

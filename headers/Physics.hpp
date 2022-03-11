@@ -57,8 +57,13 @@ namespace BEbraEngine {
         uint32_t linesToDraw;
     };
 
+
     class Physics {
     public:
+
+        optional<Collider*> getObjectRayCast(const Vector3& start, Vector3& end);
+
+        void* rayCastWorld(const Vector3& start, Vector3& end, Vector3& normal);
 
         void update();
 
@@ -97,7 +102,7 @@ namespace BEbraEngine {
 
         unique_ptr<btTaskSchedulerManager> mgr;
 
-        list<RigidBody*> bodies;
+        vector<RigidBody*> bodies;
 
         unique_ptr<btIDebugDraw> drawer;
 

@@ -54,9 +54,12 @@ namespace BEbraEngine {
         if (this->isActive) {
             body->setLinearFactor(linearFactor);
             body->setAngularFactor(AngularFactor);
-
+            body->setCollisionFlags(btCollisionObject::CollisionFlags::CF_DYNAMIC_OBJECT);
         }
         else {
+            btCollisionObject::CollisionFlags;
+            body->getCollisionFlags();
+            body->setCollisionFlags(btCollisionObject::CollisionFlags::CF_STATIC_OBJECT);
             body->setLinearFactor(btVector3(0, 0, 0));
             body->setAngularFactor(btVector3(0, 0, 0));
         }

@@ -10,9 +10,10 @@ namespace BEbraEngine {
         for (auto light = lights.begin(); light != lights.end(); ++light) {
             (*light)->update();
         }
-        for (auto object = objects.begin(); object != objects.end(); ++object) {
-            (*object)->update();
-        }
+        tbb::parallel_for<size_t>(0, objects.size(), [this](int i) {
+            objects[i]->update();
+        });
+
 
 
     }

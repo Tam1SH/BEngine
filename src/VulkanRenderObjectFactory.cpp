@@ -13,7 +13,7 @@
 #include "Debug.hpp"
 #include "MeshFactory.hpp"
 #include "Vector2.hpp"
-
+#include <boost/filesystem.hpp>
 namespace BEbraEngine {
 
     optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObject::RenderObjectCreateInfo& info)
@@ -34,16 +34,21 @@ namespace BEbraEngine {
         auto obj = new VulkanRenderObject();
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
+       // obj->texture = unique_ptr<Texture>(textureFactory->create(boost::filesystem::current_path() / "textures" / "textureTest.jpg", false));
         obj->texture = unique_ptr<Texture>(textureFactory->createEmpty());
         obj->matrix = object_view;
 
-        obj->setColor(Vector3(0.2f, 0.4f, 0.3f));
+        obj->setColor(Vector3(1));
         VulkanDescriptorSetInfo setinfo{};
         auto vTex = static_cast<VulkanTexture*>(obj->texture.get());
         setinfo.sampler = vTex->sampler;
         setinfo.imageView = vTex->imageView;
         setinfo.bufferView = object_view.get();
 
+        //setinfo.specular = static_cast<VulkanTexture*>(textureFactory->create(boost::filesystem::current_path() / "textures" / "specularTest.jpg", false));
+        //setinfo.normal = static_cast<VulkanTexture*>(textureFactory->create(boost::filesystem::current_path() / "textures" / "normalTest.jpg", false));
+       // setinfo.specular = static_cast<VulkanTexture*>(textureFactory->createEmpty());
+       // setinfo.normal = static_cast<VulkanTexture*>(textureFactory->createEmpty());
         obj->descriptor = render->createDescriptor(&setinfo);
         if (!obj->descriptor) {
             DEBUG_LOG2("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
@@ -153,6 +158,11 @@ namespace BEbraEngine {
 
     void VulkanRenderObjectFactory::destroyCamera(SimpleCamera& camera)
     {
+    }
+
+    ITextureFactory& VulkanRenderObjectFactory::getTextureFactory()
+    {
+        return *textureFactory;
     }
 
     void VulkanRenderObjectFactory::bindTransform(Light& light, Transform& transform)
