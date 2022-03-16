@@ -63,8 +63,6 @@ namespace BEbraEngine {
 
         optional<Collider*> getObjectRayCast(const Vector3& start, Vector3& end);
 
-        void* rayCastWorld(const Vector3& start, Vector3& end, Vector3& normal);
-
         void update();
 
         void setDebugDrawer(btIDebugDraw* drawer);
@@ -77,11 +75,11 @@ namespace BEbraEngine {
 
         void removeRigidBody(RigidBody& body);
 
-        void removeCollider(Collider* col);
+        void removeCollider(Collider& col);
 
         void debugDraw();
 
-        void setCollder(RigidBody* body, Collider* collider);
+        void setCollder(RigidBody& body, Collider& collider);
 
         Physics();
 
@@ -105,8 +103,6 @@ namespace BEbraEngine {
         vector<RigidBody*> bodies;
 
         unique_ptr<btIDebugDraw> drawer;
-
-        vector<RigidBody*> _bodies;
 
         unique_ptr<ColliderFactory> colliderFactory;
 

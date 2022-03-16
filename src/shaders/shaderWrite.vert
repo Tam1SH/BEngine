@@ -10,6 +10,7 @@ layout(std140, set = 1, binding = 0) buffer CameraData {
 struct gameObject {
     mat4 model;
     vec3 color;
+    int objectHasMap;
 };
 
 layout(std140, set = 0, binding = 0) readonly buffer objectBuffer {
@@ -28,6 +29,7 @@ layout(location = 2) out vec3 fNormal;
 layout(location = 3) out vec3 fragPosition;
 layout(location = 4) out vec3 cameraPosition;
 layout(location = 5) out vec3 objectColor;
+layout(location = 6) out flat int objectHasMap;
 
 void main() {
     gl_Position = Camera.proj * Camera.view * objects.objects[gl_BaseInstanceARB].model * vec4(inPosition, 1.0);
@@ -38,6 +40,6 @@ void main() {
     fragTexCoord = inTexCoord;
     cameraPosition = Camera.position;
     objectColor = objects.objects[gl_BaseInstanceARB].color;
-
+    objectHasMap = objects.objects[gl_BaseInstanceARB].objectHasMap;
 
 }

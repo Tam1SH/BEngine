@@ -1,9 +1,6 @@
 #pragma once
-#include "stdafx.h"
 #include "platform.hpp"
-
 #include "Collider.hpp"
-#include <memory>
 
 class btCollisionShape;
 
@@ -24,15 +21,15 @@ namespace BEbraEngine {
 	class ColliderFactory
 	{
 	public:
-		ColliderFactory(Physics* physics);
+		ColliderFactory(Physics& physics);
 
-		optional<Collider*> create(const Collider::ColliderCreateInfo& info);
+		optional<Collider*> create(const Collider::CreateInfo& info);
 
 		void destroyCollider(Collider& col);
 
 		void setShape(Collider& collider, btCollisionShape& newShape);
 
-		btCollisionShape* getShape(Collider::Type type);
+		optional<btCollisionShape*> getShape(Collider::Type type);
 	private:
 
 		Physics* physics;

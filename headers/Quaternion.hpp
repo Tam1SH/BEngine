@@ -10,7 +10,7 @@ namespace BEbraEngine {
 		Quaternion(const glm::quat& other) : x(other.x), y(other.y), z(other.z), w(other.w) { }
 		Quaternion(const Quaternion& other) : x(other.x), y(other.y), z(other.z), w(other.w) { }
 		Quaternion(const Vector4& other) : x(other.x), y(other.y), z(other.z), w(other.w) { }
-
+		Quaternion(const btQuaternion& other) : x(other.x()), y(other.y()), z(other.z()), w(other.w()) { }
 		operator glm::quat() const noexcept {
 			return glm::quat(w, x, y, z);
 		}

@@ -32,9 +32,21 @@ namespace BEbraEngine {
 		virtual void deallocate(uint32_t count) = 0;
 
 		/// <summary>
+		/// Обнуляет часть буфера.
+		/// </summary>
+		/// <param name="count">: количество ячеек, которые будут обнулены в буфере</param>
+		/// <param name="offset">: смещение по количеству ячеек</param>
+		virtual void reset(size_t count, size_t offset) = 0;
+
+		/// <summary>
 		/// Копирует массив в буфер, заданный через bindData(), в момент обновления данных предназначенных для отрисовки.
 		/// </summary>
 		virtual void map() = 0;
+
+		/// <summary>
+		/// задаёт количество элементов, которые будут скопированы в буфер.
+		/// </summary>
+		virtual void setCountToMap(size_t count) = 0;
 
 		virtual void free(shared_ptr<RenderBufferView> view) = 0;
 

@@ -36,6 +36,7 @@ namespace BEbraEngine {
 		operator glm::vec3() const noexcept { return glm::vec3(x, y, z); }
 
 		operator btVector3() const noexcept { return btVector3(x, y, z); }
+
 		Vector3 operator+(const Vector3& other) const noexcept { 
 			glm::vec3 l = *this;
 			glm::vec3 r = other;
@@ -75,12 +76,12 @@ namespace BEbraEngine {
 			*this = *this - other;
 			return *this;
 		}
-		bool operator==(const Vector3& other) {
+		bool operator==(const Vector3& other) const {
 			return (this->x == other.x) &&
 				(this->y == other.y) &&
 				(this->z == other.z);
 		}
-		bool operator!=(const Vector3& other) {
+		bool operator!=(const Vector3& other) const {
 			return !(*this == other);
 		}
 

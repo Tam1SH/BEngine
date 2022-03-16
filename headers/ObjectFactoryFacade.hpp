@@ -4,7 +4,7 @@
 
 #include "Vector3.hpp"
 #include "Collider.hpp"
-
+#include "RenderObject.hpp"
 using BE_STD::shared_ptr;
 using BE_STD::unique_ptr;
 using BE_STD::string;
@@ -36,7 +36,11 @@ namespace BEbraEngine {
 
         shared_ptr<DirectionLight> createDirLight(const Vector3& direction);
 
+        void setMaterialAsync(shared_ptr<GameObject> object, const Material::CreateInfo& info);
+
         void destroy(shared_ptr<GameObject>& object);
+
+        void destroy(GameComponent& object);
 
         void destroyPointLight(Light& light);
 
@@ -48,7 +52,6 @@ namespace BEbraEngine {
         
         void setCollider(Collider& col, Collider::Type type);
 
-        void setTexture(GameObject& object, const boost::filesystem::path& path);
 
         void setContext(ScriptState* logic);
 

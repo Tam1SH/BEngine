@@ -31,7 +31,7 @@ namespace BEbraEngine {
         }
 
         template<typename T, class _ = typename BE_STD::enable_if<BE_STD::is_base_of<GameComponent, T>::value>::type>
-        T& getComponentChecked() const noexcept {
+        T& getComponentChecked() const {
             for (auto& component : components_) {
                 if (dynamic_cast<T*>(component.get())) {
                     return *static_cast<T*>(component.get());

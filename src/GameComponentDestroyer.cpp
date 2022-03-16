@@ -5,6 +5,7 @@
 #include "RigidBodyFactory.hpp"
 #include "ColliderFactory.hpp"
 #include "GameObject.hpp"
+#include "ITextureFactory.hpp"
 
 namespace BEbraEngine {
 
@@ -20,53 +21,68 @@ namespace BEbraEngine {
 	}
 
 	
-	void GameComponentDestroyer::destroyRenderComponent(RenderObject& comp) const
+	void GameComponentDestroyer::destroyRenderComponent(RenderObject& comp)
 	{
 		renderFactory->destroyObject(comp);
 #ifdef _DEBUG
 		comp.isDestroyed = true;
 #endif // _DEBUG
+		
 	}
-	void GameComponentDestroyer::destroyRigidBodyComponent(RigidBody& comp) const
+	void GameComponentDestroyer::destroyRigidBodyComponent(RigidBody& comp)
 	{
 		rigidBodyFactory->destroy(comp);
 #ifdef _DEBUG
 		comp.isDestroyed = true;
 #endif // _DEBUG
 	}
-	void GameComponentDestroyer::destroyColliderComponent(Collider& comp) const
+	void GameComponentDestroyer::destroyColliderComponent(Collider& comp)
 	{
 		colliderFactory->destroyCollider(comp);
 #ifdef _DEBUG
 		comp.isDestroyed = true;
 #endif // _DEBUG
 	}
-	void GameComponentDestroyer::destroyMaterialComponent(Texture& comp) const
+	void GameComponentDestroyer::destroyTextureComponent(Texture& comp)
 	{
 #ifdef _DEBUG
 		comp.isDestroyed = true;
 #endif // _DEBUG
+		renderFactory->getTextureFactory().destroyTexture(comp);
+
 	}
-	void GameComponentDestroyer::destroyTransformComponent(Transform& comp) const
+	void GameComponentDestroyer::destroyMaterialComponent(Material& comp)
+	{
+		if (comp.color)
+			destroyTextureComponent(*comp.color);
+		if (comp.specular)
+			destroyTextureComponent(*comp.specular);
+		if (comp.normal)
+			destroyTextureComponent(*comp.normal);
+#ifdef _DEBUG
+		comp.isDestroyed = true;
+#endif // _DEBUG
+	}
+	void GameComponentDestroyer::destroyTransformComponent(Transform& comp)
 	{
 
 	}
-	void GameComponentDestroyer::destroyPointLightComponent(Light& comp) const
+	void GameComponentDestroyer::destroyPointLightComponent(Light& comp)
 	{
 		renderFactory->destroyPointLight(comp);
 
 	}
-	void GameComponentDestroyer::destroyDirectionLightComponent(DirectionLight& comp) const
+	void GameComponentDestroyer::destroyDirectionLightComponent(DirectionLight& comp)
 	{
 		//renderFactory->des
 
 	}
-	void GameComponentDestroyer::destroyCameraComponent(SimpleCamera& comp) const
+	void GameComponentDestroyer::destroyCameraComponent(SimpleCamera& comp)
 	{
 		renderFactory->destroyCamera(comp);
 	}
 
-	void GameComponentDestroyer::destroyGameObject(GameObject& comp) const
+	void GameComponentDestroyer::destroyGameObject(GameObject& comp)
 	{
 #ifdef _DEBUG
 		comp.isDestroyed = true;

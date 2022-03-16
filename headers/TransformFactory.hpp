@@ -5,7 +5,7 @@
 namespace BEbraEngine {
     class TransformFactory {
     public:
-        std::optional<Transform*> create(const Transform::TransformCreateInfo& info);
+        std::optional<Transform*> create(const Transform::CreateInfo& info);
 
         TransformFactory();
     private:

@@ -30,10 +30,10 @@ namespace BEbraEngine {
     shared_ptr<GameObject> ObjectFactoryFacade::create(const Vector3& position)
     {
         GameComponentCreateInfo info{};
-        Transform::TransformCreateInfo transformInfo{};
-        Collider::ColliderCreateInfo colliderInfo{};
-        RigidBody::RigidBodyCreateInfo rigidBodyInfo{};
-        RenderObject::RenderObjectCreateInfo renderInfo{};
+        Transform::CreateInfo transformInfo{};
+        Collider::CreateInfo colliderInfo{};
+        RigidBody::CreateInfo rigidBodyInfo{};
+        RenderObject::CreateInfo renderInfo{};
 
         transformInfo.position = position;
 
@@ -77,11 +77,19 @@ namespace BEbraEngine {
         return light;
     }
 
+    void ObjectFactoryFacade::setMaterialAsync(shared_ptr<GameObject> object, const Material::CreateInfo& info)
+    {
+        realFactory_->setMaterialAsync(object, info);
+    }
+
     void ObjectFactoryFacade::destroy(shared_ptr<GameObject>& object)
     {
         state_->removeObject(object, [=](GameObject& obj) { realFactory_->destroy(obj); });
     }
-
+    void ObjectFactoryFacade::destroy(GameComponent& object)
+    {
+        realFactory_->destroy(object);
+    }
 
     void ObjectFactoryFacade::destroyPointLight(Light& light)
     {
@@ -108,11 +116,6 @@ namespace BEbraEngine {
     void ObjectFactoryFacade::setCollider(Collider& col, Collider::Type type)
     {
         realFactory_->setCollider(col, type);
-    }
-
-    void ObjectFactoryFacade::setTexture(GameObject& object, const boost::filesystem::path& path)
-    {
-        realFactory_->setTexture(object, path);
     }
 
 }

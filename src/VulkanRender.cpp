@@ -28,6 +28,7 @@
 #include "VulkanRenderBufferPool.hpp"
 #include "utils.hpp"
 #include <TransformFactory.hpp>
+#include "VulkanTextureFactory.hpp"
 namespace BEbraEngine {
     
 
@@ -40,9 +41,9 @@ namespace BEbraEngine {
 
     VulkanRender::QueueFamilyIndices VulkanRender::FamilyIndices;
                                       
-
+    
     void VulkanRender::generateMipmaps(VulkanTexture* texture, VkFormat imageFormat, CommandBuffer& buffer) {
-        // Check if image format supports linear blitting
+        
         VkFormatProperties formatProperties;
         vkGetPhysicalDeviceFormatProperties(physicalDevice, imageFormat, &formatProperties);
 
@@ -50,140 +51,178 @@ namespace BEbraEngine {
             throw std::runtime_error("texture image format does not support linear blitting!");
         }
 
+        VkImageSubresourceRange subresourceRange = {};
+        subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        subresourceRange.levelCount = 1;
+        subresourceRange.layerCount = 1;
 
 
-        int32_t mipWidth = texture->width();
-        int32_t mipHeight = texture->height();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        for (uint32_t i = 1; i < texture->mipLevels; i++) {
-            DEBUG_LOG3((std::stringstream() << "texture mipmap" + std::to_string(i)).str(), texture);
-            
-            VkImageMemoryBarrier transferBarrier{};
-            transferBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-            transferBarrier.image = texture->image;
-            transferBarrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
-            transferBarrier.dstQueueFamilyIndex = FamilyIndices.transferFamily.value();
-
-            transferBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            transferBarrier.subresourceRange.baseArrayLayer = 0;
-            transferBarrier.subresourceRange.layerCount = 1;
-            transferBarrier.subresourceRange.levelCount = 1;
-            transferBarrier.subresourceRange.baseMipLevel = i - 1;
-
-            auto queueToQueueBarrier = transferBarrier;    
-            
-            transferBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-            transferBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-
-
-            transferBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-            transferBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-            transferBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            transferBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            vkCmdPipelineBarrier(buffer,
-                VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
-                0, nullptr,
-                0, nullptr,
-                1, &transferBarrier);
-
-            queueToQueueBarrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
-            queueToQueueBarrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
-
-            queueToQueueBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-            queueToQueueBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            queueToQueueBarrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-            queueToQueueBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-            
-
-
-            auto buffer1 = concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
-                VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-
-            VkImageBlit blit{};
-            blit.srcOffsets[0] = { 0, 0, 0 };
-            blit.srcOffsets[1] = { mipWidth, mipHeight, 1 };
-            blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            blit.srcSubresource.mipLevel = i - 1;
-            blit.srcSubresource.baseArrayLayer = 0;
-            blit.srcSubresource.layerCount = 1;
-            blit.dstOffsets[0] = { 0, 0, 0 };
-            blit.dstOffsets[1] = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 };
-            blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            blit.dstSubresource.mipLevel = i;
-            blit.dstSubresource.baseArrayLayer = 0;
-            blit.dstSubresource.layerCount = 1;
-
-            vkCmdPipelineBarrier(buffer,
-                VK_PIPELINE_STAGE_TRANSFER_BIT,
-                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
-                0, nullptr,
-                0, nullptr,
-                1, &queueToQueueBarrier);
-
-            buffer1.startRecord();
-            {
-
-                vkCmdBlitImage(buffer1,
-                    texture->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                    texture->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                    1, &blit,
-                    VK_FILTER_LINEAR); 
-
-                vkCmdPipelineBarrier(buffer1,
-                    VK_PIPELINE_STAGE_TRANSFER_BIT,
-                    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                   0, 0, nullptr, 0, nullptr, 1, &queueToQueueBarrier);
-
-            }
-            buffer1.endRecord();
-            addBufferToRenderQueue(buffer1);
-            
-
-            if (mipWidth > 1) mipWidth /= 2;
-            if (mipHeight > 1) mipHeight /= 2;
-        }
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.image = texture->image;
         barrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
-        barrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
+        barrier.dstQueueFamilyIndex = FamilyIndices.transferFamily.value();
+        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount = 1;
         barrier.subresourceRange.levelCount = 1;
 
-        barrier.subresourceRange.baseMipLevel = texture->mipLevels - 1;
-       // barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        vkCmdPipelineBarrier(buffer,
+            VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+            0, nullptr,
+            0, nullptr,
+            1, &barrier);
 
-        barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-        barrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
-        barrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
 
+
+        int32_t mipWidth = texture->width();
+        int32_t mipHeight = texture->height();
         auto buffer1 = concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
             VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-
-
         buffer1.startRecord();
 
+        for (int32_t i = 1; i < texture->mipLevels; i++) {
 
-        vkCmdPipelineBarrier(buffer1,
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-            0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        vkCmdPipelineBarrier(buffer,
-            VK_PIPELINE_STAGE_TRANSFER_BIT, 
-            VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 
-            0, 0, nullptr, 0, nullptr, 1, &barrier);
+            VkImageBlit imageBlit{};
+
+            
+            imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageBlit.srcSubresource.layerCount = 1;
+            imageBlit.srcSubresource.mipLevel = i - 1;
+            imageBlit.srcOffsets[0] = { 0,0,0 };
+            imageBlit.srcOffsets[1].x = int32_t(texture->width() >> (i - 1)) <= 1 ? 1 : int32_t(texture->width() >> (i - 1));
+            imageBlit.srcOffsets[1].y = int32_t(texture->height() >> (i - 1)) <= 1 ? 1 : int32_t(texture->height() >> (i - 1));
+            imageBlit.srcOffsets[1].z = 1;
+
+            
+            imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageBlit.dstSubresource.layerCount = 1;
+            imageBlit.dstSubresource.mipLevel = i;
+            imageBlit.dstOffsets[0] = { 0,0,0 };
+            imageBlit.dstOffsets[1].x = int32_t(texture->width() >> i) <= 1 ? 1 : int32_t(texture->width() >> i);
+            imageBlit.dstOffsets[1].y = int32_t(texture->height() >> i) <= 1 ? 1 : int32_t(texture->height() >> i);
+            imageBlit.dstOffsets[1].z = 1;
+
+            VkImageSubresourceRange mipSubRange = {};
+            mipSubRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            mipSubRange.baseMipLevel = i;
+            mipSubRange.levelCount = 1;
+            mipSubRange.layerCount = 1;
+
+            
+            {
+                
+                VkImageMemoryBarrier barrier{};
+                barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+                barrier.image = texture->image;
+                barrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
+                barrier.dstQueueFamilyIndex = FamilyIndices.transferFamily.value();
+                barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                barrier.dstAccessMask = 0;
+                barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                barrier.subresourceRange = mipSubRange;
+
+                vkCmdPipelineBarrier(buffer,
+                    VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+                    0, 0, 0, 0, 0, 1, &barrier);
+                    
+
+            }
+            {
+                
+                VkImageMemoryBarrier barrier{};
+                barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+                barrier.image = texture->image;
+                barrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
+                barrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
+                barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                barrier.dstAccessMask = 0;
+                barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                barrier.subresourceRange = mipSubRange;
+
+                vkCmdPipelineBarrier(buffer,
+                    VK_PIPELINE_STAGE_TRANSFER_BIT,
+                    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+                    0, nullptr,
+                    0, nullptr,
+                    1, &barrier);
+
+                vkCmdPipelineBarrier(buffer1,
+                    VK_PIPELINE_STAGE_TRANSFER_BIT,
+                    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                    0, 0, nullptr, 0, nullptr, 1, &barrier);
+                    
+
+                vkCmdBlitImage(
+                    buffer1,
+                    texture->image,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                    texture->image,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    1,
+                    &imageBlit,
+                    VK_FILTER_LINEAR);
+            }
+
+            
+
+            
+            {
+                VkImageMemoryBarrier barrier{};
+                barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+                barrier.image = texture->image;
+                barrier.srcQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
+                barrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
+                barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+                barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+                barrier.subresourceRange = mipSubRange;
+
+                vkCmdPipelineBarrier(buffer1,
+                    VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+                    0, 0, 0, 0, 0, 1, &barrier);
+
+            }
+            
+
+
+        }
+        {}
+        {
+            subresourceRange.levelCount = texture->mipLevels;
+            VkImageMemoryBarrier barrier{};
+            barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            barrier.image = texture->image;
+            barrier.srcQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
+            barrier.dstQueueFamilyIndex = FamilyIndices.graphicsFamily.value();
+            barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            barrier.subresourceRange = subresourceRange;
+
+            vkCmdPipelineBarrier(buffer1,
+                VK_PIPELINE_STAGE_TRANSFER_BIT,
+                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                0, 0, nullptr, 0, nullptr, 1, &barrier);
+
+
+        }
 
         buffer1.endRecord();
+        buffer1.onCompleted([=]{ texture->setLoaded(); });
         addBufferToRenderQueue(buffer1);
-
+        
     }
 
     void VulkanRender::createVkImage(unsigned char* data, VulkanTexture* texture, VkDeviceSize imageSize)
@@ -197,25 +236,27 @@ namespace BEbraEngine {
         vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &_data);
         memcpy(_data, data, static_cast<size_t>(imageSize));
         vkUnmapMemory(device, stagingBufferMemory);
+        auto buffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+
         if (texture->mipLevels != 1)
             createImage(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
                 VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
         else 
             createImage(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
-                VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+                VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-
-        auto buffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         buffer.startRecord();
+            transitionImageLayout(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
 
-        transitionImageLayout(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, buffer);
         copyBufferToImage(stagingBuffer, texture->image, static_cast<uint32_t>(texture->width()), static_cast<uint32_t>(texture->height()), buffer);
         
         if(texture->mipLevels != 1)
             generateMipmaps(texture, VK_FORMAT_R8G8B8A8_SRGB, buffer);
-        else 
+        else {
             transitionImageLayout(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, buffer);
 
+        }
+            
         buffer.endRecord();
 
         buffer.onCompleted(
@@ -282,20 +323,6 @@ namespace BEbraEngine {
             attachmentsSetPool->free(set);
         }
         createAttachmentsSet();
-        for (auto light = lights.begin(); light != lights.end(); ++light) {
-            
-            auto info = LightDescriptorInfo();
-            info.bufferView = (*light)->data.get();
-            info.type = LightDescriptorInfo::Type::Point;
-
-            freeDescriptor((*light));
-            (*light)->descriptor = createDescriptor(&info);
-
-        }
-        for (auto object = objects.begin(); object != objects.end(); ++object) {
-             factory->CreateObjectSet((*object));
-
-        }
     }
 
     void VulkanRender::createDepthResources()
@@ -472,9 +499,6 @@ namespace BEbraEngine {
             vkDestroyDescriptorSetLayout(device, layout, 0);
         }
         executeQueues_Objects.execute();
-        for (auto& object : objects) {
-            factory->destroyObject(*object);
-        }
         executeQueues_Objects.execute();
 
         vulkanRenderBufferPool.reset();
@@ -482,18 +506,14 @@ namespace BEbraEngine {
         lightPool.reset();
         attachmentsSetPool.reset();
         for (int i = 0; i < depthAttachments.size(); i++) {
-            destroyTexture(depthAttachments[i].get());
+            destroyTexture(*depthAttachments[i]);
         }
         for (int i = 0; i < colorAttachments.size(); i++) {
-            destroyTexture(colorAttachments[i].get());
+            destroyTexture(*colorAttachments[i]);
         }
 
-        objects.clear();
-        
         factory.reset();
         cameras.clear();
-
-        lights.clear();
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
             vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
@@ -632,6 +652,236 @@ namespace BEbraEngine {
         if (vkCreateSampler(device, &samplerInfo, nullptr, &texture->sampler) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture sampler!");
         }
+    }
+
+    VulkanTexture* VulkanRender::ImageFromGpuToCpuMemory(VulkanTexture* texture)
+    {
+        bool supportsBlit = true;
+
+        // Check blit support for source and destination
+        VkFormatProperties formatProps;
+
+        // Check if the device supports blitting from optimal images (the swapchain images are in optimal format)
+        vkGetPhysicalDeviceFormatProperties(physicalDevice, VK_FORMAT_R8G8B8A8_UNORM, &formatProps);
+        if (!(formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT)) {
+            std::cerr << "Device does not support blitting from optimal tiled images, using copy instead of blit!" << std::endl;
+            supportsBlit = false;
+        }
+
+        // Check if the device supports blitting to linear images
+        vkGetPhysicalDeviceFormatProperties(physicalDevice, VK_FORMAT_R8G8B8A8_UNORM, &formatProps);
+        if (!(formatProps.linearTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT)) {
+            std::cerr << "Device does not support blitting to linear tiled images, using copy instead of blit!" << std::endl;
+            supportsBlit = false;
+        }
+
+        // Source for the copy is the last rendered swapchain image
+        VkImage srcImage = texture->image;
+
+        // Create the linear tiled destination image to copy to and to read the memory from
+        VkImageCreateInfo imageCreateCI{};
+        imageCreateCI.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageCreateCI.imageType = VK_IMAGE_TYPE_2D;
+        // Note that vkCmdBlitImage (if supported) will also do format conversions if the swapchain color format would differ
+        imageCreateCI.format = VK_FORMAT_R8G8B8A8_UNORM;
+        imageCreateCI.extent.width = texture->width();
+        imageCreateCI.extent.height = texture->height();
+        imageCreateCI.extent.depth = 1;
+        imageCreateCI.arrayLayers = 1;
+        imageCreateCI.mipLevels = 1;
+        imageCreateCI.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageCreateCI.samples = VK_SAMPLE_COUNT_1_BIT;
+        imageCreateCI.tiling = VK_IMAGE_TILING_LINEAR;
+        imageCreateCI.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        // Create the image
+        VkImage dstImage;
+        vkCreateImage(device, &imageCreateCI, nullptr, &dstImage);
+
+        // Create memory to back up the image
+        VkMemoryRequirements memRequirements;
+        VkMemoryAllocateInfo memAllocInfo{};
+        memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+
+        VkDeviceMemory dstImageMemory;
+        vkGetImageMemoryRequirements(device, dstImage, &memRequirements);
+        memAllocInfo.allocationSize = memRequirements.size;
+        // Memory must be host visible to copy from
+        
+        memAllocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        vkAllocateMemory(device, &memAllocInfo, nullptr, &dstImageMemory);
+        vkBindImageMemory(device, dstImage, dstImageMemory, 0);
+
+        // Do the actual blit from the swapchain image to our host visible destination image
+        
+        auto cmd = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
+            CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+        cmd.startRecord();
+        
+        VkImageMemoryBarrier barrier{};
+
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.image = srcImage;
+        barrier.pNext = 0;
+        barrier.srcAccessMask = 0;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+        barrier.subresourceRange = VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+
+        vkCmdPipelineBarrier(cmd,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            0,
+            0, 0, 0, 0, 1, &barrier);
+
+
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.image = dstImage;
+        barrier.pNext = 0;
+        barrier.srcAccessMask = 0;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        barrier.subresourceRange = VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+
+        vkCmdPipelineBarrier(cmd, 
+            VK_PIPELINE_STAGE_TRANSFER_BIT, 
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            0, 
+            0, 0, 0, 0, 1, &barrier);
+
+
+
+        // If source and destination support blit we'll blit as this also does automatic format conversion (e.g. from BGR to RGB)
+        if (supportsBlit)
+        {
+            // Define the region to blit (we will blit the whole swapchain image)
+            VkOffset3D blitSize;
+            blitSize.x = texture->width();
+            blitSize.y = texture->height();
+            blitSize.z = 1;
+            VkImageBlit imageBlitRegion{};
+            imageBlitRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageBlitRegion.srcSubresource.layerCount = 1;
+            imageBlitRegion.srcOffsets[1] = blitSize;
+            imageBlitRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageBlitRegion.dstSubresource.layerCount = 1;
+            imageBlitRegion.dstOffsets[1] = blitSize;
+
+            // Issue the blit command
+            vkCmdBlitImage(
+                cmd,
+                srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                dstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1,
+                &imageBlitRegion,
+                VK_FILTER_NEAREST);
+        }
+        else
+        {
+            // Otherwise use image copy (requires us to manually flip components)
+            VkImageCopy imageCopyRegion{};
+            imageCopyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageCopyRegion.srcSubresource.layerCount = 1;
+            imageCopyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            imageCopyRegion.dstSubresource.layerCount = 1;
+            imageCopyRegion.extent.width = texture->width();
+            imageCopyRegion.extent.height = texture->height();
+            imageCopyRegion.extent.depth = 1;
+
+            // Issue the copy command
+            vkCmdCopyImage(
+                cmd,
+                srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                dstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1,
+                &imageCopyRegion);
+        }
+
+        barrier.image = dstImage;
+        barrier.pNext = 0;
+        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+        barrier.subresourceRange = VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+
+        vkCmdPipelineBarrier(cmd,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            0,
+            0, 0, 0, 0, 1, &barrier);
+
+        VkSubmitInfo info{};
+        info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        info.commandBufferCount = 1;
+        info.pCommandBuffers = cmd.GetBuffer();
+        cmd.endRecord();
+        vkQueueSubmit(transferQueue, 1, &info, 0);
+        vkQueueWaitIdle(transferQueue);
+
+        // Get layout of the image (including row pitch)
+        VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
+        VkSubresourceLayout subResourceLayout;
+        vkGetImageSubresourceLayout(device, dstImage, &subResource, &subResourceLayout);
+
+
+        // Map image memory so we can start copying from it
+        const char* data{};
+       // vkMapMemory(device, texture->memory, 0, VK_WHOLE_SIZE, 0, (void**)data);
+        auto res = vkMapMemory(device, dstImageMemory, 0, VK_WHOLE_SIZE, 0, (void**)&data);
+        data += subResourceLayout.offset;
+        /*
+        
+        std::ofstream file("JOPA.ppm", std::ios::out | std::ios::binary);
+
+        // ppm header
+        file << "P6\n" << texture->width() << "\n" << texture->height() << "\n" << 255 << "\n";
+
+        // If source is BGR (destination is always RGB) and we can't use blit (which does automatic conversion), we'll have to manually swizzle color components
+        bool colorSwizzle{};
+        // Check if source is BGR
+        // Note: Not complete, only contains most common and basic BGR surface formats for demonstration purposes
+        if (!supportsBlit)
+        {
+            std::vector<VkFormat> formatsBGR = { VK_FORMAT_B8G8R8A8_SRGB, VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_B8G8R8A8_SNORM };
+            colorSwizzle = (std::find(formatsBGR.begin(), formatsBGR.end(), VK_FORMAT_B8G8R8A8_UNORM) != formatsBGR.end());
+        }
+        colorSwizzle = false;
+        // ppm binary pixel data
+        for (uint32_t y = 0; y < texture->height(); y++)
+        {
+            unsigned int* row = (unsigned int*)data;
+            for (uint32_t x = 0; x < texture->width(); x++)
+            {
+                if (colorSwizzle)
+                {
+                    file.write((char*)row + 2, 1);
+                    file.write((char*)row + 1, 1);
+                    file.write((char*)row, 1);
+                }
+                else
+                {
+                    file.write((char*)row, 3);
+                }
+                row++;
+            }
+            data += subResourceLayout.rowPitch;
+        }
+        file.close();
+
+        std::cout << "Screenshot saved to disk" << std::endl;
+        // Clean up resources
+        */
+        vkUnmapMemory(device, dstImageMemory);
+        vkFreeMemory(device, dstImageMemory, nullptr);
+        vkDestroyImage(device, dstImage, nullptr);
+        cmd.destroy();
+        return 0;
     }
 
     void VulkanRender::createInstance()
@@ -1644,7 +1894,7 @@ namespace BEbraEngine {
             barrier.srcQueueFamilyIndex = FamilyIndices.transferFamily.value();
             barrier.dstQueueFamilyIndex = FamilyIndices.transferFamily.value();
 
-            sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+            sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
             destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         }
         else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
@@ -1702,6 +1952,10 @@ namespace BEbraEngine {
 
     void VulkanRender::drawFrame()
     {
+        
+        linePool->reset(linesToDrawLastUpdate, 0);
+        linePool->setCountToMap(linesToDraw);
+        linePool->map();
         //updateCmdBuffers();
 
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
@@ -1759,8 +2013,6 @@ namespace BEbraEngine {
         submitInfoTransfer.commandBufferCount = static_cast<uint32_t>(buffersTransfer.size());
         submitInfoTransfer.pCommandBuffers = buffersTransfer.data();
 
-
-
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
@@ -1811,7 +2063,7 @@ namespace BEbraEngine {
         for (auto& buf : bufDestroy)
             buf.destroy();
         executeQueues_Objects.execute();
-
+        linesToDrawLastUpdate = linesToDraw.load();
         linesToDraw = 0;
     }
 
@@ -1825,19 +2077,10 @@ namespace BEbraEngine {
             drawLine(camera->Front + camera->Position, (Vector3(1, 0, 0) / 100 + camera->Position), Vector3(0, 0, 1));
         }
 
-        for (auto light = lights.begin(); light != lights.end(); ++light) {
-            (*light)->update();
-        }
-        for (auto object = objects.begin(); object != objects.end(); ++object) {
-            (*object)->update();
-        }
         if(globalLight)
         globalLight->update();
         totalTime += Time::time();
-        // if(needCmdBuffersUpdate)
-       // updateCmdBuffers();
-
-        linePool->map();
+        
         needCmdBuffersUpdate = false;
     }
 
@@ -1848,12 +2091,13 @@ namespace BEbraEngine {
 
     void VulkanRender::drawLine(const Vector3& from, const Vector3& to, const Vector3& color)
     {
-        linesMemory[linesToDraw].from = from;
-        linesMemory[linesToDraw].to = to;
-        linesMemory[linesToDraw].color = color;
+       // std::lock_guard<mutex> g(m);
+        volatile int _linesToDraw = linesToDraw++;
+        linesMemory[_linesToDraw].from = from;
+        linesMemory[_linesToDraw].to = to;
+        linesMemory[_linesToDraw].color = color;
+   
 
-
-        linesToDraw++;
     }
 
     void VulkanRender::updateCmdBuffers(RenderData& data)
@@ -1912,17 +2156,14 @@ namespace BEbraEngine {
             vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &pointLightsSet, 0, nullptr);
 
             vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
+            if(objectSet)
+                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &objectSet, 0, nullptr);
 
-            vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &objectSet, 0, nullptr);
 
 
-
-            for (auto object = data.objects.begin(); object != data.objects.end(); ++object) {
-                if (object != data.objects.end()) {
-                    const auto& obj = static_cast<VulkanRenderObject*>(*object);
-                    obj->draw(RenderBuffers[i]);
-
-                }
+            for (auto& object : data.objects) {
+                auto& obj = object->as<VulkanRenderObject>();
+                obj.draw(RenderBuffers[i]);
             }
             
             vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, linesDrawing);
@@ -2401,16 +2642,17 @@ namespace BEbraEngine {
         linePool = std::unique_ptr<VulkanRenderBufferPool<Line::ShaderData>>(new VulkanRenderBufferPool<Line::ShaderData>());
         linePool->setContext(this);
         linePool->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
-        linePool->allocate(100000, sizeof(Line::ShaderData), AbstractRender::TypeBuffer::Storage);
-
+        linePool->allocate(linesMemory.size(), sizeof(Line::ShaderData), AbstractRender::TypeBuffer::Storage);
+        linePool->bindData(linesMemory);
 
         executeQueues_Objects.setStrategy(ExecuteType::Single);
         auto view = linePool->get();
         lineSet = createDescriptor2(view->get());
 
-        static auto obj = static_cast<VulkanRenderObject*>(factory->create({}).value());
-        objectSet = obj->descriptor;
-        factory->destroyObject(*obj);
+      //  auto obj = static_cast<VulkanRenderObject*>(factory->create({}).value());
+     //   objectSet = obj->descriptor;
+     //   factory->destroyObject(*obj);
+    //    delete obj;
     }
 
     RenderBuffer* VulkanRender::createIndexBuffer(std::vector<uint32_t> indices)
@@ -2542,10 +2784,12 @@ namespace BEbraEngine {
             bufferInfo.range = info->bufferView->availableRange;
 
             VkDescriptorImageInfo image{};
-            image.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            image.imageView = info->imageView;
-            image.sampler = info->sampler;
+            if (info->image) {
 
+                image.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                image.imageView = info->image->imageView;
+                image.sampler = info->image->sampler;
+            }
             VkDescriptorImageInfo specular{};
             if (info->specular) {
                 specular.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -2563,9 +2807,10 @@ namespace BEbraEngine {
 
 
 
-            std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+            std::vector<VkWriteDescriptorSet> descriptorWrites{};
 
             auto types = vulkanRenderBufferPool->getInfo().types;
+            descriptorWrites.resize(1);
             descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             descriptorWrites[0].dstSet = set;
             descriptorWrites[0].dstBinding = 0;
@@ -2573,17 +2818,19 @@ namespace BEbraEngine {
             descriptorWrites[0].descriptorType = types[0].type;
             descriptorWrites[0].descriptorCount = 1;
             descriptorWrites[0].pBufferInfo = &bufferInfo;
-
-            descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            descriptorWrites[1].dstSet = set;
-            descriptorWrites[1].dstBinding = 1;
-            descriptorWrites[1].dstArrayElement = 0;
-            descriptorWrites[1].descriptorType = types[1].type;
-            descriptorWrites[1].descriptorCount = 1;
-            descriptorWrites[1].pImageInfo = &image;
+            if (info->image) {
+                descriptorWrites.resize(2);
+                descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                descriptorWrites[1].dstSet = set;
+                descriptorWrites[1].dstBinding = 1;
+                descriptorWrites[1].dstArrayElement = 0;
+                descriptorWrites[1].descriptorType = types[1].type;
+                descriptorWrites[1].descriptorCount = 1;
+                descriptorWrites[1].pImageInfo = &image;
+            }
             if (info->specular) {
 
-
+                descriptorWrites.resize(3);
                 descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 descriptorWrites[2].dstSet = set;
                 descriptorWrites[2].dstBinding = 2;
@@ -2594,7 +2841,7 @@ namespace BEbraEngine {
             }
             if (info->normal) {
 
-
+                descriptorWrites.resize(4);
                 descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 descriptorWrites[3].dstSet = set;
                 descriptorWrites[3].dstBinding = 3;
@@ -2615,6 +2862,85 @@ namespace BEbraEngine {
 
         return set;
     }
+    void VulkanRender::updateDesriptor(VkDescriptorSet& set, VulkanDescriptorSetInfo* info)
+    {
+
+        auto vkbuffer = static_cast<VulkanBuffer*>(info->bufferView->buffer.get());
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = vkbuffer->self;
+        bufferInfo.offset = info->bufferView->offset;
+        bufferInfo.range = info->bufferView->availableRange;
+
+        VkDescriptorImageInfo image{};
+        if (info->image) {
+
+            image.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            image.imageView = info->image->imageView;
+            image.sampler = info->image->sampler;
+        }
+        VkDescriptorImageInfo specular{};
+        if (info->specular) {
+            specular.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            specular.imageView = info->specular->imageView;
+            specular.sampler = info->specular->sampler;
+        }
+
+
+        VkDescriptorImageInfo normal{};
+        if (info->normal) {
+            normal.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            normal.imageView = info->normal->imageView;
+            normal.sampler = info->normal->sampler;
+        }
+
+
+
+        std::vector<VkWriteDescriptorSet> descriptorWrites{};
+
+        auto types = vulkanRenderBufferPool->getInfo().types;
+        descriptorWrites.resize(1);
+        descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[0].dstSet = set;
+        descriptorWrites[0].dstBinding = 0;
+        descriptorWrites[0].dstArrayElement = 0;
+        descriptorWrites[0].descriptorType = types[0].type;
+        descriptorWrites[0].descriptorCount = 1;
+        descriptorWrites[0].pBufferInfo = &bufferInfo;
+        if (info->image) {
+            descriptorWrites.resize(2);
+            descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[1].dstSet = set;
+            descriptorWrites[1].dstBinding = 1;
+            descriptorWrites[1].dstArrayElement = 0;
+            descriptorWrites[1].descriptorType = types[1].type;
+            descriptorWrites[1].descriptorCount = 1;
+            descriptorWrites[1].pImageInfo = &image;
+        }
+        if (info->specular) {
+
+            descriptorWrites.resize(3);
+            descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[2].dstSet = set;
+            descriptorWrites[2].dstBinding = 2;
+            descriptorWrites[2].dstArrayElement = 0;
+            descriptorWrites[2].descriptorType = types[2].type;
+            descriptorWrites[2].descriptorCount = 1;
+            descriptorWrites[2].pImageInfo = &specular;
+        }
+        if (info->normal) {
+
+            descriptorWrites.resize(4);
+            descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[3].dstSet = set;
+            descriptorWrites[3].dstBinding = 3;
+            descriptorWrites[3].dstArrayElement = 0;
+            descriptorWrites[3].descriptorType = types[3].type;
+            descriptorWrites[3].descriptorCount = 1;
+            descriptorWrites[3].pImageInfo = &normal;
+        }
+
+        vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+    }
     void VulkanRender::freeDescriptor(VulkanRenderObject& set)
     {
         vulkanRenderBufferPool->free(set.descriptor);
@@ -2628,22 +2954,31 @@ namespace BEbraEngine {
     {
         lightPool->free(set->descriptor);
     }
-    void VulkanRender::destroyTexture(VulkanTexture* texture)
+    void VulkanRender::destroyTexture(VulkanTexture& texture)
     {
+        auto texCopy = texture;
 
-        if (texture->image != nullptr) {
+        executeQueues_Objects.addTask(ExecuteType::Multi, 
+            [=] {
+            texture;
+            if (texCopy.image != nullptr) {
 
 
-            vkFreeMemory(device, texture->memory, 0);
-            vkDestroyImage(device, texture->image, 0);
-            vkDestroySampler(device, texture->sampler, 0);
-            vkDestroyImageView(device, texture->imageView, 0);
-        }
-        else DEBUG_LOG3("texture memory is invalid", texture);
-        texture->memory = 0;
-        texture->image = 0;
-        texture->sampler = 0;
-        texture->imageView = 0;
+                vkFreeMemory(device, texCopy.memory, 0);
+                vkDestroyImage(device, texCopy.image, 0);
+                vkDestroySampler(device, texCopy.sampler, 0);
+                vkDestroyImageView(device, texCopy.imageView, 0);
+            }
+            else DEBUG_LOG3("texture memory is invalid", &texCopy);
+            auto& nonconstJopa = const_cast<VulkanTexture&>(texCopy);
+            nonconstJopa.memory = VK_NULL_HANDLE;
+            nonconstJopa.image = VK_NULL_HANDLE;
+            nonconstJopa.sampler = VK_NULL_HANDLE;
+            nonconstJopa.imageView = VK_NULL_HANDLE;
+
+        });
+
+
     }
     void VulkanRender::destroyBuffer(RenderBuffer* buffer)
     {
@@ -2670,33 +3005,7 @@ namespace BEbraEngine {
     {
         return createBufferAsync(vertices.data(), sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
-    void VulkanRender::addObject(RenderObject& object)
-    {
-        objects.push_back(dynamic_cast<VulkanRenderObject*>(&object));
-        needCmdBuffersUpdate = true;
-    }
-    void VulkanRender::addLight(Light& light)
-    {
-        lights.push_back(dynamic_cast<VulkanPointLight*>(&light));
-        needCmdBuffersUpdate = true;
-    }
 
-    void VulkanRender::removeObject(RenderObject& object)
-    {
-        auto item = std::remove(objects.begin(), objects.end(), &object);
-        if (item != objects.end())
-            objects.erase(item);
-        else
-            DEBUG_LOG1("lost object");
-        needCmdBuffersUpdate = true;
-    }
-
-    void VulkanRender::removeLight(Light& light)
-    {
-        auto item = std::remove(lights.begin(), lights.end(), &light);
-        lights.erase(item);
-        needCmdBuffersUpdate = true;
-    }
     VulkanRender::VulkanRender() {}
 
 

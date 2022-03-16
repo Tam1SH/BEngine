@@ -11,15 +11,17 @@
 #include "Math.hpp"
 namespace BEbraEngine {
 
-	GameObjectFactory::GameObjectFactory(AbstractRender& render, Physics& physics)
+	GameObjectFactory::GameObjectFactory(AbstractRender& render, Physics& physics, RenderWorld& world)
 	{
 		renderFactory = render.getRenderObjectFactory();
 		colliderFactory = physics.getColliderFactory();
 		rigidBodyFactory = physics.getRigidBodyFactory();
+		renderFactory->setWorld(world);
 		transFactory = unique_ptr<TransformFactory>(new TransformFactory());
 		destroyer = unique_ptr<IVisitorGameComponentDestroyer>(new GameComponentDestroyer(
 			*renderFactory, *colliderFactory, *rigidBodyFactory
 		));
+		renderFactory->setComponentDestroyer(*destroyer);
 	}
 
 	optional<GameComponent*> GameObjectFactory::create(const GameComponentCreateInfo& info)
@@ -32,20 +34,15 @@ namespace BEbraEngine {
 		optional<Collider*> opt_collider;
 		optional<RigidBody*> opt_rigidBody;
 		optional<Transform*> opt_transform;
+		optional<Material*> opt_material;
 
-		if (info.colliderInfo) {
-			Collider::ColliderCreateInfo cinfo{};
+		if (info.rigidBodyInfo && info.colliderInfo) {
+
+			Collider::CreateInfo cinfo{};
 			cinfo.scale = info.transformInfo->scale;
 			cinfo.position = info.transformInfo->position;
 			opt_collider = colliderFactory->create(cinfo);
-		}
-		if (info.rigidBodyInfo) {
-
-			Collider::ColliderCreateInfo cinfo{};
-			cinfo.scale = info.transformInfo->scale;
-			cinfo.position = info.transformInfo->position;
-			opt_collider = colliderFactory->create(cinfo);
-			RigidBody::RigidBodyCreateInfo RigidBodyInfo{};
+			RigidBody::CreateInfo RigidBodyInfo{};
 			RigidBodyInfo.position = info.transformInfo->position;
 			if (opt_collider.has_value()) {
 				RigidBodyInfo.collider = opt_collider.value();
@@ -57,7 +54,7 @@ namespace BEbraEngine {
 		if (info.renderInfo) 
 			opt_renderObj = renderFactory->create(*info.renderInfo);
 		else {
-			RenderObject::RenderObjectCreateInfo info{};
+			RenderObject::CreateInfo info{};
 			opt_renderObj = renderFactory->create(info);
 			DEBUG_LOG1("renderInfo doesn't exist in GameObjectCreateInfo");
 		}
@@ -65,18 +62,18 @@ namespace BEbraEngine {
 		if (info.transformInfo)
 			opt_transform = transFactory->create(*info.transformInfo);
 		else {
-			Transform::TransformCreateInfo info{};
+			Transform::CreateInfo info{};
 			opt_transform = transFactory->create(info);
 			DEBUG_LOG1("transformInfo doesn't exist in GameObjectCreateInfo");
 		}
 
 
 		if (info.transformInfo && info.colliderInfo && info.rigidBodyInfo) {
-			auto v = info.transformInfo->position;
-			auto v1 = info.colliderInfo->position;
-			auto v2 = info.rigidBodyInfo->position;
+			auto& v = info.transformInfo->position;
+			auto& v1 = info.colliderInfo->position;
+			auto& v2 = info.rigidBodyInfo->position;
 
-			if (v != v1 || v != v2) {
+			if (v != v1 || v != v2 || v1 != v2) {
 				DEBUG_LOG2("positions are not equal, are they?", 0, "GameComponentCreateInfo", Debug::ObjectType::GameObject, Debug::MessageType::Info);
 			}
 		}
@@ -85,8 +82,6 @@ namespace BEbraEngine {
 		shared_ptr<Transform> transform;
 		shared_ptr<Collider> collider;
 		shared_ptr<RigidBody> rigidbody;
-
-
 
 		comp = new GameObject();
 
@@ -130,7 +125,7 @@ namespace BEbraEngine {
 
 	shared_ptr<Light> GameObjectFactory::createLight(const Vector3& position)
 	{
-		Transform::TransformCreateInfo info{};
+		Transform::CreateInfo info{};
 		info.position = position;
 		auto transform = shared_ptr<Transform>(transFactory->create(info).value());
 		auto light = shared_ptr<Light>(renderFactory->createLight(Vector3(1), position));
@@ -164,20 +159,28 @@ namespace BEbraEngine {
 
 	void GameObjectFactory::setCollider(Collider& col, Collider::Type type)
 	{
-		colliderFactory->setShape(col, *colliderFactory->getShape(type));
+		colliderFactory->setShape(col, *colliderFactory->getShape(type).value());
 	}
 
-	void GameObjectFactory::setTexture(GameObject& object, const boost::filesystem::path& path)
+	void GameObjectFactory::setMaterialAsync(shared_ptr<GameObject> object, const Material::CreateInfo& info)
 	{
-		renderFactory->setTexture(object.getComponentChecked<RenderObject>(), path);
+		auto rObj = object->getComponentCheckedPtr<RenderObject>();
+		auto& mat1 = object->getComponent<Material>();
+		if(mat1.has_value())
+			mat1.value()->destroy(*destroyer);
+
+		auto opt_mat = renderFactory->createMaterialAsync(rObj,info);
+		Material* mat{};
+		if (opt_mat.has_value()) {
+			mat = opt_mat.value();
+		}
+		else throw std::exception();
+		object->addComponent(shared_ptr<Material>(mat));
 	}
 
 	void GameObjectFactory::destroy(GameComponent& object)
 	{
 		object.destroy(*destroyer);
-		//renderFactory->destroyObject(object->getComponent<RenderObject>());
-		//colliderFactory->destroyCollider(object->getComponent<Collider>().get());
-		//rigidBodyFactory->destroy(object->getComponent<RigidBody>().get());
 	}
 
 	void GameObjectFactory::destroy(GameObject& object)

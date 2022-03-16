@@ -63,7 +63,7 @@ namespace BEbraEngine {
         struct ShaderData {
             alignas(16) Vector3 position;
 
-            alignas(16) Vector3 ambient;
+            alignas(16) Vector3 color;
             alignas(16) Vector3 diffuse;
             alignas(16) Vector3 specular;
 
@@ -72,7 +72,7 @@ namespace BEbraEngine {
             alignas(4) float quadratic;
         };
         
-        struct PointLightCreateInfo {
+        struct CreateInfo {
             const Vector3 lightColor{ 1 };
             float constant{};
             float linear{};
@@ -111,12 +111,12 @@ namespace BEbraEngine {
         struct ShaderData {
             alignas(16) Vector3 direction;
 
-            alignas(16) Vector3 ambient;
+            alignas(16) Vector3 color;
             alignas(16) Vector3 diffuse;
             alignas(16) Vector3 specular;
 
         };
-        struct DirectionLightCreateInfo {
+        struct CreateInfo {
             const Vector3 lightColor{ 1 };
         };
 
@@ -134,7 +134,7 @@ namespace BEbraEngine {
         void update() {
             ShaderData data1;
             data1.direction = _direction;
-            data1.ambient = color;
+            data1.color = color;
             data1.diffuse = color;
             data1.specular = color;
             data->setData(&data1, sizeof(ShaderData));
@@ -159,18 +159,32 @@ namespace BEbraEngine {
     };
 
     class Material : public GameComponent {
+        DEBUG_DESTROY_CHECK_DECL()
     public:
-        Material(Texture* ambient,
+        friend class GameComponentDestroyer;
+        struct CreateInfo {
+            boost::filesystem::path color;
+            boost::filesystem::path specular;
+            boost::filesystem::path normal;
+        };
+    public:
+        Material(Texture* color);
+        Material(Texture* color,
             Texture* specular,
             Texture* normal);
-    private:
 
-        Texture* ambient;
-        Texture* specular;
-        Texture* normal;
-
-        // Унаследовано через GameComponent
         virtual void destroy(IVisitorGameComponentDestroyer& destroyer) override;
+
+        ~Material();
+
+        Texture& getColor() { return *color; }
+        Texture& getSpecular() { return *specular; }
+        Texture& getNormal() { return *normal; }
+
+        shared_ptr<Texture> color;
+        shared_ptr<Texture> specular;
+        shared_ptr<Texture> normal;
+
     };
 
     class RenderObject : public GameComponent, public IReusable {
@@ -179,25 +193,22 @@ namespace BEbraEngine {
         struct ShaderData {
             Matrix4 model;
             alignas(16) Vector3 color;
-
+            int hasMaps{false};
         };
 
-        struct RenderObjectCreateInfo {
+        struct CreateInfo {
 
-            const Light::PointLightCreateInfo* pointLightInfo;
-            const DirectionLight::DirectionLightCreateInfo* directionLightInfo;
+            const Light::CreateInfo* pointLightInfo;
+            const DirectionLight::CreateInfo* directionLightInfo;
         };
     public:
 
 
         void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
-        //бесполезная хуйня
-        shared_ptr<Texture> texture;
+        Material* material;
 
         shared_ptr<Model> model;
-
-        Material* material;
 
         shared_ptr<RenderBufferView> matrix;
 
@@ -216,6 +227,7 @@ namespace BEbraEngine {
         Vector3& getColor() {
             return _color;
         }
+        bool hasMaps;
     private:
         Vector3 _color;
 

@@ -15,7 +15,7 @@ namespace BEbraEngine {
     public:
         friend class TransformFactory;
 
-        struct TransformCreateInfo {
+        struct CreateInfo {
 
             Vector3 position{};
             Vector3 scale{ 1 };
@@ -26,13 +26,11 @@ namespace BEbraEngine {
 
         void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
-        void updatePosition(const Vector3& position) noexcept;
-
         void setPosition(const Vector3& position) noexcept;
 
         void setScale(const Vector3& scale) noexcept;
 
-        void setQuat(const Quaternion& quat) noexcept;
+        void setRotation(const Quaternion& quat) noexcept;
 
 
         Vector3& getPosition() noexcept;

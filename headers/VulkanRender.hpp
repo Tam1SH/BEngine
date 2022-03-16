@@ -52,6 +52,7 @@ using BE_STD::optional;
 using BE_STD::map;
 using BE_STD::list;
 using BE_STD::string;
+using BE_STD::atomic;
 
 BE_NAMESPACE_STD_BEGIN
     template<typename T, typename D>
@@ -83,14 +84,6 @@ namespace BEbraEngine {
 
         RenderBuffer* createVertexBuffer(vector<Vertex> vertices) override;
 
-        void addObject(RenderObject& object) override;
-
-        void addLight(Light& light) override;
-
-        void removeObject(RenderObject& object) override;
-
-        void removeLight(Light& light) override;
-
         void addCamera(SimpleCamera& camera) override;
 
         void selectMainCamera(SimpleCamera& camera) override;
@@ -116,12 +109,14 @@ namespace BEbraEngine {
             return { 
             static_cast<float>(currentRenderResolution.width), 
             static_cast<float>(currentRenderResolution.height) 
-        };
+            };
         }
 
         uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type) override;
 
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
+
+        void updateDesriptor(VkDescriptorSet& set, VulkanDescriptorSetInfo* info);
 
         VkDescriptorSet createDescriptor(LightDescriptorInfo* info);
 
@@ -135,7 +130,7 @@ namespace BEbraEngine {
 
         void freeDescriptor(VulkanPointLight* set);
 
-        void destroyTexture(VulkanTexture* texture);
+        void destroyTexture(VulkanTexture& texture);
 
         RenderBuffer* createBufferAsync(void* data, uint32_t size, VkBufferUsageFlags usage);
 
@@ -146,6 +141,8 @@ namespace BEbraEngine {
         VkImageView createImageView(VulkanTexture* texture, VkFormat format, VkImageAspectFlags aspectFlags);
 
         void createTextureSampler(VulkanTexture* texture);
+        
+        VulkanTexture* ImageFromGpuToCpuMemory(VulkanTexture* texture);
 
         void recreateSwapChain(uint32_t width, uint32_t height);
 
@@ -188,8 +185,7 @@ namespace BEbraEngine {
 
         ~VulkanRender();
 
-        size_t linesToDraw;
-        size_t debebebe{};
+        
     public:
 
         static VkDevice device;
@@ -202,6 +198,7 @@ namespace BEbraEngine {
 
     
     private:
+        mutex m;
 
         bool needCmdBuffersUpdate{ true };
 
@@ -209,21 +206,17 @@ namespace BEbraEngine {
 
         VkDescriptorSet lineSet;
 
+        atomic<size_t> linesToDraw{0};
+
+        atomic<size_t> linesToDrawLastUpdate;
+
         VkDescriptorSet objectSet;
 
-        vector<Line::ShaderData> linesMemory{ 100000 };
-
-        unique_ptr<RenderBuffer> nullVertexbuffer;
-
-        unique_ptr<RenderBuffer> lineDefault;
+        vector<Line::ShaderData> linesMemory{ 30000 };
 
         unique_ptr<VulkanRenderBufferPool<Line::ShaderData>> linePool;
 
         unique_ptr<VulkanRenderObjectFactory> factory;
-
-        vector<VulkanRenderObject*> objects;
-
-        list<VulkanPointLight*> lights;
 
         list<VulkanCamera*> cameras;
 
@@ -468,7 +461,7 @@ namespace BEbraEngine {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
 
-        const bool enableValidationLayers = false;
+        const bool enableValidationLayers = true;
 
     };
 

@@ -24,6 +24,14 @@ namespace BEbraEngine {
 
         virtual void destroy(IVisitorGameComponentDestroyer& destroyer) = 0;
 
+        template<typename T, class _ = typename BE_STD::enable_if<BE_STD::is_base_of<GameComponent, T>::value>::type>
+        T& as() {
+            T* p = dynamic_cast<T*>(this);
+            if (p)
+                return *p;
+            throw std::exception();
+        }
+
         virtual void addComponent(shared_ptr<GameComponent> component);
 
         virtual shared_ptr<GameComponent> removeComponent(shared_ptr<GameComponent> component);
@@ -42,7 +50,7 @@ namespace BEbraEngine {
 
         virtual ~GameComponent() noexcept {}
 
-        GameComponent() {}
+        GameComponent() noexcept {}
 
     protected:
         string name_{};

@@ -2,11 +2,12 @@
 #include "stdafx.h"
 
 #include "AbstractRender.hpp"
-
-
+#include "Debug.hpp"
 namespace BEbraEngine {
 
     class RenderWorld {
+    public:
+        struct Request { };
     public:
 
         RenderWorld(AbstractRender& render) {
@@ -14,36 +15,37 @@ namespace BEbraEngine {
         }
 
 
-        void removeObject(RenderObject& object) {
+        void removeObject(const RenderObject& object) {
             auto iter = std::remove(objects.begin(), objects.end(), &object);
-            objects.erase(iter);
-            RenderData data;
-            data.objects = objects;
-            data.lights = lights;
-            render->updateState(data);
+            if (iter != objects.end()) {
+                objects.erase(iter);
+                updateState({});
+            }
+            else {
+                DEBUG_LOG1("Object has not been in renderWorld", &object);
+                throw std::exception();
+            }
+            
         }
 
         void addObject(RenderObject& object) {
             objects.push_back(&object);
-            RenderData data;
-            data.objects = objects;
-            data.lights = lights;
-            render->updateState(data);
+            updateState({});
 
         }
 
         void addLight(Light& light) {
             lights.push_back(&light);
-            RenderData data;
-            data.objects = objects;
-            data.lights = lights;
-            render->updateState(data);
+            updateState({});
         }
 
-        void updateRenderData();
+        void update();
 
+        void updateState(const Request& request);
         
     private:
+        
+        tbb::concurrent_queue<Request> requestQueue;
         vector<RenderObject*> objects;
         vector<Light*> lights;
         AbstractRender* render;

@@ -24,4 +24,5 @@ namespace BEbraEngine {
         memcpy(_data, data, size);
         vkUnmapMemory(VulkanRender::device, memory);
     }
+
 }

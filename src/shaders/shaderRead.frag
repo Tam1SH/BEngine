@@ -54,7 +54,7 @@ float random( vec4  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
 
 void main() {
 
-	if(subpassLoad(inputDepth).r >= 0.1) {
+	if(subpassLoad(inputDepth).r >= 1) {
         float depth = subpassLoad(inputDepth).r;
         vec3 color = vec3((depth - 0.8) * 1.0 / (1 - 0.8));
         outColor = vec4(  subpassLoad(inputColor).rgb - color / 2, 1.0f);

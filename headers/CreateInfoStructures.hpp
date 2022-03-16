@@ -3,8 +3,11 @@
 #include "platform.hpp"
 #include "RenderBuffer.hpp"
 #include "Vector3.hpp"
-
 using BE_STD::vector;
+
+namespace BEbraEngine {
+	class VulkanTexture;
+}
 
 namespace BEbraEngine {
 
@@ -28,8 +31,6 @@ namespace BEbraEngine {
 	class VulkanDescriptorSetInfo {
 	public:
 		RenderBufferView* bufferView;
-		VkSampler sampler;
-		VkImageView imageView;
 
 		const VulkanTexture* image;
 		const VulkanTexture* specular;

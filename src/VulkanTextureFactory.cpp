@@ -3,12 +3,42 @@
 
 #include "VulkanTextureFactory.hpp"
 #include <stb-master/stb_image.h>
-
+#include <stb-master/stb_image_write.h>
 #include "VulkanRender.hpp"
 #include "Debug.hpp"
 
 namespace BEbraEngine {
+    optional<Material*> VulkanTextureFactory::createMaterialAsync(const Material::CreateInfo& info, function<void(Material*)> onComplete)
+    {
+        auto strColorLow = ((info.color.parent_path().string() / info.color.stem()).string() + "_low");
+        auto strExensionColor = info.color.extension().string();
+        auto image = create(strColorLow + strExensionColor, false);
 
+        
+        tbb::task_arena g;
+        auto mat = new Material(image);
+
+        g.enqueue([=] {
+            auto strColor = ((info.color.parent_path().string() / info.color.stem()).string());
+            auto strSpecular = ((info.specular.parent_path().string() / info.specular.stem()).string());
+            auto strNormal = ((info.normal.parent_path().string() / info.normal.stem()).string());
+
+            auto strExensionColor = info.color.extension().string();
+            auto strExensionSpecular = info.specular.extension().string();
+            auto strExensionNormal = info.normal.extension().string();
+
+            auto color = create(strColor + strExensionColor, true);
+            //Хуй знает, есть ли смысл создавать мип лвла для всего этого
+            auto specular = create(strSpecular + strExensionSpecular, false);
+            auto normal = create(strNormal + strExensionNormal, false);
+            image->destroy(*destroyer);
+            *mat = Material(color, specular, normal);
+
+            onComplete(mat);
+
+            });
+        return mat;
+    }
     Texture* VulkanTextureFactory::createAsync(const boost::filesystem::path& path, std::function<void(Texture*)> onComplete)
     {
 
@@ -24,6 +54,7 @@ namespace BEbraEngine {
 
             std::string path = str + str1;
             Texture* image = create(path, true);
+            
             onComplete(image);
         });
 
@@ -33,8 +64,8 @@ namespace BEbraEngine {
     {
         VulkanTexture* image = new VulkanTexture();
         int texWidth, texHeight, texChannels;
-        stbi_set_flip_vertically_on_load(true);
-
+       // stbi_set_flip_vertically_on_load(true);
+        
         stbi_uc* pixels = stbi_load(path.string().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         image->setHeight(texHeight);
         image->setWidth(texWidth);
@@ -45,51 +76,49 @@ namespace BEbraEngine {
             if(!path.string().empty())
                 DEBUG_LOG2("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
                     image, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
-            pixels = new unsigned char[4 * 300 * 300];
-            for (int i = 0; i < 4 * 300 * 300; i++) {
-                pixels[i] = 255;
-            }
-            texWidth = 300, texHeight = 300;
+            pixels = new unsigned char[4];
+            pixels[0] = 255;
+            pixels[1] = 255;
+            pixels[2] = 255;
+            texWidth = 1, texHeight = 1;
             imageSize = 4 * texWidth * texHeight;
             image->setHeight(texHeight);
             image->setWidth(texWidth);
         }
         if (generateMip)
             image->mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-        else
+        else {
+
             image->mipLevels = 1;
+            image->setLoaded();
+        }
 
         render->createVkImage(pixels, image, imageSize);
         image->imageView = render->createImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
         stbi_image_free(pixels);
         
         render->createTextureSampler(image);
-
         return image;
     }
     Texture* VulkanTextureFactory::createEmpty()
     {
         return create("", false);
     }
+    void VulkanTextureFactory::setDestroyer(IVisitorGameComponentDestroyer& destroyer)
+    {
+        this->destroyer = &destroyer;
+    }
+    void VulkanTextureFactory::jopa(char const* filename, int x, int y, int comp, const void* data, int quality)
+    {
+        stbi_write_jpg(filename, x, y, comp, data, quality);
+    }
     VulkanTextureFactory::VulkanTextureFactory(AbstractRender* render) : render(dynamic_cast<VulkanRender*>(render))
     { 
         if (!render) throw std::runtime_error("render isn't VulkanRender"); 
     }
-    void VulkanTextureFactory::destroyTexture(Texture* texture)
+    void VulkanTextureFactory::destroyTexture(Texture& texture)
     {
-        auto vTexture = static_cast<VulkanTexture*>(texture);
-        
-#ifdef _DEBUG
-        if (texture->isDestroyed) {
-            DEBUG_LOG3("А текстурка блять уже удалена", texture);
-        }
-        else
-            texture->isDestroyed = true;
-#endif 
+        auto& vTexture = texture.as<VulkanTexture>();
         render->destroyTexture(vTexture);
-
-
-
-
     }
 }

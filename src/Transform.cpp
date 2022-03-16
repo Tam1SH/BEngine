@@ -37,11 +37,7 @@ namespace BEbraEngine {
         destroyer.destroyTransformComponent(*this);
     }
 
-    void Transform::updatePosition(const Vector3& position) noexcept
-    {
-        this->position = position;
 
-    }
 
     void Transform::setPosition(const Vector3& position) noexcept
     {
@@ -54,7 +50,7 @@ namespace BEbraEngine {
         this->scale = scale;
     }
 
-    void Transform::setQuat(const Quaternion& quat) noexcept
+    void Transform::setRotation(const Quaternion& quat) noexcept
     {
         this->quat = quat;
     }

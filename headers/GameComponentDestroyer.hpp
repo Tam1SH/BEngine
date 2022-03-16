@@ -19,23 +19,25 @@ namespace BEbraEngine {
 			ColliderFactory& colliderFactory,
 			RigidBodyFactory& rigidBodyFactory);
 
-		void destroyGameObject(GameObject& comp) const override;
+		void destroyGameObject(GameObject& comp) override;
 
-		void destroyPointLightComponent(Light& comp) const override;
+		void destroyPointLightComponent(Light& comp) override;
 
-		void destroyDirectionLightComponent(DirectionLight& comp) const override;
+		void destroyDirectionLightComponent(DirectionLight& comp) override;
 
-		void destroyRenderComponent(RenderObject& comp) const override;
+		void destroyRenderComponent(RenderObject& comp) override;
 
-		void destroyRigidBodyComponent(RigidBody& comp) const override;
+		void destroyRigidBodyComponent(RigidBody& comp) override;
 
-		void destroyColliderComponent(Collider& comp) const override;
+		void destroyColliderComponent(Collider& comp) override;
 	
-		void destroyMaterialComponent(Texture& comp) const override;
+		void destroyTextureComponent(Texture& comp) override;
 
-		void destroyTransformComponent(Transform& comp) const override;
+		void destroyMaterialComponent(Material& comp) override;
 
-		void destroyCameraComponent(SimpleCamera& comp) const override;
+		void destroyTransformComponent(Transform& comp) override;
+
+		void destroyCameraComponent(SimpleCamera& comp) override;
 
 	private:
 		IRenderObjectFactory* renderFactory;

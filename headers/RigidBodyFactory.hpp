@@ -1,9 +1,9 @@
 #pragma once
 #include "stdafx.h"
+#include "platform.hpp"
 #include "RigidBoby.hpp"
 
-using std::optional;
-
+using BE_STD::optional;
 
 namespace BEbraEngine {
 	class Physics;
@@ -15,13 +15,13 @@ namespace BEbraEngine {
 	class RigidBodyFactory
 	{
 	public:
-		RigidBodyFactory(Physics* physics);
+		RigidBodyFactory(Physics& physics);
 
-		optional<RigidBody*> create(const RigidBody::RigidBodyCreateInfo& info);
+		optional<RigidBody*> create(const RigidBody::CreateInfo& info);
 
 		void destroy(RigidBody& body);
 
-		void setCollder(RigidBody& body, Collider* collider);
+		void setCollder(RigidBody& body, Collider& collider);
 
 		Collider& getCollider(RigidBody& body);
 	private:

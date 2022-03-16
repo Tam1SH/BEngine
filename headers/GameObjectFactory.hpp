@@ -1,18 +1,20 @@
 #pragma once
 #include "stdafx.h"
-
+#include "platform.hpp"
 #include "GameComponentCreateInfo.hpp"
 #include "Collider.hpp"
 
-using std::shared_ptr;
-using std::unique_ptr;
-using std::optional;
-using std::string;
+using BE_STD::shared_ptr;
+using BE_STD::unique_ptr;
+using BE_STD::optional;
+using BE_STD::string;
 
-namespace std {
+BE_NAMESPACE_STD_BEGIN
+
 	 template<class T> 
 	 class shared_ptr;
-}
+
+BE_NAMESPACE_STD_END
 
 namespace BEbraEngine {
 	class Physics;
@@ -31,6 +33,7 @@ namespace BEbraEngine {
 	class SimpleCamera;
 	class Vector3;
 	class GameObject;
+	class RenderWorld;
 }
 
 namespace BEbraEngine {
@@ -55,13 +58,14 @@ namespace BEbraEngine {
 
 		void setCollider(Collider& col, Collider::Type type);
 
-		void setTexture(GameObject& object, const boost::filesystem::path& path);
+		void setMaterialAsync(shared_ptr<GameObject> object, const Material::CreateInfo& info);
+
 
 		void destroyCamera(SimpleCamera& camera);
 
 		void destroyPointLight(Light& light);
 
-		GameObjectFactory(AbstractRender& render, Physics& physics);
+		GameObjectFactory(AbstractRender& render, Physics& physics, RenderWorld& world);
 
 		~GameObjectFactory();
 

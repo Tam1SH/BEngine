@@ -4,17 +4,27 @@
 namespace BEbraEngine {
 
 
-    void RenderWorld::updateRenderData()
+    void RenderWorld::update()
     {
 
-        for (auto light = lights.begin(); light != lights.end(); ++light) {
-            (*light)->update();
+        for (auto& light : lights) {
+            light->update();
         }
-        tbb::parallel_for<size_t>(0, objects.size(), [this](int i) {
-            objects[i]->update();
-        });
+        for(auto& object : objects)
+            object->update();
 
+        Request req;
+        if (requestQueue.try_pop(req)) {
+            RenderData data;
+            data.objects = objects;
+            data.lights = lights;
+            render->updateState(data);
+        }
+    }
 
+    void RenderWorld::updateState(const Request& request)
+    {
+        requestQueue.push(request);
 
     }
 

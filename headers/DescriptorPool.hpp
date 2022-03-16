@@ -1,8 +1,10 @@
 #pragma once
 #include "stdafx.h"
+#include "platform.hpp"
 #include "CreateInfoStructures.hpp"
 #include "Debug.hpp"
-#include <stdexcept>
+using BE_STD::optional;
+using BE_STD::mutex;
 
 namespace BEbraEngine {
     class DescriptorPool final {
@@ -24,7 +26,7 @@ namespace BEbraEngine {
 
         void free(VkDescriptorSet set);
 
-        std::optional<VkDescriptorSet> get();
+        optional<VkDescriptorSet> get();
 
         VulkanDescriptorPoolInfo getInfo() { return info; }
     private:
@@ -36,7 +38,7 @@ namespace BEbraEngine {
         
 
         std::list<VkDescriptorSet> setsUses;
-        std::mutex mutex;
+        mutex mutex;
 
         uint32_t countDescriptors{ 0 };
 

@@ -32,6 +32,10 @@ namespace BEbraEngine {
 
 		void map() override;
 
+		void reset(size_t count, size_t offset) override;
+
+		void setCountToMap(size_t count) override;
+
 		void setContext(AbstractRender* render) override;
 
 		shared_ptr<RenderBuffer> getBuffer() override { return _buffer; }
@@ -53,9 +57,11 @@ namespace BEbraEngine {
 		size_t dataSize;
 		shared_ptr<RenderBuffer> _buffer;
 		const vector<RenderData>* _data;
+		vector<RenderData> nullData;
 		tbb::concurrent_queue<shared_ptr<RenderBufferView>> _pool;
 		AbstractRender* _render;
 		size_t totalCount;
+		size_t countToMap;
 		RenderBufferPoolUsage _usage{};
 	};
 
@@ -111,6 +117,18 @@ namespace BEbraEngine {
 
 	}
 
+	template<typename RenderData>
+	inline void VulkanRenderBufferPool<RenderData>::reset(size_t count, size_t offset)
+	{
+		_buffer->setData(nullData.data(), count * sizeof(RenderData), offset * sizeof(RenderData));
+	}
+
+	template<typename RenderData>
+	inline void VulkanRenderBufferPool<RenderData>::setCountToMap(size_t count)
+	{
+		countToMap = count;
+	}
+
 
 
 
@@ -151,6 +169,8 @@ namespace BEbraEngine {
 		}
 
 		_data = &data;
+		nullData.reserve(data.size());
+		nullData.resize(data.size());
 	}
 
 	template<typename RenderData>

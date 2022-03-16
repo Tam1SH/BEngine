@@ -15,6 +15,8 @@ namespace BEbraEngine {
 	class AbstractRender;
 	class ITextureFactory;
 	class SimpleCamera; 
+	class IVisitorGameComponentDestroyer;
+	class RenderWorld;
 }
 
 namespace BEbraEngine {
@@ -22,17 +24,21 @@ namespace BEbraEngine {
 	public:
 		virtual ~IRenderObjectFactory() {}
 
-		virtual optional<RenderObject*> create(const RenderObject::RenderObjectCreateInfo& info) = 0;
+		virtual optional<RenderObject*> create(const RenderObject::CreateInfo& info) = 0;
 
 		virtual ITextureFactory& getTextureFactory() = 0;
+
+		virtual void setWorld(RenderWorld& world) = 0;
+
+		virtual void setComponentDestroyer(IVisitorGameComponentDestroyer& destroyer) = 0;
+
+		virtual optional<Material*> createMaterialAsync(shared_ptr<RenderObject> obj, const Material::CreateInfo& info) = 0;
+
+		virtual void setMaterial(RenderObject& obj, Material& material) = 0;
 
 		virtual void bindTransform(Light& light, Transform& transform) = 0;
 
 		virtual void bindTransform(RenderObject& object, Transform& transform) = 0;
-
-		virtual void setTexture(RenderObject& object, const boost::filesystem::path& path) = 0;
-
-		virtual void setTexture(shared_ptr<RenderObject> object, Texture const& path) = 0;
 
 
 		virtual Light* createLight(const Vector3& color, const Vector3& position) = 0;

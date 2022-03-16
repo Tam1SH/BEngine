@@ -20,7 +20,7 @@ namespace BEbraEngine {
         unique_ptr<AbstractRender> render1;
         unique_ptr<Physics> physics;
         unique_ptr<BaseWindow> window1;
-        unique_ptr<ScriptState> gameLogic1;
+        unique_ptr<ScriptState> gameState;
         bool multiThreading = true;
     public:
         void Main() {
@@ -34,7 +34,7 @@ namespace BEbraEngine {
             physics = unique_ptr<Physics>(new Physics());
             auto drawer = new DebugDrawer(*render1);
             physics->setDebugDrawer(drawer);
-            gameLogic1 = unique_ptr<ScriptState>(new ScriptState(*render1, *physics));
+            gameState = unique_ptr<ScriptState>(new ScriptState(*render1, *physics));
             Debug::enableAll();
         }
         
@@ -54,7 +54,7 @@ namespace BEbraEngine {
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _physics(g, [&](const tbb::flow::continue_msg&) { physics->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
-                        _gameLogic(g, [&](const tbb::flow::continue_msg&) { gameLogic1->update(); });
+                        _gameLogic(g, [&](const tbb::flow::continue_msg&) { gameState->update(); });
 
 
                     tbb::flow::make_edge(input, _physics);
@@ -64,7 +64,7 @@ namespace BEbraEngine {
                     input.try_put(tbb::flow::continue_msg());
                     g.wait_for_all();
                    
-                    gameLogic1->updateState();
+                    gameState->updateState();
                     render1->drawFrame();
                 }
                 else {
@@ -76,8 +76,8 @@ namespace BEbraEngine {
                      physics->update();
                     
                     render1->update();
-                    gameLogic1->update();
-                    gameLogic1->updateState();
+                    gameState->update();
+                    gameState->updateState();
                     render1->drawFrame();
                 }
 
@@ -89,7 +89,7 @@ namespace BEbraEngine {
         }
 
         ~Engine() {
-            gameLogic1.reset();
+            gameState.reset();
             //  render1.reset();
             //  UId->Destroy();
         }

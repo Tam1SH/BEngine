@@ -11,6 +11,9 @@
 #include "RenderObject.hpp"
 #include "GameObject.hpp"
 #include "Math.hpp"
+#include "VulkanRender.hpp"
+#include "CreateInfoStructures.hpp"
+#include "VulkanObjects.hpp"
 namespace BEbraEngine {
 
     std::mt19937::result_type seed = time(0);
@@ -50,9 +53,10 @@ namespace BEbraEngine {
     {
         this->physics = &physics;
         this->render = &render;
-        auto scriptsss = new ObjectFactoryFacade(new GameObjectFactory(render, physics));
-        scriptsss->setContext(this);
+
         renderWorld = std::make_unique<RenderWorld>(render);
+        auto scriptsss = new ObjectFactoryFacade(new GameObjectFactory(render, physics, *renderWorld));
+        scriptsss->setContext(this);
 
         scriptObjectFactory = std::unique_ptr<ObjectFactoryFacade>(scriptsss);
         scriptManager = std::unique_ptr<ScriptManager>(new ScriptManager(scriptObjectFactory.get()));
@@ -68,10 +72,14 @@ namespace BEbraEngine {
 
         scriptManager->InitScripts();
         camera = scriptObjectFactory->createCamera(Vector3(0, 40, 0));
+        
         player = scriptObjectFactory->create(Vector3(-30, 30, 0));
         player->getComponentChecked<Transform>().setScale(Vector3(2));
         player->getComponentChecked<Collider>().setScale(Vector3(2));
-       // player->getComponentChecked<RenderObject>()
+        scriptObjectFactory->setMaterialAsync(player, { boost::filesystem::current_path() / "textures" / "textureTest.jpg",
+                                                    boost::filesystem::current_path() / "textures" / "specularTest.jpg", 
+                                                    boost::filesystem::current_path() / "textures" / "normalTest.jpg" });
+
         auto& body = player->getComponentChecked<RigidBody>();
         body.setMaxVelocity(20);
         body.lockRotateX(true);
@@ -97,6 +105,7 @@ namespace BEbraEngine {
         object3->getComponentChecked<RigidBody>().setDynamic(false);
         object3->getComponentChecked<Collider>().setScale(Vector3(60, 1, 20));
         object3->getComponentChecked<Transform>().setScale(Vector3(60, 1, 20));
+        
         /*
         auto object2 = scriptObjectFactory->create(Vector3(0, 100, 100));
         auto d = object2->getComponentByName("RigidBody");
@@ -144,13 +153,18 @@ namespace BEbraEngine {
 
         auto object6 = scriptObjectFactory->create(Vector3(20, 33, 0));
         object6->getComponentChecked<RigidBody>().setDynamic(false);
-        object6->removeComponent(object6->getComponentCheckedPtr<Collider>());
-        object6->removeComponent(object6->getComponentCheckedPtr<RigidBody>());
+        auto& col = object6->getComponentCheckedPtr<Collider>();
+        auto& body1 = object6->getComponentCheckedPtr<RigidBody>();
+
+        object6->removeComponent(col);
+        object6->removeComponent(body1);
+        scriptObjectFactory->destroy(*col);
+        scriptObjectFactory->destroy(*body1);
 
         object6->getComponentChecked<Transform>().setScale(Vector3(2));
         scriptObjectFactory->setModel(*object6, (boost::filesystem::current_path() / "Models/Sphere.fbx").string());
 
-        light = scriptObjectFactory->createLight(Vector3(20, 33, 0));
+        light = scriptObjectFactory->createLight(Vector3(-20, 25, 0));
         light->setColor(Vector3(2));
 
         rotate = Vector3(0, -0.5f, 0);
@@ -170,6 +184,8 @@ namespace BEbraEngine {
        //     step = 0;
 
         if (Input::isKeyPressed(KeyCode::KEY_T)) {
+            auto& mat = player->getComponentChecked<Material>();
+            static_cast<VulkanRender*>(render)->ImageFromGpuToCpuMemory(&static_cast<VulkanTexture&>(mat.getColor()));
             //clearObjects();
         }
 
@@ -216,21 +232,15 @@ namespace BEbraEngine {
             
             scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand));
             scriptObjectFactory->setModel(*obj, getPath(rand).string());
-         //   scriptObjectFactory->setTexture(*obj, boost::filesystem::current_path() / "pizda.jpg");
-            obj->getComponentChecked<RenderObject>().setColor(Vector3(1));
-           
-            //auto collider = obj->removeComponent(obj->getComponentCheckedPtr<Collider>());
-            //auto rigidbody = obj->removeComponent(obj->getComponentCheckedPtr<RigidBody>());
-            //scriptObjectFactory->destroyComponent(*collider);
-           // scriptObjectFactory->destroyComponent(*rigidbody);
 
-           // obj->getComponentChecked<Transform>().setScale(Vector3(2));
+
+            obj->getComponentChecked<RenderObject>().setColor(Vector3(1));
+            scriptObjectFactory->setMaterialAsync(obj, { boost::filesystem::current_path() / "textures" / "textureTest.jpg",
+                                             boost::filesystem::current_path() / "textures" / "specularTest.jpg",
+                                             boost::filesystem::current_path() / "textures" / "normalTest.jpg" });
+
+
             Quaternion quat;
-            quat = BEbraMath::rotate(quat, 45, Vector3(0, 1, 0));
-           // obj->getComponentChecked<Collider>().setPosition(Vector3(0, 80, 0));
-          //  obj->getComponentChecked<Transform>().setPosition(Vector3(0, 80, 0));
-            //obj->getComponentChecked<RigidBody>().setPosition(Vector3(0, 80, 0));
-            //obj->getComponentChecked<RigidBody>().setRotation(quat);
             objects.push_back(obj);
         }
 
@@ -269,7 +279,7 @@ namespace BEbraEngine {
 
         auto& rigidBodyPlayer = player->getComponentChecked<RigidBody>();
         if (Input::isKeyPressed(KeyCode::KEY_T)) {
-            rigidBodyPlayer.moveTo(Vector3(-30, 30, 0));
+            //rigidBodyPlayer.moveTo(Vector3(-30, 30, 0));
         }
         if (Input::isKeyPressed(KeyCode::KEY_A) && !inFly) {
             camera->processKeyboard(LEFT, Time::deltaTime() * speed);
@@ -302,16 +312,16 @@ namespace BEbraEngine {
         }
         static float y = 0;
 
-        y = rigidBodyPlayer.getVelocity().y;
+        //y = rigidBodyPlayer.getVelocity().y;
         if (y <= 0.01 && y >= 0)
         {
             inFly = false;
             if (Input::isKeyPressed(KeyCode::KEY_SPACE)) {
                 auto pos = camera->Up;
-                pos.x = rigidBodyPlayer.getVelocity().x;
-                pos.z = rigidBodyPlayer.getVelocity().y;
+               // pos.x = rigidBodyPlayer.getVelocity().x;
+               // pos.z = rigidBodyPlayer.getVelocity().y;
                 pos.y = 20;
-                rigidBodyPlayer.applyImpulse(pos, (pos * Time::deltaTime() * speed));
+               // rigidBodyPlayer.applyImpulse(pos, (pos * Time::deltaTime() * speed));
                 
             }
         }
@@ -387,7 +397,7 @@ namespace BEbraEngine {
 
     void ScriptState::updateState()
     {
-        renderWorld->updateRenderData();
+        renderWorld->update();
         queues.execute();
     }
 

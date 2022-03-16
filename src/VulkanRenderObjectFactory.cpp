@@ -14,9 +14,10 @@
 #include "MeshFactory.hpp"
 #include "Vector2.hpp"
 #include <boost/filesystem.hpp>
+//#include <stb-master/stb_image_write.h>
 namespace BEbraEngine {
 
-    optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObject::RenderObjectCreateInfo& info)
+    optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObject::CreateInfo& info)
     {
 
         auto maybe_object_view = _poolofObjects->get();
@@ -34,21 +35,16 @@ namespace BEbraEngine {
         auto obj = new VulkanRenderObject();
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
-       // obj->texture = unique_ptr<Texture>(textureFactory->create(boost::filesystem::current_path() / "textures" / "textureTest.jpg", false));
-        obj->texture = unique_ptr<Texture>(textureFactory->createEmpty());
+        
         obj->matrix = object_view;
-
+        obj->material = new Material(textureFactory->createEmpty(), textureFactory->createEmpty(), textureFactory->createEmpty());
+        obj->hasMaps = false;
         obj->setColor(Vector3(1));
         VulkanDescriptorSetInfo setinfo{};
-        auto vTex = static_cast<VulkanTexture*>(obj->texture.get());
-        setinfo.sampler = vTex->sampler;
-        setinfo.imageView = vTex->imageView;
         setinfo.bufferView = object_view.get();
-
-        //setinfo.specular = static_cast<VulkanTexture*>(textureFactory->create(boost::filesystem::current_path() / "textures" / "specularTest.jpg", false));
-        //setinfo.normal = static_cast<VulkanTexture*>(textureFactory->create(boost::filesystem::current_path() / "textures" / "normalTest.jpg", false));
-       // setinfo.specular = static_cast<VulkanTexture*>(textureFactory->createEmpty());
-       // setinfo.normal = static_cast<VulkanTexture*>(textureFactory->createEmpty());
+        setinfo.image = &obj->material->getColor().as<VulkanTexture>();
+        setinfo.specular = &obj->material->getSpecular().as<VulkanTexture>();
+        setinfo.normal = &obj->material->getNormal().as<VulkanTexture>();
         obj->descriptor = render->createDescriptor(&setinfo);
         if (!obj->descriptor) {
             DEBUG_LOG2("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
@@ -101,6 +97,7 @@ namespace BEbraEngine {
         this->render = dynamic_cast<VulkanRender*>(render);
 
         textureFactory = new VulkanTextureFactory(render);
+       
 
         _poolofObjects = std::make_unique<VulkanRenderBufferPool<RenderObject::ShaderData>>();
         _poolofObjects->setContext(render);
@@ -129,30 +126,25 @@ namespace BEbraEngine {
         info.type = LightDescriptorInfo::Type::Point;
     }
 
+    void VulkanRenderObjectFactory::setWorld(RenderWorld& world)
+    {
+        this->world = &world;
+    }
+
     void VulkanRenderObjectFactory::destroyObject(RenderObject& object)
     {
-        auto& obj = static_cast<VulkanRenderObject&>(object); 
+        auto& obj = object.as<VulkanRenderObject>();
         render->freeDescriptor(obj);
         _poolofObjects->free(obj.matrix);
-        auto texture = obj.texture;
-
-        render->executeQueues_Objects.addTask(ExecuteType::Multi,
-            [=] {
-            if (texture.get())
-                textureFactory->destroyTexture(texture.get());
-            else
-                DEBUG_LOG2("Texture lost", 0, "", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
-            });
-
+        obj.matrix = 0;
 #ifdef _DEBUG
         object.isDestroyed = true;
 #endif // _DEBUG
-
     }
 
     void VulkanRenderObjectFactory::destroyPointLight(Light& light)
     {
-        auto& light_ = static_cast<VulkanPointLight&>(light);
+        auto& light_ = light.as<VulkanPointLight>();
         _poolofPointLights->free(light_.data);
     }
 
@@ -163,6 +155,61 @@ namespace BEbraEngine {
     ITextureFactory& VulkanRenderObjectFactory::getTextureFactory()
     {
         return *textureFactory;
+    }
+
+    optional<Material*> VulkanRenderObjectFactory::createMaterialAsync(shared_ptr<RenderObject> obj, const Material::CreateInfo& info)
+    {
+        
+        auto wObj = std::weak_ptr<RenderObject>(obj);
+        auto pointer = &*obj;
+        auto mat = textureFactory->createMaterialAsync(info, [=](Material* mat) {
+            render->executeQueues_Objects.addTask(ExecuteType::Multi,
+                [=] { 
+                    if (!wObj.expired()) {
+                        auto& vObj = wObj.lock()->as<VulkanRenderObject>();
+                        
+                        setMaterial(vObj, *mat);
+                        world->updateState({});
+                    }
+                    else {
+                        DEBUG_LOG1("Render object was destroyed during set material", pointer);
+                        mat->destroy(*destroyer);
+                        delete mat;
+                    }
+                });
+            
+        });
+
+        return optional<Material*>(mat);
+    }
+
+    void VulkanRenderObjectFactory::setMaterial(RenderObject& obj, Material& material)
+    {
+        auto& vObj = obj.as<VulkanRenderObject>();
+        
+        if (vObj.material) {
+            vObj.material->destroy(*destroyer);
+            delete vObj.material;
+        }
+
+        vObj.hasMaps = true;
+        VulkanDescriptorSetInfo setinfo{};
+        setinfo.bufferView = obj.matrix.get();
+        setinfo.image = &material.getColor().as<VulkanTexture>();
+        setinfo.specular = &material.getSpecular().as<VulkanTexture>();
+        setinfo.normal = &material.getNormal().as<VulkanTexture>();
+        render->freeDescriptor(vObj);
+        
+        vObj.descriptor = render->createDescriptor(&setinfo);
+
+        vObj.material = &material;
+
+    }
+
+    void VulkanRenderObjectFactory::setComponentDestroyer(IVisitorGameComponentDestroyer& destroyer)
+    {
+        this->destroyer = &destroyer;
+        textureFactory->setDestroyer(destroyer);
     }
 
     void VulkanRenderObjectFactory::bindTransform(Light& light, Transform& transform)
@@ -178,9 +225,6 @@ namespace BEbraEngine {
     {
         render->freeDescriptor(*obj);
         VulkanDescriptorSetInfo setinfo{};
-        auto vTex = static_cast<VulkanTexture*>(obj->texture.get());
-        setinfo.sampler = vTex->sampler;
-        setinfo.imageView = vTex->imageView;
         setinfo.bufferView = obj->matrix.get();
         obj->descriptor = render->createDescriptor(&setinfo);
     }
@@ -191,37 +235,6 @@ namespace BEbraEngine {
     }
 
     VulkanRenderObjectFactory::~VulkanRenderObjectFactory()
-    {
-
-    }
-
-    void VulkanRenderObjectFactory::setTexture(RenderObject& object, const boost::filesystem::path& path)
-    {
-        auto obj = &static_cast<VulkanRenderObject&>(object);
-        Texture* _texture = textureFactory->createAsync(path, [=](Texture* texture) {
-
-            DEBUG_LOG1("Start create");
-            render->executeQueues_Objects.addTask(ExecuteType::Single,
-                [=] {
-                    textureFactory->destroyTexture(obj->texture.get());
-                    obj->texture.reset();
-                    obj->texture = unique_ptr<Texture>(texture);
-                    render->freeDescriptor(*obj);
-                    VulkanDescriptorSetInfo setinfo{};
-
-                    auto vTex = static_cast<VulkanTexture*>(obj->texture.get());
-                    setinfo.sampler = vTex->sampler;
-                    setinfo.imageView = vTex->imageView;
-                    setinfo.bufferView = obj->matrix.get();
-                    obj->descriptor = render->createDescriptor(&setinfo);
-                    DEBUG_LOG1("create end");
-                });
-            });
-
-            obj->texture = unique_ptr<Texture>(_texture);
-    }
-
-    void VulkanRenderObjectFactory::setTexture(shared_ptr<RenderObject> object, Texture const& path)
     {
 
     }
@@ -249,3 +262,24 @@ namespace BEbraEngine {
         }
     }
 }
+
+/*
+auto imageMemory = static_cast<VulkanTexture&>(material.getSpecular()).memory;
+
+
+
+VkMappedMemoryRange range{};
+range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+range.memory= imageMemory;
+range.size = material.getSpecular().width() * material.getSpecular().height();
+range.offset = 0;
+
+vkInvalidateMappedMemoryRanges(render->device, 1, &range);
+unsigned char* memImage = new unsigned char[range.size];
+void* memory{};
+
+auto res = vkMapMemory(VulkanRender::device, imageMemory, range.offset, range.size, 0, &memory);
+memcpy(&memImage, memory, range.size);
+vkUnmapMemory(VulkanRender::device, imageMemory);
+//textureFactory->jopa("JOPA.jpg", material.getSpecular().height(), material.getSpecular().width(), 3, memImage, 90);
+*/

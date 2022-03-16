@@ -3,6 +3,7 @@
 #include "platform.hpp"
 #include "Model.hpp"
 #include "IRenderObjectFactory.hpp"
+#include <RenderWorld.hpp>
 
 using BE_STD::shared_ptr;
 using BE_STD::unique_ptr;
@@ -50,15 +51,19 @@ namespace BEbraEngine {
 
         ITextureFactory& getTextureFactory() override;
 
+        optional<Material*> createMaterialAsync(shared_ptr<RenderObject> obj, const Material::CreateInfo& info) override;
+
+        optional<RenderObject*> create(const RenderObject::CreateInfo& info) override;
+
+        void setMaterial(RenderObject& obj, Material& material) override;
+
+        void setComponentDestroyer(IVisitorGameComponentDestroyer& destroyer) override;
+
         void bindTransform(Light& light, Transform& transform) override;
 
         void bindTransform(RenderObject& object, Transform& transform) override;
 
-        void setTexture(RenderObject& object, const boost::filesystem::path& path) override;
 
-        void setTexture(shared_ptr<RenderObject>  object, Texture const& path) override;
-
-        optional<RenderObject*> create(const RenderObject::RenderObjectCreateInfo& info) override;
 
         Light* createLight(const Vector3& color, const Vector3& position) override;
 
@@ -67,6 +72,8 @@ namespace BEbraEngine {
         SimpleCamera* createCamera(const Vector3& position) override;
 
         void setContext(AbstractRender* render) override;
+
+        void setWorld(RenderWorld& world) override;
        
         void destroyObject(RenderObject& object) override;
 
@@ -87,8 +94,9 @@ namespace BEbraEngine {
         unique_ptr<VulkanRenderBufferPool<DirectionLight::ShaderData>> _poolofDirLights;
 
         shared_ptr<RenderBufferView> storage;
-
+        IVisitorGameComponentDestroyer* destroyer;
         VulkanRender* render;
+        RenderWorld* world;
         VulkanTextureFactory* textureFactory;
         unique_ptr<MeshFactory> meshFactory;
 

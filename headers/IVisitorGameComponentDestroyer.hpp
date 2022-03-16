@@ -10,25 +10,27 @@ namespace BEbraEngine {
 	class DirectionLight;
 	class SimpleCamera;
 	class GameObject;
+	class Material;
 }
 
 namespace BEbraEngine {
 
 	class IVisitorGameComponentDestroyer {
 	public:
-		virtual void destroyGameObject(GameObject& comp) const = 0;
-		virtual void destroyPointLightComponent(Light& comp) const = 0;
-		virtual void destroyDirectionLightComponent(DirectionLight& comp) const = 0;
+		virtual void destroyGameObject(GameObject& comp) = 0;
+		virtual void destroyPointLightComponent(Light& comp) = 0;
+		virtual void destroyDirectionLightComponent(DirectionLight& comp) = 0;
 
 
-		virtual void destroyRenderComponent(RenderObject& comp) const = 0;
-		virtual void destroyRigidBodyComponent(RigidBody& comp) const = 0;
-		virtual void destroyColliderComponent(Collider& comp) const = 0;
-		virtual void destroyMaterialComponent(Texture& comp) const = 0;
-		virtual void destroyTransformComponent(Transform& comp) const = 0;
-		virtual void destroyCameraComponent(SimpleCamera& comp) const = 0;
+		virtual void destroyRenderComponent(RenderObject& comp) = 0;
+		virtual void destroyRigidBodyComponent(RigidBody& comp) = 0;
+		virtual void destroyColliderComponent(Collider& comp) = 0;
+		virtual void destroyTextureComponent(Texture& comp) = 0;
+		virtual void destroyMaterialComponent(Material& comp) = 0;
+		virtual void destroyTransformComponent(Transform& comp) = 0;
+		virtual void destroyCameraComponent(SimpleCamera& comp) = 0;
 
-		virtual ~IVisitorGameComponentDestroyer() {}
-		IVisitorGameComponentDestroyer(){}
+		virtual ~IVisitorGameComponentDestroyer() noexcept {}
+		IVisitorGameComponentDestroyer() noexcept {}
 	};
 }

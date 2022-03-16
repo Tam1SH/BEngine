@@ -6,9 +6,9 @@
 namespace BEbraEngine {
     class GameComponentCreateInfo {
     public:
-        const Transform::TransformCreateInfo* transformInfo;
-        const Collider::ColliderCreateInfo* colliderInfo;
-        const RigidBody::RigidBodyCreateInfo* rigidBodyInfo;
-        const RenderObject::RenderObjectCreateInfo* renderInfo;
+        const Transform::CreateInfo* transformInfo;
+        const Collider::CreateInfo* colliderInfo;
+        const RigidBody::CreateInfo* rigidBodyInfo;
+        const RenderObject::CreateInfo* renderInfo;
     };
 }

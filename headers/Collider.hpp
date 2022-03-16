@@ -4,8 +4,8 @@
 #include "Vector3.hpp"
 #include "Debug.hpp"
 #include "Quaternion.hpp"
-class btCollisionObject;
 
+class btCollisionObject;
 
 
 using BE_STD::unique_ptr;
@@ -34,7 +34,7 @@ namespace BEbraEngine {
 			Mesh 
 		};
 
-		struct ColliderCreateInfo 
+		struct CreateInfo 
 		{
 		public:
 			Vector3 scale{};
@@ -48,11 +48,15 @@ namespace BEbraEngine {
 
 		btCollisionObject& get() noexcept { return *_collider; }
 
+		const btCollisionObject& get() const noexcept { return *_collider; }
+
 		void setScale(const Vector3& size) noexcept;
 
 		void setRotation(const Quaternion& quat) noexcept;
 
 		Vector3& getSize() noexcept { return size; }
+
+		const Vector3& getSize() const noexcept { return size; }
 
 		void setPosition(const Vector3& position) noexcept;
 
@@ -77,10 +81,10 @@ namespace BEbraEngine {
 		Collider() noexcept;
 
 
-		RigidBody* body;
+		RigidBody* body{};
 		unique_ptr<btCollisionObject> _collider;
-		Vector3 position;
-		Vector3 size;
+		Vector3 position{};
+		Vector3 size{};
 	};
 }
 

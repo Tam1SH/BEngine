@@ -9,6 +9,8 @@ namespace BEbraEngine {
     
     class Texture : public GameComponent { DEBUG_DESTROY_CHECK_DECL()
     public:
+        bool isLoaded() { return isLoaded_; }
+        void setLoaded() { isLoaded_ = true; }
         Texture();
         ~Texture();
         uint32_t width() { return width_; }
@@ -16,14 +18,13 @@ namespace BEbraEngine {
 
         void destroy(IVisitorGameComponentDestroyer& destroyer) override;
 
-    protected:
-        uint32_t width_{};
-        uint32_t height_{};
-
-
-
         
 
+
+    protected:
+        bool isLoaded_{};
+        uint32_t width_{};
+        uint32_t height_{};
     };
 
     class VulkanTexture : public Texture {
@@ -40,8 +41,31 @@ namespace BEbraEngine {
             other.memory = 0;
             other.imageView = 0;
             other.sampler = 0;
-
+#ifdef _DEBUG
+            this->isDestroyed = true;
+#endif
             return *this;
+        }
+        VulkanTexture& operator=(const VulkanTexture& other) {
+            this->image = other.image;
+            this->imageView = other.imageView;
+            this->memory = other.memory;
+            this->sampler = other.sampler;
+            this->mipLevels = other.mipLevels;
+#ifdef _DEBUG
+            this->isDestroyed = other.isDestroyed;
+#endif
+            return *this;
+        }
+        VulkanTexture(const VulkanTexture& other) {
+            this->image = other.image;
+            this->imageView = other.imageView;
+            this->memory = other.memory;
+            this->sampler = other.sampler;
+            this->mipLevels = other.mipLevels;
+#ifdef _DEBUG
+            this->isDestroyed = other.isDestroyed;
+#endif
         }
         VulkanTexture() {}
         VulkanTexture(VulkanTexture&& other) noexcept {
@@ -54,6 +78,9 @@ namespace BEbraEngine {
             other.memory = 0;
             other.imageView = 0;
             other.sampler = 0;
+#ifdef _DEBUG
+            this->isDestroyed = true;
+#endif
         }
         uint32_t mipLevels;
         VkImage image;

@@ -4,7 +4,8 @@
 
 using BE_STD::vector;
 using BE_STD::string;
-
+using BE_STD::mutex;
+using BE_STD::stringstream;
 #define DEBUG_LOG1(msg) BEbraEngine::Debug::log(__LINE__, __FILE__, msg);
 #define DEBUG_LOG2(msg, pointer, name, oType, mType) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, pointer, name, oType, mType)
 #define DEBUG_LOG3(msg, pointer) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, pointer);
@@ -52,29 +53,29 @@ namespace BEbraEngine {
 
 		static void enableLog(ObjectType type);
 
-		static void log(int line, const char* nameFile, const std::stringstream& stream);
+		static void log(int line, const char* nameFile, const stringstream& stream);
 
-		static void log(const std::string& text);
+		static void log(const string& text);
 
-		static void log(int line, const char* nameFile, const std::string&& text);
+		static void log(int line, const char* nameFile, const string&& text);
 
 
 		static void log(int line, const char* nameFile,
-			const std::string& text, const void* pointer = {}, const std::string& name = {}, ObjectType oType = {}, MessageType mType = MessageType::Info);
+			const string& text, const void* pointer = {}, const string& name = {}, ObjectType oType = {}, MessageType mType = MessageType::Info);
 
-		static void log(const std::string& text, const void* handle, const std::string& name, ObjectType oType, MessageType mType);
+		static void log(const string& text, const void* handle, const string& name, ObjectType oType, MessageType mType);
 
 	private:
-		static void _log(const std::string& str);
+		static void _log(const string& str);
 
 
-		static std::string to_string(ObjectType type);
+		static string to_string(ObjectType type);
 
-		static std::string to_string(MessageType type);
+		static string to_string(MessageType type);
 
-		static std::mutex m;
+		static mutex m;
 
-		static std::vector<ObjectType> _disableLog;
+		static vector<ObjectType> _disableLog;
 
 	};
 	

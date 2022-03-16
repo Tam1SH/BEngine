@@ -41,6 +41,7 @@ layout(location = 2) in vec3 fNormal;
 layout(location = 3) in vec3 fragPosition;
 layout(location = 4) in vec3 cameraPosition;
 layout(location = 5) in vec3 objectColor;
+layout(location = 6) in flat int objectHasMaps;
 
 layout(location = 0) out vec4 outColor;
 
@@ -78,9 +79,12 @@ vec3 CalcPointLight(_PointLight pLight, vec3 normal, vec3 viewDir);
 
 void main() {
 
+    vec3 norm;
+    if(bool(objectHasMaps))
+        norm = normalize(texture(texSamplerNormal, fragTexCoord).rgb * 2.0 - 1.0);
+    else
+        norm = normalize(fNormal);
 
-    //vec3 norm = normalize(texture(texSamplerNormal, fragTexCoord).rgb * 2.0 - 1.0);
-    vec3 norm = normalize(fNormal);
     vec3 viewDir = normalize(cameraPosition - fragPosition);
     
 
@@ -95,8 +99,9 @@ void main() {
     vec4 FragColor = vec4(result * objectColor,1.0f);
 
     //outColor =  vec4(vec3(1.0 - texture(texSampler, fragTexCoord)), 1.0);
+
     outColor = vec4(texture(texSampler, fragTexCoord).rgb,1) * FragColor; 
-    //outColor = FragColor; 
+
 }
 
 
@@ -113,8 +118,13 @@ vec3 CalcPointLight(_PointLight pLight, vec3 normal, vec3 viewDir)
     float specularStrength = 0.5f;
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * pLight.specular * texture(texSamplerSpecular, fragTexCoord).rgb; 
-    
+
+    vec3 specular;
+    if(bool(objectHasMaps))
+        specular = specularStrength * spec * pLight.specular * texture(texSamplerSpecular, fragTexCoord).rgb; 
+    else
+        specular = specularStrength * spec * pLight.specular; 
+
     float distance = length(pLight.position - fragPosition);
     float attenuation = 1.0 / (pLight.constant + pLight.linear * distance + pLight.quadratic * (distance * distance));    
 
