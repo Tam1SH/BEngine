@@ -12,7 +12,7 @@ namespace BEbraEngine {
 	class VulkanWindow : public BaseWindow {
 	public:
 
-		void createWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
+		void createWindow(const Vector2& size, const std::string& title = "BEbraEngine") override final;
 
 		VulkanWindow(AbstractRender* render);
 

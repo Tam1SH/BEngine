@@ -159,11 +159,11 @@ namespace BEbraEngine {
 
     optional<Material*> VulkanRenderObjectFactory::createMaterialAsync(shared_ptr<RenderObject> obj, const Material::CreateInfo& info)
     {
-        
+        //Не принципиально удалён ли был объект или нет
         auto wObj = std::weak_ptr<RenderObject>(obj);
         auto pointer = &*obj;
         auto mat = textureFactory->createMaterialAsync(info, [=](Material* mat) {
-            render->executeQueues_Objects.addTask(ExecuteType::Multi,
+            render->executeQueues.addTask(ExecuteType::Multi,
                 [=] { 
                     if (!wObj.expired()) {
                         auto& vObj = wObj.lock()->as<VulkanRenderObject>();
@@ -186,12 +186,15 @@ namespace BEbraEngine {
     void VulkanRenderObjectFactory::setMaterial(RenderObject& obj, Material& material)
     {
         auto& vObj = obj.as<VulkanRenderObject>();
-        
+
         if (vObj.material) {
             vObj.material->destroy(*destroyer);
             delete vObj.material;
         }
-
+        if (!vObj.matrix) {
+            DEBUG_LOG1("Probably object has been destroyed while seting material");
+            return;
+        }
         vObj.hasMaps = true;
         VulkanDescriptorSetInfo setinfo{};
         setinfo.bufferView = obj.matrix.get();

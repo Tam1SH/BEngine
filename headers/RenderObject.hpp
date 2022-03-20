@@ -168,7 +168,7 @@ namespace BEbraEngine {
             boost::filesystem::path normal;
         };
     public:
-        Material(Texture* color);
+        Material(shared_ptr<Texture> color);
         Material(Texture* color,
             Texture* specular,
             Texture* normal);

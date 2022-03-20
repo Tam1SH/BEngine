@@ -1,4 +1,5 @@
-
+#include "platform.hpp"
+using BE_STD::shared_ptr;
 
 namespace BEbraEngine {
 	class RenderObject;
@@ -13,6 +14,10 @@ namespace BEbraEngine {
 	class Material;
 }
 
+namespace std {
+	template<typename Class>
+	class shared_ptr;
+}
 namespace BEbraEngine {
 
 	class IVisitorGameComponentDestroyer {
@@ -26,6 +31,7 @@ namespace BEbraEngine {
 		virtual void destroyRigidBodyComponent(RigidBody& comp) = 0;
 		virtual void destroyColliderComponent(Collider& comp) = 0;
 		virtual void destroyTextureComponent(Texture& comp) = 0;
+		virtual void destroyTextureComponentAsync(shared_ptr<Texture> comp) = 0;
 		virtual void destroyMaterialComponent(Material& comp) = 0;
 		virtual void destroyTransformComponent(Transform& comp) = 0;
 		virtual void destroyCameraComponent(SimpleCamera& comp) = 0;

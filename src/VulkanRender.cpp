@@ -498,18 +498,18 @@ namespace BEbraEngine {
         for (auto& [name, layout] : layouts) {
             vkDestroyDescriptorSetLayout(device, layout, 0);
         }
-        executeQueues_Objects.execute();
-        executeQueues_Objects.execute();
+        executeQueues.execute();
+        executeQueues.execute();
 
         vulkanRenderBufferPool.reset();
         cameraPool.reset();
         lightPool.reset();
         attachmentsSetPool.reset();
         for (int i = 0; i < depthAttachments.size(); i++) {
-            destroyTexture(*depthAttachments[i]);
+            destroyTextureAsync(depthAttachments[i]);
         }
         for (int i = 0; i < colorAttachments.size(); i++) {
-            destroyTexture(*colorAttachments[i]);
+            destroyTextureAsync(colorAttachments[i]);
         }
 
         factory.reset();
@@ -1990,13 +1990,12 @@ namespace BEbraEngine {
 
         std::vector<VkCommandBuffer> buffersRender;
         std::vector<VkCommandBuffer> buffersTransfer;
-        std::vector<CommandBuffer> bufDestroy;
 
         while (!BufferRenderQueue.empty()) {
             CommandBuffer buffer;
             BufferRenderQueue.try_pop(buffer);
             buffersRender.push_back(buffer);
-            bufDestroy.push_back(buffer);
+            buffersToDestroy.push_back(buffer);
         }
         for (auto& buffer : RenderBuffers) {
             buffersRender.push_back(buffer);
@@ -2005,7 +2004,7 @@ namespace BEbraEngine {
             CommandBuffer buffer;
             BufferTransferQueue.try_pop(buffer);
             buffersTransfer.push_back(buffer);
-            bufDestroy.push_back(buffer);
+            buffersToDestroy.push_back(buffer);
         }
 
         VkSubmitInfo submitInfoTransfer{};
@@ -2054,17 +2053,6 @@ namespace BEbraEngine {
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
-
-        
-        
-        
-        vkQueueWaitIdle(transferQueue);
-        vkQueueWaitIdle(graphicsQueue);
-        for (auto& buf : bufDestroy)
-            buf.destroy();
-        executeQueues_Objects.execute();
-        linesToDrawLastUpdate = linesToDraw.load();
-        linesToDraw = 0;
     }
 
     void VulkanRender::update()
@@ -2445,6 +2433,18 @@ namespace BEbraEngine {
         }
     }
 
+    void VulkanRender::prepareDraw()
+    {
+        vkQueueWaitIdle(transferQueue);
+        vkQueueWaitIdle(graphicsQueue);
+        for (auto& buf : buffersToDestroy)
+            buf.destroy();
+        buffersToDestroy.clear();
+        executeQueues.execute();
+        linesToDrawLastUpdate = linesToDraw.load() > 0 ? 1 : linesToDraw.load();
+        linesToDraw = 0;
+    }
+
     void VulkanRender::addCamera(SimpleCamera& camera)
     {
         camera.resize({ static_cast<float>(currentRenderResolution.width), 
@@ -2645,7 +2645,7 @@ namespace BEbraEngine {
         linePool->allocate(linesMemory.size(), sizeof(Line::ShaderData), AbstractRender::TypeBuffer::Storage);
         linePool->bindData(linesMemory);
 
-        executeQueues_Objects.setStrategy(ExecuteType::Single);
+        executeQueues.setStrategy(ExecuteType::Single);
         auto view = linePool->get();
         lineSet = createDescriptor2(view->get());
 
@@ -2954,27 +2954,25 @@ namespace BEbraEngine {
     {
         lightPool->free(set->descriptor);
     }
-    void VulkanRender::destroyTexture(VulkanTexture& texture)
+    void VulkanRender::destroyTextureAsync(shared_ptr<VulkanTexture> texture)
     {
-        auto texCopy = texture;
 
-        executeQueues_Objects.addTask(ExecuteType::Multi, 
+        executeQueues.addTask(ExecuteType::Multi, 
             [=] {
-            texture;
-            if (texCopy.image != nullptr) {
+            DEBUG_LOG1("BEGIN DESTROINGYYY")
+            if (texture->image != nullptr) {
 
 
-                vkFreeMemory(device, texCopy.memory, 0);
-                vkDestroyImage(device, texCopy.image, 0);
-                vkDestroySampler(device, texCopy.sampler, 0);
-                vkDestroyImageView(device, texCopy.imageView, 0);
+                vkFreeMemory(device, texture->memory, 0);
+                vkDestroyImage(device, texture->image, 0);
+                vkDestroySampler(device, texture->sampler, 0);
+                vkDestroyImageView(device, texture->imageView, 0);
             }
-            else DEBUG_LOG3("texture memory is invalid", &texCopy);
-            auto& nonconstJopa = const_cast<VulkanTexture&>(texCopy);
-            nonconstJopa.memory = VK_NULL_HANDLE;
-            nonconstJopa.image = VK_NULL_HANDLE;
-            nonconstJopa.sampler = VK_NULL_HANDLE;
-            nonconstJopa.imageView = VK_NULL_HANDLE;
+            else DEBUG_LOG3("texture memory is invalid", &*texture);
+            texture->memory = VK_NULL_HANDLE;
+            texture->image = VK_NULL_HANDLE;
+            texture->sampler = VK_NULL_HANDLE;
+            texture->imageView = VK_NULL_HANDLE;
 
         });
 

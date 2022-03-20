@@ -11,7 +11,7 @@
 
 class btIDrawDebug;
 
-const int MAX_FRAMES_IN_FLIGHT = 1;
+const int MAX_FRAMES_IN_FLIGHT = 3;
 
 namespace BEbraEngine {
     class VulkanTexture;
@@ -98,6 +98,8 @@ namespace BEbraEngine {
 
         void drawFrame() override;
 
+        void prepareDraw() override;
+
         void update() override;
 
         void updateState(RenderData& data) override;
@@ -130,7 +132,7 @@ namespace BEbraEngine {
 
         void freeDescriptor(VulkanPointLight* set);
 
-        void destroyTexture(VulkanTexture& texture);
+        void destroyTextureAsync(shared_ptr<VulkanTexture> texture);
 
         RenderBuffer* createBufferAsync(void* data, uint32_t size, VkBufferUsageFlags usage);
 
@@ -148,7 +150,7 @@ namespace BEbraEngine {
 
         VkPipelineLayout pipelineLayout;
 
-        ExecuteQueues<function<void()>> executeQueues_Objects;
+        ExecuteQueues<function<void()>> executeQueues;
 
     public:
         enum class DescriptorLayoutType {
@@ -210,6 +212,8 @@ namespace BEbraEngine {
 
         atomic<size_t> linesToDrawLastUpdate;
 
+        vector<CommandBuffer> buffersToDestroy;
+
         VkDescriptorSet objectSet;
 
         vector<Line::ShaderData> linesMemory{ 30000 };
@@ -262,11 +266,11 @@ namespace BEbraEngine {
 
         vector<VkDescriptorSet> attachmentsSets;
 
-        vector<unique_ptr<VulkanTexture>> normalAttachments;
+        vector<shared_ptr<VulkanTexture>> normalAttachments;
 
-        vector<unique_ptr<VulkanTexture>> colorAttachments;
+        vector<shared_ptr<VulkanTexture>> colorAttachments;
 
-        vector<unique_ptr<VulkanTexture>> depthAttachments;
+        vector<shared_ptr<VulkanTexture>> depthAttachments;
 
         uint32_t MAX_COUNT_OF_OBJECTS = 1000;
 
@@ -463,6 +467,9 @@ namespace BEbraEngine {
 
         const bool enableValidationLayers = true;
 
-    };
+
+
+
+};
 
 }

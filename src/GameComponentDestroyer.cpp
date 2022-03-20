@@ -48,17 +48,18 @@ namespace BEbraEngine {
 #ifdef _DEBUG
 		comp.isDestroyed = true;
 #endif // _DEBUG
-		renderFactory->getTextureFactory().destroyTexture(comp);
+		throw std::exception();
+		//renderFactory->getTextureFactory().destroyTextureAsync(comp);
 
 	}
 	void GameComponentDestroyer::destroyMaterialComponent(Material& comp)
 	{
 		if (comp.color)
-			destroyTextureComponent(*comp.color);
+			destroyTextureComponentAsync(comp.color);
 		if (comp.specular)
-			destroyTextureComponent(*comp.specular);
+			destroyTextureComponentAsync(comp.specular);
 		if (comp.normal)
-			destroyTextureComponent(*comp.normal);
+			destroyTextureComponentAsync(comp.normal);
 #ifdef _DEBUG
 		comp.isDestroyed = true;
 #endif // _DEBUG
@@ -80,6 +81,16 @@ namespace BEbraEngine {
 	void GameComponentDestroyer::destroyCameraComponent(SimpleCamera& comp)
 	{
 		renderFactory->destroyCamera(comp);
+	}
+
+	void GameComponentDestroyer::destroyTextureComponentAsync(shared_ptr<Texture> comp)
+	{
+
+#ifdef _DEBUG
+		comp->isDestroyed = true;
+#endif // _DEBUG
+		renderFactory->getTextureFactory().destroyTextureAsync(comp);
+
 	}
 
 	void GameComponentDestroyer::destroyGameObject(GameObject& comp)

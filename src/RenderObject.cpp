@@ -85,9 +85,9 @@ namespace BEbraEngine {
 
     }
 
-    Material::Material(Texture* color)
+    Material::Material(shared_ptr<Texture> color)
     {
-        this->color = unique_ptr<Texture>(color);
+        this->color = color;
     }
 
     Material::Material(Texture* color, Texture* specular, Texture* normal)

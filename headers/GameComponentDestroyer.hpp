@@ -25,6 +25,8 @@ namespace BEbraEngine {
 
 		void destroyDirectionLightComponent(DirectionLight& comp) override;
 
+		void destroyTextureComponentAsync(shared_ptr<Texture> comp) override;
+
 		void destroyRenderComponent(RenderObject& comp) override;
 
 		void destroyRigidBodyComponent(RigidBody& comp) override;
@@ -43,6 +45,8 @@ namespace BEbraEngine {
 		IRenderObjectFactory* renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;
+
+
 
 
 	};

@@ -26,6 +26,8 @@ namespace BEbraEngine {
 
         virtual void destroyTexture(Texture& texture) = 0;
 
+        virtual void destroyTextureAsync(shared_ptr<Texture> texture) = 0;
+
         virtual ~ITextureFactory() {}
 
     };

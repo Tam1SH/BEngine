@@ -45,6 +45,7 @@ namespace BEbraEngine {
                 if (multiThreading) {
 
 
+                    render1->prepareDraw();
                     tbb::flow::graph g;
                     tbb::flow::broadcast_node<tbb::flow::continue_msg> input(g);
                     tbb::flow::continue_node<tbb::flow::continue_msg>
@@ -66,6 +67,7 @@ namespace BEbraEngine {
                    
                     gameState->updateState();
                     render1->drawFrame();
+
                 }
                 else {
 
@@ -79,6 +81,8 @@ namespace BEbraEngine {
                     gameState->update();
                     gameState->updateState();
                     render1->drawFrame();
+
+                    render1->prepareDraw();
                 }
 
             }

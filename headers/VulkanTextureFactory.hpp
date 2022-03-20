@@ -29,6 +29,8 @@ namespace BEbraEngine {
 
         void destroyTexture(Texture& texture) override;
 
+        void destroyTextureAsync(shared_ptr<Texture> texture) override;
+
         VulkanTextureFactory(AbstractRender* render);
 
     private:

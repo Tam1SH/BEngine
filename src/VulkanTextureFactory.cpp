@@ -12,7 +12,7 @@ namespace BEbraEngine {
     {
         auto strColorLow = ((info.color.parent_path().string() / info.color.stem()).string() + "_low");
         auto strExensionColor = info.color.extension().string();
-        auto image = create(strColorLow + strExensionColor, false);
+        auto image = std::shared_ptr<Texture>(create(strColorLow + strExensionColor, false));
 
         
         tbb::task_arena g;
@@ -31,7 +31,10 @@ namespace BEbraEngine {
             //Хуй знает, есть ли смысл создавать мип лвла для всего этого
             auto specular = create(strSpecular + strExensionSpecular, false);
             auto normal = create(strNormal + strExensionNormal, false);
-            image->destroy(*destroyer);
+            auto image_temp = std::shared_ptr<Texture>();
+            
+            mat->color.swap(image_temp);
+            destroyTextureAsync(image_temp);
             *mat = Material(color, specular, normal);
 
             onComplete(mat);
@@ -119,6 +122,11 @@ namespace BEbraEngine {
     void VulkanTextureFactory::destroyTexture(Texture& texture)
     {
         auto& vTexture = texture.as<VulkanTexture>();
-        render->destroyTexture(vTexture);
+       // render->destroyTexture(vTexture);
+    }
+    void VulkanTextureFactory::destroyTextureAsync(shared_ptr<Texture> texture)
+    {
+        auto& vTexture = std::static_pointer_cast<VulkanTexture>(texture);
+        render->destroyTextureAsync(vTexture);
     }
 }

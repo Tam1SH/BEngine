@@ -68,6 +68,7 @@ namespace BEbraEngine {
 
 		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
 		virtual void update() = 0;
+		virtual void prepareDraw() = 0;
 		virtual void drawFrame() = 0;
 		virtual void drawLine(const Vector3& from, 
 							  const Vector3& to, 
