@@ -1,8 +1,20 @@
 #pragma once
 #include "stdafx.h"
+#include "platform.hpp"
+#include "RenderObject.hpp"
+namespace BEbraEngine {
+    class AbstractRender;
+    class RenderObject;
+    class Light;
+    class RenderData;
+}
 
-#include "AbstractRender.hpp"
-#include "Debug.hpp"
+BE_NAMESPACE_STD_BEGIN
+    template<class T, class Alloc>
+    class vector;
+BE_NAMESPACE_STD_END
+
+
 namespace BEbraEngine {
 
     class RenderWorld {
@@ -10,41 +22,23 @@ namespace BEbraEngine {
         struct Request { };
     public:
 
-        RenderWorld(AbstractRender& render) {
-            this->render = &render;
-        }
+        RenderWorld(AbstractRender& render);
 
+        void removeObject(const RenderObject& object);
 
-        void removeObject(const RenderObject& object) {
-            auto iter = std::remove(objects.begin(), objects.end(), &object);
-            if (iter != objects.end()) {
-                objects.erase(iter);
-                updateState({});
-            }
-            else {
-                DEBUG_LOG1("Object has not been in renderWorld", &object);
-                throw std::exception();
-            }
-            
-        }
+        void addObject(RenderObject& object);
 
-        void addObject(RenderObject& object) {
-            objects.push_back(&object);
-            updateState({});
-
-        }
-
-        void addLight(Light& light) {
-            lights.push_back(&light);
-            updateState({});
-        }
+        void addLight(Light& light);
 
         void update();
 
         void updateState(const Request& request);
+
+        RenderData& getRenderData();
         
     private:
-        
+        RenderData* data;
+
         tbb::concurrent_queue<Request> requestQueue;
         vector<RenderObject*> objects;
         vector<Light*> lights;

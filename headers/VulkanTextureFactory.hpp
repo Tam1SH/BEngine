@@ -3,11 +3,11 @@
 #include "stdafx.h"
 #include "Texture.hpp"
 #include "ITextureFactory.hpp"
+#include "AbstractRender.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 namespace BEbraEngine {
-    class AbstractRender;
     class VulkanRender;
 }
 
@@ -22,10 +22,10 @@ namespace BEbraEngine {
         Texture* create(const boost::filesystem::path& path, bool generateMip) override;
 
         Texture* createEmpty() override;
+        
+        void saveImage(const char* fileName, int width, int height, int channel_num, const BitMap& pixels, int quality);
 
         void setDestroyer(IVisitorGameComponentDestroyer& destroyer) override;
-
-        void jopa(char const* filename, int x, int y, int comp, const void* data, int quality);
 
         void destroyTexture(Texture& texture) override;
 

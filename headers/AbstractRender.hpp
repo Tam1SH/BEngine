@@ -41,6 +41,9 @@ namespace BEbraEngine {
 		bool isEnable_MSAA{};
 
 	};
+	struct BitMap {
+		vector<vector<Vector3>> pixels;
+	};
 	class AbstractRender {
 	public:
 		enum class TypeBuffer {

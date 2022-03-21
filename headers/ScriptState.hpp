@@ -81,6 +81,8 @@ namespace BEbraEngine {
 
         vector<shared_ptr<GameObject>> objects_;
 
+        vector<shared_ptr<Light>> lights;
+
         tbb::concurrent_hash_map<const GameObject*, shared_ptr<GameObject>> objectsCache;
 
         ExecuteQueues<function<void()>> queues;
@@ -109,7 +111,6 @@ namespace BEbraEngine {
 
         list<shared_ptr<GameObject>> bounds;
         list<shared_ptr<GameObject>> objects;
-        list<shared_ptr<Light>> lights;
         Vector3 scale;
         Vector3 rotate;
         Vector3 lightColor;

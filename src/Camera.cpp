@@ -4,8 +4,8 @@
 #define NOMINMAX
 
 #include "Camera.hpp"
+
 #include "Input.hpp"
-#include "VulkanRender.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>

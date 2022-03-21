@@ -14,7 +14,6 @@
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h"
 #include "BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h"
 #include "AbstractRender.hpp"
-#include <VulkanRender.hpp>
 #include "Math.hpp"
 namespace BEbraEngine {
     ATTRIBUTE_ALIGNED16(class)

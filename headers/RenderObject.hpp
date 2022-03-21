@@ -55,7 +55,6 @@ namespace BEbraEngine {
         shared_ptr<RenderBufferView> data;
         shared_ptr<RenderBuffer> vertices;
         shared_ptr<Transform> transform;
-        VkDescriptorSet set;
     };
 
     class Light : public GameComponent, public IReusable {

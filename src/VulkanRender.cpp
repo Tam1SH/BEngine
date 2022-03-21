@@ -654,7 +654,7 @@ namespace BEbraEngine {
         }
     }
 
-    VulkanTexture* VulkanRender::ImageFromGpuToCpuMemory(VulkanTexture* texture)
+    VulkanTexture* VulkanRender::getBitMapFromSwapChainImage()
     {
         bool supportsBlit = true;
 
@@ -676,7 +676,7 @@ namespace BEbraEngine {
         }
 
         // Source for the copy is the last rendered swapchain image
-        VkImage srcImage = texture->image;
+        VkImage srcImage = swapChainImages[currentFrame];
 
         // Create the linear tiled destination image to copy to and to read the memory from
         VkImageCreateInfo imageCreateCI{};
@@ -684,8 +684,9 @@ namespace BEbraEngine {
         imageCreateCI.imageType = VK_IMAGE_TYPE_2D;
         // Note that vkCmdBlitImage (if supported) will also do format conversions if the swapchain color format would differ
         imageCreateCI.format = VK_FORMAT_R8G8B8A8_UNORM;
-        imageCreateCI.extent.width = texture->width();
-        imageCreateCI.extent.height = texture->height();
+        
+        imageCreateCI.extent.height = currentRenderResolution.height;
+        imageCreateCI.extent.width = currentRenderResolution.width;
         imageCreateCI.extent.depth = 1;
         imageCreateCI.arrayLayers = 1;
         imageCreateCI.mipLevels = 1;
@@ -726,7 +727,7 @@ namespace BEbraEngine {
         barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
         barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
         barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
         barrier.subresourceRange = VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
@@ -761,8 +762,8 @@ namespace BEbraEngine {
         {
             // Define the region to blit (we will blit the whole swapchain image)
             VkOffset3D blitSize;
-            blitSize.x = texture->width();
-            blitSize.y = texture->height();
+            blitSize.x = currentRenderResolution.width;
+            blitSize.y = currentRenderResolution.height;
             blitSize.z = 1;
             VkImageBlit imageBlitRegion{};
             imageBlitRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -789,8 +790,8 @@ namespace BEbraEngine {
             imageCopyRegion.srcSubresource.layerCount = 1;
             imageCopyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
             imageCopyRegion.dstSubresource.layerCount = 1;
-            imageCopyRegion.extent.width = texture->width();
-            imageCopyRegion.extent.height = texture->height();
+            imageCopyRegion.extent.width = currentRenderResolution.width;
+            imageCopyRegion.extent.height = currentRenderResolution.height;
             imageCopyRegion.extent.depth = 1;
 
             // Issue the copy command
@@ -835,48 +836,51 @@ namespace BEbraEngine {
        // vkMapMemory(device, texture->memory, 0, VK_WHOLE_SIZE, 0, (void**)data);
         auto res = vkMapMemory(device, dstImageMemory, 0, VK_WHOLE_SIZE, 0, (void**)&data);
         data += subResourceLayout.offset;
-        /*
         
-        std::ofstream file("JOPA.ppm", std::ios::out | std::ios::binary);
+        bool colorSwizzle = false;
 
-        // ppm header
-        file << "P6\n" << texture->width() << "\n" << texture->height() << "\n" << 255 << "\n";
-
-        // If source is BGR (destination is always RGB) and we can't use blit (which does automatic conversion), we'll have to manually swizzle color components
-        bool colorSwizzle{};
-        // Check if source is BGR
-        // Note: Not complete, only contains most common and basic BGR surface formats for demonstration purposes
         if (!supportsBlit)
         {
             std::vector<VkFormat> formatsBGR = { VK_FORMAT_B8G8R8A8_SRGB, VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_B8G8R8A8_SNORM };
             colorSwizzle = (std::find(formatsBGR.begin(), formatsBGR.end(), VK_FORMAT_B8G8R8A8_UNORM) != formatsBGR.end());
         }
-        colorSwizzle = false;
-        // ppm binary pixel data
-        for (uint32_t y = 0; y < texture->height(); y++)
+        auto map = BitMap(); 
+        map.pixels.resize(currentRenderResolution.height);
+        for (uint32_t y = 0; y < currentRenderResolution.height; y++) {
+            map.pixels[y].resize(currentRenderResolution.width);
+        }
+
+        for (uint32_t y = 0; y < currentRenderResolution.height; y++)
         {
             unsigned int* row = (unsigned int*)data;
-            for (uint32_t x = 0; x < texture->width(); x++)
+            for (uint32_t x = 0; x < currentRenderResolution.width; x++)
             {
                 if (colorSwizzle)
                 {
-                    file.write((char*)row + 2, 1);
-                    file.write((char*)row + 1, 1);
-                    file.write((char*)row, 1);
+                    float r = *((char*)row + 2);
+                    float g = *((char*)row + 1);
+                    float b = *(char*)row;
+                    map.pixels[y][x] = { r,g,b };
                 }
                 else
                 {
-                    file.write((char*)row, 3);
+                    float r = *(char*)row;
+                    float g = *((char*)row + 1);
+                    float b = *((char*)row + 2);
+                    map.pixels[y][x] = { r,g,b };
+
                 }
                 row++;
             }
             data += subResourceLayout.rowPitch;
         }
-        file.close();
+        static_cast<VulkanTextureFactory&>(getRenderObjectFactory()->getTextureFactory()).saveImage(
+            "JOPA.jpg", currentRenderResolution.width, currentRenderResolution.height, 3, map, 90
+        );
 
         std::cout << "Screenshot saved to disk" << std::endl;
         // Clean up resources
-        */
+        
         vkUnmapMemory(device, dstImageMemory);
         vkFreeMemory(device, dstImageMemory, nullptr);
         vkDestroyImage(device, dstImage, nullptr);

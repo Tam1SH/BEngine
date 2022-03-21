@@ -107,14 +107,31 @@ namespace BEbraEngine {
     {
         return create("", false);
     }
+    void VulkanTextureFactory::saveImage(const char* fileName, int width, int height, int channel_num, const BitMap& pixels, int quality)
+    {
+        tbb::task_arena t;
+        t.enqueue([=] {
+            vector<uint8_t> pixelsConvert;
+            pixelsConvert.resize(width * height * channel_num);
+            int index{};
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    pixelsConvert[index++] = pixels.pixels[y][x].x;
+                    pixelsConvert[index++] = pixels.pixels[y][x].y;
+                    pixelsConvert[index++] = pixels.pixels[y][x].z;
+                }
+            }
+            stbi_write_jpg(fileName, width, height, channel_num, pixelsConvert.data(), quality);
+            });
+       
+    }
     void VulkanTextureFactory::setDestroyer(IVisitorGameComponentDestroyer& destroyer)
     {
         this->destroyer = &destroyer;
     }
-    void VulkanTextureFactory::jopa(char const* filename, int x, int y, int comp, const void* data, int quality)
-    {
-        stbi_write_jpg(filename, x, y, comp, data, quality);
-    }
+
     VulkanTextureFactory::VulkanTextureFactory(AbstractRender* render) : render(dynamic_cast<VulkanRender*>(render))
     { 
         if (!render) throw std::runtime_error("render isn't VulkanRender"); 

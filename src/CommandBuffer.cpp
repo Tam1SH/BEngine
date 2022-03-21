@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CommandBuffer.hpp"
 #include "CommandPool.hpp"
-#include "VulkanRender.hpp"
 namespace BEbraEngine {
     CommandBuffer::CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type)
     {

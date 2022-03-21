@@ -144,7 +144,7 @@ namespace BEbraEngine {
 
         void createTextureSampler(VulkanTexture* texture);
         
-        VulkanTexture* ImageFromGpuToCpuMemory(VulkanTexture* texture);
+        VulkanTexture* getBitMapFromSwapChainImage();
 
         void recreateSwapChain(uint32_t width, uint32_t height);
 

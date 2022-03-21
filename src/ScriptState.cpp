@@ -57,7 +57,7 @@ namespace BEbraEngine {
         renderWorld = std::make_unique<RenderWorld>(render);
         auto scriptsss = new ObjectFactoryFacade(new GameObjectFactory(render, physics, *renderWorld));
         scriptsss->setContext(this);
-
+      //  render.setWorld(*renderWorld);
         scriptObjectFactory = std::unique_ptr<ObjectFactoryFacade>(scriptsss);
         scriptManager = std::unique_ptr<ScriptManager>(new ScriptManager(scriptObjectFactory.get()));
 
@@ -165,7 +165,17 @@ namespace BEbraEngine {
         scriptObjectFactory->setModel(*object6, (boost::filesystem::current_path() / "Models/Sphere.fbx").string());
 
         light = scriptObjectFactory->createLight(Vector3(-20, 25, 0));
-        light->setColor(Vector3(2));
+        lights.push_back(light);
+        light->setColor(Vector3(1,0,0));
+        light = scriptObjectFactory->createLight(Vector3(20, 25, 0));
+
+        lights.push_back(light);
+
+        light->setColor(Vector3(0, 1, 0));
+        light = scriptObjectFactory->createLight(Vector3(0, 25, 20));
+
+        lights.push_back(light);
+        light->setColor(Vector3(0, 0, 1));
 
         rotate = Vector3(0, -0.5f, 0);
 
@@ -175,7 +185,7 @@ namespace BEbraEngine {
     void ScriptState::clearObjects() { }
 
     void ScriptState::fixedUpdate() {
-        globalLight->setColor(Vector3(0.1));
+        globalLight->setColor(Vector3(0));
         //step++;
         //if (step > 127) lightColor.x = 0; else lightColor.x = (128 - step) / 255.f * 2;
         //if(step < 128) lightColor.y = 0; else lightColor.y = (step - 128) / 255.f * 2;
@@ -185,7 +195,7 @@ namespace BEbraEngine {
 
         if (Input::isKeyPressed(KeyCode::KEY_T)) {
             auto& mat = player->getComponentChecked<Material>();
-            static_cast<VulkanRender*>(render)->ImageFromGpuToCpuMemory(&static_cast<VulkanTexture&>(mat.getColor()));
+            static_cast<VulkanRender*>(render)->getBitMapFromSwapChainImage();
             //clearObjects();
         }
 
@@ -227,19 +237,21 @@ namespace BEbraEngine {
         }
 
         if (Input::isKeyPressed(KeyCode::KEY_G)) {
-            int rand = dice_rand();
+            int rand_ = dice_rand();
             auto obj = scriptObjectFactory->create(Vector3(0, 40, 0));
             
-            scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand));
-            scriptObjectFactory->setModel(*obj, getPath(rand).string());
+            scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand_));
+            scriptObjectFactory->setModel(*obj, getPath(rand_).string());
 
-
-            obj->getComponentChecked<RenderObject>().setColor(Vector3(1));
+            
+            obj->getComponentChecked<RenderObject>().setColor(Vector3((rand() % 256) / (float)256, rand() % 256 / (float)256, rand() % 256 / (float)256));
+            /*
+            
             scriptObjectFactory->setMaterialAsync(obj, { boost::filesystem::current_path() / "textures" / "textureTest.jpg",
                                              boost::filesystem::current_path() / "textures" / "specularTest.jpg",
                                              boost::filesystem::current_path() / "textures" / "normalTest.jpg" });
-
-
+                                             */
+            
             Quaternion quat;
             objects.push_back(obj);
         }
