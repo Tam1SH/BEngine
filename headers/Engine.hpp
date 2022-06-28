@@ -14,6 +14,10 @@ using std::unique_ptr;
 
 namespace BEbraEngine {
 
+    struct EngineCreateInfo {
+        bool Debug;
+        bool Test;
+    };
 
     class Engine {
     public:
@@ -23,18 +27,20 @@ namespace BEbraEngine {
         unique_ptr<ScriptState> gameState;
         bool multiThreading = true;
     public:
-        void Main() {
-            init();
-            start();
+        void Main(const EngineCreateInfo& info) {
+            init(info);
+            if(!info.Test)
+                start();
         }
-        void init() {
+        void init(const EngineCreateInfo& info) {
             render1 = unique_ptr<VulkanRender>(new VulkanRender());
             window1 = unique_ptr<VulkanWindow>(new VulkanWindow(render1.get()));
-            window1->createWindow(Vector2(1000, 1000), "BEEEBRA!!!");
+            if(info.Test)
+                window1->createWindow(Vector2(1000, 1000), "BEEEBRA!!!");
             physics = unique_ptr<Physics>(new Physics());
             auto drawer = new DebugDrawer(*render1);
             physics->setDebugDrawer(drawer);
-            gameState = unique_ptr<ScriptState>(new ScriptState(*render1, *physics));
+            gameState = unique_ptr<ScriptState>(new ScriptState(*render1, *physics, *window1));
             Debug::enableAll();
         }
         
@@ -44,12 +50,13 @@ namespace BEbraEngine {
                 Time::updateTime();
                 if (multiThreading) {
 
-
+                    window1->update();
                     render1->prepareDraw();
+
                     tbb::flow::graph g;
                     tbb::flow::broadcast_node<tbb::flow::continue_msg> input(g);
                     tbb::flow::continue_node<tbb::flow::continue_msg>
-                        _window(g, [&](const tbb::flow::continue_msg&) { window1->update(); });
+                        _window(g, [&](const tbb::flow::continue_msg&) {  });
                     tbb::flow::continue_node<tbb::flow::continue_msg>
                         _render(g, [&](const tbb::flow::continue_msg&) { render1->update(); });
                     tbb::flow::continue_node<tbb::flow::continue_msg>

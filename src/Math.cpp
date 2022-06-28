@@ -98,7 +98,7 @@ namespace BEbraEngine {
 
 		Quaternion rotate(const Quaternion& quat, float angle, const Vector3& vec)
 		{
-			return glm::rotate(static_cast<glm::mat4>(toMat4(quat)), angle, static_cast<glm::vec3>(vec));
+			return glm::toQuat(glm::rotate(static_cast<glm::mat4>(toMat4(quat)), angle, static_cast<glm::vec3>(vec)));
 		}
 
 	}

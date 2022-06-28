@@ -43,7 +43,7 @@ namespace BEbraEngine {
 
 
 namespace BEbraEngine {
-
+    //разделить логику и создание/удаление(назв. Adjuster?) также для рендера создать чтоли стораге?
     class VulkanRenderObjectFactory : public IRenderObjectFactory
     {
     public:

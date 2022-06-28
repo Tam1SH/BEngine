@@ -24,6 +24,7 @@ namespace BEbraEngine {
 	class DirectionLight;
 	class RenderBuffer;
 	class Vector3;
+	class RenderWorld;
 }
 
 
@@ -41,9 +42,35 @@ namespace BEbraEngine {
 		bool isEnable_MSAA{};
 
 	};
+	
+	
 	struct BitMap {
-		vector<vector<Vector3>> pixels;
+	public:
+		struct Rows {
+			struct pixel {
+				char x, y, z;
+			};
+			unsigned int* rows;
+			pixel operator[](size_t index) const {
+				auto pixel_ = rows + index;
+				auto comp_ = pixel{
+					*((char*)pixel_ + 2),
+					*((char*)pixel_ + 1),
+					*((char*)pixel_)
+				};
+				return comp_;
+			}
+		};
+		Rows& operator[](int index)
+		{
+			return at(index);
+		}
+
+		virtual Rows& at(int index) = 0;
+		virtual ~BitMap() {}
 	};
+
+
 	class AbstractRender {
 	public:
 		enum class TypeBuffer {
@@ -78,7 +105,10 @@ namespace BEbraEngine {
 							  const Vector3& color) = 0;
 
 		virtual Type getType() = 0;
+		virtual void setWorld(RenderWorld& world) { this->world = &world; }
 		virtual uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type) = 0;
 		virtual ~AbstractRender() {}
+	protected:
+		RenderWorld* world;
 	};
 }

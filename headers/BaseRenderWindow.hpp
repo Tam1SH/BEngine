@@ -17,6 +17,11 @@ namespace BEbraEngine {
 			FullScreen,
 			Hidden
 		};
+		enum class FullScreenType {
+			None,
+			FullScreenOnWindow,
+			FullScreen
+		};
 		enum class SurfaceType {
 			Vulkan
 			//DX12 - ну и хуетень, чем я занимаюсь
@@ -26,6 +31,8 @@ namespace BEbraEngine {
 		virtual void createWindow(const Vector2& size, const std::string& title) = 0;
 		virtual void onResizeCallback(int width, int height) = 0;
 		bool isClose();
+		bool isCollapsed();
+		void setFullScreen(FullScreenType type);
 		void update();
 		Vector2 getSize() const noexcept;
 		void setWindowSize(const Vector2& newSize) const noexcept;

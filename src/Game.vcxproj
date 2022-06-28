@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
@@ -105,10 +105,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;$(IncludePath);C:\boost</IncludePath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.3.216.0\Include;C:\VulkanSDK\1.3.216.0\Include\vulkan;$(IncludePath);C:\boost_1_79_0\boost;C:\boost_1_79_0</IncludePath>
     <PublicIncludeDirectories>
     </PublicIncludeDirectories>
-    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;C:\boost\stage\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;C:\boost_1_79_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -123,8 +123,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\1.2.170.0\Include\vulkan;$(IncludePath);C:\boost</IncludePath>
-    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.3.216.0\Include;C:\VulkanSDK\1.3.216.0\Include\vulkan;$(IncludePath);C:\boost_1_79_0\boost;C:\boost_1_79_0</IncludePath>
+    <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;C:\boost_1_79_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -141,7 +141,7 @@
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers</AdditionalIncludeDirectories>
       <AdditionalOptions>
@@ -172,7 +172,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include;$(SolutionDir)Include\GLFW</AdditionalIncludeDirectories>
       <AdditionalOptions>
@@ -228,7 +228,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -237,6 +237,7 @@
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -314,7 +315,10 @@
     <ClCompile Include="ColliderFactory.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
     <ClCompile Include="DXRender.cpp" />
-    <ClCompile Include="GameComponent.cpp" />
+    <ClCompile Include="GameComponent.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="GameComponentDestroyer.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="RenderWorld.cpp" />

@@ -49,7 +49,7 @@ namespace BEbraEngine {
     class ScriptState {
     public:
 
-        ScriptState(AbstractRender& render, Physics& physics);
+        ScriptState(AbstractRender& render, Physics& physics, BaseWindow& window);
 
         void scriptInit();
 
@@ -61,7 +61,7 @@ namespace BEbraEngine {
 
         void updateState();
 
-        void addObject(shared_ptr<GameObject> object, const GameComponentCreateInfo& info);
+        void addObject(shared_ptr<GameObject> object);
 
         void removeObject(shared_ptr<GameObject> object, function<void(GameObject&)> callback);
 
@@ -71,13 +71,13 @@ namespace BEbraEngine {
 
         void addDirLight(DirectionLight& light);
 
-        shared_ptr<GameObject> getShared(const GameObject& object);
-
         ~ScriptState();
 
         
 
     private:
+
+        BaseWindow* window;
 
         vector<shared_ptr<GameObject>> objects_;
 

@@ -22,8 +22,10 @@ namespace BEbraEngine {
         Texture* create(const boost::filesystem::path& path, bool generateMip) override;
 
         Texture* createEmpty() override;
+
+        void saveImage(const char* fileName, int width, int height, int channel_num, const void* rows, int quality);
         
-        void saveImage(const char* fileName, int width, int height, int channel_num, const BitMap& pixels, int quality);
+        void saveImage(const char* fileName, int width, int height, int channel_num, BEbraEngine::BitMap& bitMap, int quality);
 
         void setDestroyer(IVisitorGameComponentDestroyer& destroyer) override;
 

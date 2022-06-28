@@ -18,7 +18,7 @@ namespace BEbraEngine {
             updateState({});
         }
         else {
-            DEBUG_LOG1("Object has not been in renderWorld", &object);
+            DEBUG_LOG3("Object has not been in renderWorld", &object);
             throw std::exception();
         }
 
@@ -49,6 +49,7 @@ namespace BEbraEngine {
             data.objects = objects;
             data.lights = lights;
             render->updateState(data);
+          //  requestQueue.clear();
         }
     }
 

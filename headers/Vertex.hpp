@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include <glm/glm.hpp>
-#include <vulkan/vulkan.h>
+#include <vulkan.h>
 #include "Vector3.hpp"
 #include "Vector2.hpp"
 #include "Vector4.hpp"

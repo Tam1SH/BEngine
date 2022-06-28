@@ -54,7 +54,7 @@ namespace BEbraEngine {
             auto obj = dynamic_cast<GameObject*>(opt_comp.value());
             if (obj) {
                 auto sObj = shared_ptr<GameObject>(obj);
-                state_->addObject(sObj, info);
+                state_->addObject(sObj);
                 return sObj;
             }
             else throw std::exception();

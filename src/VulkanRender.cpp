@@ -313,7 +313,30 @@ namespace BEbraEngine {
 
         freeDescriptor(globalLight);
         globalLight->descriptor = createDescriptor(&info1);
+        globalLightSet = globalLight->descriptor;
 
+
+        auto& data = world->getRenderData();
+        for (auto& light : data.lights) {
+
+            auto& vLight = light->as<VulkanPointLight>();
+            auto info = LightDescriptorInfo();
+            info.bufferView = &*vLight.data;
+            info.type = LightDescriptorInfo::Type::Point;
+            pointLightsSet = createDescriptor(&info);
+            break;
+        }
+
+        for (auto& object : data.objects) {
+            auto& vObj = object->as<VulkanRenderObject>();
+            auto info = VulkanDescriptorSetInfo();
+            info.bufferView = &*vObj.matrix;
+            info.image = &vObj.material->getColor().as<VulkanTexture>();
+            info.specular = &vObj.material->getSpecular().as<VulkanTexture>();
+            info.normal = &vObj.material->getNormal().as<VulkanTexture>();
+            vObj.descriptor = createDescriptor(&info);
+        }
+        world->updateState({});
         for (auto& camera : cameras) {
             camera->descriptor = createDescriptor(camera->cameraData->buffer.get());
             if (camera->isMain())
@@ -321,7 +344,10 @@ namespace BEbraEngine {
         }
         for (auto set : attachmentsSets) {
             attachmentsSetPool->free(set);
-        }
+        }        
+        auto view = linePool->get();
+        lineSet = createDescriptor2(view->get());
+        linePool->free(*view);
         createAttachmentsSet();
     }
 
@@ -822,8 +848,12 @@ namespace BEbraEngine {
         info.commandBufferCount = 1;
         info.pCommandBuffers = cmd.GetBuffer();
         cmd.endRecord();
+
+
         vkQueueSubmit(transferQueue, 1, &info, 0);
         vkQueueWaitIdle(transferQueue);
+
+
 
         // Get layout of the image (including row pitch)
         VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
@@ -844,39 +874,30 @@ namespace BEbraEngine {
             std::vector<VkFormat> formatsBGR = { VK_FORMAT_B8G8R8A8_SRGB, VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_B8G8R8A8_SNORM };
             colorSwizzle = (std::find(formatsBGR.begin(), formatsBGR.end(), VK_FORMAT_B8G8R8A8_UNORM) != formatsBGR.end());
         }
-        auto map = BitMap(); 
-        map.pixels.resize(currentRenderResolution.height);
+
+
+        auto begin = std::chrono::steady_clock::now();
+
+        
+        auto mm = VulkanBitMap();
+        mm.rows.resize(currentRenderResolution.height);
         for (uint32_t y = 0; y < currentRenderResolution.height; y++) {
-            map.pixels[y].resize(currentRenderResolution.width);
-        }
 
-        for (uint32_t y = 0; y < currentRenderResolution.height; y++)
-        {
             unsigned int* row = (unsigned int*)data;
-            for (uint32_t x = 0; x < currentRenderResolution.width; x++)
-            {
-                if (colorSwizzle)
-                {
-                    float r = *((char*)row + 2);
-                    float g = *((char*)row + 1);
-                    float b = *(char*)row;
-                    map.pixels[y][x] = { r,g,b };
-                }
-                else
-                {
-                    float r = *(char*)row;
-                    float g = *((char*)row + 1);
-                    float b = *((char*)row + 2);
-                    map.pixels[y][x] = { r,g,b };
-
-                }
-                row++;
-            }
+            mm.rows[y].rows = row;
             data += subResourceLayout.rowPitch;
         }
+
+
+        auto end = std::chrono::steady_clock::now();
+
         static_cast<VulkanTextureFactory&>(getRenderObjectFactory()->getTextureFactory()).saveImage(
-            "JOPA.jpg", currentRenderResolution.width, currentRenderResolution.height, 3, map, 90
+            "JOPA.jpg", currentRenderResolution.width, currentRenderResolution.height, 3, mm, 90
         );
+
+
+        auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
+        DEBUG_LOG1(std::stringstream() << "time: " << elapsed_ms.count());
 
         std::cout << "Screenshot saved to disk" << std::endl;
         // Clean up resources
@@ -1417,7 +1438,7 @@ namespace BEbraEngine {
             fragShaderStageInfo.module = fragShaderModule->module;
             fragShaderStageInfo.pName = "main";
 
-            VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww            VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
             VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
             vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -1957,6 +1978,7 @@ namespace BEbraEngine {
     void VulkanRender::drawFrame()
     {
         
+        if (window->isCollapsed()) return;
         linePool->reset(linesToDrawLastUpdate, 0);
         linePool->setCountToMap(linesToDraw);
         linePool->map();
@@ -2148,8 +2170,9 @@ namespace BEbraEngine {
             vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &pointLightsSet, 0, nullptr);
 
             vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &setMainCamera, 0, nullptr);
-            if(objectSet)
-                vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &objectSet, 0, nullptr);
+            
+            //if(objectSet)
+            //    vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &objectSet, 0, nullptr);
 
 
 
@@ -2652,7 +2675,7 @@ namespace BEbraEngine {
         executeQueues.setStrategy(ExecuteType::Single);
         auto view = linePool->get();
         lineSet = createDescriptor2(view->get());
-
+        linePool->free(*view);
       //  auto obj = static_cast<VulkanRenderObject*>(factory->create({}).value());
      //   objectSet = obj->descriptor;
      //   factory->destroyObject(*obj);
@@ -3009,6 +3032,9 @@ namespace BEbraEngine {
     }
 
     VulkanRender::VulkanRender() {}
+
+
+
 
 
 }

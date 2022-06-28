@@ -69,20 +69,20 @@ namespace BEbraEngine {
         int texWidth, texHeight, texChannels;
        // stbi_set_flip_vertically_on_load(true);
         
-        stbi_uc* pixels = stbi_load(path.string().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        stbi_uc* rows = stbi_load(path.string().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         image->setHeight(texHeight);
         image->setWidth(texWidth);
         VkDeviceSize imageSize = texWidth * texHeight * 4;
 
-        if (!pixels)
+        if (!rows)
         {
             if(!path.string().empty())
                 DEBUG_LOG2("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
                     image, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
-            pixels = new unsigned char[4];
-            pixels[0] = 255;
-            pixels[1] = 255;
-            pixels[2] = 255;
+            rows = new unsigned char[4];
+            rows[0] = 255;
+            rows[1] = 255;
+            rows[2] = 255;
             texWidth = 1, texHeight = 1;
             imageSize = 4 * texWidth * texHeight;
             image->setHeight(texHeight);
@@ -96,9 +96,9 @@ namespace BEbraEngine {
             image->setLoaded();
         }
 
-        render->createVkImage(pixels, image, imageSize);
+        render->createVkImage(rows, image, imageSize);
         image->imageView = render->createImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
-        stbi_image_free(pixels);
+        stbi_image_free(rows);
         
         render->createTextureSampler(image);
         return image;
@@ -107,10 +107,16 @@ namespace BEbraEngine {
     {
         return create("", false);
     }
-    void VulkanTextureFactory::saveImage(const char* fileName, int width, int height, int channel_num, const BitMap& pixels, int quality)
+    void VulkanTextureFactory::saveImage(const char* fileName, int width, int height, int channel_num, const void* rows, int quality) {
+        stbi_write_jpg(fileName, width, height, channel_num, rows, quality);
+    }
+
+    void VulkanTextureFactory::saveImage(const char* fileName, int width, int height, int channel_num, BEbraEngine::BitMap& bitMap, int quality)
     {
         tbb::task_arena t;
-        t.enqueue([=] {
+        auto pBitMap = &bitMap;
+       // t.enqueue([=]() {
+            DEBUG_LOG1("BEGIN TASK");
             vector<uint8_t> pixelsConvert;
             pixelsConvert.resize(width * height * channel_num);
             int index{};
@@ -118,13 +124,14 @@ namespace BEbraEngine {
             {
                 for (int x = 0; x < width; x++)
                 {
-                    pixelsConvert[index++] = pixels.pixels[y][x].x;
-                    pixelsConvert[index++] = pixels.pixels[y][x].y;
-                    pixelsConvert[index++] = pixels.pixels[y][x].z;
+                   
+                    pixelsConvert[index++] = pBitMap->at(y)[x].x;
+                    pixelsConvert[index++] = pBitMap->at(y)[x].y;
+                    pixelsConvert[index++] = pBitMap->at(y)[x].z;
                 }
             }
             stbi_write_jpg(fileName, width, height, channel_num, pixelsConvert.data(), quality);
-            });
+         //   });
        
     }
     void VulkanTextureFactory::setDestroyer(IVisitorGameComponentDestroyer& destroyer)
@@ -143,7 +150,7 @@ namespace BEbraEngine {
     }
     void VulkanTextureFactory::destroyTextureAsync(shared_ptr<Texture> texture)
     {
-        auto& vTexture = std::static_pointer_cast<VulkanTexture>(texture);
+        auto vTexture = std::static_pointer_cast<VulkanTexture>(texture);
         render->destroyTextureAsync(vTexture);
     }
 }

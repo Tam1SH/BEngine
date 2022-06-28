@@ -6,6 +6,7 @@ using BE_STD::vector;
 using BE_STD::string;
 using BE_STD::mutex;
 using BE_STD::stringstream;
+
 #define DEBUG_LOG1(msg) BEbraEngine::Debug::log(__LINE__, __FILE__, msg);
 #define DEBUG_LOG2(msg, pointer, name, oType, mType) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, pointer, name, oType, mType)
 #define DEBUG_LOG3(msg, pointer) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, pointer);
@@ -81,3 +82,4 @@ namespace BEbraEngine {
 	
 
 }
+

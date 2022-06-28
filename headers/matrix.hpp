@@ -16,7 +16,7 @@ namespace BEbraEngine {
 			return elements[i];
 		}
 #ifdef _WIN64
-		 operator DirectX::XMMATRIX&() {
+		 operator DirectX::XMMATRIX() {
 			auto& v0 = elements[0];
 			auto& v1 = elements[1];
 			auto& v2 = elements[2];

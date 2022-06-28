@@ -88,7 +88,8 @@ namespace BEbraEngine {
 			localtime_s(&tm, &t);
 #endif
 
-			str << to_string(mType) << ": " << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": "
+
+			str << to_string(mType) << ": " << tm.tm_hour << ":" << tm.tm_min << ":" << tm.tm_sec << ": " << "(" << nameFile << ": " << line << ") "
 				<< text << " | ";
 
 			if (handle)

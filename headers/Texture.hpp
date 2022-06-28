@@ -9,6 +9,7 @@ namespace BEbraEngine {
     
     class Texture : public GameComponent { DEBUG_DESTROY_CHECK_DECL()
     public:
+
         bool isLoaded() { return isLoaded_; }
         void setLoaded() { isLoaded_ = true; }
         Texture();

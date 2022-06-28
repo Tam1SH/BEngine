@@ -35,7 +35,7 @@ extern "C" {
 		vkCmdDraw(0, 0, 0, 0, 0);
 		tbb::parallel_for(0, 0, [](size_t) {});
 		BEbraEngine::Engine eng;
-		eng.Main();
+		//eng.Main();
 		return "This native library is compiled with ABI: %s" ABI ".";
 	}
 

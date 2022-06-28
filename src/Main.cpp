@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 {
     DEBUG_LOG1("BEGIN OF PIZDEC");
     BEbraEngine::Engine engine;
-    engine.Main();
+    engine.Main({false,true});
     return 1337228;
 }
 

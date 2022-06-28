@@ -21,6 +21,7 @@ namespace BEbraEngine {
 	public:
 
 		virtual ~IRenderBufferPool() { }
+
 		/// <summary>
 		/// Выделяет память.
 		/// </summary>

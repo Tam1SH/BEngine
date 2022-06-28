@@ -66,6 +66,12 @@ BE_NAMESPACE_STD_END
 
 
 namespace BEbraEngine {
+    class VulkanBitMap : public BitMap {
+    public:
+        vector<Rows> rows;
+        VulkanTexture* texture;
+        Rows& at(int index) override { return rows[index]; }
+    };
 
 
     class VulkanRender final : public AbstractRender

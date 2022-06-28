@@ -14,6 +14,7 @@
 #include "VulkanRender.hpp"
 #include "CreateInfoStructures.hpp"
 #include "VulkanObjects.hpp"
+#include "BaseRenderWindow.hpp"
 namespace BEbraEngine {
 
     std::mt19937::result_type seed = time(0);
@@ -49,15 +50,15 @@ namespace BEbraEngine {
 
 
 
-    ScriptState::ScriptState(AbstractRender& render, Physics& physics)
+    ScriptState::ScriptState(AbstractRender& render, Physics& physics, BaseWindow& window)
     {
         this->physics = &physics;
         this->render = &render;
-
+        this->window = &window;
         renderWorld = std::make_unique<RenderWorld>(render);
         auto scriptsss = new ObjectFactoryFacade(new GameObjectFactory(render, physics, *renderWorld));
         scriptsss->setContext(this);
-      //  render.setWorld(*renderWorld);
+        render.setWorld(*renderWorld);
         scriptObjectFactory = std::unique_ptr<ObjectFactoryFacade>(scriptsss);
         scriptManager = std::unique_ptr<ScriptManager>(new ScriptManager(scriptObjectFactory.get()));
 
@@ -153,8 +154,8 @@ namespace BEbraEngine {
 
         auto object6 = scriptObjectFactory->create(Vector3(20, 33, 0));
         object6->getComponentChecked<RigidBody>().setDynamic(false);
-        auto& col = object6->getComponentCheckedPtr<Collider>();
-        auto& body1 = object6->getComponentCheckedPtr<RigidBody>();
+        auto col = object6->getComponentCheckedPtr<Collider>();
+        auto body1 = object6->getComponentCheckedPtr<RigidBody>();
 
         object6->removeComponent(col);
         object6->removeComponent(body1);
@@ -199,6 +200,16 @@ namespace BEbraEngine {
             //clearObjects();
         }
 
+        if (Input::isKeyPressed(KeyCode::KEY_F11))
+        {
+           // static bool b{};
+           // b = !b;
+           // if(b)
+                window->setFullScreen(BaseWindow::FullScreenType::FullScreenOnWindow);
+           // else 
+            //    window->setFullScreen(BaseWindow::FullScreenType::None);
+
+        }
         if (Input::isKeyPressed(KeyCode::KEY_1)) {
 
             rotate.y = 0.5f;
@@ -241,7 +252,7 @@ namespace BEbraEngine {
             auto obj = scriptObjectFactory->create(Vector3(0, 40, 0));
             
             scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand_));
-            scriptObjectFactory->setModel(*obj, getPath(rand_).string());
+            //scriptObjectFactory->setModel(*obj, getPath(rand_).string());
 
             
             obj->getComponentChecked<RenderObject>().setColor(Vector3((rand() % 256) / (float)256, rand() % 256 / (float)256, rand() % 256 / (float)256));
@@ -414,35 +425,26 @@ namespace BEbraEngine {
     }
 
 
-    void ScriptState::addObject(shared_ptr<GameObject> object, const GameComponentCreateInfo& info)
+    void ScriptState::addObject(shared_ptr<GameObject> object)
     {
-
-        auto pObject = object;
         queues.addTask(ExecuteType::Single, 
             [=] {
-                auto renderObj = pObject->getComponent<RenderObject>();
+                auto renderObj = object->getComponent<RenderObject>();
                 if (renderObj.has_value()) {
-                    renderWorld->addObject(pObject->getComponentChecked<RenderObject>());
+                    renderWorld->addObject(object->getComponentChecked<RenderObject>());
                 }
                 else
                     DEBUG_LOG1("Object has no component 'RenderObject'");
                 
 
-                if (info.rigidBodyInfo) {
-                    auto rigidBody = pObject->getComponent<RigidBody>();
-                    if (rigidBody.has_value()) {
-                        physics->addRigidBody(pObject->getComponentChecked<RigidBody>());
-                    }
-                    else
-                        DEBUG_LOG1("Object has no component 'RigidBody'");
-
+                auto rigidBody = object->getComponent<RigidBody>();
+                if (rigidBody.has_value()) {
+                    physics->addRigidBody(object->getComponentChecked<RigidBody>());
                 }
-                objects_.push_back(object);
+                else
+                    DEBUG_LOG1("Object has no component 'RigidBody'");
 
-                // бля что ита
-                const GameObject* const bulshit = &*object;
-                tbb::concurrent_hash_map<const GameObject*, shared_ptr<GameObject>>::const_accessor a{};
-                objectsCache.insert({ bulshit, object});
+                objects_.push_back(object);
             }
             
 
@@ -507,18 +509,6 @@ namespace BEbraEngine {
             render->addGlobalLight(*pLight);
             }
         );
-    }
-
-    shared_ptr<GameObject> ScriptState::getShared(const GameObject& object)
-    {
-        auto sObj = shared_ptr<GameObject>();
-        tbb::concurrent_hash_map<const GameObject*, shared_ptr<GameObject>>::accessor a{};
-
-        if (objectsCache.find(a, &object)) 
-            return a->second;
-        else 
-            throw std::runtime_error("the object is not registered");
-        
     }
 
     ScriptState::~ScriptState()

@@ -139,6 +139,22 @@ namespace BEbraEngine {
 		return _isClose;
 	}
 
+	bool BaseWindow::isCollapsed()
+	{
+		return SDL_GetWindowFlags(handle) & SDL_WINDOW_MINIMIZED;
+	}
+	void BaseWindow::setFullScreen(FullScreenType type)
+	{
+		int flags{};
+		if (type == FullScreenType::FullScreenOnWindow)
+			flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+		if (type == FullScreenType::FullScreen)
+			flags = SDL_WINDOW_FULLSCREEN;
+		if (!SDL_SetWindowFullscreen(handle, flags)) throw std::exception();
+
+	}
+
+
 
 
 }

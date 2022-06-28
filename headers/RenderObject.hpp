@@ -186,6 +186,7 @@ namespace BEbraEngine {
 
     };
 
+    //TODO: избавляться от этого класса надо.
     class RenderObject : public GameComponent, public IReusable {
         DEBUG_DESTROY_CHECK_DECL()
     public:

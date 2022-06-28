@@ -172,7 +172,7 @@ namespace BEbraEngine {
                         world->updateState({});
                     }
                     else {
-                        DEBUG_LOG1("Render object was destroyed during set material", pointer);
+                        DEBUG_LOG3("Render object was destroyed during set material", pointer);
                         mat->destroy(*destroyer);
                         delete mat;
                     }
@@ -182,6 +182,8 @@ namespace BEbraEngine {
 
         return optional<Material*>(mat);
     }
+
+
 
     void VulkanRenderObjectFactory::setMaterial(RenderObject& obj, Material& material)
     {

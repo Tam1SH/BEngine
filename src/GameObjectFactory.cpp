@@ -165,7 +165,7 @@ namespace BEbraEngine {
 	void GameObjectFactory::setMaterialAsync(shared_ptr<GameObject> object, const Material::CreateInfo& info)
 	{
 		auto rObj = object->getComponentCheckedPtr<RenderObject>();
-		auto& mat1 = object->getComponent<Material>();
+		auto mat1 = object->getComponent<Material>();
 		if(mat1.has_value())
 			mat1.value()->destroy(*destroyer);
 
