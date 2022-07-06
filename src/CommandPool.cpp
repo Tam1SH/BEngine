@@ -1,19 +1,23 @@
-#include "stdafx.h"
-#include "CommandPool.hpp"
-#include "CommandBuffer.hpp"
-#include "VulkanRender.hpp"
+#include <vulkan.h>
+
+module CommandPool;
+import CommandBuffer;
+import VulkanRender;
 namespace BEbraEngine {
     void CommandPool::create(uint32_t queueFamilyIndex)
     {
+        
         VkCommandPoolCreateInfo info{};
         info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
         info.queueFamilyIndex = queueFamilyIndex;
         this->pool = 0;
         vkCreateCommandPool(VulkanRender::device, &info, 0, &pool);
+        
     }
     CommandBuffer CommandPool::createCommandBuffer(CommandBuffer::Type type, VkCommandBufferUsageFlagBits bits)
     {
+        
         CommandBuffer buffer = CommandBuffer();
         buffer.pool = this;
         buffer.type = type;
@@ -29,6 +33,8 @@ namespace BEbraEngine {
         vkAllocateCommandBuffers(VulkanRender::device, &allocInfo, buffer.GetBuffer());
         countBuffers++;
         return buffer;
+        
+        throw std::exception();
 
     }
     void CommandPool::destroyCmdBuffer(VkCommandBuffer buffer)

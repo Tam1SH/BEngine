@@ -1,14 +1,13 @@
-#include "stdafx.h"
-#include "ObjectFactoryFacade.hpp"
-#include "ScriptState.hpp"
-#include "GameObject.hpp"
-#include "GameComponent.hpp"
-#include "GameObjectFactory.hpp"
-#include "Vector3.hpp"
-#include "RenderObject.hpp"
-#include "Camera.hpp"
+#include <boost/filesystem.hpp>
+module ObjectFactoryFacade;
+import ScriptState;
+import GameObjectFactory;
+import <optional>;
+import <memory>;
+using std::string;
 using std::unique_ptr;
 using std::optional;
+using std::shared_ptr;
 
 namespace BEbraEngine {
 
@@ -29,17 +28,18 @@ namespace BEbraEngine {
 
     shared_ptr<GameObject> ObjectFactoryFacade::create(const Vector3& position)
     {
+        
         GameComponentCreateInfo info{};
         Transform::CreateInfo transformInfo{};
-        Collider::CreateInfo colliderInfo{};
-        RigidBody::CreateInfo rigidBodyInfo{};
-        RenderObject::CreateInfo renderInfo{};
+        ColliderCreateInfo colliderInfo{};
+        RigidBodyCreateInfo rigidBodyInfo{};
+        RenderObjectCreateInfo renderInfo{};
 
         transformInfo.position = position;
 
         colliderInfo.position = position;
         colliderInfo.scale = transformInfo.scale;
-        colliderInfo.type = Collider::Type::Box;
+        colliderInfo.type = ColliderType::Box;
 
         rigidBodyInfo.mass = 1.f;
         rigidBodyInfo.position = transformInfo.position;
@@ -60,7 +60,9 @@ namespace BEbraEngine {
             else throw std::exception();
         }
         else throw std::exception();
-
+        
+        throw std::exception();
+        
     }
 
     shared_ptr<Light> ObjectFactoryFacade::createLight(const Vector3& position)
@@ -68,6 +70,7 @@ namespace BEbraEngine {
         auto light = realFactory_->createLight(position);
         state_->addLight(*light);
         return light;
+        throw std::exception();
     }
 
     shared_ptr<DirectionLight> ObjectFactoryFacade::createDirLight(const Vector3& direction)
@@ -75,14 +78,15 @@ namespace BEbraEngine {
         auto light = realFactory_->createDirLight(direction);
         state_->addDirLight(*light);
         return light;
+        throw std::exception();
     }
 
-    void ObjectFactoryFacade::setMaterialAsync(shared_ptr<GameObject> object, const Material::CreateInfo& info)
+    void ObjectFactoryFacade::setMaterialAsync(shared_ptr<GameObject> object, const MaterialCreateInfo& info)
     {
         realFactory_->setMaterialAsync(object, info);
     }
 
-    void ObjectFactoryFacade::destroy(shared_ptr<GameObject>& object)
+    void ObjectFactoryFacade::destroy(shared_ptr<GameObject> object)
     {
         state_->removeObject(object, [=](GameObject& obj) { realFactory_->destroy(obj); });
     }
@@ -101,6 +105,7 @@ namespace BEbraEngine {
         auto camera = realFactory_->createCamera(position);
         state_->addCamera(*camera);
         return camera;
+        throw std::exception();
     }
 
     void ObjectFactoryFacade::destroyCamera(SimpleCamera& camera)
@@ -113,7 +118,7 @@ namespace BEbraEngine {
         realFactory_->setModel(object, path);
     }
 
-    void ObjectFactoryFacade::setCollider(Collider& col, Collider::Type type)
+    void ObjectFactoryFacade::setCollider(Collider& col, ColliderType type)
     {
         realFactory_->setCollider(col, type);
     }

@@ -1,15 +1,30 @@
 ﻿
-#include "stdafx.h"
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 
-#include "VulkanTextureFactory.hpp"
 #include <stb-master/stb_image.h>
 #include <stb-master/stb_image_write.h>
-#include "VulkanRender.hpp"
-#include "Debug.hpp"
+#include <boost/filesystem.hpp>
+#include <tbb.h>
+#include <vulkan.h>
+#include <cmath>
+#include <algorithm>
+#undef max
 
+module VulkanTextureFactory;
+import RenderObjects;
+import VulkanRender;
+import <optional>;
+import <vector>;
+import <memory>;
+using std::function;
+using std::optional;
+using std::vector;
+using std::shared_ptr;
 namespace BEbraEngine {
-    optional<Material*> VulkanTextureFactory::createMaterialAsync(const Material::CreateInfo& info, function<void(Material*)> onComplete)
+    optional<Material*> VulkanTextureFactory::createMaterialAsync(const MaterialCreateInfo& info, function<void(Material*)> onComplete)
     {
+        
         auto strColorLow = ((info.color.parent_path().string() / info.color.stem()).string() + "_low");
         auto strExensionColor = info.color.extension().string();
         auto image = std::shared_ptr<Texture>(create(strColorLow + strExensionColor, false));
@@ -41,10 +56,12 @@ namespace BEbraEngine {
 
             });
         return mat;
+        
+        throw std::exception();
     }
     Texture* VulkanTextureFactory::createAsync(const boost::filesystem::path& path, std::function<void(Texture*)> onComplete)
     {
-
+        
         auto str = ((path.parent_path().string() / path.stem()).string() + "_low");
         auto str1 = path.extension().string();
         auto path_low = str + str1;
@@ -62,9 +79,12 @@ namespace BEbraEngine {
         });
 
         return image;
+        
+        throw std::exception();
     }
     Texture* VulkanTextureFactory::create(const boost::filesystem::path& path, bool generateMip)
     {
+        
         VulkanTexture* image = new VulkanTexture();
         int texWidth, texHeight, texChannels;
        // stbi_set_flip_vertically_on_load(true);
@@ -76,9 +96,9 @@ namespace BEbraEngine {
 
         if (!rows)
         {
-            if(!path.string().empty())
-                DEBUG_LOG2("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
-                    image, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
+            //if(!path.string().empty())
+                //DEBUG_LOG2("failed to upload texture. uncorrect path or file don't exist. | path: " + path.string(),
+                //    image, "", Debug::ObjectType::Empty, Debug::MessageType::Error);
             rows = new unsigned char[4];
             rows[0] = 255;
             rows[1] = 255;
@@ -88,6 +108,7 @@ namespace BEbraEngine {
             image->setHeight(texHeight);
             image->setWidth(texWidth);
         }
+
         if (generateMip)
             image->mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
         else {
@@ -102,10 +123,13 @@ namespace BEbraEngine {
         
         render->createTextureSampler(image);
         return image;
+        
+        throw std::exception();
     }
     Texture* VulkanTextureFactory::createEmpty()
     {
         return create("", false);
+        throw std::exception();
     }
     void VulkanTextureFactory::saveImage(const char* fileName, int width, int height, int channel_num, const void* rows, int quality) {
         stbi_write_jpg(fileName, width, height, channel_num, rows, quality);
@@ -113,10 +137,11 @@ namespace BEbraEngine {
 
     void VulkanTextureFactory::saveImage(const char* fileName, int width, int height, int channel_num, BEbraEngine::BitMap& bitMap, int quality)
     {
+        
         tbb::task_arena t;
         auto pBitMap = &bitMap;
-       // t.enqueue([=]() {
-            DEBUG_LOG1("BEGIN TASK");
+        //t.enqueue([=]() {
+            //DEBUG_LOG1("BEGIN TASK");
             vector<uint8_t> pixelsConvert;
             pixelsConvert.resize(width * height * channel_num);
             int index{};
@@ -131,7 +156,7 @@ namespace BEbraEngine {
                 }
             }
             stbi_write_jpg(fileName, width, height, channel_num, pixelsConvert.data(), quality);
-         //   });
+        //});
        
     }
     void VulkanTextureFactory::setDestroyer(IVisitorGameComponentDestroyer& destroyer)
@@ -139,14 +164,14 @@ namespace BEbraEngine {
         this->destroyer = &destroyer;
     }
 
-    VulkanTextureFactory::VulkanTextureFactory(AbstractRender* render) : render(dynamic_cast<VulkanRender*>(render))
+    VulkanTextureFactory::VulkanTextureFactory(AbstractRender* render) 
+        : render(dynamic_cast<VulkanRender*>(render))
     { 
         if (!render) throw std::runtime_error("render isn't VulkanRender"); 
     }
     void VulkanTextureFactory::destroyTexture(Texture& texture)
     {
-        auto& vTexture = texture.as<VulkanTexture>();
-       // render->destroyTexture(vTexture);
+        throw std::exception();
     }
     void VulkanTextureFactory::destroyTextureAsync(shared_ptr<Texture> texture)
     {

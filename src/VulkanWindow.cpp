@@ -1,13 +1,12 @@
-#include "stdafx.h"
-#define NOMINMAX
-#include "VulkanWindow.hpp"
-#include "VulkanRender.hpp"
-#undef CreateWindow
+module VulkanWindow;
+import VulkanRender;
+
 
 namespace BEbraEngine {
 
 	void VulkanWindow::createWindow(const Vector2& size, const std::string& title)
 	{
+		
 		onCreateWindow(size, BaseWindow::SurfaceType::Vulkan, title);
 		render->create(this);
 	}

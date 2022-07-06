@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "CommandBuffer.hpp"
-#include "CommandPool.hpp"
+#include <vulkan.h>
+module CommandBuffer;
+import CommandPool;
 namespace BEbraEngine {
     CommandBuffer::CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type)
     {

@@ -1,10 +1,11 @@
-#include "stdafx.h"
-#include "BaseRenderWindow.hpp"
-#include "Input.hpp"
-#include "Vector2.hpp"
+
 #include <SDL_vulkan.h>
-#include "Debug.hpp"
-#ifdef BEBRA_USE_SDL
+#include <SDL.h>
+
+module BaseRenderWindow;
+using std::vector;
+using std::string;
+
 namespace BEbraEngine {
 	void BaseWindow::vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface)
 	{
@@ -158,4 +159,3 @@ namespace BEbraEngine {
 
 
 }
-#endif

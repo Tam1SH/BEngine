@@ -1,15 +1,11 @@
-﻿#include "stdafx.h"
-#include "GameComponentDestroyer.hpp"
-#include "IRenderObjectFactory.hpp"
-#include "RenderObject.hpp"
-#include "RigidBodyFactory.hpp"
-#include "ColliderFactory.hpp"
-#include "GameObject.hpp"
-#include "ITextureFactory.hpp"
+#include <boost/filesystem.hpp>
+module GameComponentDestroyer;
+import Texture;
+import <memory>;
+using std::shared_ptr;
 
 namespace BEbraEngine {
 
-	
 	GameComponentDestroyer::GameComponentDestroyer(
 		IRenderObjectFactory& renderFactory,
 		ColliderFactory& colliderFactory,
@@ -19,36 +15,33 @@ namespace BEbraEngine {
 		this->colliderFactory = &colliderFactory;
 		this->rigidBodyFactory = &rigidBodyFactory;
 	}
-
-	
 	void GameComponentDestroyer::destroyRenderComponent(RenderObject& comp)
 	{
 		renderFactory->destroyObject(comp);
 #ifdef _DEBUG
-		comp.isDestroyed = true;
+		//comp.isDestroyed = true;
 #endif // _DEBUG
-		
+
 	}
 	void GameComponentDestroyer::destroyRigidBodyComponent(RigidBody& comp)
 	{
 		rigidBodyFactory->destroy(comp);
 #ifdef _DEBUG
-		comp.isDestroyed = true;
+		//comp.isDestroyed = true;
 #endif // _DEBUG
 	}
 	void GameComponentDestroyer::destroyColliderComponent(Collider& comp)
 	{
 		colliderFactory->destroyCollider(comp);
 #ifdef _DEBUG
-		comp.isDestroyed = true;
+		//comp.isDestroyed = true;
 #endif // _DEBUG
 	}
 	void GameComponentDestroyer::destroyTextureComponent(Texture& comp)
 	{
 #ifdef _DEBUG
-		comp.isDestroyed = true;
+		//comp.isDestroyed = true;
 #endif // _DEBUG
-		throw std::exception();
 		//renderFactory->getTextureFactory().destroyTextureAsync(comp);
 
 	}
@@ -61,7 +54,7 @@ namespace BEbraEngine {
 		if (comp.normal)
 			destroyTextureComponentAsync(comp.normal);
 #ifdef _DEBUG
-		comp.isDestroyed = true;
+		//comp.isDestroyed = true;
 #endif // _DEBUG
 	}
 	void GameComponentDestroyer::destroyTransformComponent(Transform& comp)
@@ -87,7 +80,7 @@ namespace BEbraEngine {
 	{
 
 #ifdef _DEBUG
-		comp->isDestroyed = true;
+		//comp->isDestroyed = true;
 #endif // _DEBUG
 		renderFactory->getTextureFactory().destroyTextureAsync(comp);
 
@@ -96,9 +89,7 @@ namespace BEbraEngine {
 	void GameComponentDestroyer::destroyGameObject(GameObject& comp)
 	{
 #ifdef _DEBUG
-		comp.isDestroyed = true;
+		//comp.isDestroyed = true;
 #endif // _DEBUG
 	}
-	
-	
 }

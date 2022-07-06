@@ -138,18 +138,18 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd</AdditionalIncludeDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
       <EnableModules>true</EnableModules>
       <TranslateIncludes>false</TranslateIncludes>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -233,10 +233,10 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
@@ -305,63 +305,115 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AbstractScriptObject.cpp" />
     <ClCompile Include="AngelScript.cpp" />
     <ClCompile Include="AngelScriptEngine.cpp" />
-    <ClCompile Include="AsyncTask.cpp" />
-    <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="BaseRenderWindow.cpp" />
+    <ClCompile Include="Camera.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="Collider.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="ColliderFactory.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
-    <ClCompile Include="DXRender.cpp" />
-    <ClCompile Include="GameComponent.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    <ClCompile Include="CTextureFactory.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="CVisitorComponentDestroyer.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Debug.ixx" />
+    <ClCompile Include="GameComponent.ixx" />
     <ClCompile Include="GameComponentDestroyer.cpp" />
-    <ClCompile Include="Math.cpp" />
-    <ClCompile Include="RenderWorld.cpp" />
-    <ClCompile Include="RigidBodyFactory.cpp" />
+    <ClCompile Include="IVisitorGameComponentDestroyer.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Line.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Math.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="matrix.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Quaternion.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RenderBuffer.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RenderData.ixx" />
+    <ClCompile Include="RenderObjects.cpp" />
+    <ClCompile Include="RenderObjects.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RenderWorld.cxx" />
+    <ClCompile Include="RenderWorld.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="RigidBody.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RigidBodyFactory.cxx" />
     <ClCompile Include="ObjectFactoryFacade.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="utils.cpp" />
-    <ClCompile Include="VulkanObjects.cpp" />
+    <ClCompile Include="Transform.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TransformFactory.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="utils.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vector2.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vector3.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vector4.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="VulkanObjects.cxx" />
+    <ClCompile Include="VulkanObjects.ixx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="VulkanRender.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandPool.cpp" />
-    <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="DebugUI.cpp" />
     <ClCompile Include="DescriptorPool.cpp" />
-    <ClCompile Include="DescriptorSet.cpp" />
-    <ClCompile Include="DescriptorSetLayout.cpp" />
-    <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="ScriptState.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
-    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VulkanTextureFactory.cpp" />
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="MeshFactory.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Network.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pipeline.cpp" />
-    <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="VulkanRenderObjectFactory.cpp" />
-    <ClCompile Include="RenderBufferPool.cpp" />
-    <ClCompile Include="RigidBoby.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Time.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="TransformFactory.cpp" />
-    <ClCompile Include="Vertex.cpp" />
-    <ClCompile Include="VkBuffer.cpp" />
+    <ClCompile Include="VulkanBuffer.cxx" />
     <ClCompile Include="VulkanWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -380,78 +432,109 @@
     <Text Include="..\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\headers\AbstractRender.hpp" />
-    <ClInclude Include="..\headers\AbstractScriptObject.hpp" />
-    <ClInclude Include="..\headers\AngelScript.hpp" />
-    <ClInclude Include="..\headers\AngelScriptEngine.hpp" />
-    <ClInclude Include="..\headers\AsyncTask.hpp" />
-    <ClInclude Include="..\headers\AudioSystem.hpp" />
-    <ClInclude Include="..\headers\BaseRenderWindow.hpp" />
-    <ClInclude Include="..\headers\BaseScript.hpp" />
-    <ClInclude Include="..\headers\BaseScriptEngine.hpp" />
-    <ClInclude Include="..\headers\Engine.hpp" />
-    <ClInclude Include="..\headers\Camera.hpp" />
-    <ClInclude Include="..\headers\Collider.hpp" />
-    <ClInclude Include="..\headers\ColliderFactory.hpp" />
-    <ClInclude Include="..\headers\CommandBuffer.hpp" />
-    <ClInclude Include="..\headers\CommandPool.hpp" />
-    <ClInclude Include="..\headers\CreateInfoStructures.hpp" />
-    <ClInclude Include="..\headers\Debug.hpp" />
-    <ClInclude Include="..\headers\DebugUI.hpp" />
-    <ClInclude Include="..\headers\DescriptorPool.hpp" />
-    <ClInclude Include="..\headers\DescriptorSet.hpp" />
-    <ClInclude Include="..\headers\DescriptorSetLayouts.hpp" />
-    <ClInclude Include="..\headers\ExecuteQueues.hpp" />
-    <ClInclude Include="..\headers\FileSystem.hpp" />
-    <ClInclude Include="..\headers\GameComponent.hpp" />
-    <ClInclude Include="..\headers\GameComponentCreateInfo.hpp" />
-    <ClInclude Include="..\headers\GameComponentDestroyer.hpp" />
-    <ClInclude Include="..\headers\GameObject.hpp" />
-    <ClInclude Include="..\headers\GameObjectFactory.hpp" />
-    <ClInclude Include="..\headers\Input.hpp" />
-    <ClInclude Include="..\headers\IRenderBufferPool.hpp" />
-    <ClInclude Include="..\headers\IRenderObjectFactory.hpp" />
-    <ClInclude Include="..\headers\IReusable.hpp" />
-    <ClInclude Include="..\headers\ITextureFactory.hpp" />
-    <ClInclude Include="..\headers\IVisitorGameComponentDestroyer.hpp" />
-    <ClInclude Include="..\headers\Math.hpp" />
-    <ClInclude Include="..\headers\matrix.hpp" />
-    <ClInclude Include="..\headers\MeshFactory.hpp" />
-    <ClInclude Include="..\headers\Model.hpp" />
-    <ClInclude Include="..\headers\Network.hpp" />
-    <ClInclude Include="..\headers\ObjectFactoryFacade.hpp" />
-    <ClInclude Include="..\headers\Physics.hpp" />
-    <ClInclude Include="..\headers\Pipeline.hpp" />
-    <ClInclude Include="..\headers\platform.hpp" />
-    <ClInclude Include="..\headers\platform_window.hpp" />
-    <ClInclude Include="..\headers\Quaternion.hpp" />
-    <ClInclude Include="..\headers\RenderBuffer.hpp" />
-    <ClInclude Include="..\headers\RenderObject.hpp" />
-    <ClInclude Include="..\headers\RenderWorld.hpp" />
-    <ClInclude Include="..\headers\RigidBoby.hpp" />
-    <ClInclude Include="..\headers\RigidBodyFactory.hpp" />
-    <ClInclude Include="..\headers\ScriptManager.hpp" />
-    <ClInclude Include="..\headers\ScriptState.hpp" />
-    <ClInclude Include="..\headers\ScriptWrappers.hpp" />
-    <ClInclude Include="..\headers\Shader.hpp" />
-    <ClInclude Include="..\headers\Texture.hpp" />
-    <ClInclude Include="..\headers\Time.hpp" />
-    <ClInclude Include="..\headers\Transform.hpp" />
-    <ClInclude Include="..\headers\TransformFactory.hpp" />
-    <ClInclude Include="..\headers\utils.hpp" />
-    <ClInclude Include="..\headers\Vector2.hpp" />
-    <ClInclude Include="..\headers\Vector3.hpp" />
-    <ClInclude Include="..\headers\Vector4.hpp" />
-    <ClInclude Include="..\headers\Vertex.hpp" />
-    <ClInclude Include="..\headers\VkBuffer.hpp" />
-    <ClInclude Include="..\headers\VulkanObjects.hpp" />
-    <ClInclude Include="..\headers\VulkanRender.hpp" />
-    <ClInclude Include="..\headers\VulkanRenderBufferPool.hpp" />
-    <ClInclude Include="..\headers\VulkanRenderObjectFactory.hpp" />
-    <ClInclude Include="..\headers\VulkanTextureFactory.hpp" />
-    <ClInclude Include="..\headers\VulkanWindow.hpp" />
-    <ClInclude Include="DXRender.hpp" />
-    <ClInclude Include="stdafx.h" />
+    <ClCompile Include="AbstractRender.ixx">
+      <FileType>Document</FileType>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="AngelScript.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="AngelScriptEngine.ixx" />
+    <ClCompile Include="BaseRenderWindow.ixx" />
+    <ClCompile Include="BaseScript.ixx" />
+    <ClCompile Include="BaseScriptEngine.ixx" />
+    <ClCompile Include="ColliderFactory.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="CommandBuffer.ixx" />
+    <ClCompile Include="CommandPool.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="CreateInfoStructures.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="DescriptorPool.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="DescriptorSet.ixx" />
+    <ClCompile Include="DescriptorSetLayouts.ixx" />
+    <ClCompile Include="ExecuteQueues.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="GameComponentCreateInfo.ixx" />
+    <ClCompile Include="GameComponentDestroyer.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="GameObject.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="GameObjectFactory.ixx" />
+    <ClCompile Include="Input.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="IRenderBufferPool.ixx" />
+    <ClCompile Include="IRenderObjectFactory.ixx" />
+    <ClCompile Include="ITextureFactory.ixx" />
+    <ClCompile Include="MeshFactory.ixx">
+      <FileType>Document</FileType>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Model.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="ObjectFactoryFacade.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClInclude Include="Physics.hpp">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClCompile Include="VulkanPipeline.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClInclude Include="platform.hpp" />
+    <ClInclude Include="platform_window.hpp" />
+    <ClCompile Include="RigidBodyFactory.ixx" />
+    <ClCompile Include="ScriptManager.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="ScriptState.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="ScriptWrappers.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Shader.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Texture.ixx">
+      <FileType>Document</FileType>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vertex.ixx">
+      <FileType>Document</FileType>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="VulkanBuffer.ixx">
+      <FileType>Document</FileType>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Time.ixx" />
+    <ClCompile Include="VulkanRender.ixx" />
+    <ClCompile Include="VulkanRenderBufferPool.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="VulkanRenderObjectFactory.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="VulkanTextureFactory.ixx" />
+    <ClCompile Include="VulkanWindow.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

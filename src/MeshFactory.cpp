@@ -1,10 +1,21 @@
-#include "stdafx.h"
-#include "MeshFactory.hpp"
-#include "VulkanTextureFactory.hpp"
-#include "AbstractRender.hpp"
-namespace BEbraEngine {
 
-    optional<Model*> MeshFactory::create(const Model::ModelCreateInfo& info)
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <fstream>
+#include <iostream>
+#include <boost/filesystem.hpp>
+
+module MeshFactory;
+import RenderBuffer;
+import Model;
+import Vector3;
+import Vector2;
+import <optional>;
+
+namespace BEbraEngine {
+    
+    std::optional<Model*> MeshFactory::create(const ModelCreateInfo& info)
     {
 
         auto model = new Model();
@@ -12,21 +23,21 @@ namespace BEbraEngine {
         if (name == "Box") {
             auto box = getDefaultModel("BOX");
             if (box.get())
-                return optional<Model*>(&*box);
+                return std::optional<Model*>(&*box);
         }
 
         if (name == "Cylinder")
         {
             auto cylinder = getDefaultModel("Cylinder");
             if (cylinder.get())
-                return optional<Model*>(&*cylinder);
+                return std::optional<Model*>(&*cylinder);
         }
 
         if (name == "Sphere")
         {
             auto sphere = getDefaultModel("Sphere");
             if(sphere.get())
-                return optional<Model*>(&*sphere);
+                return std::optional<Model*>(&*sphere);
         }
         // „тение файла с помощью Assimp
         Assimp::Importer imposter;
@@ -35,7 +46,7 @@ namespace BEbraEngine {
         // ѕроверка на ошибки
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // если Ќ≈ 0
         {
-            std::cout << "ERROR::ASSIMP:: " << imposter.GetErrorString() << std::endl;
+            //std::cout << "ERROR::ASSIMP:: " << imposter.GetErrorString() << std::endl;
             return std::make_optional<Model*>();
         }
 
@@ -46,7 +57,8 @@ namespace BEbraEngine {
         auto model_out = std::make_optional<Model*>(model);
         return model_out;
     }
-    std::optional<Model*> MeshFactory::createAsync(const Model::ModelCreateInfo& info)
+
+    std::optional<Model*> MeshFactory::createAsync(const ModelCreateInfo& info)
     {
         return std::optional<Model*>();
     }
@@ -54,6 +66,7 @@ namespace BEbraEngine {
     {
         return default_models[name];
     }
+
     MeshFactory::MeshFactory(AbstractRender* render) { 
         this->render = render;
         downloadDefaultModels(); 
@@ -65,7 +78,7 @@ namespace BEbraEngine {
         const char* sphere = "SPHERE";
         const char* cylinder = "CYLINDER";
 
-        Model::ModelCreateInfo info = { };
+        ModelCreateInfo info{};
         
         info.path = boost::filesystem::current_path() / "Models/Box.fbx";;
         default_models[box] = std::shared_ptr<Model>(create(info).value());
@@ -117,15 +130,15 @@ namespace BEbraEngine {
 
     {
         // ƒанные дл€ заполнени€
-        vector<Vertex> vertices;
-        vector<uint32_t> indices;
-        vector<Texture*> textures;
+        std::vector<Vertex> vertices;
+        std::vector<uint32_t> indices;
+        std::vector<Texture*> textures;
 
         // ÷икл по всем вершинам меша
         for (unsigned int i = 0; i < mesh->mNumVertices; i++)
         {
             Vertex vertex;
-            glm::vec3 vector; // мы объ€вл€ем промежуточный вектор, т.к. Assimp использует свой собственный векторный класс, который не преобразуетс€ напр€мую в тип glm::vec3, поэтому сначала мы передаем данные в этот промежуточный вектор типа glm::vec3
+            Vector3 vector; // мы объ€вл€ем промежуточный вектор, т.к. Assimp использует свой собственный векторный класс, который не преобразуетс€ напр€мую в тип glm::vec3, поэтому сначала мы передаем данные в этот промежуточный вектор типа glm::vec3
 
             //  оординаты
             vector.x = mesh->mVertices[i].x;
@@ -142,7 +155,7 @@ namespace BEbraEngine {
             // “екстурные координаты
             if (mesh->mTextureCoords[0]) // если меш содержит текстурные координаты
             {
-                glm::vec2 vec;
+                Vector2 vec;
 
                 // ¬ершина может содержать до 8 различных текстурных координат. ћы предполагаем, что мы не будем использовать модели,
                 // в которых вершина может содержать несколько текстурных координат, поэтому мы всегда берем первый набор (0)
@@ -151,7 +164,7 @@ namespace BEbraEngine {
                 vertex.texCoord = vec;
             }
             else
-                vertex.texCoord = glm::vec2(0.0f, 0.0f);
+                vertex.texCoord = Vector2(0.0f, 0.0f);
 
             //  асательный вектор
             vector.x = mesh->mTangents[i].x;
@@ -242,4 +255,7 @@ namespace BEbraEngine {
         }
         return textures;
     }
+
+    
+    
 }

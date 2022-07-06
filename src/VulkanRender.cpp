@@ -1,44 +1,44 @@
-#include "stdafx.h"
-
-#include "VulkanRender.hpp"
-#include "VulkanWindow.hpp"
-#include "VkBuffer.hpp"
-#include "Camera.hpp"
-#include "matrix.hpp"
-#include "Texture.hpp"
-#include "DescriptorSetLayouts.hpp"
-#include "RenderBuffer.hpp"
-#include "RenderObject.hpp"
-#include "VulkanRenderObjectFactory.hpp"
-#include "CommandBuffer.hpp"
-#include "CommandPool.hpp"
 #include <stdexcept>
 #include <array>
 #include <set>
 #include <SDL_vulkan.h>
-#include "Vertex.hpp"
-#include "CreateInfoStructures.hpp"
-#include "DescriptorSet.hpp"
-#include "RenderObject.hpp"
-#include "DescriptorPool.hpp"
-#include "VulkanObjects.hpp"
-#include "Shader.hpp"
-#include "Pipeline.hpp"
-#include "Time.hpp"
-#include "VulkanRenderBufferPool.hpp"
-#include "utils.hpp"
-#include <TransformFactory.hpp>
-#include "VulkanTextureFactory.hpp"
+#include <vulkan.h>
+#include <tbb.h>
+#include <boost/filesystem.hpp>
+#include <iostream>
+#include <fstream>
+module VulkanRender;
+import RenderWorld;
+import VulkanBuffer;
+import utils;
+import <memory>;
+import <vector>;
+import DescriptorSetLayouts;
+import RenderObjects;
+import DescriptorPool;
+import CommandBuffer;
+import CommandPool;
+import VulkanRenderObjectFactory;
+import IRenderObjectFactory;
+import CreateInfoStructures;
+import DescriptorSet;
+import Shader;
+import VulkanPipeline;
+import Time;
+import VulkanRenderBufferPool;
+import VulkanTextureFactory;
+using std::vector;
+using std::shared_ptr;
 namespace BEbraEngine {
     
 
-
+    
     VkDevice VulkanRender::device;
 
     VkPhysicalDevice VulkanRender::physicalDevice;
 
     VkInstance VulkanRender::instance;
-
+    
     VulkanRender::QueueFamilyIndices VulkanRender::FamilyIndices;
                                       
     
@@ -224,7 +224,8 @@ namespace BEbraEngine {
         addBufferToRenderQueue(buffer1);
         
     }
-
+   
+    
     void VulkanRender::createVkImage(unsigned char* data, VulkanTexture* texture, VkDeviceSize imageSize)
     {
         VkBuffer stagingBuffer;
@@ -266,7 +267,8 @@ namespace BEbraEngine {
             });
         addBufferToTransferQueue(buffer);
     }
-
+    
+    
     void VulkanRender::addBufferToRenderQueue(const CommandBuffer& buffer)
     {
         BufferRenderQueue.push(buffer);
@@ -275,7 +277,7 @@ namespace BEbraEngine {
     {
         BufferTransferQueue.push(buffer);
     }
-
+    
     VkFence* VulkanRender::getCurrentFence()
     {
         return inFlightFences.data();
@@ -305,8 +307,9 @@ namespace BEbraEngine {
     }
 
     void VulkanRender::recreateRenderObjects() {
-
+        
         //auto& dec1 = globalLight.lock()->descriptor;
+        
         auto info1 = LightDescriptorInfo();
         info1.bufferView = globalLight->data.get();
         info1.type = LightDescriptorInfo::Type::Direction;
@@ -314,9 +317,10 @@ namespace BEbraEngine {
         freeDescriptor(globalLight);
         globalLight->descriptor = createDescriptor(&info1);
         globalLightSet = globalLight->descriptor;
-
+        
 
         auto& data = world->getRenderData();
+        
         for (auto& light : data.lights) {
 
             auto& vLight = light->as<VulkanPointLight>();
@@ -349,6 +353,7 @@ namespace BEbraEngine {
         lineSet = createDescriptor2(view->get());
         linePool->free(*view);
         createAttachmentsSet();
+        
     }
 
     void VulkanRender::createDepthResources()
@@ -610,6 +615,7 @@ namespace BEbraEngine {
 
     void VulkanRender::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
     {
+        
         auto commandBuffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
             CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
@@ -631,6 +637,7 @@ namespace BEbraEngine {
 
     }
 
+    
 
     VkImageView VulkanRender::createImageView(VulkanTexture* texture, VkFormat format, VkImageAspectFlags aspectFlags)
     {
@@ -652,6 +659,7 @@ namespace BEbraEngine {
 
         return imageView;
     }
+    
 
     void VulkanRender::createTextureSampler(VulkanTexture* texture)
     {
@@ -680,6 +688,7 @@ namespace BEbraEngine {
         }
     }
 
+    
     VulkanTexture* VulkanRender::getBitMapFromSwapChainImage()
     {
         bool supportsBlit = true;
@@ -897,7 +906,7 @@ namespace BEbraEngine {
 
 
         auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
-        DEBUG_LOG1(std::stringstream() << "time: " << elapsed_ms.count());
+        //DEBUG_LOG1(std::stringstream() << "time: " << elapsed_ms.count());
 
         std::cout << "Screenshot saved to disk" << std::endl;
         // Clean up resources
@@ -1256,7 +1265,7 @@ namespace BEbraEngine {
 
     void VulkanRender::createRenderPass()
     {
-        DEBUG_LOG1("Start createRenderPass \n\n\n\n\n\n");
+        //DEBUG_LOG1("Start createRenderPass \n\n\n\n\n\n");
         for (int i = 0; i < swapChainImages.size(); i++) {
             createAttachment(VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, colorAttachments[i].get());
             createAttachment(findDepthFormat(), VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, depthAttachments[i].get());
@@ -1368,7 +1377,7 @@ namespace BEbraEngine {
         if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
             throw std::runtime_error("failed to create render pass!");
         }
-        DEBUG_LOG1("End createRenderPass \n\n\n\n\n\n");
+        //DEBUG_LOG1("End createRenderPass \n\n\n\n\n\n");
     }
 
     void VulkanRender::createAttachmentsSet()
@@ -1438,7 +1447,7 @@ namespace BEbraEngine {
             fragShaderStageInfo.module = fragShaderModule->module;
             fragShaderStageInfo.pName = "main";
 
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww            VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+            VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
             VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
             vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -2086,9 +2095,9 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
         for (auto& camera : cameras) {
             camera->update();
 
-            drawLine(camera->Front + camera->Position, (Vector3(0, 0, 1) / 100 + camera->Position), Vector3(1, 0, 0));
-            drawLine(camera->Front + camera->Position, (Vector3(0, 1, 0) / 100 + camera->Position), Vector3(0, 1, 0));
-            drawLine(camera->Front + camera->Position, (Vector3(1, 0, 0) / 100 + camera->Position), Vector3(0, 0, 1));
+            //drawLine(camera->Front + camera->Position, (Vector3(0, 0, 1) / 100 + camera->Position), Vector3(1, 0, 0));
+           // drawLine(camera->Front + camera->Position, (Vector3(0, 1, 0) / 100 + camera->Position), Vector3(0, 1, 0));
+            //drawLine(camera->Front + camera->Position, (Vector3(1, 0, 0) / 100 + camera->Position), Vector3(0, 0, 1));
         }
 
         if(globalLight)
@@ -2403,8 +2412,8 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
             std::stringstream ss;
             ss << pCallbackData->pMessage << std::endl;
 
-            DEBUG_LOG1(ss.str());
-            DEBUG_LOG1("\n\n\n\n\n");
+            //DEBUG_LOG1(ss.str());
+            //DEBUG_LOG1("\n\n\n\n\n");
         }
         else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
         {
@@ -2526,12 +2535,12 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
         return buffer;
     }
 
-
+    
     VkDevice VulkanRender::getDevice()
     {
         return device;
     }
-
+    
     VulkanRender::~VulkanRender()
     {
 
@@ -2627,10 +2636,13 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
     }
     void VulkanRender::create(BaseWindow* window)
     {
+        
         std::system("C:/.BEbraEngine/src/shaders/sh.bat");
 
         factory = std::unique_ptr<VulkanRenderObjectFactory>(new VulkanRenderObjectFactory());
+        
         this->window = dynamic_cast<VulkanWindow*>(window);
+        
         auto size = this->window->getDrawableSize() ;// * (1/2.f);
         currentRenderResolution = { static_cast<uint32_t>(size.x),static_cast<uint32_t>(size.y) };
         createInstance();
@@ -2676,16 +2688,19 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
         auto view = linePool->get();
         lineSet = createDescriptor2(view->get());
         linePool->free(*view);
+        
       //  auto obj = static_cast<VulkanRenderObject*>(factory->create({}).value());
      //   objectSet = obj->descriptor;
      //   factory->destroyObject(*obj);
     //    delete obj;
+    
     }
 
     RenderBuffer* VulkanRender::createIndexBuffer(std::vector<uint32_t> indices)
     {
         return createBufferAsync(indices.data(), sizeof(indices[0]) * indices.size(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
+    
 
     VkDescriptorSet VulkanRender::createDescriptor(LightDescriptorInfo* info)
     {
@@ -2715,14 +2730,15 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
             vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 
         }
-        else
-            DEBUG_LOG2("DescriptorPool is empty (Lights)",
-                vulkanRenderBufferPool.get(),
-                "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
+        //else
+           // DEBUG_LOG2("DescriptorPool is empty (Lights)",
+           //     vulkanRenderBufferPool.get(),
+           //     "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
         
 
         return set;
     }
+
     VkDescriptorSet VulkanRender::createDescriptor2(RenderBufferView* buffer)
     {
         VkDescriptorSet set{};
@@ -2749,9 +2765,9 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
             vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
         }
         else
-            DEBUG_LOG2("DescriptorPool is empty (Camera)",
-                vulkanRenderBufferPool.get(),
-                "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
+            //DEBUG_LOG2("DescriptorPool is empty (Camera)",
+           //     vulkanRenderBufferPool.get(),
+            //    "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
         return set;
     }
 
@@ -2781,12 +2797,12 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
             vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
         }
         else
-            DEBUG_LOG2("DescriptorPool is empty (Camera)",
-                vulkanRenderBufferPool.get(),
-                "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
+            //DEBUG_LOG2("DescriptorPool is empty (Camera)",
+            //    vulkanRenderBufferPool.get(),
+            //    "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
         return set;
     }
-
+    
     IRenderObjectFactory* VulkanRender::getRenderObjectFactory()
     {
         return factory.get();
@@ -2796,7 +2812,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
     {
         this->globalLight = dynamic_cast<VulkanDirLight*>(&globalLight);
     }
-
+    
     VkDescriptorSet VulkanRender::createDescriptor(VulkanDescriptorSetInfo* info)
     {
         VkDescriptorSet set{};
@@ -2880,15 +2896,16 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
             vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
         }
-        else
-            DEBUG_LOG2("DescriptorPool is empty (RenderObject)", 
-                vulkanRenderBufferPool.get(), 
-                "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
+        //else
+            //DEBUG_LOG2("DescriptorPool is empty (RenderObject)", 
+            //    vulkanRenderBufferPool.get(), 
+            //    "DescriptorPool", Debug::ObjectType::DescriptorPool, Debug::MessageType::Error);
 
        
 
         return set;
     }
+    
     void VulkanRender::updateDesriptor(VkDescriptorSet& set, VulkanDescriptorSetInfo* info)
     {
 
@@ -2968,6 +2985,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
         vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
+    
     void VulkanRender::freeDescriptor(VulkanRenderObject& set)
     {
         vulkanRenderBufferPool->free(set.descriptor);
@@ -2981,12 +2999,13 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
     {
         lightPool->free(set->descriptor);
     }
+    
     void VulkanRender::destroyTextureAsync(shared_ptr<VulkanTexture> texture)
     {
-
+        
         executeQueues.addTask(ExecuteType::Multi, 
             [=] {
-            DEBUG_LOG1("BEGIN DESTROINGYYY")
+            //DEBUG_LOG1("BEGIN DESTROINGYYY")
             if (texture->image != nullptr) {
 
 
@@ -2995,16 +3014,17 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
                 vkDestroySampler(device, texture->sampler, 0);
                 vkDestroyImageView(device, texture->imageView, 0);
             }
-            else DEBUG_LOG3("texture memory is invalid", &*texture);
+            //else DEBUG_LOG3("texture memory is invalid", &*texture);
             texture->memory = VK_NULL_HANDLE;
             texture->image = VK_NULL_HANDLE;
             texture->sampler = VK_NULL_HANDLE;
             texture->imageView = VK_NULL_HANDLE;
 
         });
-
+        
 
     }
+    
     void VulkanRender::destroyBuffer(RenderBuffer* buffer)
     {
         auto vkBuffer = static_cast<VulkanBuffer*>(buffer);
@@ -3032,9 +3052,6 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
     }
 
     VulkanRender::VulkanRender() {}
-
-
-
 
 
 }

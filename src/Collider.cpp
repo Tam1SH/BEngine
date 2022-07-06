@@ -1,13 +1,5 @@
-#include "stdafx.h"
-#include "Collider.hpp"
-
-#include <Physics/btBulletCollisionCommon.h>
-#include "IVisitorGameComponentDestroyer.hpp"
-#include "Debug.hpp"
-#include "RigidBoby.hpp"
-
+module Collider;
 namespace BEbraEngine {
-
 	void Collider::setScale(const Vector3& size) noexcept
 	{
 		this->size = size;
@@ -31,7 +23,7 @@ namespace BEbraEngine {
 	void Collider::setMass(float mass) noexcept
 	{
 		//TODO: что это нахуй значит?
-		auto vec = btVector3(0,0,0);
+		auto vec = btVector3(0, 0, 0);
 		_collider->getCollisionShape()->calculateLocalInertia(mass, vec);
 	}
 
@@ -52,12 +44,11 @@ namespace BEbraEngine {
 
 	Collider::~Collider()
 	{
-		DEBUG_DESTROY_CHECK("Collider has not destroyed", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
+		//DEBUG_DESTROY_CHECK("Collider has not destroyed", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
 	}
 
 	void Collider::destroy(IVisitorGameComponentDestroyer& destroyer)
 	{
-		destroyer.destroyColliderComponent(*this);
+		//destroyer.destroyColliderComponent(*this);
 	}
 }
-

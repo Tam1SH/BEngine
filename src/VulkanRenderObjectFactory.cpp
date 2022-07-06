@@ -1,37 +1,43 @@
-﻿#include "stdafx.h"
-#include "RenderObject.hpp"
-#include "VulkanRenderObjectFactory.hpp"
-#include "CreateInfoStructures.hpp"
-#include "VulkanRender.hpp"
-#include "VulkanTextureFactory.hpp"
-#include "Texture.hpp"
-#include "Transform.hpp"
-#include "VkBuffer.hpp"
-#include "VulkanObjects.hpp"
-#include "Vertex.hpp"
-#include "VulkanRenderBufferPool.hpp"
-#include "Debug.hpp"
-#include "MeshFactory.hpp"
-#include "Vector2.hpp"
-#include <boost/filesystem.hpp>
+﻿#include <boost/filesystem.hpp>
+#include <tbb.h>
+module VulkanRenderObjectFactory;
+import RenderObjects;
+import CreateInfoStructures;
+
+import VulkanRender;
+import VulkanTextureFactory;
+
+import CommandPool;
+import VulkanBuffer;
+import Vertex;
+import RenderWorld;
+import VulkanRenderBufferPool;
+import MeshFactory;
+import Vector2;
+import <optional>;
+import <memory>;
+using std::optional;
+using std::shared_ptr;
+
+
 //#include <stb-master/stb_image_write.h>
 namespace BEbraEngine {
 
-    optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObject::CreateInfo& info)
+    optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObjectCreateInfo& info)
     {
-
+        
         auto maybe_object_view = _poolofObjects->get();
         shared_ptr<RenderBufferView> object_view;
-
+        
         if (maybe_object_view.has_value()) {
             object_view = maybe_object_view.value();
         }
         else {
 
-            DEBUG_LOG2("BufferPool is empty", &_poolofObjects, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            //DEBUG_LOG2("BufferPool is empty", &_poolofObjects, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
             return optional<RenderObject*>();
         }
-
+        
         auto obj = new VulkanRenderObject();
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
@@ -42,21 +48,26 @@ namespace BEbraEngine {
         obj->setColor(Vector3(1));
         VulkanDescriptorSetInfo setinfo{};
         setinfo.bufferView = object_view.get();
+        
         setinfo.image = &obj->material->getColor().as<VulkanTexture>();
+        
         setinfo.specular = &obj->material->getSpecular().as<VulkanTexture>();
         setinfo.normal = &obj->material->getNormal().as<VulkanTexture>();
         obj->descriptor = render->createDescriptor(&setinfo);
+        
         if (!obj->descriptor) {
-            DEBUG_LOG2("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            //DEBUG_LOG2("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
             delete obj;
             return optional<RenderObject*>();
         }
         obj->layout = &render->pipelineLayout;
         return optional<RenderObject*>(obj);
+        
     }
 
     Light* VulkanRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)
     {
+       
         auto maybe_object_view = _poolofPointLights->get();
         shared_ptr<RenderBufferView> object_view;
         if (maybe_object_view.has_value()) {
@@ -68,10 +79,12 @@ namespace BEbraEngine {
         light->data = object_view;
 
         return light;
+        
     }
 
     DirectionLight* VulkanRenderObjectFactory::createDirLight(const Vector3& color, const Vector3& direction)
     {
+        
         auto maybe_light_view = _poolofDirLights->get();
         shared_ptr<RenderBufferView> view;
 
@@ -90,10 +103,13 @@ namespace BEbraEngine {
 
         light->data = view;
         return light;
+        
+        throw std::exception();
     }
 
     void VulkanRenderObjectFactory::setContext(AbstractRender* render)
     {
+        
         this->render = dynamic_cast<VulkanRender*>(render);
 
         textureFactory = new VulkanTextureFactory(render);
@@ -124,6 +140,7 @@ namespace BEbraEngine {
         auto info = LightDescriptorInfo();
         info.bufferView = &v;
         info.type = LightDescriptorInfo::Type::Point;
+        
     }
 
     void VulkanRenderObjectFactory::setWorld(RenderWorld& world)
@@ -133,13 +150,15 @@ namespace BEbraEngine {
 
     void VulkanRenderObjectFactory::destroyObject(RenderObject& object)
     {
+        
         auto& obj = object.as<VulkanRenderObject>();
         render->freeDescriptor(obj);
         _poolofObjects->free(obj.matrix);
         obj.matrix = 0;
 #ifdef _DEBUG
-        object.isDestroyed = true;
+       // object.isDestroyed = true;
 #endif // _DEBUG
+        
     }
 
     void VulkanRenderObjectFactory::destroyPointLight(Light& light)
@@ -157,8 +176,9 @@ namespace BEbraEngine {
         return *textureFactory;
     }
 
-    optional<Material*> VulkanRenderObjectFactory::createMaterialAsync(shared_ptr<RenderObject> obj, const Material::CreateInfo& info)
+    optional<Material*> VulkanRenderObjectFactory::createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info)
     {
+        
         //Не принципиально удалён ли был объект или нет
         auto wObj = std::weak_ptr<RenderObject>(obj);
         auto pointer = &*obj;
@@ -172,8 +192,8 @@ namespace BEbraEngine {
                         world->updateState({});
                     }
                     else {
-                        DEBUG_LOG3("Render object was destroyed during set material", pointer);
-                        mat->destroy(*destroyer);
+                        //DEBUG_LOG3("Render object was destroyed during set material", pointer);
+                        //mat->destroy(*destroyer);
                         delete mat;
                     }
                 });
@@ -181,20 +201,22 @@ namespace BEbraEngine {
         });
 
         return optional<Material*>(mat);
+        
     }
 
 
 
     void VulkanRenderObjectFactory::setMaterial(RenderObject& obj, Material& material)
     {
+        
         auto& vObj = obj.as<VulkanRenderObject>();
 
         if (vObj.material) {
-            vObj.material->destroy(*destroyer);
+            //vObj.material->destroy(*destroyer);
             delete vObj.material;
         }
         if (!vObj.matrix) {
-            DEBUG_LOG1("Probably object has been destroyed while seting material");
+            //DEBUG_LOG1("Probably object has been destroyed while seting material");
             return;
         }
         vObj.hasMaps = true;
@@ -208,7 +230,7 @@ namespace BEbraEngine {
         vObj.descriptor = render->createDescriptor(&setinfo);
 
         vObj.material = &material;
-
+        
     }
 
     void VulkanRenderObjectFactory::setComponentDestroyer(IVisitorGameComponentDestroyer& destroyer)
@@ -228,10 +250,12 @@ namespace BEbraEngine {
 
     void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)
     {
+        
         render->freeDescriptor(*obj);
         VulkanDescriptorSetInfo setinfo{};
         setinfo.bufferView = obj->matrix.get();
         obj->descriptor = render->createDescriptor(&setinfo);
+        
     }
 
     VulkanRenderObjectFactory::VulkanRenderObjectFactory()
@@ -246,6 +270,7 @@ namespace BEbraEngine {
 
     SimpleCamera* VulkanRenderObjectFactory::createCamera(const Vector3& position)
     {
+        
         auto camera = new VulkanCamera(render->getCurrentRenderResolution(), position);
         auto view = new RenderBufferView();
         view->availableRange = sizeof(SimpleCamera::ShaderData);
@@ -253,18 +278,22 @@ namespace BEbraEngine {
         camera->cameraData = view;
         camera->descriptor = render->createDescriptor(camera->cameraData->buffer.get());
         return camera;
+        
+        throw std::exception();
     }
 
     void VulkanRenderObjectFactory::setModel(RenderObject& object, const std::string& path)
     {
+        
         object.model.reset();
-        Model::ModelCreateInfo info{};
+        ModelCreateInfo info{};
         info.path = path;
         
         auto m = meshFactory->create(info);
         if (m.has_value()) {
             object.model = shared_ptr<Model>(m.value());
         }
+        
     }
 }
 

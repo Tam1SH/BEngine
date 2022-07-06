@@ -1,6 +1,5 @@
-#include "stdafx.h"
-#include "AngelScript.hpp"
 #include <angelscript.h>
+module AngelScript;
 namespace BEbraEngine {
 
 	asIScriptContext* AngelScript::getContext()
@@ -11,7 +10,7 @@ namespace BEbraEngine {
 	{
 		this->context = context;
 	}
-	void AngelScript::destroy(IVisitorGameComponentDestroyer& destroyer)
-	{
-	}
+	//void AngelScript::destroy(IVisitorGameComponentDestroyer& destroyer)
+	//{
+	//}
 }

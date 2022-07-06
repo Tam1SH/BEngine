@@ -11,9 +11,9 @@ TODO: подумать над реализацей:
 
 */
 
-#include "stdafx.h"
 #include "Engine.hpp"
-#include "Debug.hpp"
+
+import Debug;
 
 
 #ifndef __ANDROID__
@@ -25,9 +25,9 @@ extern "C"
 
 int main(int argc, char* argv[])
 {
-    DEBUG_LOG1("BEGIN OF PIZDEC");
+    //DEBUG_LOG1("BEGIN OF PIZDEC");
     BEbraEngine::Engine engine;
-    engine.Main({false,true});
+    engine.Main({false,false});
     return 1337228;
 }
 

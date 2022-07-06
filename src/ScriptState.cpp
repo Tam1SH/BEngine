@@ -1,20 +1,25 @@
-﻿#include "stdafx.h"
-#include "ScriptState.hpp"
-#include "ScriptManager.hpp"
-#include "Time.hpp"
-#include "Camera.hpp"
+﻿#include <boost/filesystem.hpp>
+#include <random>
+#include <tbb.h>
 #include "Physics.hpp"
-#include "Input.hpp"
-#include "ObjectFactoryFacade.hpp"
-#include "AbstractRender.hpp"
-#include "GameObjectFactory.hpp"
-#include "RenderObject.hpp"
-#include "GameObject.hpp"
-#include "Math.hpp"
-#include "VulkanRender.hpp"
-#include "CreateInfoStructures.hpp"
-#include "VulkanObjects.hpp"
-#include "BaseRenderWindow.hpp"
+module ScriptState;
+import ScriptManager;
+
+import RenderWorld;
+import GameObject;
+import GameObjectFactory;
+import Input;
+import Collider;
+import Time;
+import ObjectFactoryFacade;
+import AbstractRender;
+import CreateInfoStructures;
+import BaseRenderWindow;
+
+import <functional>;
+import <memory>;
+using std::shared_ptr;
+
 namespace BEbraEngine {
 
     std::mt19937::result_type seed = time(0);
@@ -35,14 +40,14 @@ namespace BEbraEngine {
 
 
 
-    Collider::Type getShape(int rand) {
+    ColliderType getShape(int rand) {
 
         switch (rand) {
-        case 1: return Collider::Type::Box;
+        case 1: return ColliderType::Box;
             //case 2: return Collider::Type::Capsule;
             //case 3: return Collider::Type::Cone;
-        case 2: return Collider::Type::Cylinder;
-        case 3: return Collider::Type::Sphere;
+        case 2: return ColliderType::Cylinder;
+        case 3: return ColliderType::Sphere;
 
         }
 
@@ -52,6 +57,7 @@ namespace BEbraEngine {
 
     ScriptState::ScriptState(AbstractRender& render, Physics& physics, BaseWindow& window)
     {
+        
         this->physics = &physics;
         this->render = &render;
         this->window = &window;
@@ -64,13 +70,13 @@ namespace BEbraEngine {
 
         scriptManager->LoadScripts();
 
-
         scriptInit();
+        
     }
 
     void ScriptState::scriptInit()
     {
-
+        /*
         scriptManager->InitScripts();
         camera = scriptObjectFactory->createCamera(Vector3(0, 40, 0));
         
@@ -107,49 +113,6 @@ namespace BEbraEngine {
         object3->getComponentChecked<Collider>().setScale(Vector3(60, 1, 20));
         object3->getComponentChecked<Transform>().setScale(Vector3(60, 1, 20));
         
-        /*
-        auto object2 = scriptObjectFactory->create(Vector3(0, 100, 100));
-        auto d = object2->getComponentByName("RigidBody");
-        object2->getComponentChecked<RigidBody>().setDynamic(false);
-        object2->getComponentChecked<Collider>().setScale(Vector3(100, 100, 1));
-        object2->getComponentChecked<Transform>().setScale(Vector3(100, 100, 1));
-
-        auto object3 = scriptObjectFactory->create(Vector3(-100, 100, 0));
-        object3->getComponentChecked<RigidBody>().setDynamic(false);
-        object3->getComponentChecked<Collider>().setScale(Vector3(1, 100, 100));
-        object3->getComponentChecked<Transform>().setScale(Vector3(1, 100, 100));
-
-
-        auto object4 = scriptObjectFactory->create(Vector3(100, 100, 0));
-        object4->getComponentChecked<RigidBody>().setDynamic(false);
-        object4->getComponentChecked<Collider>().setScale(Vector3(1, 100, 100));
-        object4->getComponentChecked<Transform>().setScale(Vector3(1, 100, 100));
-
-        auto object5 = scriptObjectFactory->create(Vector3(0, 0, 0));
-        object5->getComponentChecked<RigidBody>().setDynamic(false);
-        object5->getComponentChecked<Collider>().setScale(Vector3(100, 1, 100));
-        object5->getComponentChecked<Transform>().setScale(Vector3(100, 1, 100));
-
-        sphere = scriptObjectFactory->create(Vector3(0, 20, 0));
-        scriptObjectFactory->setCollider(sphere->getComponentChecked<Collider>(), Collider::Type::Box);
-        sphere->getComponentChecked<Collider>().setScale(Vector3(10));
-        sphere->getComponentChecked<Transform>().setScale(Vector3(10));
-        sphere->getComponentChecked<RenderObject>().setColor(Vector3(0,0.5,0));
-        sphere->getComponentChecked<RigidBody>().setDynamic(false);
-        */
-
-        /*
-        auto object6 = scriptObjectFactory->create(Vector3(0, 60, 0));
-        object6->getComponentChecked<RigidBody>().setDynamic(false);
-        object6->removeComponent(object6->getComponentCheckedPtr<Collider>());
-        object6->removeComponent(object6->getComponentCheckedPtr<RigidBody>());
-
-        object6->getComponentChecked<Transform>().setScale(Vector3(10));
-        scriptObjectFactory->setModel(*object6, (boost::filesystem::current_path() / "Models/Sphere.fbx").string());
-        */
-
-
-       // scriptObjectFactory->setModel(*sphere, (boost::filesystem::current_path() / "Models/Box.fbx").string());
         globalLight = scriptObjectFactory->createDirLight(Vector3(0, -0.5f, 0));
 
         auto object6 = scriptObjectFactory->create(Vector3(20, 33, 0));
@@ -179,13 +142,14 @@ namespace BEbraEngine {
         light->setColor(Vector3(0, 0, 1));
 
         rotate = Vector3(0, -0.5f, 0);
-
+        */
     }
 
 
     void ScriptState::clearObjects() { }
 
     void ScriptState::fixedUpdate() {
+        /*
         globalLight->setColor(Vector3(0));
         //step++;
         //if (step > 127) lightColor.x = 0; else lightColor.x = (128 - step) / 255.f * 2;
@@ -196,7 +160,7 @@ namespace BEbraEngine {
 
         if (Input::isKeyPressed(KeyCode::KEY_T)) {
             auto& mat = player->getComponentChecked<Material>();
-            static_cast<VulkanRender*>(render)->getBitMapFromSwapChainImage();
+            //static_cast<VulkanRender*>(render)->getBitMapFromSwapChainImage();
             //clearObjects();
         }
 
@@ -229,12 +193,13 @@ namespace BEbraEngine {
            //  obj->getComponentChecked<Transform>().setPosition(Vector3(0, 80, 0));
              //obj->getComponentChecked<RigidBody>().setPosition(Vector3(0, 80, 0));
         }
-
+        */
     }
 
 
     void ScriptState::update()
     {
+        /*
         //auto obj = scriptObjectFactory->create(Vector3(0));
         //scriptObjectFactory->destroy(obj);
         auto pos = player->getComponentChecked<Transform>().getPosition();
@@ -256,12 +221,7 @@ namespace BEbraEngine {
 
             
             obj->getComponentChecked<RenderObject>().setColor(Vector3((rand() % 256) / (float)256, rand() % 256 / (float)256, rand() % 256 / (float)256));
-            /*
-            
-            scriptObjectFactory->setMaterialAsync(obj, { boost::filesystem::current_path() / "textures" / "textureTest.jpg",
-                                             boost::filesystem::current_path() / "textures" / "specularTest.jpg",
-                                             boost::filesystem::current_path() / "textures" / "normalTest.jpg" });
-                                             */
+
             
             Quaternion quat;
             objects.push_back(obj);
@@ -412,6 +372,7 @@ namespace BEbraEngine {
                 body.moveTo(Vector3(pos.x, pos.y, 10));
             }
         }
+        */
        // render->drawLine(camera->Front + camera->Position, (Vector3(0, 0, 1) / 20 + camera->Position), Vector3(1, 0, 0));
        // render->drawLine(camera->Front + camera->Position, (Vector3(0, 1, 0) / 20 + camera->Position), Vector3(0, 1, 0));
        // render->drawLine(camera->Front + camera->Position, (Vector3(1, 0, 0) / 20 + camera->Position), Vector3(0, 0, 1));
@@ -420,42 +381,44 @@ namespace BEbraEngine {
 
     void ScriptState::updateState()
     {
-        renderWorld->update();
-        queues.execute();
+        //renderWorld->update();
+        //queues.execute();
     }
 
 
     void ScriptState::addObject(shared_ptr<GameObject> object)
     {
+        
         queues.addTask(ExecuteType::Single, 
             [=] {
                 auto renderObj = object->getComponent<RenderObject>();
                 if (renderObj.has_value()) {
                     renderWorld->addObject(object->getComponentChecked<RenderObject>());
                 }
-                else
-                    DEBUG_LOG1("Object has no component 'RenderObject'");
+                //else
+                //    DEBUG_LOG1("Object has no component 'RenderObject'");
                 
 
                 auto rigidBody = object->getComponent<RigidBody>();
                 if (rigidBody.has_value()) {
                     physics->addRigidBody(object->getComponentChecked<RigidBody>());
                 }
-                else
-                    DEBUG_LOG1("Object has no component 'RigidBody'");
+               // else
+                //    DEBUG_LOG1("Object has no component 'RigidBody'");
 
                 objects_.push_back(object);
             }
             
 
         );
-
+        
     }
 
     void ScriptState::removeObject(shared_ptr<GameObject> object,
 
         std::function<void(GameObject&)> callback)
     {
+        
         queues.addTask(ExecuteType::Single,
              [this, object, callback] () {
 
@@ -463,15 +426,15 @@ namespace BEbraEngine {
                 if (renderObj.has_value()) {
                     renderWorld->removeObject(object->getComponentChecked<RenderObject>());
                 }
-                else
-                    DEBUG_LOG1("Object has no component 'RenderObject'");
+                //else
+                //    DEBUG_LOG1("Object has no component 'RenderObject'");
 
                 auto rigidBody = object->getComponent<RigidBody>();
                 if (rigidBody.has_value()) {
                     physics->removeRigidBody(object->getComponentChecked<RigidBody>());
                 }
-                else
-                    DEBUG_LOG1("Object has no component 'RigidBody'");
+                //else
+                //    DEBUG_LOG1("Object has no component 'RigidBody'");
 
                 std::remove(objects_.begin(), objects_.end(), object);
                
@@ -482,6 +445,7 @@ namespace BEbraEngine {
 
     void ScriptState::addCamera(SimpleCamera& camera)
     {
+        
         auto pCamera = &camera;
         queues.addTask(ExecuteType::Single,
             [=] {
@@ -489,35 +453,44 @@ namespace BEbraEngine {
             render->selectMainCamera(*pCamera);
             }
         );
+        
     }
 
     void ScriptState::addLight(Light& light)
     {
+        
+       
         auto pLight = &light;
         queues.addTask(ExecuteType::Single,
             [=] {
             renderWorld->addLight(*pLight);
             }
         );
+        
     }
 
     void ScriptState::addDirLight(DirectionLight& light)
     {
+        
+        
         auto pLight = &light;
         queues.addTask(ExecuteType::Single,
             [=] {
             render->addGlobalLight(*pLight);
             }
         );
+        
     }
 
     ScriptState::~ScriptState()
     {
+        /*
         for (auto& object : bounds) {
             scriptObjectFactory->destroy(object);
         }
         for (auto& object : objects) {
             scriptObjectFactory->destroy(object);
         }
+        */
     }
 }

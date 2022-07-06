@@ -1,51 +1,46 @@
-﻿#include "stdafx.h"
-#include "Physics.hpp"
-#include "RigidBoby.hpp"
-#include "GameObject.hpp"
-#include "Transform.hpp"
-#include "Quaternion.hpp"
-#include "Time.hpp"
-#include "Vector4.hpp"
-#include "Collider.hpp"
+﻿
+#include <Physics/btBulletDynamicsCommon.h>
+//#include <Physics/btBullet>
+#include <Physics/LinearMath/btIDebugDraw.h>
+//#include "BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"
 #include "BulletCollision/CollisionDispatch/btCollisionDispatcherMt.h"
 #include "BulletDynamics/Dynamics/btSimulationIslandManagerMt.h"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorldMt.h"
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.h"
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h"
 #include "BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h"
-#include "AbstractRender.hpp"
-#include "Math.hpp"
+#include <iostream>
+#include <tbb.h>
+#include "Physics.hpp"
+import Time;
+import RigidBody;
+import Collider;
+import ColliderFactory;
+import GameObject;
+import AbstractRender;
+import RigidBodyFactory;
+import BEbraMath;
+using std::optional;
+
 namespace BEbraEngine {
-    ATTRIBUTE_ALIGNED16(class)
-    ParallelDiscreteDynamicsWorld : public btDiscreteDynamicsWorldMt
-    {
+    
 
-    public:
-        BT_DECLARE_ALIGNED_ALLOCATOR();
-
-        ParallelDiscreteDynamicsWorld(btDispatcher* dispatcher,
-            btBroadphaseInterface* pairCache,
-            btConstraintSolverPoolMt* constraintSolver,
-            btSequentialImpulseConstraintSolverMt* constraintSolverMt,
-            btCollisionConfiguration* collisionConfiguration) : btDiscreteDynamicsWorldMt(dispatcher, pairCache, constraintSolver, constraintSolverMt, collisionConfiguration)
-        {
-            btSimulationIslandManagerMt* islandMgr = static_cast<btSimulationIslandManagerMt*>(m_islandManager);
-            islandMgr->setIslandDispatchFunction(btSimulationIslandManagerMt::parallelIslandDispatch);
-        }
-
-    };
-
+    
     void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
     {
         linesToDraw++;
-        render->drawLine(from, to, color);
+        Vector3 _from = from;
+        Vector3 _to = to;
+        Vector3 _color = color;
+        render->drawLine(_from, _to, _color);
     }
-
+    
     DebugDrawer::DebugDrawer(AbstractRender& render)
     {
         this->render = &render;
     }
 
+    
     class btTaskSchedulerManager
     {
         btAlignedObjectArray<btITaskScheduler*> m_taskSchedulers;
@@ -55,12 +50,13 @@ namespace BEbraEngine {
         btTaskSchedulerManager() {}
         void init()
         {
+            
             this;
             std::cout << btGetTBBTaskScheduler() << std::endl;
             
             addTaskScheduler(btGetTBBTaskScheduler());
             btSetTaskScheduler(m_taskSchedulers[0]);
-
+            
         }
         void shutdown()
         {
@@ -73,6 +69,7 @@ namespace BEbraEngine {
 
         void addTaskScheduler(btITaskScheduler* ts)
         {
+            
             if (ts)
             {
                 // if initial number of threads is 0 or 1,
@@ -84,24 +81,26 @@ namespace BEbraEngine {
                 m_taskSchedulers.push_back(ts);
                 btSetTaskScheduler(m_taskSchedulers[0]);
             }
-            //else throw std::exception();
+            else throw std::exception();
+            
         }
         int getNumTaskSchedulers() const { return m_taskSchedulers.size(); }
         btITaskScheduler* getTaskScheduler(int i) { return m_taskSchedulers[i]; }
     };
 
-
+    
     optional<Collider*> Physics::getObjectRayCast(const Vector3& start, Vector3& end)
     {
         btCollisionWorld::ClosestRayResultCallback result(start, end);
         dynamicsWorld->rayTest(start, Vector3(0), result);
         auto collider = static_cast<Collider*>(result.m_collisionObject->getUserPointer());
-        return optional<Collider*>(collider);
+        return optional<Collider*>(collider);//optional<Collider*>(collider);
     }
-
+    
     void Physics::update()
     {
 
+        
         dynamicsWorld->stepSimulation(Time::deltaTime(), 1);
         
         tbb::parallel_for<size_t>(0, bodies.size(), [&](int i) {
@@ -122,11 +121,11 @@ namespace BEbraEngine {
             body.getTransform().setPosition(pos);
             body.getTransform().setRotation(quat);
         });
-
-        //dynamicsWorld->debugDrawWorld(); 
+        
+        dynamicsWorld->debugDrawWorld(); 
         queues.execute();
     }
-
+    
     void Physics::setDebugDrawer(btIDebugDraw* drawer)
     {
         this->drawer = std::unique_ptr<btIDebugDraw>(drawer);
@@ -166,7 +165,7 @@ namespace BEbraEngine {
     }
     Physics::Physics()
     {
-
+        
         colliderFactory = std::unique_ptr<ColliderFactory>(new ColliderFactory(*this));
         rigidBodyFactory = std::unique_ptr<RigidBodyFactory>(new RigidBodyFactory(*this));
         if (true) {
@@ -215,11 +214,13 @@ namespace BEbraEngine {
         }
 
         queues.setStrategy(ExecuteType::Single);
-
+        
     }
     Physics::~Physics()
     {
         dynamicsWorld.reset();
         bodies.clear();
     }
+    
+    
 }

@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Pipeline.hpp"
+#include <vulkan.h>
+module VulkanPipeline;
 namespace BEbraEngine {
 
 

@@ -1,21 +1,35 @@
-#include "stdafx.h"
-#include "ColliderFactory.hpp"
-#include <Physics/btBulletCollisionCommon.h>
-#include "Collider.hpp"
+#include "platform.hpp"
+#include <Physics/btBulletDynamicsCommon.h>
+#include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
+#include <stdexcept>
 #include "Physics.hpp"
-#include "RigidBoby.hpp"
+module ColliderFactory;
+import RigidBody;
+import <memory>;
+import <optional>;
+using std::unique_ptr;
+using std::optional;
 
 namespace BEbraEngine {
 
 	ColliderFactory::ColliderFactory(Physics& physics) {
 		this->physics = &physics;
 	}
+	void ColliderFactory::setShape(Collider& collider, btCollisionShape& newShape)
+	{
+		if (collider._collider->getCollisionShape() != &newShape)
+		{
+			delete collider._collider->getCollisionShape();
+			collider.body->getRigidBody().setCollisionShape(&newShape);
+			collider._collider->setCollisionShape(&newShape);
+		}
 
-	optional<Collider*> ColliderFactory::create(const Collider::CreateInfo& info)
+	}
+
+	optional<Collider*> ColliderFactory::create(const ColliderCreateInfo& info)
 	{
 		auto col = new Collider();
 		btCollisionShape* shape{};
-
 		col->_collider = unique_ptr<btCollisionObject>(new btCollisionObject());
 		auto opt_shape = getShape(info.type);
 		if (opt_shape.has_value())
@@ -32,42 +46,33 @@ namespace BEbraEngine {
 	void ColliderFactory::destroyCollider(Collider& col)
 	{
 #ifdef _DEBUG
-		col.isDestroyed = true;
+		//col.isDestroyed = true;
 #endif 
 		physics->removeCollider(col);
 	}
 
-	void ColliderFactory::setShape(Collider& collider, btCollisionShape& newShape)
-	{
-		if (collider._collider->getCollisionShape() != &newShape)
-		{
-			delete collider._collider->getCollisionShape();
-			collider.body->getRigidBody().setCollisionShape(&newShape);
-			collider._collider->setCollisionShape(&newShape);
-		}
 
-	}
 
-	optional<btCollisionShape*> ColliderFactory::getShape(Collider::Type type)
+	optional<btCollisionShape*> ColliderFactory::getShape(ColliderType type)
 	{
 		switch (type)
 		{
-		case Collider::Type::Box:
+		case ColliderType::Box:
 			return optional<btCollisionShape*>(new btBoxShape(btVector3(1, 1, 1)));
 			break;
-		case Collider::Type::Sphere:
+		case ColliderType::Sphere:
 			return optional<btCollisionShape*>(new btSphereShape(1));
 			break;
-		case Collider::Type::Capsule:
+		case ColliderType::Capsule:
 			return optional<btCollisionShape*>(new btCapsuleShape(1, 1));
 			break;
-		case Collider::Type::Cylinder:
+		case ColliderType::Cylinder:
 			return optional<btCollisionShape*>(new btCylinderShape(btVector3(1, 1, 1)));
 			break;
-		case Collider::Type::Cone:
+		case ColliderType::Cone:
 			return optional<btCollisionShape*>(new btConeShape(1, 1));
 			break;
-		case Collider::Type::Mesh:
+		case ColliderType::Mesh:
 			throw std::runtime_error("not implemented xyu");
 			break;
 		default:

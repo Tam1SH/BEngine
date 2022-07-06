@@ -1,16 +1,25 @@
-﻿#include "stdafx.h"
-#define NOMINMAX
-#include "GameObjectFactory.hpp"
-#include "TransformFactory.hpp"
-#include "IRenderObjectFactory.hpp"
-#include "GameObject.hpp"
+﻿#include <boost/filesystem.hpp>
 #include "Physics.hpp"
-#include "AbstractRender.hpp"
-#include "GameComponentDestroyer.hpp"	
-#include "Camera.hpp"
-#include "Math.hpp"
-namespace BEbraEngine {
+module GameObjectFactory;
+import GameComponentCreateInfo;
+import IRenderObjectFactory;
+//import GameObject;
+import RenderWorld;
+import TransformFactory;
+import ColliderFactory;
+import IVisitorGameComponentDestroyer;
+import GameComponentDestroyer;
+//import GameComponent;
+//import <optional>;
+//import <memory>;
+//import RenderObjects;
+using std::optional;
+using std::shared_ptr;
+using std::string;
+using std::unique_ptr;
 
+namespace BEbraEngine {
+	
 	GameObjectFactory::GameObjectFactory(AbstractRender& render, Physics& physics, RenderWorld& world)
 	{
 		renderFactory = render.getRenderObjectFactory();
@@ -26,6 +35,7 @@ namespace BEbraEngine {
 
 	optional<GameComponent*> GameObjectFactory::create(const GameComponentCreateInfo& info)
 	{
+		
 		GameComponent* comp;
 
 		optional<Light*> opt_light;
@@ -38,14 +48,14 @@ namespace BEbraEngine {
 
 		if (info.rigidBodyInfo && info.colliderInfo) {
 
-			Collider::CreateInfo cinfo{};
+			ColliderCreateInfo cinfo{};
 			cinfo.scale = info.transformInfo->scale;
 			cinfo.position = info.transformInfo->position;
 			opt_collider = colliderFactory->create(cinfo);
-			RigidBody::CreateInfo RigidBodyInfo{};
+			RigidBodyCreateInfo RigidBodyInfo{};
 			RigidBodyInfo.position = info.transformInfo->position;
 			if (opt_collider.has_value()) {
-				RigidBodyInfo.collider = opt_collider.value();
+				//RigidBodyInfo.collider = opt_collider.value();
 			}
 
 			opt_rigidBody = rigidBodyFactory->create(RigidBodyInfo);
@@ -54,9 +64,9 @@ namespace BEbraEngine {
 		if (info.renderInfo) 
 			opt_renderObj = renderFactory->create(*info.renderInfo);
 		else {
-			RenderObject::CreateInfo info{};
+			RenderObjectCreateInfo info{};
 			opt_renderObj = renderFactory->create(info);
-			DEBUG_LOG1("renderInfo doesn't exist in GameObjectCreateInfo");
+			//DEBUG_LOG1("renderInfo doesn't exist in GameObjectCreateInfo");
 		}
 
 		if (info.transformInfo)
@@ -64,7 +74,7 @@ namespace BEbraEngine {
 		else {
 			Transform::CreateInfo info{};
 			opt_transform = transFactory->create(info);
-			DEBUG_LOG1("transformInfo doesn't exist in GameObjectCreateInfo");
+			//DEBUG_LOG1("transformInfo doesn't exist in GameObjectCreateInfo");
 		}
 
 
@@ -74,7 +84,7 @@ namespace BEbraEngine {
 			auto& v2 = info.rigidBodyInfo->position;
 
 			if (v != v1 || v != v2 || v1 != v2) {
-				DEBUG_LOG2("positions are not equal, are they?", 0, "GameComponentCreateInfo", Debug::ObjectType::GameObject, Debug::MessageType::Info);
+				//DEBUG_LOG2("positions are not equal, are they?", 0, "GameComponentCreateInfo", Debug::ObjectType::GameObject, Debug::MessageType::Info);
 			}
 		}
 		
@@ -117,14 +127,16 @@ namespace BEbraEngine {
 			return optional<GameComponent*>(comp);
 		}
 		else {
-			DEBUG_LOG2("Can't create a object", 0, "Xyu znaet", Debug::ObjectType::GameObject, Debug::MessageType::Error);
+			//DEBUG_LOG2("Can't create a object", 0, "Xyu znaet", Debug::ObjectType::GameObject, Debug::MessageType::Error);
 			return optional<GameComponent*>();
 		}
-
+		
+		throw std::exception();
 	}
 
 	shared_ptr<Light> GameObjectFactory::createLight(const Vector3& position)
 	{
+		
 		Transform::CreateInfo info{};
 		info.position = position;
 		auto transform = shared_ptr<Transform>(transFactory->create(info).value());
@@ -137,7 +149,7 @@ namespace BEbraEngine {
 		//workspace->addComponent(light);
 		renderFactory->bindTransform(*light, *transform);
 
-		//light->update();
+		light->update();
 		//render->addLight(light);
 		return light;
 	}
@@ -150,6 +162,7 @@ namespace BEbraEngine {
 
 		light->update();
 		return light;
+		throw std::exception();
 	}
 
 	void GameObjectFactory::setModel(GameObject& object, const string& path)
@@ -157,17 +170,17 @@ namespace BEbraEngine {
 		renderFactory->setModel(object.getComponentChecked<RenderObject>(), path);
 	}
 
-	void GameObjectFactory::setCollider(Collider& col, Collider::Type type)
+	void GameObjectFactory::setCollider(Collider& col, ColliderType type)
 	{
 		colliderFactory->setShape(col, *colliderFactory->getShape(type).value());
 	}
 
-	void GameObjectFactory::setMaterialAsync(shared_ptr<GameObject> object, const Material::CreateInfo& info)
+	void GameObjectFactory::setMaterialAsync(shared_ptr<GameObject> object, const MaterialCreateInfo& info)
 	{
 		auto rObj = object->getComponentCheckedPtr<RenderObject>();
 		auto mat1 = object->getComponent<Material>();
-		if(mat1.has_value())
-			mat1.value()->destroy(*destroyer);
+		//if(mat1.has_value())
+			//mat1.value()->destroy(*destroyer);
 
 		auto opt_mat = renderFactory->createMaterialAsync(rObj,info);
 		Material* mat{};
@@ -180,12 +193,12 @@ namespace BEbraEngine {
 
 	void GameObjectFactory::destroy(GameComponent& object)
 	{
-		object.destroy(*destroyer);
+		//object.destroy(*destroyer);
 	}
 
 	void GameObjectFactory::destroy(GameObject& object)
 	{
-		object.destroy(*destroyer);
+		//object.destroy(*destroyer);
 	}
 
 	GameObjectFactory::~GameObjectFactory()
@@ -194,7 +207,6 @@ namespace BEbraEngine {
 
 	void GameObjectFactory::destroyPointLight(Light& light)
 	{
-		light.release();
 		renderFactory->destroyPointLight(light);
 	}
 
@@ -203,11 +215,12 @@ namespace BEbraEngine {
 	shared_ptr<SimpleCamera> GameObjectFactory::createCamera(const Vector3& position)
 	{
 		auto camera = shared_ptr<SimpleCamera>(renderFactory->createCamera(position));
-	//	render->addCamera(camera);
-	//	render->selectMainCamera(camera.get());
+		//render->addCamera(camera);
+		//render->selectMainCamera(camera.get());
 		return camera;
 	}
 	void GameObjectFactory::destroyCamera(SimpleCamera& camera)
 	{
 	}
+	
 }

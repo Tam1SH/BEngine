@@ -1,9 +1,17 @@
-﻿#include "stdafx.h"
-#include "ScriptManager.hpp"
-#include "AngelScriptEngine.hpp"
+﻿#include <boost/filesystem.hpp>
+#include <tbb.h>
 #include <filesystem>
-#include "Time.hpp"
-#include "Debug.hpp"
+#include <json.hpp>
+#include <fstream>
+module ScriptManager;
+import Time;
+
+import AngelScriptEngine;
+using std::optional;
+using std::shared_ptr;
+using std::string;
+using std::unique_ptr;
+
 namespace BEbraEngine {
 	
 
@@ -91,7 +99,7 @@ namespace BEbraEngine {
 			}
 		}
 		catch (std::exception& ex) {
-			DEBUG_LOG1(ex.what());
+			//DEBUG_LOG1(ex.what());
 		}
 
 		
