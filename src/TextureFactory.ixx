@@ -1,18 +1,18 @@
 #include "platform.hpp"
 #include <boost/filesystem.hpp>
 
-export module ITextureFactory;
+export module TextureFactory;
 import <optional>;
 import <memory>;
 import Texture;
 import RenderObjects;
-import IVisitorGameComponentDestroyer;
-using BE_STD::optional;
-using BE_STD::function;
+import VisitorGameComponentDestroyer;
+using std::optional;
+using std::function;
 
 namespace BEbraEngine {
 
-    export class ITextureFactory {
+    export class TextureFactory {
     public:
         virtual Texture* createAsync(const boost::filesystem::path& path, function<void(Texture*)> onComplete) = 0;
 
@@ -20,7 +20,7 @@ namespace BEbraEngine {
 
         virtual Texture* createEmpty() = 0;
 
-        virtual void setDestroyer(IVisitorGameComponentDestroyer& destroyer) = 0;
+        virtual void setDestroyer(VisitorGameComponentDestroyer& destroyer) = 0;
 
         virtual optional<Material*> createMaterialAsync(const MaterialCreateInfo& info, function<void(Material*)> onComplete) = 0;
 
@@ -28,7 +28,7 @@ namespace BEbraEngine {
 
         virtual void destroyTextureAsync(std::shared_ptr<Texture> texture) = 0;
 
-        virtual ~ITextureFactory() {}
+        virtual ~TextureFactory() {}
 
     };
 }

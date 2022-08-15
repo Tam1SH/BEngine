@@ -19,13 +19,13 @@ import DescriptorPool;
 import CommandBuffer;
 import CommandPool;
 import VulkanRenderObjectFactory;
-import IRenderObjectFactory;
+import RenderObjectFactory;
 import CreateInfoStructures;
 import DescriptorSet;
 import Shader;
 import VulkanPipeline;
 import Time;
-import VulkanRenderBufferPool;
+import VulkanRenderBufferArray;
 import VulkanTextureFactory;
 using std::vector;
 using std::shared_ptr;
@@ -598,12 +598,12 @@ namespace BEbraEngine {
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
-    uint32_t VulkanRender::alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type)
+    uint32_t VulkanRender::alignmentBuffer(uint32_t originalSize, Render::TypeBuffer type)
     {
         VkDeviceSize alignment = 0;
-        if(type == AbstractRender::TypeBuffer::Uniform)
+        if(type == Render::TypeBuffer::Uniform)
             alignment = GPU_properties.limits.minUniformBufferOffsetAlignment;
-        if(type == AbstractRender::TypeBuffer::Storage)
+        if(type == Render::TypeBuffer::Storage)
             alignment = GPU_properties.limits.minStorageBufferOffsetAlignment;
 
         VkDeviceSize alignedSize = originalSize;
@@ -2678,10 +2678,10 @@ namespace BEbraEngine {
         createPointAndDirectionLightsSets();
         createCameraSet();
 
-        linePool = std::unique_ptr<VulkanRenderBufferPool<Line::ShaderData>>(new VulkanRenderBufferPool<Line::ShaderData>());
+        linePool = std::unique_ptr<VulkanRenderBufferArray<Line::ShaderData>>(new VulkanRenderBufferArray<Line::ShaderData>());
         linePool->setContext(this);
         linePool->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
-        linePool->allocate(linesMemory.size(), sizeof(Line::ShaderData), AbstractRender::TypeBuffer::Storage);
+        linePool->allocate(linesMemory.size(), sizeof(Line::ShaderData), Render::TypeBuffer::Storage);
         linePool->bindData(linesMemory);
 
         executeQueues.setStrategy(ExecuteType::Single);
@@ -2803,7 +2803,7 @@ namespace BEbraEngine {
         return set;
     }
     
-    IRenderObjectFactory* VulkanRender::getRenderObjectFactory()
+    RenderObjectFactory* VulkanRender::getRenderObjectFactory()
     {
         return factory.get();
     }

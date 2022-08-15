@@ -12,7 +12,7 @@ import Input;
 import Collider;
 import Time;
 import ObjectFactoryFacade;
-import AbstractRender;
+import Render;
 import CreateInfoStructures;
 import BaseRenderWindow;
 
@@ -55,7 +55,7 @@ namespace BEbraEngine {
 
 
 
-    ScriptState::ScriptState(AbstractRender& render, Physics& physics, BaseWindow& window)
+    ScriptState::ScriptState(Render& render, Physics& physics, BaseWindow& window)
     {
         
         this->physics = &physics;

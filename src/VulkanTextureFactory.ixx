@@ -2,9 +2,9 @@
 
 
 export module VulkanTextureFactory;
-import ITextureFactory;
+import TextureFactory;
 import RenderObjects;
-import AbstractRender;
+import Render;
 import Debug;
 import Texture;
 import <optional>;
@@ -19,7 +19,7 @@ namespace BEbraEngine {
 }
 
 namespace BEbraEngine {
-    export class VulkanTextureFactory : public ITextureFactory {
+    export class VulkanTextureFactory : public TextureFactory {
     public:
 
         optional<Material*> createMaterialAsync(const MaterialCreateInfo& info, function<void(Material*)> onComplete); //override;
@@ -34,17 +34,17 @@ namespace BEbraEngine {
         
         void saveImage(const char* fileName, int width, int height, int channel_num, BEbraEngine::BitMap& bitMap, int quality);
 
-        void setDestroyer(IVisitorGameComponentDestroyer& destroyer); //override;
+        void setDestroyer(VisitorGameComponentDestroyer& destroyer); //override;
 
         void destroyTexture(Texture& texture); //override;
 
         void destroyTextureAsync(shared_ptr<Texture> texture); //override;
 
-        VulkanTextureFactory(AbstractRender* render);
+        VulkanTextureFactory(Render* render);
 
     private:
         VulkanRender* render;
-        IVisitorGameComponentDestroyer* destroyer;
+        VisitorGameComponentDestroyer* destroyer;
 
     };
 }

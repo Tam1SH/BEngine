@@ -1,7 +1,8 @@
 
 #include "platform.hpp"
 
-export module AbstractRender;
+export module Render;
+import <span>;
 import <vector>;
 import <memory>;
 import RenderData;
@@ -17,7 +18,7 @@ using std::shared_ptr;
 
 namespace BEbraEngine {
 	class SimpleCamera;
-	export class IRenderObjectFactory;
+	export class RenderObjectFactory;
 	class RenderObject;
 	class Light;
 	class DirectionLight;
@@ -55,8 +56,24 @@ namespace BEbraEngine {
 		virtual ~BitMap() {}
 	};
 
+	export class RenderAllocator {
+	public:
+		enum class TypeBuffer {
+			Storage,
+			Uniform,
+			StorageDynamic, //only vulkan
+			UniformDynamic //only vulkan
+		};
 
-	export class AbstractRender {
+		virtual RenderBuffer* createIndexBuffer(std::span<uint32_t> indices) = 0;
+		virtual RenderBuffer* createVertexBuffer(std::span<Vertex> vertices) = 0;
+		virtual RenderBuffer* createUniformBuffer(uint32_t size) = 0;
+		virtual RenderBuffer* createStorageBuffer(uint32_t size) = 0;
+		virtual uint32_t alignmentBuffer(uint32_t originalSize, RenderAllocator::TypeBuffer type) = 0;
+		virtual void destroyBuffer(RenderBuffer* buffer) = 0;
+	};
+
+	export class Render {
 	public:
 		enum class TypeBuffer {
 			Storage,
@@ -81,7 +98,7 @@ namespace BEbraEngine {
 		virtual void addCamera(SimpleCamera& camera) = 0; 
 		virtual void removeCamera(SimpleCamera& camera) = 0;
 
-		virtual IRenderObjectFactory* getRenderObjectFactory() = 0;
+		virtual RenderObjectFactory* getRenderObjectFactory() = 0;
 		virtual void update() = 0;
 		virtual void prepareDraw() = 0;
 		virtual void drawFrame() = 0;
@@ -91,9 +108,11 @@ namespace BEbraEngine {
 
 		virtual Type getType() = 0;
 		virtual void setWorld(RenderWorld& world) { this->world = &world; }
-		virtual uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type) = 0;
-		virtual ~AbstractRender() {}
+		virtual uint32_t alignmentBuffer(uint32_t originalSize, Render::TypeBuffer type) = 0;
+		virtual ~Render() {}
 	protected:
 		RenderWorld* world;
 	};
+
+
 }

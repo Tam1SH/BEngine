@@ -15,7 +15,7 @@ using std::unique_ptr;
 
 namespace BEbraEngine {
 	export class RigidBody;
-	class IVisitorGameComponentDestroyer;
+	class VisitorGameComponentDestroyer;
 
 }
 
@@ -47,7 +47,7 @@ namespace BEbraEngine {
 
 	public:
 
-		void destroy(IVisitorGameComponentDestroyer& destroyer) { } //override;
+		void destroy(VisitorGameComponentDestroyer& destroyer) { } //override;
 
 		btCollisionObject& get() noexcept { return *_collider; }
 
@@ -69,7 +69,7 @@ namespace BEbraEngine {
 
 		void setRigidBody(RigidBody& body);
 
-		template<typename T, class _ = typename BE_STD::enable_if<BE_STD::is_base_of<Collider, T>::value>::type>
+		template<typename T, class _ = typename std::enable_if<std::is_base_of<Collider, T>::value>::type>
 		void as() {
 			if (dynamic_cast<T*>(this))
 				return static_cast<T*>(this);

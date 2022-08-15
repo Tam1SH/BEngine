@@ -3,7 +3,7 @@
 #include "platform.hpp"
 #include <tbb.h>
 export module ScriptState;
-import AbstractRender;
+import Render;
 import ExecuteQueues;
 import <queue>;
 import <memory>;
@@ -41,7 +41,7 @@ namespace BEbraEngine {
     export class ScriptState {
     public:
 
-        ScriptState(AbstractRender& render, Physics& physics, BaseWindow& window);
+        ScriptState(Render& render, Physics& physics, BaseWindow& window);
 
         void scriptInit();
 
@@ -79,7 +79,7 @@ namespace BEbraEngine {
 
         ExecuteQueues<function<void()>> queues;
 
-        AbstractRender* render;
+        Render* render;
 
         Physics* physics;
         

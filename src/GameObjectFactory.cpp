@@ -2,12 +2,12 @@
 #include "Physics.hpp"
 module GameObjectFactory;
 import GameComponentCreateInfo;
-import IRenderObjectFactory;
+import RenderObjectFactory;
 //import GameObject;
 import RenderWorld;
 import TransformFactory;
 import ColliderFactory;
-import IVisitorGameComponentDestroyer;
+import VisitorGameComponentDestroyer;
 import GameComponentDestroyer;
 //import GameComponent;
 //import <optional>;
@@ -20,14 +20,14 @@ using std::unique_ptr;
 
 namespace BEbraEngine {
 	
-	GameObjectFactory::GameObjectFactory(AbstractRender& render, Physics& physics, RenderWorld& world)
+	GameObjectFactory::GameObjectFactory(Render& render, Physics& physics, RenderWorld& world)
 	{
 		renderFactory = render.getRenderObjectFactory();
 		colliderFactory = physics.getColliderFactory();
 		rigidBodyFactory = physics.getRigidBodyFactory();
 		renderFactory->setWorld(world);
 		transFactory = unique_ptr<TransformFactory>(new TransformFactory());
-		destroyer = unique_ptr<IVisitorGameComponentDestroyer>(new GameComponentDestroyer(
+		destroyer = unique_ptr<VisitorGameComponentDestroyer>(new GameComponentDestroyer(
 			*renderFactory, *colliderFactory, *rigidBodyFactory
 		));
 		renderFactory->setComponentDestroyer(*destroyer);
@@ -35,7 +35,7 @@ namespace BEbraEngine {
 
 	optional<GameComponent*> GameObjectFactory::create(const GameComponentCreateInfo& info)
 	{
-		
+		/*Вполне можно здесь добавить Builder*/
 		GameComponent* comp;
 
 		optional<Light*> opt_light;
@@ -94,11 +94,18 @@ namespace BEbraEngine {
 		shared_ptr<RigidBody> rigidbody;
 
 		comp = new GameObject();
+		//opt_renderObj.and_then([&]() {
+
+		//	renderObj = shared_ptr<RenderObject>(value);
+		//	comp->addComponent(renderObj);
+		//});
 
 		if (opt_renderObj.has_value()) {
 			renderObj = shared_ptr<RenderObject>(opt_renderObj.value());
+			
 			comp->addComponent(renderObj);
 		}
+
 
 		if (opt_transform.has_value()) {
 			transform = shared_ptr<Transform>(opt_transform.value());
@@ -120,18 +127,16 @@ namespace BEbraEngine {
 			comp->addComponent(collider);
 			comp->addComponent(rigidbody);
 		}
-
+		
 		if (opt_renderObj.has_value() && 
 			opt_transform.has_value()) {
 
 			return optional<GameComponent*>(comp);
 		}
 		else {
-			//DEBUG_LOG2("Can't create a object", 0, "Xyu znaet", Debug::ObjectType::GameObject, Debug::MessageType::Error);
 			return optional<GameComponent*>();
 		}
 		
-		throw std::exception();
 	}
 
 	shared_ptr<Light> GameObjectFactory::createLight(const Vector3& position)

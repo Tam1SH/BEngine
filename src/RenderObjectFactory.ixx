@@ -1,12 +1,12 @@
 #include "platform.hpp"
 #include <boost/filesystem.hpp>
 
-export module IRenderObjectFactory;
+export module RenderObjectFactory;
 import RenderObjects;
 import Camera;
-import ITextureFactory;
+import TextureFactory;
 import Transform;
-import AbstractRender;
+import Render;
 import Vector3;
 import <memory>;
 import <optional>;
@@ -17,25 +17,25 @@ using std::unique_ptr;
 using std::optional;
 
 namespace BEbraEngine {
-	class ITextureFactory;
-	class IVisitorGameComponentDestroyer;
+	class TextureFactory;
+	class VisitorGameComponentDestroyer;
 	export class RenderWorld;
 }
 
 namespace BEbraEngine {
 	
 
-	export class IRenderObjectFactory {
+	export class RenderObjectFactory {
 	public:
-		virtual ~IRenderObjectFactory() {}
+		virtual ~RenderObjectFactory() {}
 
 		virtual optional<RenderObject*> create(const RenderObjectCreateInfo& info) = 0;
 
-		virtual ITextureFactory& getTextureFactory() = 0;
+		virtual TextureFactory& getTextureFactory() = 0;
 
 		virtual void setWorld(RenderWorld& world) = 0;
 
-		virtual void setComponentDestroyer(IVisitorGameComponentDestroyer& destroyer) = 0;
+		virtual void setComponentDestroyer(VisitorGameComponentDestroyer& destroyer) = 0;
 
 		virtual optional<Material*> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info) = 0;
 
@@ -51,7 +51,7 @@ namespace BEbraEngine {
 
 		virtual DirectionLight* createDirLight(const Vector3& color, const Vector3& direction) = 0;
 
-		virtual void setContext(AbstractRender* render) = 0;
+		virtual void setContext(Render* render) = 0;
 
 		virtual void destroyObject(RenderObject& object) = 0;
 

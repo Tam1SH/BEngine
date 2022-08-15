@@ -16,8 +16,8 @@ import Transform;
 namespace BEbraEngine {
 
     class Texture;
-    class IVisitorGameComponentDestroyer;
-    class AbstractRender;
+    class VisitorGameComponentDestroyer;
+    class Render;
 }
 
 using std::weak_ptr;
@@ -47,7 +47,7 @@ namespace BEbraEngine {
         Vector3 to;
         Vector3 color;
 
-        void create(AbstractRender& render);
+        void create(Render& render);
 
         void update()
         {
@@ -83,7 +83,7 @@ namespace BEbraEngine {
         };
     public:
 
-        //void destroy(IVisitorGameComponentDestroyer& destroyer) {}//override;
+        //void destroy(VisitorGameComponentDestroyer& destroyer) {}//override;
 
         //void destroy(ÑVisitorGameComponentDestroyer auto& destroyer) {
         //    destroyer.destroyPointLightComponent(*this);
@@ -158,7 +158,7 @@ namespace BEbraEngine {
         virtual ~DirectionLight() {}
 
 
-        //virtual void destroy(IVisitorGameComponentDestroyer& destroyer) {}//override;
+        //virtual void destroy(VisitorGameComponentDestroyer& destroyer) {}//override;
 
         //void destroy(ÑVisitorGameComponentDestroyer auto& destroyer) {
         //    destroyer.destroyDirectionLightComponent(*this);
@@ -196,7 +196,7 @@ namespace BEbraEngine {
             this->normal = std::shared_ptr<Texture>(normal);
         }
 
-        //void Material::destroy(IVisitorGameComponentDestroyer& destroyer)
+        //void Material::destroy(VisitorGameComponentDestroyer& destroyer)
         //{
         //    destroyer.destroyMaterialComponent(*this);
         //}
@@ -234,7 +234,7 @@ namespace BEbraEngine {
     public:
 
 
-        //void destroy(IVisitorGameComponentDestroyer& destroyer) {}//override;
+        //void destroy(VisitorGameComponentDestroyer& destroyer) {}//override;
 
         //void destroy(ÑVisitorGameComponentDestroyer auto& destroyer) {
         //    destroyer.destroyRenderComponent(*this);

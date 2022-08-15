@@ -1,9 +1,9 @@
 #include <tbb.h>
 module RenderWorld;
-import AbstractRender;
+import Render;
 import RenderObjects;
 namespace BEbraEngine {
-    RenderWorld::RenderWorld(AbstractRender& render)
+    RenderWorld::RenderWorld(Render& render)
     {
         this->render = &render;
         data = new RenderData();

@@ -1,11 +1,11 @@
 #include "platform.hpp"
 #include <tbb.h>
-export module VulkanRenderBufferPool;
-import IRenderBufferPool;
+export module VulkanRenderBufferArray;
+import RenderBufferArray;
 import VulkanBuffer;
 import RenderBuffer;
 import VulkanRender;
-import AbstractRender;
+import Render;
 import <optional>;
 import <vector>;
 import <memory>;
@@ -19,12 +19,13 @@ namespace BEbraEngine {
 
 namespace BEbraEngine {
 
-	export template<typename RenderData>
-	class VulkanRenderBufferPool : public IRenderBufferPool<RenderData> {
+	export template<class RenderData>
+	class VulkanRenderBufferArray : public RenderBufferArray<RenderData> {
 	public:
-
-		void allocate(uint32_t count, uint32_t sizeofData, AbstractRender::TypeBuffer type)
+		
+		void allocate(uint32_t count, uint32_t sizeofData, Render::TypeBuffer type)
 		{
+
 			uint32_t new_size = totalCount + count;
 			uint32_t alignsizeofData = 0;
 			dataSize = sizeofData * count;
@@ -32,9 +33,9 @@ namespace BEbraEngine {
 
 			if (_usage == RenderBufferPoolUsage::SeparateOneBuffer) {
 				alignsizeofData = _render->alignmentBuffer(sizeofData, type);
-				if (type == AbstractRender::TypeBuffer::Storage)
+				if (type == Render::TypeBuffer::Storage)
 					_buffer = shared_ptr<RenderBuffer>(_render->createStorageBuffer(sizeofData * count));
-				if (type == AbstractRender::TypeBuffer::Uniform)
+				if (type == Render::TypeBuffer::Uniform)
 					_buffer = shared_ptr<RenderBuffer>(_render->createUniformBuffer(sizeofData * count));
 
 			}
@@ -81,7 +82,7 @@ namespace BEbraEngine {
 			countToMap = count;
 		} //override;
 
-		void setContext(AbstractRender* render)
+		void setContext(Render* render)
 		{
 			_render = static_cast<VulkanRender*>(render);
 		}//override;
@@ -96,6 +97,7 @@ namespace BEbraEngine {
 		
 		void bindData(const vector<RenderData>& data)
 		{
+			
 			if (data.size() * sizeof(RenderData) > dataSize) {
 				//DEBUG_LOG1(
 				//	BE_STD::stringstream() << "The allocated memory in the pool is less than the memory located in the bound data | "
@@ -134,7 +136,7 @@ namespace BEbraEngine {
 			return optional<shared_ptr<RenderBufferView>>();
 		} //override;
 
-		~VulkanRenderBufferPool()
+		~VulkanRenderBufferArray()
 		{
 			_buffer->destroy();
 		}
@@ -146,7 +148,7 @@ namespace BEbraEngine {
 		const vector<RenderData>* _data;
 		vector<RenderData> nullData;
 		tbb::concurrent_queue<shared_ptr<RenderBufferView>> _pool;
-		AbstractRender* _render;
+		Render* _render;
 		size_t totalCount;
 		size_t countToMap;
 		RenderBufferPoolUsage _usage{};

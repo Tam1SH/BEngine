@@ -11,7 +11,7 @@ namespace BEbraEngine {
 		render->create(this);
 	}
 
-	VulkanWindow::VulkanWindow(AbstractRender* render)
+	VulkanWindow::VulkanWindow(Render* render)
 	{
 		this->render = static_cast<VulkanRender*>(render);
 	}

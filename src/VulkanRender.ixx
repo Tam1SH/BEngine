@@ -4,7 +4,7 @@
 #include <boost/filesystem.hpp>
 export module VulkanRender;
 import ExecuteQueues;
-import AbstractRender;
+import Render;
 import BaseRenderWindow;
 import RenderBuffer;
 import Vector2;
@@ -40,10 +40,10 @@ namespace BEbraEngine {
     class VulkanRenderObjectFactory;
 
     template<typename RenderData>
-    class VulkanRenderBufferPool;
+    class VulkanRenderBufferArray;
 
     class RenderBufferView;
-    class IRenderObjectFactory;
+    class RenderObjectFactory;
 }
 
 
@@ -69,7 +69,7 @@ namespace BEbraEngine {
         Rows& at(int index) override { return rows[index]; }
     };
 
-    export class VulkanRender : public AbstractRender
+    export class VulkanRender : public Render
     {
     public:
        
@@ -91,10 +91,10 @@ namespace BEbraEngine {
 
         void removeCamera(SimpleCamera& camera); //override;
 
-        AbstractRender::Type getType() //override 
-        { return AbstractRender::Type::Vulkan; }
+        Render::Type getType() //override 
+        { return Render::Type::Vulkan; }
 
-        IRenderObjectFactory* getRenderObjectFactory(); //override;
+        RenderObjectFactory* getRenderObjectFactory(); //override;
 
         void addGlobalLight(DirectionLight& globalLight); //override;
 
@@ -116,7 +116,7 @@ namespace BEbraEngine {
             };
         }
 
-        uint32_t alignmentBuffer(uint32_t originalSize, AbstractRender::TypeBuffer type); //override;
+        uint32_t alignmentBuffer(uint32_t originalSize, Render::TypeBuffer type); //override;
 
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
 
@@ -220,7 +220,7 @@ namespace BEbraEngine {
 
         vector<Line::ShaderData> linesMemory{ 30000 };
 
-        unique_ptr<VulkanRenderBufferPool<Line::ShaderData>> linePool;
+        unique_ptr<VulkanRenderBufferArray<Line::ShaderData>> linePool;
 
         unique_ptr<VulkanRenderObjectFactory> factory;
 

@@ -20,7 +20,7 @@ namespace BEbraEngine {
 
     class Engine {
     public:
-        unique_ptr<AbstractRender> render1;
+        unique_ptr<Render> render1;
         unique_ptr<Physics> physics;
         unique_ptr<BaseWindow> window1;
         unique_ptr<ScriptState> gameState;

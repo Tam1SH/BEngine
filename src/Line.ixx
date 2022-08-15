@@ -37,7 +37,7 @@ namespace BEbraEngine {
         Vector3 to;
         Vector3 color;
 
-        void create(AbstractRender& render);
+        void create(Render& render);
 
         void update();
 

@@ -1,6 +1,6 @@
 #include "platform.hpp"
 
-export module IVisitorGameComponentDestroyer;
+export module VisitorGameComponentDestroyer;
 import RenderObjects;
 import Collider;
 import RigidBody;
@@ -10,6 +10,7 @@ import GameObject;
 
 import <memory>;
 
+import Transform;
 using std::shared_ptr;
 
 namespace BEbraEngine {
@@ -18,7 +19,7 @@ namespace BEbraEngine {
 
 namespace BEbraEngine {
 
-	export class IVisitorGameComponentDestroyer {
+	export class VisitorGameComponentDestroyer {
 	public:
 		virtual void destroyGameObject(GameObject& comp) = 0;
 		virtual void destroyPointLightComponent(Light& comp) = 0;
@@ -29,12 +30,12 @@ namespace BEbraEngine {
 		virtual void destroyRigidBodyComponent(RigidBody& comp) = 0;
 		virtual void destroyColliderComponent(Collider& comp) = 0;
 		virtual void destroyTextureComponent(Texture& comp) = 0;
-		virtual void destroyTextureComponentAsync(std::shared_ptr<Texture> comp) = 0;
+		virtual void destroyTextureComponentAsync(shared_ptr<Texture> comp) = 0;
 		virtual void destroyMaterialComponent(Material& comp) = 0;
 		virtual void destroyTransformComponent(Transform& comp) = 0;
 		virtual void destroyCameraComponent(SimpleCamera& comp) = 0;
 
-		virtual ~IVisitorGameComponentDestroyer() noexcept {}
-		IVisitorGameComponentDestroyer() noexcept {}
+		virtual ~VisitorGameComponentDestroyer() noexcept {}
+		VisitorGameComponentDestroyer() noexcept {}
 	};
 }

@@ -6,12 +6,11 @@ import CreateInfoStructures;
 
 import VulkanRender;
 import VulkanTextureFactory;
-
+import RenderWorld;
 import CommandPool;
 import VulkanBuffer;
 import Vertex;
-import RenderWorld;
-import VulkanRenderBufferPool;
+import VulkanRenderBufferArray;
 import MeshFactory;
 import Vector2;
 import <optional>;
@@ -107,7 +106,7 @@ namespace BEbraEngine {
         throw std::exception();
     }
 
-    void VulkanRenderObjectFactory::setContext(AbstractRender* render)
+    void VulkanRenderObjectFactory::setContext(Render* render)
     {
         
         this->render = dynamic_cast<VulkanRender*>(render);
@@ -115,19 +114,19 @@ namespace BEbraEngine {
         textureFactory = new VulkanTextureFactory(render);
        
 
-        _poolofObjects = std::make_unique<VulkanRenderBufferPool<RenderObject::ShaderData>>();
+        _poolofObjects = std::make_unique<VulkanRenderBufferArray<RenderObject::ShaderData>>();
         _poolofObjects->setContext(render);
         _poolofObjects->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
-        _poolofObjects->allocate(10000, sizeof(RenderObject::ShaderData), AbstractRender::TypeBuffer::Storage);
+        _poolofObjects->allocate(10000, sizeof(RenderObject::ShaderData), Render::TypeBuffer::Storage);
         
-        _poolofDirLights = std::make_unique<VulkanRenderBufferPool<DirectionLight::ShaderData>>();
+        _poolofDirLights = std::make_unique<VulkanRenderBufferArray<DirectionLight::ShaderData>>();
         _poolofDirLights->setContext(render);
-        _poolofDirLights->allocate(1, sizeof(DirectionLight::ShaderData), AbstractRender::TypeBuffer::Storage);
+        _poolofDirLights->allocate(1, sizeof(DirectionLight::ShaderData), Render::TypeBuffer::Storage);
 
-        _poolofPointLights = std::make_unique<VulkanRenderBufferPool<Light::ShaderData>>();
+        _poolofPointLights = std::make_unique<VulkanRenderBufferArray<Light::ShaderData>>();
         _poolofPointLights->setContext(render);
         _poolofPointLights->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
-        _poolofPointLights->allocate(10000, sizeof(Light::ShaderData), AbstractRender::TypeBuffer::Storage);
+        _poolofPointLights->allocate(10000, sizeof(Light::ShaderData), Render::TypeBuffer::Storage);
 
 
         meshFactory = std::unique_ptr<MeshFactory>(new MeshFactory(render));
@@ -171,7 +170,7 @@ namespace BEbraEngine {
     {
     }
 
-    ITextureFactory& VulkanRenderObjectFactory::getTextureFactory()
+    TextureFactory& VulkanRenderObjectFactory::getTextureFactory()
     {
         return *textureFactory;
     }
@@ -233,7 +232,7 @@ namespace BEbraEngine {
         
     }
 
-    void VulkanRenderObjectFactory::setComponentDestroyer(IVisitorGameComponentDestroyer& destroyer)
+    void VulkanRenderObjectFactory::setComponentDestroyer(VisitorGameComponentDestroyer& destroyer)
     {
         this->destroyer = &destroyer;
         textureFactory->setDestroyer(destroyer);

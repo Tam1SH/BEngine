@@ -8,7 +8,7 @@ import GameComponent;
 
 namespace BEbraEngine {
     class TransformFactory;
-    class IVisitorGameComponentDestroyer;
+    class VisitorGameComponentDestroyer;
 }
 namespace BEbraEngine {
 
@@ -25,7 +25,7 @@ namespace BEbraEngine {
 
     public:
 
-        // void destroy(IVisitorGameComponentDestroyer& destroyer) {}//override;
+        // void destroy(VisitorGameComponentDestroyer& destroyer) {}//override;
 
          //void destroy(ÑVisitorGameComponentDestroyer auto& destroyer) {
          //    destroyer.destroyTransformComponent(*this);
@@ -101,7 +101,7 @@ namespace BEbraEngine {
 
 
 
-    //void Transform::destroy(IVisitorGameComponentDestroyer& destroyer)
+    //void Transform::destroy(VisitorGameComponentDestroyer& destroyer)
     //{
     //    destroyer.destroyTransformComponent(*this);
     //}

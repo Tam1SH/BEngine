@@ -47,7 +47,7 @@ namespace BEbraEngine {
 		//DEBUG_DESTROY_CHECK("Collider has not destroyed", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
 	}
 
-	void Collider::destroy(IVisitorGameComponentDestroyer& destroyer)
+	void Collider::destroy(VisitorGameComponentDestroyer& destroyer)
 	{
 		//destroyer.destroyColliderComponent(*this);
 	}

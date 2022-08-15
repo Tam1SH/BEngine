@@ -2,14 +2,14 @@
 #include <boost/filesystem.hpp>
 
 export module VulkanRenderObjectFactory;
-import IRenderBufferPool;
-import VulkanRenderBufferPool;
+import RenderBufferArray;
+import VulkanRenderBufferArray;
 
 import Model;
 import RenderObjects;
 import Debug;
-import IRenderObjectFactory;
-import ITextureFactory;
+import RenderObjectFactory;
+import TextureFactory;
 import Camera;
 import VulkanBuffer;
 import VulkanObjects;
@@ -22,6 +22,7 @@ import <memory>;
 import <string>;
 import <optional>;
 import RenderBuffer;
+
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -38,13 +39,13 @@ namespace BEbraEngine {
 
 namespace BEbraEngine {
     //разделить логику и создание/удаление(назв. Adjuster?) также для рендера создать чтоли стораге?
-    export class VulkanRenderObjectFactory : public IRenderObjectFactory
+    export class VulkanRenderObjectFactory : public RenderObjectFactory
     {
     public:
         
         friend class VulkanRender;
 
-        ITextureFactory& getTextureFactory() override;
+        TextureFactory& getTextureFactory() override;
 
         optional<Material*> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info) override;
 
@@ -52,7 +53,7 @@ namespace BEbraEngine {
 
         void setMaterial(RenderObject& obj, Material& material) override;
 
-        void setComponentDestroyer(IVisitorGameComponentDestroyer& destroyer) override;
+        void setComponentDestroyer(VisitorGameComponentDestroyer& destroyer) override;
 
         void bindTransform(Light& light, Transform& transform) override;
 
@@ -66,7 +67,7 @@ namespace BEbraEngine {
 
         SimpleCamera* createCamera(const Vector3& position) override;
 
-        void setContext(AbstractRender* render) override;
+        void setContext(Render* render) override;
 
         void setWorld(RenderWorld& world) override;
        
@@ -84,12 +85,12 @@ namespace BEbraEngine {
         ~VulkanRenderObjectFactory();
 
     private:
-        unique_ptr<VulkanRenderBufferPool<RenderObject::ShaderData>> _poolofObjects;
-        unique_ptr<VulkanRenderBufferPool<Light::ShaderData>> _poolofPointLights;
-        unique_ptr<VulkanRenderBufferPool<DirectionLight::ShaderData>> _poolofDirLights;
+        unique_ptr<VulkanRenderBufferArray<RenderObject::ShaderData>> _poolofObjects;
+        unique_ptr<VulkanRenderBufferArray<Light::ShaderData>> _poolofPointLights;
+        unique_ptr<VulkanRenderBufferArray<DirectionLight::ShaderData>> _poolofDirLights;
 
         shared_ptr<RenderBufferView> storage;
-        IVisitorGameComponentDestroyer* destroyer;
+        VisitorGameComponentDestroyer* destroyer;
         VulkanRender* render;
         RenderWorld* world;
         VulkanTextureFactory* textureFactory;

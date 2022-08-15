@@ -7,7 +7,7 @@ using std::shared_ptr;
 namespace BEbraEngine {
 
 	GameComponentDestroyer::GameComponentDestroyer(
-		IRenderObjectFactory& renderFactory,
+		RenderObjectFactory& renderFactory,
 		ColliderFactory& colliderFactory,
 		RigidBodyFactory& rigidBodyFactory)
 	{

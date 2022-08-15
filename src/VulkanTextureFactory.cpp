@@ -159,12 +159,12 @@ namespace BEbraEngine {
         //});
        
     }
-    void VulkanTextureFactory::setDestroyer(IVisitorGameComponentDestroyer& destroyer)
+    void VulkanTextureFactory::setDestroyer(VisitorGameComponentDestroyer& destroyer)
     {
         this->destroyer = &destroyer;
     }
 
-    VulkanTextureFactory::VulkanTextureFactory(AbstractRender* render) 
+    VulkanTextureFactory::VulkanTextureFactory(Render* render) 
         : render(dynamic_cast<VulkanRender*>(render))
     { 
         if (!render) throw std::runtime_error("render isn't VulkanRender"); 

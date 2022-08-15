@@ -20,7 +20,7 @@ namespace BEbraEngine {
             const boost::filesystem::path & path,
             function<void(Texture*)> onComplete,
             bool generateMip,
-            IVisitorGameComponentDestroyer & destroyer,
+            VisitorGameComponentDestroyer & destroyer,
             const Material::CreateInfo& info,
             Texture & texture,
             std::shared_ptr<Texture> shared_ptr_texture

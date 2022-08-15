@@ -9,14 +9,14 @@ using std::string;
 using std::list;
 
 namespace BEbraEngine {
-	class IVisitorGameComponentDestroyer;
+	class VisitorGameComponentDestroyer;
 }
 namespace BEbraEngine {
 
 	export class GameComponent {
 	public:
 
-		//virtual void destroy(IVisitorGameComponentDestroyer& destroyer) = 0;
+		//virtual void destroy(VisitorGameComponentDestroyer& destroyer) = 0;
 
 		template<typename T, class _ = typename BE_STD::enable_if<BE_STD::is_base_of<GameComponent, T>::value>::type>
 		T& as() {

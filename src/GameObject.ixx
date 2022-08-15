@@ -20,7 +20,7 @@ namespace BEbraEngine {
         //DEBUG_DESTROY_CHECK_DECL()
     public:
 
-        //void destroy(IVisitorGameComponentDestroyer& destroyer) { } //override;
+        //void destroy(VisitorGameComponentDestroyer& destroyer) { } //override;
 
         //void destroy(ÑVisitorComponentDestroyer auto& destroyer) {
         //    for (auto& comp : components_) {

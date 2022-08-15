@@ -20,7 +20,7 @@ using BE_STD::optional;
 namespace BEbraEngine {
     export class Physics;
     export class Collider;
-    class IVisitorGameComponentDestroyer;
+    class VisitorGameComponentDestroyer;
 }
 
 namespace BEbraEngine {
@@ -46,7 +46,7 @@ namespace BEbraEngine {
     public:
 
 
-        void destroy(IVisitorGameComponentDestroyer& destroyer) {}//override;
+        void destroy(VisitorGameComponentDestroyer& destroyer) {}//override;
 
         //void destroy(ÑVisitorComponentDestroyer auto& destroyer) {
         //	destroyer.destroyRigidBodyComponent(*this);

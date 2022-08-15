@@ -18,7 +18,7 @@
 
 
 export module RenderWorld;
-import AbstractRender;
+import Render;
 import RenderObjects;
 import Debug;
 import RenderData;
@@ -33,7 +33,7 @@ namespace BEbraEngine {
         struct Request { };
     public:
 
-        RenderWorld(AbstractRender& render);
+        RenderWorld(Render& render);
 
         void removeObject(const RenderObject& object);
 
@@ -53,7 +53,7 @@ namespace BEbraEngine {
         tbb::concurrent_queue<Request> requestQueue;
         std::vector<RenderObject*> objects;
         std::vector<Light*> lights;
-        AbstractRender* render;
+        Render* render;
     };
 }
 

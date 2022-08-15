@@ -2,7 +2,7 @@
 module RenderObjects;
 import Transform;
 namespace BEbraEngine {
-	void Line::create(AbstractRender& render) {
+	void Line::create(Render& render) {
 
 	}
     

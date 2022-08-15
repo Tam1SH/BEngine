@@ -141,7 +141,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd</AdditionalIncludeDirectories>
       <AdditionalOptions>
@@ -330,7 +330,7 @@
     <ClCompile Include="Debug.ixx" />
     <ClCompile Include="GameComponent.ixx" />
     <ClCompile Include="GameComponentDestroyer.cpp" />
-    <ClCompile Include="IVisitorGameComponentDestroyer.ixx">
+    <ClCompile Include="VisitorGameComponentDestroyer.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -473,9 +473,9 @@
     <ClCompile Include="Input.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClCompile Include="IRenderBufferPool.ixx" />
-    <ClCompile Include="IRenderObjectFactory.ixx" />
-    <ClCompile Include="ITextureFactory.ixx" />
+    <ClCompile Include="RenderBufferArray.ixx" />
+    <ClCompile Include="RenderObjectFactory.ixx" />
+    <ClCompile Include="TextureFactory.ixx" />
     <ClCompile Include="MeshFactory.ixx">
       <FileType>Document</FileType>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -527,7 +527,7 @@
     </ClCompile>
     <ClCompile Include="Time.ixx" />
     <ClCompile Include="VulkanRender.ixx" />
-    <ClCompile Include="VulkanRenderBufferPool.ixx">
+    <ClCompile Include="VulkanRenderBufferArray.ixx">
       <FileType>Document</FileType>
     </ClCompile>
     <ClCompile Include="VulkanRenderObjectFactory.ixx">

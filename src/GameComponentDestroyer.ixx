@@ -1,7 +1,7 @@
 #include <boost/filesystem.hpp>
 export module GameComponentDestroyer;
-import IVisitorGameComponentDestroyer;
-import IRenderObjectFactory;
+import VisitorGameComponentDestroyer;
+import RenderObjectFactory;
 import ColliderFactory;
 import RigidBodyFactory;
 import <memory>;
@@ -17,11 +17,11 @@ namespace BEbraEngine {
 
 
 	
-	export class GameComponentDestroyer : public IVisitorGameComponentDestroyer
+	export class GameComponentDestroyer : public VisitorGameComponentDestroyer
 	{
 	public:
 		GameComponentDestroyer(
-			IRenderObjectFactory& renderFactory,
+			RenderObjectFactory& renderFactory,
 			ColliderFactory& colliderFactory,
 			RigidBodyFactory& rigidBodyFactory);
 		
@@ -48,7 +48,7 @@ namespace BEbraEngine {
 		void destroyCameraComponent(SimpleCamera& comp);
 
 	private:
-		IRenderObjectFactory* renderFactory;
+		RenderObjectFactory* renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;
 

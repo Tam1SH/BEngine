@@ -1,5 +1,5 @@
 export module VulkanWindow;
-import AbstractRender;
+import Render;
 import BaseRenderWindow;
 import <string>;
 import Vector2;
@@ -13,7 +13,7 @@ namespace BEbraEngine {
 
 		void createWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
 
-		VulkanWindow(AbstractRender* render);
+		VulkanWindow(Render* render);
 
 		void onResizeCallback(int width, int height) override;
 

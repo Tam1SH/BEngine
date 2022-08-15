@@ -24,7 +24,7 @@ import RigidBody;
 import Collider;
 import Transform;
 import Quaternion;
-import AbstractRender;
+import Render;
 
 class btDynamicsWorld;
 class btConstraintSolverPoolMt;
@@ -47,7 +47,7 @@ BE_NAMESPACE_STD_END
 
 
 namespace BEbraEngine {
-    class AbstractRender;
+    class Render;
     class RigidBody;
     class RigidBodyFactory;
     class ColliderFactory;
@@ -82,7 +82,7 @@ namespace BEbraEngine {
 
         void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
 
-        DebugDrawer(AbstractRender& render);
+        DebugDrawer(Render& render);
 
         void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color) {}
 
@@ -94,7 +94,7 @@ namespace BEbraEngine {
 
         int getDebugMode() const { return btIDebugDraw::DBG_DrawWireframe; }
     private:
-        AbstractRender* render;
+        Render* render;
         uint32_t linesToDraw;
     };
 

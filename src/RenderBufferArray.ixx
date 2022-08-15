@@ -1,10 +1,10 @@
 
 #include "platform.hpp"
-export module IRenderBufferPool;
+export module RenderBufferArray;
 import <memory>;
 import <optional>;
 import <vector>;
-import AbstractRender;
+import Render;
 import RenderBuffer;
 using std::shared_ptr;
 using std::optional;
@@ -17,13 +17,13 @@ namespace BEbraEngine {
 	};
 
 	export template<typename RenderData>
-	class IRenderBufferPool {
+	class RenderBufferArray {
 
 	public:
 
-		virtual ~IRenderBufferPool() { }
+		virtual ~RenderBufferArray() { }
 
-		virtual void allocate(uint32_t count, uint32_t sizeofData, AbstractRender::TypeBuffer type) = 0;
+		virtual void allocate(uint32_t count, uint32_t sizeofData, Render::TypeBuffer type) = 0;
 
 		virtual void deallocate(uint32_t count) = 0;
 
@@ -35,7 +35,7 @@ namespace BEbraEngine {
 
 		virtual void free(shared_ptr<RenderBufferView> view) = 0;
 
-		virtual void setContext(AbstractRender* render) = 0;
+		virtual void setContext(Render* render) = 0;
 
 		virtual void bindData(const std::vector<RenderData>& data) = 0;
 

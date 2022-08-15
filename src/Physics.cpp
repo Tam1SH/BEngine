@@ -17,7 +17,7 @@ import RigidBody;
 import Collider;
 import ColliderFactory;
 import GameObject;
-import AbstractRender;
+import Render;
 import RigidBodyFactory;
 import BEbraMath;
 using std::optional;
@@ -35,7 +35,7 @@ namespace BEbraEngine {
         render->drawLine(_from, _to, _color);
     }
     
-    DebugDrawer::DebugDrawer(AbstractRender& render)
+    DebugDrawer::DebugDrawer(Render& render)
     {
         this->render = &render;
     }

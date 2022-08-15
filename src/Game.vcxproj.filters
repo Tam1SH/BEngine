@@ -120,7 +120,7 @@
     <ClCompile Include="GameComponent.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="IVisitorGameComponentDestroyer.ixx">
+    <ClCompile Include="VisitorGameComponentDestroyer.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="Line.ixx">
@@ -183,7 +183,7 @@
     <ClCompile Include="Vertex.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="IRenderObjectFactory.ixx">
+    <ClCompile Include="RenderObjectFactory.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="Model.ixx">
@@ -204,7 +204,7 @@
     <ClCompile Include="ScriptWrappers.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="ITextureFactory.ixx">
+    <ClCompile Include="TextureFactory.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="Input.ixx">
@@ -255,7 +255,7 @@
     <ClCompile Include="GameObjectFactory.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="IRenderBufferPool.ixx">
+    <ClCompile Include="RenderBufferArray.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="ScriptManager.ixx">
@@ -294,7 +294,7 @@
     <ClCompile Include="VulkanWindow.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanRenderBufferPool.ixx">
+    <ClCompile Include="VulkanRenderBufferArray.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="Collider.cpp">

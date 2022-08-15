@@ -14,7 +14,7 @@ import Input;
 //import ÑVisitorComponentDestroyer;
 namespace BEbraEngine {
     class RenderBufferView;
-    class IVisitorGameComponentDestroyer;
+    class VisitorGameComponentDestroyer;
 }
 
 namespace BEbraEngine {
@@ -74,7 +74,7 @@ namespace BEbraEngine {
             updateCameraVectors();
         }
 
-        void destroy(IVisitorGameComponentDestroyer& destroyer) { } //override;
+        void destroy(VisitorGameComponentDestroyer& destroyer) { } //override;
 
         //void destroy(ÑVisitorComponentDestroyer auto& destroyer) {
         //    destroyer.destroyCameraComponent(*this);

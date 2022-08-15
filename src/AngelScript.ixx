@@ -2,7 +2,7 @@
 export module AngelScript;
 
 import BaseScript;
-import IVisitorGameComponentDestroyer;
+import VisitorGameComponentDestroyer;
 
 namespace BEbraEngine {
 
@@ -14,7 +14,7 @@ namespace BEbraEngine {
 
 		AngelScript(asIScriptContext* context);
 
-		void destroy(IVisitorGameComponentDestroyer& destroyer) { } //override;
+		void destroy(VisitorGameComponentDestroyer& destroyer) { } //override;
 		
 	private:
 		asIScriptContext* context;

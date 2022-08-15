@@ -16,13 +16,13 @@ using std::shared_ptr;
 using std::string;
 using std::map;
 using std::vector;
-import AbstractRender;
+import Render;
 import Model;
 import Texture;
 
 namespace BEbraEngine {
-    //class AbstractRender;
-    class ITextureFactory;
+    //class Render;
+    class TextureFactory;
 }
 namespace BEbraEngine {
     
@@ -35,7 +35,7 @@ namespace BEbraEngine {
 
         std::shared_ptr<Model> getDefaultModel(const string& name);
 
-        MeshFactory(AbstractRender* render);
+        MeshFactory(Render* render);
     private:
 
 
@@ -47,9 +47,9 @@ namespace BEbraEngine {
 
         std::vector<Texture*> loadMaterialTextures(Model* model, aiMaterial* mat, aiTextureType type, string typeName, const string& path);
 
-        ITextureFactory* _textureFactory;
+        TextureFactory* _textureFactory;
 
-        AbstractRender* render;
+        Render* render;
 
         std::map<string, shared_ptr<Model>> default_models;
         

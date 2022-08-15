@@ -5,12 +5,12 @@ export module GameObjectFactory;
 import <memory>;
 import <optional>;
 import <string>;
-import AbstractRender;
+import Render;
 import RenderObjects;
 import GameComponent;
 import GameObject;
 import Camera;
-import IVisitorGameComponentDestroyer;
+import VisitorGameComponentDestroyer;
 import Vector3;
 import Collider;
 
@@ -57,14 +57,14 @@ namespace BEbraEngine {
 
 		void destroyPointLight(Light& light);
 
-		GameObjectFactory(AbstractRender& render, Physics& physics, RenderWorld& world);
+		GameObjectFactory(Render& render, Physics& physics, RenderWorld& world);
 
 		~GameObjectFactory();
 
 	private:
 		unique_ptr<TransformFactory> transFactory;
-		unique_ptr<IVisitorGameComponentDestroyer> destroyer;
-		IRenderObjectFactory* renderFactory;
+		unique_ptr<VisitorGameComponentDestroyer> destroyer;
+		RenderObjectFactory* renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;
 
