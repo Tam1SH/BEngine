@@ -1,5 +1,0 @@
-// Файлы указаний помогают среде IDE Visual Studio интерпретировать идентификаторы Visual C++
-// (например, имена функций и макросов).
-// Дополнительные сведения: https://go.microsoft.com/fwlink/?linkid=865984
-#define __TBB_requires(__VA_ARGS__)
-#define DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(ObjectType) int refCount; void ObjectType##::addRef() { ++refCount; } int ObjectType##::release() { if (--refCount == 0) { delete this; return 0; } return refCount; }
