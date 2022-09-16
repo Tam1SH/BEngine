@@ -1,17 +1,18 @@
 #include <vulkan/vulkan.h>
 
+
+
 export module VulkanObjects;
-import RenderObjects;
-import VulkanBuffer;
+import Light;
 import Camera;
-import Vector2;
-import Vector3;
+import RenderObject;
+import DirectionLight;
+import VulkanBuffer;
 
 
 namespace BEbraEngine {
     
-    export class VulkanRenderObject final : public RenderObject {
-
+    export class VulkanRenderObject : public RenderObject {
     public:
 
         ~VulkanRenderObject() {}

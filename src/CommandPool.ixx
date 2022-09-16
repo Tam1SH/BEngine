@@ -16,7 +16,7 @@ namespace BEbraEngine {
             return pool;
         }
 
-        CommandPool() {}
+        
 
         void create(uint32_t queueFamilyIndex);
 
@@ -26,7 +26,12 @@ namespace BEbraEngine {
 
         void destroyCmdBuffers(std::vector<VkCommandBuffer> buffers);
 
-        ~CommandPool();
+        CommandPool(const CommandPool& o) = delete;
+        CommandPool& operator=(const CommandPool& o) = delete;
+        //TODO: переопределить move конструктор
+
+        CommandPool() noexcept {}
+        ~CommandPool() noexcept;
     private:
 
         VkCommandPool pool{};

@@ -1,11 +1,17 @@
 ﻿#include <boost/filesystem.hpp>
 #include <tbb.h>
-module VulkanRenderObjectFactory;
-import RenderObjects;
-import CreateInfoStructures;
+#include <variant>
 
+module VulkanRenderObjectFactory;
 import VulkanRender;
+import VulkanRenderAllocator;
+import CreateInfoStructures;
 import VulkanTextureFactory;
+import VulkanTextureFactory;
+import CRenderObjectFactory;
+import MeshFactory;
+import RenderBuffer;
+import VulkanRenderBufferArray;
 import RenderWorld;
 import CommandPool;
 import VulkanBuffer;
@@ -15,12 +21,23 @@ import MeshFactory;
 import Vector2;
 import <optional>;
 import <memory>;
+
 using std::optional;
 using std::shared_ptr;
 
 
 //#include <stb-master/stb_image_write.h>
 namespace BEbraEngine {
+
+    namespace create {
+
+        template<> std::variant<VulkanRenderObjectFactory> renderObjectFactory(
+            VulkanRender& render,
+            VulkanRenderAllocator& allocator) {
+
+            return std::variant<VulkanRenderObjectFactory>();
+        }
+    }
 
     optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObjectCreateInfo& info)
     {
@@ -55,7 +72,7 @@ namespace BEbraEngine {
         obj->descriptor = render->createDescriptor(&setinfo);
         
         if (!obj->descriptor) {
-            //DEBUG_LOG2("Can't create render object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
+            //DEBUG_LOG2("Can't create renderAlloc object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
             delete obj;
             return optional<RenderObject*>();
         }
@@ -106,46 +123,8 @@ namespace BEbraEngine {
         throw std::exception();
     }
 
-    void VulkanRenderObjectFactory::setContext(Render* render)
-    {
-        
-        this->render = dynamic_cast<VulkanRender*>(render);
-
-        textureFactory = new VulkanTextureFactory(render);
-       
-
-        _poolofObjects = std::make_unique<VulkanRenderBufferArray<RenderObject::ShaderData>>();
-        _poolofObjects->setContext(render);
-        _poolofObjects->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
-        _poolofObjects->allocate(10000, sizeof(RenderObject::ShaderData), Render::TypeBuffer::Storage);
-        
-        _poolofDirLights = std::make_unique<VulkanRenderBufferArray<DirectionLight::ShaderData>>();
-        _poolofDirLights->setContext(render);
-        _poolofDirLights->allocate(1, sizeof(DirectionLight::ShaderData), Render::TypeBuffer::Storage);
-
-        _poolofPointLights = std::make_unique<VulkanRenderBufferArray<Light::ShaderData>>();
-        _poolofPointLights->setContext(render);
-        _poolofPointLights->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
-        _poolofPointLights->allocate(10000, sizeof(Light::ShaderData), Render::TypeBuffer::Storage);
 
 
-        meshFactory = std::unique_ptr<MeshFactory>(new MeshFactory(render));
-
-        
-        auto v = RenderBufferView();
-        v.buffer = _poolofPointLights->getBuffer();
-        v.availableRange = sizeof(Light::ShaderData) * 100;
-
-        auto info = LightDescriptorInfo();
-        info.bufferView = &v;
-        info.type = LightDescriptorInfo::Type::Point;
-        
-    }
-
-    void VulkanRenderObjectFactory::setWorld(RenderWorld& world)
-    {
-        this->world = &world;
-    }
 
     void VulkanRenderObjectFactory::destroyObject(RenderObject& object)
     {
@@ -170,36 +149,41 @@ namespace BEbraEngine {
     {
     }
 
-    TextureFactory& VulkanRenderObjectFactory::getTextureFactory()
-    {
-        return *textureFactory;
-    }
+   // TextureFactory& VulkanRenderObjectFactory::getTextureFactory()
+    //{
+    //    return *textureFactory;
+    //}
 
-    optional<Material*> VulkanRenderObjectFactory::createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info)
+    Task<optional<Material*>> VulkanRenderObjectFactory::createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info)
     {
         
         //Не принципиально удалён ли был объект или нет
         auto wObj = std::weak_ptr<RenderObject>(obj);
         auto pointer = &*obj;
-        auto mat = textureFactory->createMaterialAsync(info, [=](Material* mat) {
+        Task<optional<Material*>> task; 
+
+        auto mat = textureFactory->createMaterialAsync(info, [=](Material* mat) mutable {
             render->executeQueues.addTask(ExecuteType::Multi,
-                [=] { 
+                [=]() mutable {
                     if (!wObj.expired()) {
                         auto& vObj = wObj.lock()->as<VulkanRenderObject>();
-                        
                         setMaterial(vObj, *mat);
-                        world->updateState({});
+                        task.execute(true);
+                        //world->updateState({});
                     }
                     else {
                         //DEBUG_LOG3("Render object was destroyed during set material", pointer);
                         //mat->destroy(*destroyer);
+                        task.execute(false);
                         delete mat;
+                        
                     }
-                });
-            
+            });
+
         });
 
-        return optional<Material*>(mat);
+        task.setValue(mat);
+        return task;
         
     }
 
@@ -232,11 +216,11 @@ namespace BEbraEngine {
         
     }
 
-    void VulkanRenderObjectFactory::setComponentDestroyer(VisitorGameComponentDestroyer& destroyer)
-    {
-        this->destroyer = &destroyer;
-        textureFactory->setDestroyer(destroyer);
-    }
+    //void VulkanRenderObjectFactory::setComponentDestroyer(VisitorGameComponentDestroyer& destroyer)
+    //{
+    //    this->destroyer = &destroyer;
+    //    textureFactory->setDestroyer(destroyer);
+    //}
 
     void VulkanRenderObjectFactory::bindTransform(Light& light, Transform& transform)
     {
@@ -247,19 +231,41 @@ namespace BEbraEngine {
         object.transform = &transform;
     }
 
-    void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)
-    {
-        
-        render->freeDescriptor(*obj);
-        VulkanDescriptorSetInfo setinfo{};
-        setinfo.bufferView = obj->matrix.get();
-        obj->descriptor = render->createDescriptor(&setinfo);
-        
-    }
+    //void VulkanRenderObjectFactory::CreateObjectSet(VulkanRenderObject* obj)
+    //{
+    //    
+    //    render->freeDescriptor(*obj);
+    //    VulkanDescriptorSetInfo setinfo{};
+    //    setinfo.bufferView = obj->matrix.get();
+    //    obj->descriptor = render->createDescriptor(&setinfo);
+    //    
+    //}
 
-    VulkanRenderObjectFactory::VulkanRenderObjectFactory()
+    VulkanRenderObjectFactory::VulkanRenderObjectFactory(
+        VulkanRender& render, VulkanRenderAllocator& allocator)
+        : render(&render), allocator(&allocator)
     {
+        _poolofObjects = std::make_unique<VulkanRenderBufferArray<RenderObject::ShaderData>>(allocator);
+        //_poolofObjects->setContext(&allocator);
+        _poolofObjects->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
+        _poolofObjects->allocate(10000, sizeof(RenderObject::ShaderData), TypeRenderBuffer::Storage);
 
+        _poolofDirLights = std::make_unique<VulkanRenderBufferArray<DirectionLight::ShaderData>>(allocator);
+        //_poolofDirLights->setContext(&allocator);
+        _poolofDirLights->allocate(1, sizeof(DirectionLight::ShaderData), TypeRenderBuffer::Storage);
+
+        _poolofPointLights = std::make_unique<VulkanRenderBufferArray<Light::ShaderData>>(allocator);
+        //_poolofPointLights->setContext(&allocator);
+        _poolofPointLights->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
+        _poolofPointLights->allocate(10000, sizeof(Light::ShaderData), TypeRenderBuffer::Storage);
+
+        auto v = RenderBufferView();
+        v.buffer = _poolofPointLights->getBuffer();
+        v.availableRange = sizeof(Light::ShaderData) * 100;
+
+        auto info = LightDescriptorInfo();
+        info.bufferView = &v;
+        info.type = LightDescriptorInfo::Type::Point;
     }
 
     VulkanRenderObjectFactory::~VulkanRenderObjectFactory()
@@ -294,6 +300,8 @@ namespace BEbraEngine {
         }
         
     }
+
+
 }
 
 /*
@@ -307,7 +315,7 @@ range.memory= imageMemory;
 range.size = material.getSpecular().width() * material.getSpecular().height();
 range.offset = 0;
 
-vkInvalidateMappedMemoryRanges(render->device, 1, &range);
+vkInvalidateMappedMemoryRanges(renderAlloc->device, 1, &range);
 unsigned char* memImage = new unsigned char[range.size];
 void* memory{};
 

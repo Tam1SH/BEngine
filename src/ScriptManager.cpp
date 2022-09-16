@@ -37,7 +37,7 @@ namespace BEbraEngine {
 			tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
 				//for (int i = 0; i < scripts.size(); i++) {
 				if (scripts[i]->getActive())
-					engine->executeScript(scripts[i].get(), "Update");
+					engine.executeScript(scripts[i].get(), "Update");
 			}
 			);
 		});
@@ -47,7 +47,7 @@ namespace BEbraEngine {
 			tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
 				//for (int i = 0; i < scripts.size(); i++) {
 				if (scripts[i]->getActive())
-					engine->executeScript(scripts[i].get(), "FixedUpdate");
+					engine.executeScript(scripts[i].get(), "FixedUpdate");
 			}
 			);
 		});
@@ -57,7 +57,7 @@ namespace BEbraEngine {
 	{
 		tbb::parallel_for<size_t>(0, scripts.size(), [&](size_t i) {
 			if (scripts[i]->getActive()) 
-				engine->executeScript(scripts[i].get(), "Start");
+				engine.executeScript(scripts[i].get(), "Start");
 			
 			});
 	}
@@ -88,7 +88,7 @@ namespace BEbraEngine {
 						path = value;
 					}
 				}
-				auto opt_script = engine->createScript(path, name);
+				auto opt_script = engine.createScript(path, name);
 
 				if (opt_script.has_value()) {
 					auto script = std::shared_ptr<AngelScript>(opt_script.value());
@@ -104,10 +104,11 @@ namespace BEbraEngine {
 
 		
 	}
+
 	ScriptManager::ScriptManager(ObjectFactoryFacade* factory)
 	{
 		this->factory = factory;
-		engine = unique_ptr<AngelScriptEngine>(new AngelScriptEngine(factory));
+		engine = AngelScriptEngine(factory);
 
 	}
 

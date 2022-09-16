@@ -1,7 +1,5 @@
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-
-
+module;
+#include <boost/filesystem.hpp>
 export module Camera;
 import Vector2;
 import Matrix4;
@@ -11,21 +9,14 @@ import RenderBuffer;
 import GameComponent;
 import Input;
 
-//import ÑVisitorComponentDestroyer;
 namespace BEbraEngine {
-    class RenderBufferView;
-    class VisitorGameComponentDestroyer;
-}
 
-namespace BEbraEngine {
     export enum Camera_Movement {
         FORWARD,
         BACKWARD,
         LEFT,
         RIGHT
     };
-
-
 
     const float YAW = -90.0f;
     const float PITCH = 0.0f;
@@ -74,139 +65,65 @@ namespace BEbraEngine {
             updateCameraVectors();
         }
 
-        void destroy(VisitorGameComponentDestroyer& destroyer) { } //override;
-
-        //void destroy(ÑVisitorComponentDestroyer auto& destroyer) {
+        //void destroy(ÑGameComponentDestroyer auto& destroyer) {
         //    destroyer.destroyCameraComponent(*this);
         //}
 
-        Matrix4 getViewMatrix()
-        {
-            
-            glm::vec3 _pos = Position;
-            glm::vec3 pos_f = Position + Front;
-            glm::vec3 up = Up;
-            return glm::lookAt(_pos, pos_f, up);
+        template<class T>
+        void destroy(T& destroyer) {
+            destroyer.destroyCameraComponent(*this);
         }
 
-        void moveTo(const Vector3& newPos)
-        {
-            Position = newPos;
-        }
+        Matrix4 getViewMatrix();
 
-        void processKeyboard(Camera_Movement direction, float deltaTime)
-        {
+        void moveTo(const Vector3& newPos);
 
-            float velocity = MovementSpeed * deltaTime;
-            if (direction == FORWARD)
-                Position += Front * velocity;
-            if (direction == BACKWARD)
-                Position -= Front * velocity;
-            if (direction == LEFT)
-                Position -= Right * velocity;
-            if (direction == RIGHT)
-                Position += Right * velocity;
-        }
+        void processKeyboard(Camera_Movement direction, float deltaTime);
+
+        void _move(float& x, float& y);
+
+        void processMouseMovement();
+
+        void processMouseScroll(float yoffset);
+
+        void update();
 
 
-        void _move(float& x, float& y)
-        {
+        void resize(Vector2 newSize);
 
-            x = Input::getX() - lastX;
-            y = lastY - Input::getY();
-            lastX = Input::getX();
-            lastY = Input::getY();
-
-        }
-
-        void processMouseMovement(bool constrainPitch = true)
-        {
-            float xoffset;
-            float yoffset;
-            _move(xoffset, yoffset);
-
-            xoffset *= MouseSensitivity;
-            yoffset *= MouseSensitivity;
-
-            Yaw += xoffset;
-            Pitch += yoffset;
-
-            if (constrainPitch)
-            {
-                if (Pitch > 89.0f)
-                    Pitch = 89.0f;
-                if (Pitch < -89.0f)
-                    Pitch = -89.0f;
-            }
-
-            updateCameraVectors();
-        }
-
-        void processMouseScroll(float yoffset)
-        {
-            if (Zoom >= 1.0f && Zoom <= 45.0f)
-                Zoom -= yoffset;
-            if (Zoom <= 1.0f)
-                Zoom = 1.0f;
-            if (Zoom >= 45.0f)
-                Zoom = 45.0f;
-        }
-        void update()
-        {
-
-            ShaderData vp;
-            vp.proj = glm::perspective(glm::radians(45.0f), rectViewport.x / rectViewport.y, .1f, 10000.0f);
-            vp.view = getViewMatrix();
-            vp.position = Position;
-            processMouseMovement();
-            cameraData->setData(&vp, sizeof(ShaderData));
-        }
-
-
-        void resize(Vector2 newSize)
-        {
-            rectViewport = newSize;
-        }
-
-        void lookAt(const Vector3& at)
-        {
-             Front = BEbraMath::normalize(at - Position);
-        }
+        void lookAt(const Vector3& at);
 
         bool isMain() { return _isMain; }
 
         void setMain(bool value) { _isMain = value; }
 
     private:
-        void updateCameraVectors()
-        {
-            Vector3 front;
-            front.x = cos(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
-            front.y = sin(BEbraMath::radians(Pitch));
-            front.z = sin(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
-            Front = BEbraMath::normalize(front);
-            Right = BEbraMath::normalize(BEbraMath::cross(Front, WorldUp));  
-            Up = BEbraMath::normalize(BEbraMath::cross(Right, Front));
-        }
+          void updateCameraVectors()
+          {
+              Vector3 front;
+              front.x = cos(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
+              front.y = sin(BEbraMath::radians(Pitch));
+              front.z = sin(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
+              Front = BEbraMath::normalize(front);
+              Right = BEbraMath::normalize(BEbraMath::cross(Front, WorldUp));  
+              Up = BEbraMath::normalize(BEbraMath::cross(Right, Front));
+          }
     private:
 
-        float Yaw{};
-        float Pitch{};
+          float Yaw{};
+          float Pitch{};
 
-        float MovementSpeed{};
-        float MouseSensitivity{};
-        float Zoom{};
+          float MovementSpeed{};
+          float MouseSensitivity{};
+          float Zoom{};
 
-        int lastX{};
-        int lastY{};
-
-        int cursorX{};
-        int cursorY{};
-        bool _isMain{};
-        Vector2 rectViewport{};
-
-
-
+          int lastX{};
+          int lastY{};
+    
+          int cursorX{};
+          int cursorY{};
+          bool _isMain{};
+          Vector2 rectViewport{};
 
     };
 

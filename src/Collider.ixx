@@ -7,7 +7,7 @@ import <memory>;
 import <exception>;
 import Vector3;
 import Quaternion;
-
+import Concepts;
 import GameComponent;
 
 using std::unique_ptr;
@@ -15,8 +15,6 @@ using std::unique_ptr;
 
 namespace BEbraEngine {
 	export class RigidBody;
-	class VisitorGameComponentDestroyer;
-
 }
 
 namespace BEbraEngine {
@@ -41,13 +39,12 @@ namespace BEbraEngine {
 		//DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class ColliderFactory;
-
-
-		
-
 	public:
 
-		void destroy(VisitorGameComponentDestroyer& destroyer) { } //override;
+		template<typename T>
+		void destroy(T& destroyer) {
+			destroyer.destroyColliderComponent(*this);
+		}
 
 		btCollisionObject& get() noexcept { return *_collider; }
 
@@ -69,26 +66,37 @@ namespace BEbraEngine {
 
 		void setRigidBody(RigidBody& body);
 
-		template<typename T, class _ = typename std::enable_if<std::is_base_of<Collider, T>::value>::type>
+		template<typename T>
 		void as() {
 			if (dynamic_cast<T*>(this))
 				return static_cast<T*>(this);
-			//else
-				//throw std::runtime_error("object does not match of type");
+
+			//throw std::runtime_error("object does not match of type");
 		}
-
-		~Collider() noexcept;
-		Collider() noexcept;
-	public:
-
 		
 
+		Collider(Collider&& o) noexcept = default;
+		Collider& operator=(Collider&& o) noexcept = default;
+
+		Collider(const Collider& o) = delete;
+		Collider& operator=(const Collider& o) = delete;
+
+
+		
+		Collider() noexcept;
+		~Collider() noexcept;
+
+
+	public:
 
 		RigidBody* body{};
 		unique_ptr<btCollisionObject> _collider;
 		Vector3 position{};
 		Vector3 size{};
 	};
+
+	//static_assert(OnlyMovable<Collider>);
+	
 
 	
 

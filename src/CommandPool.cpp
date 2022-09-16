@@ -49,7 +49,7 @@ namespace BEbraEngine {
     }
 
 
-    CommandPool::~CommandPool()
+    CommandPool::~CommandPool() noexcept
     {
         vkDestroyCommandPool(VulkanRender::device, pool, 0);
     }

@@ -12,7 +12,7 @@ using std::optional;
 
 namespace BEbraEngine {
 
-	ColliderFactory::ColliderFactory(Physics& physics) {
+	ColliderFactory::ColliderFactory(Physics& physics) noexcept {
 		this->physics = &physics;
 	}
 	void ColliderFactory::setShape(Collider& collider, btCollisionShape& newShape)

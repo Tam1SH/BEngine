@@ -2,17 +2,17 @@
 #include <SDL_vulkan.h>
 #include <SDL.h>
 
-module BaseRenderWindow;
+module Window;
 using std::vector;
 using std::string;
 
 namespace BEbraEngine {
-	void BaseWindow::vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface)
+	void Window::vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface)
 	{
 		SDL_Vulkan_CreateSurface(handle, instance, surface);
 
 	}
-	vector<const char*> BaseWindow::vulkan_GetInstanceExtensions()
+	vector<const char*> Window::vulkan_GetInstanceExtensions()
 	{
 		unsigned int count;
 		SDL_Vulkan_GetInstanceExtensions(handle, &count, nullptr);
@@ -24,15 +24,15 @@ namespace BEbraEngine {
 		SDL_Vulkan_GetInstanceExtensions(handle, &count, extensions.data() + additional_extension_count);
 		return extensions;
 	}
-	void BaseWindow::setWindowSize(const Vector2& newSize) const noexcept
+	void Window::setWindowSize(const Vector2& newSize) const noexcept
 	{
 		SDL_SetWindowSize(handle, newSize.x, newSize.y);
 	}
-	string BaseWindow::getName() const noexcept
+	string Window::getName() const noexcept
 	{
 		return SDL_GetWindowTitle(handle);
 	}
-	void BaseWindow::update() {
+	void Window::update() {
 
 		SDL_Event event;
 
@@ -73,7 +73,7 @@ namespace BEbraEngine {
 
 
 	}
-	void BaseWindow::_onCreateWindow(int w, int h, const SurfaceType& type, const char* title)
+	void Window::_onCreateWindow(int w, int h, const SurfaceType& type, const char* title)
 	{
 		SDL_WindowFlags flag{};
 		if (type == SurfaceType::Vulkan) {
@@ -87,7 +87,7 @@ namespace BEbraEngine {
 
 		Input::setWindow(handle);
 	}
-	void BaseWindow::onCreateWindow(const Vector2& size, const SurfaceType& type, const std::string& title = "BEbraEngine")
+	void Window::onCreateWindow(const Vector2& size, const SurfaceType& type, const std::string& title = "BEbraEngine")
 	{
 		_isClose = false;
 		this->type = type;
@@ -96,55 +96,55 @@ namespace BEbraEngine {
 
 
 
-	Vector2 BaseWindow::getSize() const noexcept
+	Vector2 Window::getSize() const noexcept
 	{
 		int w = 0, h = 0;
 		SDL_GetWindowSize(handle, &w, &h);
 		return Vector2(w, h);
 	}
 
-	int BaseWindow::width() const noexcept
+	int Window::width() const noexcept
 	{
 		return getSize().x;
 	}
 
-	int BaseWindow::height() const noexcept
+	int Window::height() const noexcept
 	{
 		return getSize().y;
 	}
 
-	void BaseWindow::setPosition(const Vector2& position) const noexcept
+	void Window::setPosition(const Vector2& position) const noexcept
 	{
 		SDL_SetWindowPosition(handle, position.x, position.y);
 	}
 
-	Vector2 BaseWindow::getPosition() const noexcept
+	Vector2 Window::getPosition() const noexcept
 	{
 		int x = 0, y = 0;
 		SDL_GetWindowPosition(handle, &x, &y);
 		return Vector2(x, y);
 	}
 
-	BaseWindow::BaseWindow()
+	Window::Window()
 	{
 		SDL_Init(SDL_INIT_VIDEO);
 	}
 
-	BaseWindow::~BaseWindow()
+	Window::~Window()
 	{
 		SDL_DestroyWindow(handle);
 		SDL_Quit();
 	}
 
-	bool BaseWindow::isClose() {
+	bool Window::isClose() {
 		return _isClose;
 	}
 
-	bool BaseWindow::isCollapsed()
+	bool Window::isCollapsed()
 	{
 		return SDL_GetWindowFlags(handle) & SDL_WINDOW_MINIMIZED;
 	}
-	void BaseWindow::setFullScreen(FullScreenType type)
+	void Window::setFullScreen(FullScreenType type)
 	{
 		int flags{};
 		if (type == FullScreenType::FullScreenOnWindow)

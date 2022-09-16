@@ -1,7 +1,10 @@
 #include <boost/filesystem.hpp>
+
 module ObjectFactoryFacade;
 import ScriptState;
+
 import GameObjectFactory;
+import Collider;
 import <optional>;
 import <memory>;
 using std::string;
@@ -118,9 +121,6 @@ namespace BEbraEngine {
         realFactory_->setModel(object, path);
     }
 
-    void ObjectFactoryFacade::setCollider(Collider& col, ColliderType type)
-    {
-        realFactory_->setCollider(col, type);
-    }
+
 
 }

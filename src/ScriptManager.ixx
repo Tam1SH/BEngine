@@ -5,7 +5,7 @@ import <string>;
 import <optional>;
 import <memory>;
 import <vector>;
-import ObjectFactoryFacade;
+
 import AngelScriptEngine;
 import AngelScript;
 using std::string; 
@@ -14,6 +14,7 @@ using std::unique_ptr;
 using std::optional;
 
 namespace BEbraEngine {
+	export class ObjectFactoryFacade;
 }
 
 namespace BEbraEngine {
@@ -21,7 +22,7 @@ namespace BEbraEngine {
 	export class ScriptManager
 	{
 	private:
-		unique_ptr<AngelScriptEngine> engine;
+		AngelScriptEngine engine;
 
 		std::vector<shared_ptr<AngelScript>> scripts;
 

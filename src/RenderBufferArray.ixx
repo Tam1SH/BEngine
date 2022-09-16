@@ -4,8 +4,9 @@ export module RenderBufferArray;
 import <memory>;
 import <optional>;
 import <vector>;
-import Render;
+import CRenderAllocator;
 import RenderBuffer;
+import RenderAllocatorTypeRenderBuffer;
 using std::shared_ptr;
 using std::optional;
 
@@ -18,12 +19,11 @@ namespace BEbraEngine {
 
 	export template<typename RenderData>
 	class RenderBufferArray {
-
 	public:
 
 		virtual ~RenderBufferArray() { }
 
-		virtual void allocate(uint32_t count, uint32_t sizeofData, Render::TypeBuffer type) = 0;
+		virtual void allocate(uint32_t count, uint32_t sizeofData, TypeRenderBuffer type) = 0;
 
 		virtual void deallocate(uint32_t count) = 0;
 
@@ -34,8 +34,6 @@ namespace BEbraEngine {
 		virtual void setCountToMap(size_t count) = 0;
 
 		virtual void free(shared_ptr<RenderBufferView> view) = 0;
-
-		virtual void setContext(Render* render) = 0;
 
 		virtual void bindData(const std::vector<RenderData>& data) = 0;
 

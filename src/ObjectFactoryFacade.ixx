@@ -2,23 +2,33 @@
 #include <boost/filesystem.hpp>
 
 
+
 export module ObjectFactoryFacade;
+import GameObjectFactory;
+/*Objects*/
+import Light;
+import Camera;
+import Transform;
+import Material;
+import DirectionLight;
+import GameObject;
+import Collider;
+import GameComponent;
+/*Objects*/
+
+import GameComponentCreateInfo;
+import Vector3;
+
 import <memory>;
 import <string>;
-import RenderObjects;
-import Camera;
-import GameComponentCreateInfo;
-import GameComponent;
-import Vector3;
-import Collider;
-import GameObject;
+
+
 using std::shared_ptr; 
 using std::unique_ptr;
 using std::string;
 
-
 namespace BEbraEngine {
-    export class GameObjectFactory;
+    //export class GameObjectFactory;
     export class ScriptState;
 }
 
@@ -47,7 +57,10 @@ namespace BEbraEngine {
 
         void setModel(GameObject& object, const string& path);
         
-        void setCollider(Collider& col, ColliderType type);
+        void setCollider(Collider& col, ColliderType& type) 
+        {
+            realFactory_->setCollider(col, type);
+        }
 
         void setContext(ScriptState* logic);
 

@@ -2,19 +2,20 @@
 #include <random>
 #include <tbb.h>
 #include "Physics.hpp"
+#include <variant>
+#include <functional>
 module ScriptState;
 import ScriptManager;
-
 import RenderWorld;
 import GameObject;
 import GameObjectFactory;
 import Input;
 import Collider;
+
+import ExecuteQueues;
 import Time;
 import ObjectFactoryFacade;
-import Render;
 import CreateInfoStructures;
-import BaseRenderWindow;
 
 import <functional>;
 import <memory>;
@@ -38,6 +39,14 @@ namespace BEbraEngine {
 
     }
 
+    void f(int a) {
+        if (a == 5){}
+        else if (a == 4) {}
+        else if (a == 3) {}
+        else if (a == 2) {}
+        else if (a == 1) {}
+
+    }
 
 
     ColliderType getShape(int rand) {
@@ -54,24 +63,20 @@ namespace BEbraEngine {
     }
 
 
-
-    ScriptState::ScriptState(Render& render, Physics& physics, BaseWindow& window)
+    ScriptState::ScriptState(Render& render, RenderAllocator& allocator, Physics& physics)
     {
-        
-        this->physics = &physics;
-        this->render = &render;
-        this->window = &window;
-        renderWorld = std::make_unique<RenderWorld>(render);
-        auto scriptsss = new ObjectFactoryFacade(new GameObjectFactory(render, physics, *renderWorld));
-        scriptsss->setContext(this);
-        render.setWorld(*renderWorld);
-        scriptObjectFactory = std::unique_ptr<ObjectFactoryFacade>(scriptsss);
-        scriptManager = std::unique_ptr<ScriptManager>(new ScriptManager(scriptObjectFactory.get()));
+        //queues = std::move(ExecuteQueues<function<void()>>());
 
-        scriptManager->LoadScripts();
+        this->physics = &physics;
+        renderWorld = RenderWorld(render);
+        scriptObjectFactory = new ObjectFactoryFacade(new GameObjectFactory(render, allocator, physics, renderWorld));
+        scriptObjectFactory->setContext(this);
+
+        scriptManager = ScriptManager(scriptObjectFactory);
+
+        scriptManager.LoadScripts();
 
         scriptInit();
-        
     }
 
     void ScriptState::scriptInit()
@@ -160,7 +165,7 @@ namespace BEbraEngine {
 
         if (Input::isKeyPressed(KeyCode::KEY_T)) {
             auto& mat = player->getComponentChecked<Material>();
-            //static_cast<VulkanRender*>(render)->getBitMapFromSwapChainImage();
+            //static_cast<VulkanRender*>(renderAlloc)->getBitMapFromSwapChainImage();
             //clearObjects();
         }
 
@@ -245,7 +250,7 @@ namespace BEbraEngine {
          //   auto& body = object->getComponentChecked<RigidBody>();
          //   auto pos1 = body.getTransform().getPosition();
         ///    auto dirc = body.getVelocity();
-        //    render->drawLine(pos1, (dirc + pos1), Vector3(1));
+        //    renderAlloc->drawLine(pos1, (dirc + pos1), Vector3(1));
         }
 
 
@@ -373,16 +378,16 @@ namespace BEbraEngine {
             }
         }
         */
-       // render->drawLine(camera->Front + camera->Position, (Vector3(0, 0, 1) / 20 + camera->Position), Vector3(1, 0, 0));
-       // render->drawLine(camera->Front + camera->Position, (Vector3(0, 1, 0) / 20 + camera->Position), Vector3(0, 1, 0));
-       // render->drawLine(camera->Front + camera->Position, (Vector3(1, 0, 0) / 20 + camera->Position), Vector3(0, 0, 1));
+       // renderAlloc->drawLine(camera->Front + camera->Position, (Vector3(0, 0, 1) / 20 + camera->Position), Vector3(1, 0, 0));
+       // renderAlloc->drawLine(camera->Front + camera->Position, (Vector3(0, 1, 0) / 20 + camera->Position), Vector3(0, 1, 0));
+       // renderAlloc->drawLine(camera->Front + camera->Position, (Vector3(1, 0, 0) / 20 + camera->Position), Vector3(0, 0, 1));
 
     }
 
     void ScriptState::updateState()
     {
-        //renderWorld->update();
-        //queues.execute();
+        renderWorld.update();
+        queues.execute();
     }
 
 
@@ -393,7 +398,7 @@ namespace BEbraEngine {
             [=] {
                 auto renderObj = object->getComponent<RenderObject>();
                 if (renderObj.has_value()) {
-                    renderWorld->addObject(object->getComponentChecked<RenderObject>());
+                    renderWorld.addObject(object->getComponentChecked<RenderObject>());
                 }
                 //else
                 //    DEBUG_LOG1("Object has no component 'RenderObject'");
@@ -414,17 +419,17 @@ namespace BEbraEngine {
         
     }
 
-    void ScriptState::removeObject(shared_ptr<GameObject> object,
-
+    void ScriptState::removeObject(
+        shared_ptr<GameObject> object,
         std::function<void(GameObject&)> callback)
     {
         
         queues.addTask(ExecuteType::Single,
-             [this, object, callback] () {
+             [&, object, callback] () {
 
                 auto renderObj = object->getComponent<RenderObject>();
                 if (renderObj.has_value()) {
-                    renderWorld->removeObject(object->getComponentChecked<RenderObject>());
+                    renderWorld.removeObject(object->getComponentChecked<RenderObject>());
                 }
                 //else
                 //    DEBUG_LOG1("Object has no component 'RenderObject'");
@@ -449,8 +454,8 @@ namespace BEbraEngine {
         auto pCamera = &camera;
         queues.addTask(ExecuteType::Single,
             [=] {
-            render->addCamera(*pCamera);
-            render->selectMainCamera(*pCamera);
+            renderWorld.addCamera(*pCamera);
+            renderWorld.selectMainCamera(*pCamera);
             }
         );
         
@@ -458,12 +463,10 @@ namespace BEbraEngine {
 
     void ScriptState::addLight(Light& light)
     {
-        
-       
         auto pLight = &light;
         queues.addTask(ExecuteType::Single,
             [=] {
-            renderWorld->addLight(*pLight);
+            renderWorld.addLight(*pLight);
             }
         );
         
@@ -476,7 +479,7 @@ namespace BEbraEngine {
         auto pLight = &light;
         queues.addTask(ExecuteType::Single,
             [=] {
-            render->addGlobalLight(*pLight);
+            renderWorld.addGlobalLight(*pLight);
             }
         );
         

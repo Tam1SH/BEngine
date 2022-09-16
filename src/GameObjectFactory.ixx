@@ -1,18 +1,33 @@
 
 #include "platform.hpp"
 #include <boost/filesystem.hpp>
+#include <variant>
+
 export module GameObjectFactory;
+import Light;
+import Camera;
+import CRender;
+import RenderDecl;
+import RenderAllocatorDecl;
+import RenderObjectFactoryDecl;
+import RenderWorld;
+import TransformFactory;
+/*Objects*/
+import Material;
+import DirectionLight;
+import GameComponent;
+import GameObject;
+import Collider;
+/*Objects*/
+
+//import VisitorGameComponentDestroyer;
+import GameComponentCreateInfo;
+import Vector3;
+
 import <memory>;
 import <optional>;
 import <string>;
-import Render;
-import RenderObjects;
-import GameComponent;
-import GameObject;
-import Camera;
-import VisitorGameComponentDestroyer;
-import Vector3;
-import Collider;
+
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -20,10 +35,6 @@ using std::optional;
 using std::string;
 
 namespace BEbraEngine {
-	export class Physics;
-	export class GameComponentCreateInfo;
-	
-	export class TransformFactory;
 	export class ColliderFactory;
 	export class RigidBodyFactory;
 }
@@ -52,19 +63,24 @@ namespace BEbraEngine {
 
 		void setMaterialAsync(shared_ptr<GameObject> object, const MaterialCreateInfo& info);
 
-
 		void destroyCamera(SimpleCamera& camera);
 
 		void destroyPointLight(Light& light);
 
-		GameObjectFactory(Render& render, Physics& physics, RenderWorld& world);
 
-		~GameObjectFactory();
+		GameObjectFactory(GameObjectFactory&&) noexcept = default;
+		GameObjectFactory& operator=(GameObjectFactory&&) noexcept = default;
+		GameObjectFactory(const GameObjectFactory& o) = delete;
+		GameObjectFactory& operator=(const GameObjectFactory& o) = delete;
+
+		GameObjectFactory(Render& render, RenderAllocator& allocator, Physics& physics, RenderWorld& world) noexcept;
+
+		~GameObjectFactory() noexcept;
 
 	private:
-		unique_ptr<TransformFactory> transFactory;
-		unique_ptr<VisitorGameComponentDestroyer> destroyer;
-		RenderObjectFactory* renderFactory;
+		TransformFactory transFactory;
+		//unique_ptr<VisitorGameComponentDestroyer> destroyer;
+		RenderObjectFactory renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;
 

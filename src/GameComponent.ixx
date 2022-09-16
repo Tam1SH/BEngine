@@ -1,23 +1,27 @@
 #include "platform.hpp"
 
 export module GameComponent;
+import Concepts;
 import <memory>;
 import <list>;
 import <string>;
+
 using std::shared_ptr;
 using std::string;
 using std::list;
 
 namespace BEbraEngine {
-	class VisitorGameComponentDestroyer;
-}
-namespace BEbraEngine {
 
 	export class GameComponent {
 	public:
 
-		//virtual void destroy(VisitorGameComponentDestroyer& destroyer) = 0;
-
+		template<typename T>
+		void destroy(T& destroyer) {
+			for (auto& components : components_) {
+				components->destroy(destroyer);
+			}
+		
+		}
 		template<typename T, class _ = typename BE_STD::enable_if<BE_STD::is_base_of<GameComponent, T>::value>::type>
 		T& as() {
 			T* p = dynamic_cast<T*>(this);
@@ -42,9 +46,13 @@ namespace BEbraEngine {
 
 		size_t getSize() const noexcept;
 
-		virtual ~GameComponent() noexcept {}
+		GameComponent(GameComponent&& o) noexcept = default;
+		GameComponent& operator=(GameComponent&& o) noexcept = default;
+		GameComponent(const GameComponent& o) noexcept = default;
+		GameComponent& operator=(const GameComponent& o) noexcept = default;
 
-		GameComponent() noexcept {}
+		virtual ~GameComponent() noexcept = default;
+		GameComponent() noexcept = default;
 
 	protected:
 		string name_{};
@@ -55,8 +63,9 @@ namespace BEbraEngine {
 
 		GameComponent* parent_{};
 
-
 	};
+
+	
 
 	void GameComponent::addComponent(shared_ptr<GameComponent> component)
 	{
@@ -91,4 +100,6 @@ namespace BEbraEngine {
 	{
 		return components_.size();
 	}
+
+	
 }

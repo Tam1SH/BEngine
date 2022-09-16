@@ -5,16 +5,25 @@
 #include <fstream>
 #include <iostream>
 #include <boost/filesystem.hpp>
-
+#include <variant>
 module MeshFactory;
 import RenderBuffer;
+import CRenderAllocator;
+import VulkanRenderAllocator;
 import Model;
 import Vector3;
 import Vector2;
 import <optional>;
 
 namespace BEbraEngine {
-    
+
+    namespace create {
+        MeshFactory&& meshFactory(std::variant<VulkanRenderAllocator>& renderAlloc)
+        {
+            return MeshFactory(renderAlloc);
+        }
+    }
+
     std::optional<Model*> MeshFactory::create(const ModelCreateInfo& info)
     {
 
@@ -67,46 +76,53 @@ namespace BEbraEngine {
         return default_models[name];
     }
 
-    MeshFactory::MeshFactory(Render* render) { 
-        this->render = render;
+    MeshFactory::MeshFactory(std::variant<VulkanRenderAllocator>& renderAlloc)
+        : renderAlloc(renderAlloc) 
+    {
+
         downloadDefaultModels(); 
     }
 
     void MeshFactory::downloadDefaultModels()
     {
-        const char* box = "BOX";
-        const char* sphere = "SPHERE";
-        const char* cylinder = "CYLINDER";
+        std::visit([&](CRenderAllocator auto& renderAlloc) {
 
-        ModelCreateInfo info{};
-        
-        info.path = boost::filesystem::current_path() / "Models/Box.fbx";;
-        default_models[box] = std::shared_ptr<Model>(create(info).value());
-        auto vertices_view = new RenderBufferView();
-        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models[box]->meshes[0].vertices));
-        default_models[box]->meshes[0].vertices_view = vertices_view;
-        auto indices_view = new RenderBufferView();
-        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models[box]->meshes[0].indices));
-        default_models[box]->meshes[0].indices_view = indices_view;
+            
+            const char* box = "BOX";
+            const char* sphere = "SPHERE";
+            const char* cylinder = "CYLINDER";
+
+            ModelCreateInfo info{};
+
+            info.path = boost::filesystem::current_path() / "Models/Box.fbx";;
+            default_models[box] = std::shared_ptr<Model>(create(info).value());
+            auto vertices_view = new RenderBufferView();
+            vertices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createVertexBuffer(default_models[box]->meshes[0].vertices));
+            default_models[box]->meshes[0].vertices_view = vertices_view;
+            auto indices_view = new RenderBufferView();
+            indices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createIndexBuffer(default_models[box]->meshes[0].indices));
+            default_models[box]->meshes[0].indices_view = indices_view;
 
 
-        info.path = boost::filesystem::current_path() / "Models/Sphere.fbx";;
-        default_models[sphere] = std::shared_ptr<Model>(create(info).value());
-        vertices_view = new RenderBufferView();
-        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models[sphere]->meshes[0].vertices));
-        default_models[sphere]->meshes[0].vertices_view = vertices_view;
-        indices_view = new RenderBufferView();
-        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models[sphere]->meshes[0].indices));
-        default_models[sphere]->meshes[0].indices_view = indices_view;
+            info.path = boost::filesystem::current_path() / "Models/Sphere.fbx";;
+            default_models[sphere] = std::shared_ptr<Model>(create(info).value());
+            vertices_view = new RenderBufferView();
+            vertices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createVertexBuffer(default_models[sphere]->meshes[0].vertices));
+            default_models[sphere]->meshes[0].vertices_view = vertices_view;
+            indices_view = new RenderBufferView();
+            indices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createIndexBuffer(default_models[sphere]->meshes[0].indices));
+            default_models[sphere]->meshes[0].indices_view = indices_view;
 
-        info.path = boost::filesystem::current_path() / "Models/Cylinder.fbx";;
-        default_models[cylinder] = std::shared_ptr<Model>(create(info).value());
-        vertices_view = new RenderBufferView();
-        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(default_models[cylinder]->meshes[0].vertices));
-        default_models[cylinder]->meshes[0].vertices_view = vertices_view;
-        indices_view = new RenderBufferView();
-        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(default_models[cylinder]->meshes[0].indices));
-        default_models[cylinder]->meshes[0].indices_view = indices_view;
+            info.path = boost::filesystem::current_path() / "Models/Cylinder.fbx";;
+            default_models[cylinder] = std::shared_ptr<Model>(create(info).value());
+            vertices_view = new RenderBufferView();
+            vertices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createVertexBuffer(default_models[cylinder]->meshes[0].vertices));
+            default_models[cylinder]->meshes[0].vertices_view = vertices_view;
+            indices_view = new RenderBufferView();
+            indices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createIndexBuffer(default_models[cylinder]->meshes[0].indices));
+            default_models[cylinder]->meshes[0].indices_view = indices_view;
+
+        }, this->renderAlloc);
     }
 
     void MeshFactory::processNode(Model* model, aiNode* node, const aiScene* scene, const std::string& path)
@@ -199,30 +215,35 @@ namespace BEbraEngine {
         // отражения - texture_specularN
         // нормали - texture_normalN
 
-        // 1. Диффузные карты
+
         std::vector<Texture*> diffuseMaps = loadMaterialTextures(model, material, aiTextureType_DIFFUSE, "texture_diffuse", path);
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-        // 2. Карты отражения
+
         std::vector<Texture*> specularMaps = loadMaterialTextures(model, material, aiTextureType_SPECULAR, "texture_specular", path);
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
-        // 3. Карты нормалей
+
         std::vector<Texture*> normalMaps = loadMaterialTextures(model, material, aiTextureType_HEIGHT, "texture_normal", path);
         textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
-        // 4. Карты высот
+
         std::vector<Texture*> heightMaps = loadMaterialTextures(model, material, aiTextureType_AMBIENT, "texture_height", path);
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-        // Возвращаем меш-объект, созданный на основе полученных данных
         auto _mesh = Mesh(vertices, indices, textures);
         auto indices_view = new RenderBufferView();
-        indices_view->buffer = std::shared_ptr<RenderBuffer>(render->createIndexBuffer(_mesh.indices));
         auto vertices_view = new RenderBufferView();
-        vertices_view->buffer = std::shared_ptr<RenderBuffer>(render->createVertexBuffer(_mesh.vertices));
-        _mesh.indices_view = indices_view;
-        _mesh.vertices_view = vertices_view;
+
+        std::visit([&](CRenderAllocator auto& renderAlloc) {
+            indices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createIndexBuffer(_mesh.indices));
+            vertices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createVertexBuffer(_mesh.vertices));
+            _mesh.indices_view = indices_view;
+            _mesh.vertices_view = vertices_view;
+
+        }, this->renderAlloc);
+
+
         return _mesh;
     }
     std::vector<Texture*> MeshFactory::loadMaterialTextures(Model* model, aiMaterial* mat, aiTextureType type, std::string typeName, const std::string& path)

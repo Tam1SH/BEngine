@@ -5,23 +5,24 @@
 
 #include <fstream>
 #include "platform.hpp"
-
+#include <variant>
 export module MeshFactory;
 import <map>;
 import <string>;
 import <vector>;
 import <optional>;
+import VulkanRenderAllocator;
+import Model;
+import Texture;
+
 using std::optional;
 using std::shared_ptr;
 using std::string;
 using std::map;
 using std::vector;
-import Render;
-import Model;
-import Texture;
+
 
 namespace BEbraEngine {
-    //class Render;
     class TextureFactory;
 }
 namespace BEbraEngine {
@@ -35,7 +36,7 @@ namespace BEbraEngine {
 
         std::shared_ptr<Model> getDefaultModel(const string& name);
 
-        MeshFactory(Render* render);
+        MeshFactory(std::variant<VulkanRenderAllocator>& renderAlloc);
     private:
 
 
@@ -49,12 +50,15 @@ namespace BEbraEngine {
 
         TextureFactory* _textureFactory;
 
-        Render* render;
+        std::variant<VulkanRenderAllocator>& renderAlloc;
 
         std::map<string, shared_ptr<Model>> default_models;
         
     };
-    
+
+    namespace create {
+        MeshFactory&& meshFactory(std::variant<VulkanRenderAllocator>& renderAlloc);
+    }
     
 }
 

@@ -17,7 +17,7 @@ import RigidBody;
 import Collider;
 import ColliderFactory;
 import GameObject;
-import Render;
+
 import RigidBodyFactory;
 import BEbraMath;
 using std::optional;
@@ -35,7 +35,7 @@ namespace BEbraEngine {
         render->drawLine(_from, _to, _color);
     }
     
-    DebugDrawer::DebugDrawer(Render& render)
+    DebugDrawer::DebugDrawer(RenderHelper& render)
     {
         this->render = &render;
     }
@@ -91,8 +91,10 @@ namespace BEbraEngine {
     
     optional<Collider*> Physics::getObjectRayCast(const Vector3& start, Vector3& end)
     {
-        btCollisionWorld::ClosestRayResultCallback result(start, end);
-        dynamicsWorld->rayTest(start, Vector3(0), result);
+        auto _start = btVector3(start.x, start.y, start.z);
+        auto _end = btVector3(end.x, end.y, end.z);
+        btCollisionWorld::ClosestRayResultCallback result(_start, _end);
+        dynamicsWorld->rayTest(_start, btVector3(0,0,0), result);
         auto collider = static_cast<Collider*>(result.m_collisionObject->getUserPointer());
         return optional<Collider*>(collider);//optional<Collider*>(collider);
     }

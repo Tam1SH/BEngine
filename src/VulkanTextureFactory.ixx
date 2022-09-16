@@ -1,50 +1,53 @@
 #include <boost/filesystem.hpp>
-
-
 export module VulkanTextureFactory;
-import TextureFactory;
-import RenderObjects;
-import Render;
+import VulkanRender;
+import Material;
 import Debug;
+import Render;
 import Texture;
+
 import <optional>;
 import <functional>;
 import <memory>;
+
 using std::shared_ptr;
 using std::function;
 using std::optional;
 
 namespace BEbraEngine {
-    class VulkanRender;
-}
-
-namespace BEbraEngine {
-    export class VulkanTextureFactory : public TextureFactory {
+    export class VulkanTextureFactory {
     public:
 
-        optional<Material*> createMaterialAsync(const MaterialCreateInfo& info, function<void(Material*)> onComplete); //override;
+        optional<Material*> createMaterialAsync(const MaterialCreateInfo& info, function<void(Material*)> onComplete);
 
-        Texture* createAsync(const boost::filesystem::path& path, function<void(Texture*)> onComplete); //override;
+        Texture* createAsync(const boost::filesystem::path& path, function<void(Texture*)> onComplete);
 
-        Texture* create(const boost::filesystem::path& path, bool generateMip); //override;
+        Texture* create(const boost::filesystem::path& path, bool generateMip);
 
-        Texture* createEmpty(); //override;
+        Texture* createEmpty();
 
         void saveImage(const char* fileName, int width, int height, int channel_num, const void* rows, int quality);
         
         void saveImage(const char* fileName, int width, int height, int channel_num, BEbraEngine::BitMap& bitMap, int quality);
 
-        void setDestroyer(VisitorGameComponentDestroyer& destroyer); //override;
+       // void setDestroyer(VisitorGameComponentDestroyer& destroyer); //override;
 
-        void destroyTexture(Texture& texture); //override;
+        void destroyTexture(Texture& texture);
 
-        void destroyTextureAsync(shared_ptr<Texture> texture); //override;
+        void destroyTextureAsync(shared_ptr<Texture> texture);
 
-        VulkanTextureFactory(Render* render);
+        VulkanTextureFactory(VulkanRender& render);
 
     private:
-        VulkanRender* render;
-        VisitorGameComponentDestroyer* destroyer;
+        VulkanRender& render;
+        //VisitorGameComponentDestroyer* destroyer;
 
     };
+}
+
+module :private;
+import CTextureFactory;
+
+namespace BEbraEngine {
+    static_assert(CTextureFactory<VulkanTextureFactory>);
 }

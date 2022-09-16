@@ -9,7 +9,7 @@ import Collider;
 import <stdexcept>;
 namespace BEbraEngine {
 
-	RigidBodyFactory::RigidBodyFactory(Physics& physics)
+	RigidBodyFactory::RigidBodyFactory(Physics& physics) noexcept
 	{
 		this->physics = &physics;
 	}
@@ -34,7 +34,8 @@ namespace BEbraEngine {
 
         btTransform startTransform;
         startTransform.setIdentity();
-        startTransform.setOrigin(info.position);
+        auto position = btVector3(info.position.x, info.position.y, info.position.z);
+        startTransform.setOrigin(position);
 
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
         shape->getCollisionShape()->calculateLocalInertia(mass, localInertia);

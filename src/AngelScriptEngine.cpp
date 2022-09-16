@@ -10,6 +10,7 @@
 #include <sstream>
 module AngelScriptEngine;
 import AngelScript;
+import ObjectFactoryFacade;
 import ScriptWrappers;
 
 namespace BEbraEngine {

@@ -123,6 +123,7 @@ namespace BEbraEngine {
 
     void RigidBody::applyExplosionImpulse(float force, float radius, const Vector3& point) noexcept
     {
+        auto _point = btVector3(point.x, point.y, point.z);
         auto pos = transform->getPosition();
 
         Vector3 direction = BEbraMath::normalize(pos - point);
@@ -130,15 +131,16 @@ namespace BEbraEngine {
         if (BEbraMath::length(pos - point) < radius) {
             if (!body->isActive())
                 body->activate(true);
-            body->applyImpulse(direction * force, point);
+            body->applyImpulse(direction * force, _point);
         }
     }
 
     void RigidBody::applyImpulse(const Vector3& force, const Vector3& direction) noexcept
     {
         body->activate();
-
-        body->applyImpulse(force, direction);
+        auto _force = btVector3(force.x, force.y, force.z);
+        auto _direction = btVector3(direction.x, direction.y, direction.z);
+        body->applyImpulse(_force, _direction);
     }
 
     void RigidBody::applyImpulseToPoint(float force, const Vector3& point) noexcept

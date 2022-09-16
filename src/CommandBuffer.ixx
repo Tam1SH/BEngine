@@ -21,9 +21,7 @@ namespace BEbraEngine {
             Secondary
         };
     public:
-        CommandBuffer(){}
 
-        CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type);
 
         operator VkCommandBuffer& () { return _buffer; }
 
@@ -38,6 +36,15 @@ namespace BEbraEngine {
         VkCommandBuffer* GetBuffer() { return &_buffer; }
 
         void onCompleted(std::function<void()> callback) { _callback = callback; }
+
+        //CommandBuffer(const CommandBuffer& o) = delete;
+        //CommandBuffer& operator=(const CommandBuffer& o) = delete;
+        //TODO: переопределить move конструктор
+
+        CommandBuffer() noexcept {}
+        CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type) noexcept;
+        ~CommandBuffer() noexcept {}
+
     private:
 
         std::function<void()> _callback{};

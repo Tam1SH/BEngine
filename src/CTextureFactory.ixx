@@ -5,43 +5,52 @@
 #include <memory>
 
 export module CTextureFactory;
-//import RenderObjects;
-using BE_STD::optional;
-using BE_STD::function;
 
+
+using std::optional;
+using std::function;
+
+export namespace BEbraEngine {
+    class Texture;
+    class Material;
+    class MaterialCreateInfo;
+}
 
 namespace BEbraEngine {
-    /*
+    
     export template<typename T>
         concept CTextureFactory = requires(
-            // this 
-            T & self,
-            // parameters of interface 
-            const boost::filesystem::path & path,
-            function<void(Texture*)> onComplete,
-            bool generateMip,
-            VisitorGameComponentDestroyer & destroyer,
-            const Material::CreateInfo& info,
-            Texture & texture,
-            std::shared_ptr<Texture> shared_ptr_texture
+
+            /*optional<Material*> createMaterialAsync*/ const MaterialCreateInfo& info, function<void(Material*)> onComplete_,
+
+            /*Texture* createAsync*/ const boost::filesystem::path& path, function<void(Texture*)> onComplete,
+
+            /*Texture* create*/ const boost::filesystem::path& _path, bool generateMip,
+
+            /*void destroyTexture*/ Texture& texture,
+
+            /*void destroyTextureAsync*/ std::shared_ptr<Texture> shared_ptr_texture,
+
+            //this 
+            T& self
             )
     {
         { self.createAsync(path, onComplete) } -> std::same_as<Texture*>;
 
-        { self.create(path, generateMip) } -> std::same_as<Texture*>;
+        { self.create(_path, generateMip) } -> std::same_as<Texture*>;
 
         { self.createEmpty() } -> std::same_as<Texture*>;
 
-        { self.setDestroyer(destroyer) } -> std::same_as<void>;
+        //{ self.setDestroyer(destroyer) } -> std::same_as<void>;
 
-        { self.createMaterialAsync(info, onComplete) } -> std::same_as<optional<Material*>>;
+        { self.createMaterialAsync(info, onComplete_) } -> std::same_as<optional<Material*>>;
 
-        { self.destroyTexture(texture) } -> std::same_as<Texture*>;
+        { self.destroyTexture(texture) } -> std::same_as<void>;
 
         { self.destroyTextureAsync(shared_ptr_texture) } -> std::same_as<void>;
 
     };
-            */
+            
 }
 
 

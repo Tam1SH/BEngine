@@ -1,29 +1,41 @@
+#include <variant>
 export module VulkanWindow;
-import Render;
-import BaseRenderWindow;
-import <string>;
+import CRender;
+import VulkanRender;
+import Window;
 import Vector2;
-namespace BEbraEngine {
-	class VulkanRender;
-}
+import <string>;
+
 namespace BEbraEngine {
 
-	export class VulkanWindow : public BaseWindow {
+	export class VulkanWindow : public Window {
 	public:
 
 		void createWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
-
-		VulkanWindow(Render* render);
 
 		void onResizeCallback(int width, int height) override;
 
 		Vector2 getDrawableSize();
 
+		VulkanWindow() {}
+		VulkanWindow(VulkanRender& render);
+
 		~VulkanWindow();
 
 	private:
 		VulkanRender* render;
-
 	};
+
+
+	namespace create {
+
+
+		export std::variant<VulkanWindow> window(CRender auto& render) {
+			static_assert("no implementation found");
+		}
+
+		export template<> std::variant<VulkanWindow> window(VulkanRender& render);
+
+	}
 }
 

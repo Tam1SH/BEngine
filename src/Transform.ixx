@@ -1,15 +1,16 @@
 export module Transform;
+import GameComponent;
 import Matrix4;
 import Debug;
 import BEbraMath;
 import Vector3;
 import Quaternion;
-import GameComponent;
+
 
 namespace BEbraEngine {
     class TransformFactory;
-    class VisitorGameComponentDestroyer;
 }
+
 namespace BEbraEngine {
 
     export class Transform final : public GameComponent {

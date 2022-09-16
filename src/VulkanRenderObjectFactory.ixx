@@ -1,88 +1,89 @@
+
+
 #include "platform.hpp"
 #include <boost/filesystem.hpp>
+#include <tbb.h>
+#include <variant>
+
 
 export module VulkanRenderObjectFactory;
-import RenderBufferArray;
-import VulkanRenderBufferArray;
-
-import Model;
-import RenderObjects;
-import Debug;
-import RenderObjectFactory;
-import TextureFactory;
+import Light;
 import Camera;
-import VulkanBuffer;
-import VulkanObjects;
+import RenderObject;
+/*Objects*/
 
-import VulkanTextureFactory;
-import MeshFactory;
+import Material;
+import DirectionLight;
 import Texture;
 import Transform;
+/*Objects*/
+import VulkanTextureFactory;
+import MeshFactory;
+import RenderBuffer;
+import VulkanRenderBufferArray;
+import VulkanRender;
+import VulkanRenderAllocator;
+import RenderBufferArray;
+import CRenderAllocator;
+import CRender;
+import Task;
+import Model;
+
+
+
 import <memory>;
 import <string>;
 import <optional>;
-import RenderBuffer;
-
-
+//разделить логику и создание/удаление(назв. Adjuster?) также для рендера создать чтоли стораге?
 using std::shared_ptr;
 using std::unique_ptr;
 using std::optional;
 using std::string;
 
 
-
-
 namespace BEbraEngine {
-    class VulkanRender;
-}
-
-
-namespace BEbraEngine {
-    //разделить логику и создание/удаление(назв. Adjuster?) также для рендера создать чтоли стораге?
-    export class VulkanRenderObjectFactory : public RenderObjectFactory
+    
+    export class VulkanRenderObjectFactory
     {
     public:
-        
-        friend class VulkanRender;
+        Task<optional<Material*>> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info);
 
-        TextureFactory& getTextureFactory() override;
+        optional<RenderObject*> create(const RenderObjectCreateInfo& info);
 
-        optional<Material*> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info) override;
+        void setMaterial(RenderObject& obj, Material& material);
 
-        optional<RenderObject*> create(const RenderObjectCreateInfo& info) override;
+       // void setComponentDestroyer(VisitorGameComponentDestroyer& destroyer);
 
-        void setMaterial(RenderObject& obj, Material& material) override;
+        void bindTransform(Light& light, Transform& transform);
 
-        void setComponentDestroyer(VisitorGameComponentDestroyer& destroyer) override;
+        void bindTransform(RenderObject& object, Transform& transform);
 
-        void bindTransform(Light& light, Transform& transform) override;
+        Light* createLight(const Vector3& color, const Vector3& position);
 
-        void bindTransform(RenderObject& object, Transform& transform) override;
+        DirectionLight* createDirLight(const Vector3& color, const Vector3& direction);
 
-
-
-        Light* createLight(const Vector3& color, const Vector3& position) override;
-
-        DirectionLight* createDirLight(const Vector3& color, const Vector3& direction) override;
-
-        SimpleCamera* createCamera(const Vector3& position) override;
-
-        void setContext(Render* render) override;
-
-        void setWorld(RenderWorld& world) override;
+        SimpleCamera* createCamera(const Vector3& position);
        
-        void destroyObject(RenderObject& object) override;
+        void destroyObject(RenderObject& object);
 
-        void destroyPointLight(Light& light) override;
+        void destroyPointLight(Light& light);
 
-        void destroyCamera(SimpleCamera& camera) override;
+        void destroyCamera(SimpleCamera& camera);
 
-        void setModel(RenderObject& object, const string& path) override;
+        void setModel(RenderObject& object, const string& path);
 
-        void CreateObjectSet(VulkanRenderObject* obj);
+        
+        VulkanRenderObjectFactory(VulkanRender& render, VulkanRenderAllocator& allocator);
 
-        VulkanRenderObjectFactory();
+        VulkanRenderObjectFactory() {}
         ~VulkanRenderObjectFactory();
+
+        VulkanRenderObjectFactory(VulkanRenderObjectFactory&&) noexcept = default;
+        VulkanRenderObjectFactory& operator=(VulkanRenderObjectFactory&&) noexcept = default;
+        VulkanRenderObjectFactory(const VulkanRenderObjectFactory&) noexcept = delete;
+        VulkanRenderObjectFactory& operator=(const VulkanRenderObjectFactory&) noexcept = delete;
+
+
 
     private:
         unique_ptr<VulkanRenderBufferArray<RenderObject::ShaderData>> _poolofObjects;
@@ -90,13 +91,29 @@ namespace BEbraEngine {
         unique_ptr<VulkanRenderBufferArray<DirectionLight::ShaderData>> _poolofDirLights;
 
         shared_ptr<RenderBufferView> storage;
-        VisitorGameComponentDestroyer* destroyer;
+        //VisitorGameComponentDestroyer* destroyer;
         VulkanRender* render;
-        RenderWorld* world;
+        VulkanRenderAllocator* allocator;
         VulkanTextureFactory* textureFactory;
         unique_ptr<MeshFactory> meshFactory;
         
     };
+
+    namespace create {
+
+        export std::variant<VulkanRenderObjectFactory> renderObjectFactory(CRender auto& render, CRenderAllocator auto& allocator) {
+            static_assert("no implementation found, check type");
+        }
+
+        export template<> std::variant<VulkanRenderObjectFactory> renderObjectFactory(VulkanRender& render, VulkanRenderAllocator& allocator);
+    }
+}
+
+
+module :private;
+import CRenderObjectFactory;
+namespace BEbraEngine {
+    static_assert(CRenderObjectFactory<VulkanRenderObjectFactory>);
 }
 
 /*

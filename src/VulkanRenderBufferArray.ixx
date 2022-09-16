@@ -5,17 +5,15 @@ import RenderBufferArray;
 import VulkanBuffer;
 import RenderBuffer;
 import VulkanRender;
-import Render;
+import VulkanRenderAllocator;
 import <optional>;
 import <vector>;
 import <memory>;
+
 using std::shared_ptr;
 using std::optional;
 using std::vector;
 
-namespace BEbraEngine {
-
-}
 
 namespace BEbraEngine {
 
@@ -23,7 +21,7 @@ namespace BEbraEngine {
 	class VulkanRenderBufferArray : public RenderBufferArray<RenderData> {
 	public:
 		
-		void allocate(uint32_t count, uint32_t sizeofData, Render::TypeBuffer type)
+		void allocate(uint32_t count, uint32_t sizeofData, TypeRenderBuffer type) override
 		{
 
 			uint32_t new_size = totalCount + count;
@@ -32,11 +30,11 @@ namespace BEbraEngine {
 
 
 			if (_usage == RenderBufferPoolUsage::SeparateOneBuffer) {
-				alignsizeofData = _render->alignmentBuffer(sizeofData, type);
-				if (type == Render::TypeBuffer::Storage)
-					_buffer = shared_ptr<RenderBuffer>(_render->createStorageBuffer(sizeofData * count));
-				if (type == Render::TypeBuffer::Uniform)
-					_buffer = shared_ptr<RenderBuffer>(_render->createUniformBuffer(sizeofData * count));
+				alignsizeofData = allocator.alignmentBuffer(sizeofData, type);
+				if (type == TypeRenderBuffer::Storage)
+					_buffer = shared_ptr<RenderBuffer>(allocator.createStorageBuffer(sizeofData * count));
+				if (type == TypeRenderBuffer::Uniform)
+					_buffer = shared_ptr<RenderBuffer>(allocator.createUniformBuffer(sizeofData * count));
 
 			}
 
@@ -52,7 +50,7 @@ namespace BEbraEngine {
 			totalCount += count;
 		}
 
-		void deallocate(uint32_t count) {
+		void deallocate(uint32_t count) override {
 
 			throw std::runtime_error("Not implemented");
 			
@@ -63,39 +61,34 @@ namespace BEbraEngine {
 			}
 			totalCount -= count;
 			
-		} //override;
+		} 
 
-		void map()
+		void map() override
 		{
 			if (_data)
 				_buffer->setData(_data->data(), dataSize, 0);
 
-		} //override;
+		} 
 
-		void reset(size_t count, size_t offset)
+		void reset(size_t count, size_t offset) override
 		{
 			_buffer->setData(nullData.data(), count * sizeof(RenderData), offset * sizeof(RenderData));
-		} //override;
+		} 
 
-		void setCountToMap(size_t count)
+		void setCountToMap(size_t count) override
 		{
 			countToMap = count;
-		} //override;
+		} 
 
-		void setContext(Render* render)
-		{
-			_render = static_cast<VulkanRender*>(render);
-		}//override;
-
-		shared_ptr<RenderBuffer> getBuffer() //override 
+		shared_ptr<RenderBuffer> getBuffer() override 
 		{ return _buffer; }
 		
-		size_t getCount()
+		size_t getCount() override
 		{
 			return _pool.unsafe_size();
-		}//override;
+		}
 		
-		void bindData(const vector<RenderData>& data)
+		void bindData(const vector<RenderData>& data) override
 		{
 			
 			if (data.size() * sizeof(RenderData) > dataSize) {
@@ -108,12 +101,12 @@ namespace BEbraEngine {
 			_data = &data;
 			nullData.reserve(data.size());
 			nullData.resize(data.size());
-		} //override;
+		} 
 
-		void setUsage(RenderBufferPoolUsage usage) //override 
+		void setUsage(RenderBufferPoolUsage usage) override 
 		{ _usage = usage; }
 
-		void free(shared_ptr<RenderBufferView> view)
+		void free(shared_ptr<RenderBufferView> view) override
 		{
 			if (view->buffer != _buffer) {
 				//DEBUG_LOG1("The view does not belong to this buffer");
@@ -121,9 +114,9 @@ namespace BEbraEngine {
 			}
 			_pool.push(view);
 
-		}// override;
+		} 
 
-		optional<shared_ptr<RenderBufferView>> get()
+		optional<shared_ptr<RenderBufferView>> get() override
 		{
 
 			shared_ptr<RenderBufferView> out;
@@ -134,7 +127,10 @@ namespace BEbraEngine {
 			}
 
 			return optional<shared_ptr<RenderBufferView>>();
-		} //override;
+		} 
+
+		VulkanRenderBufferArray(VulkanRenderAllocator& allocator) 
+			: allocator(allocator) { }
 
 		~VulkanRenderBufferArray()
 		{
@@ -148,7 +144,7 @@ namespace BEbraEngine {
 		const vector<RenderData>* _data;
 		vector<RenderData> nullData;
 		tbb::concurrent_queue<shared_ptr<RenderBufferView>> _pool;
-		Render* _render;
+		VulkanRenderAllocator& allocator;
 		size_t totalCount;
 		size_t countToMap;
 		RenderBufferPoolUsage _usage{};

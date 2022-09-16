@@ -26,7 +26,7 @@ import ObjectFactoryFacade;
 import Vector3;
 import Input;
 import GameObject;
-import RenderObjects;
+
 import RigidBodyFactory;
 import RigidBody;
 import GameComponent;

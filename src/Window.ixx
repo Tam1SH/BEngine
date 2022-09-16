@@ -1,6 +1,6 @@
 #include <vulkan.h>
 #include "platform_window.hpp"
-export module BaseRenderWindow;
+export module Window;
 import Debug;
 import Input;
 import Vector2;
@@ -10,7 +10,8 @@ using std::vector;
 using std::string;
 
 namespace BEbraEngine {
-	export class BaseWindow {
+
+	export class Window {
 	public:
 		enum class Visibility {
 			Windowed,
@@ -26,8 +27,6 @@ namespace BEbraEngine {
 		};
 		enum class SurfaceType {
 			Vulkan
-			//DX12 - ну и хуетень, чем я занимаюсь
-			//Metal - Метал? блять анал
 		};
 	public:
 		virtual void createWindow(const Vector2& size, const std::string& title) = 0;
@@ -46,8 +45,8 @@ namespace BEbraEngine {
 		void vulkan_CreateSurface(VkInstance instance, VkSurfaceKHR* surface);
 		vector<const char*> vulkan_GetInstanceExtensions();
 
-		BaseWindow();
-		virtual ~BaseWindow();
+		Window();
+		virtual ~Window();
 
 	protected:
 		WindowHandle* handle;

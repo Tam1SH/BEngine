@@ -2,9 +2,27 @@
 #include <boost/filesystem.hpp>
 #include "platform.hpp"
 #include <tbb.h>
+#include <variant>
+
 export module ScriptState;
-import Render;
+
+import RenderObject;
+/*Objects*/
+import Camera;
+import DirectionLight;
+import GameObject;
+import Light;
+/*Objects*/
+
+import RenderDecl;
+import RenderAllocatorDecl;
 import ExecuteQueues;
+import Vector4;
+import Vector3;
+import ScriptManager;
+import RenderWorld;
+
+
 import <queue>;
 import <memory>;
 import <functional>;
@@ -12,13 +30,8 @@ import <list>;
 import <vector>;
 import <optional>;
 import <string>;
-import BaseRenderWindow;
-import RenderObjects;
-import Vector4;
-import Vector3;
 
-import GameObject;
-import Camera;
+
 using std::shared_ptr;
 using std::unique_ptr;
 using std::optional;
@@ -30,10 +43,8 @@ using std::list;
 
 
 namespace BEbraEngine {
+    export class ObjectFactoryFacade;
     export class Physics;
-    class ObjectFactoryFacade;
-    class ScriptManager;
-
 }
 
 namespace BEbraEngine {
@@ -41,7 +52,7 @@ namespace BEbraEngine {
     export class ScriptState {
     public:
 
-        ScriptState(Render& render, Physics& physics, BaseWindow& window);
+        
 
         void scriptInit();
 
@@ -63,13 +74,21 @@ namespace BEbraEngine {
 
         void addDirLight(DirectionLight& light);
 
+        ScriptState(Render& render, RenderAllocator& allocator, Physics& physics);
+        ScriptState() {}
+
+        ScriptState(ScriptState&&) noexcept = default;
+        ScriptState& operator=(ScriptState&&) noexcept = default;
+        ScriptState(const ScriptState&) noexcept = delete;
+        ScriptState& operator=(const ScriptState&) noexcept = delete;
+
         ~ScriptState();
 
         
 
     private:
 
-        BaseWindow* window;
+        //std::variant<VulkanWindow>* window;
 
         vector<shared_ptr<GameObject>> objects_;
 
@@ -83,13 +102,13 @@ namespace BEbraEngine {
 
         Physics* physics;
         
-        unique_ptr<RenderWorld> renderWorld;
+        RenderWorld renderWorld;
 
-        unique_ptr<ObjectFactoryFacade> scriptObjectFactory;
+        ObjectFactoryFacade* scriptObjectFactory;
 
-        unique_ptr<ScriptManager> scriptManager;
+        ScriptManager scriptManager;
 
-
+        //std::unique_ptr<RenderObjectFactory> factory;
 
         shared_ptr<SimpleCamera> camera;
 

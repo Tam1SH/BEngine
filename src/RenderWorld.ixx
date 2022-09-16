@@ -1,41 +1,38 @@
 #include "platform.hpp"
-
-
 #include <tbb.h>
-
-#define DEBUG_LOG1(msg) BEbraEngine::Debug::log(__LINE__, __FILE__, msg);
-#define DEBUG_LOG2(msg, pointer, name, oType, mType) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, pointer, name, oType, mType)
-#define DEBUG_LOG3(msg, pointer) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, pointer);
-
-#ifdef _DEBUG
-#define DEBUG_DESTROY_CHECK_DECL() public: bool isDestroyed; private:
-#define DEBUG_DESTROY_CHECK(msg, pointer, name, oType, mType) if(!isDestroyed) BEbraEngine::Debug::log(__LINE__, __FILE__, msg, pointer, name, oType, mType)	
-
-#else
-#define DEBUG_DESTROY_CHECK(msg, pointer, name, oType, mType) 
-#define DEBUG_DESTROY_CHECK_DECL()
-#endif
+#include <variant>
 
 
 export module RenderWorld;
-import Render;
-import RenderObjects;
-import Debug;
+import RenderDecl;
+import Camera;
+import DirectionLight;
+import Light;
+import RenderObject;
 import RenderData;
+
 import <vector>;
 import <algorithm>;
 
 
+
 namespace BEbraEngine {
+
 
     export class RenderWorld {
     public:
         struct Request { };
     public:
 
-        RenderWorld(Render& render);
+        void selectMainCamera(SimpleCamera& camera);
 
-        void removeObject(const RenderObject& object);
+        void addGlobalLight(DirectionLight& globalLight);
+
+        void addCamera(SimpleCamera& camera);
+
+        void removeCamera(SimpleCamera& camera);
+
+        void removeObject(RenderObject& object);
 
         void addObject(RenderObject& object);
 
@@ -46,14 +43,40 @@ namespace BEbraEngine {
         void updateState(const Request& request);
 
         RenderData& getRenderData();
+
+
+        RenderWorld(Render& render);
+        RenderWorld() {}
         
+        
+        RenderWorld(RenderWorld&& o) noexcept {
+            data = std::move(o.data);
+
+            Request r;
+            requestQueue.clear();
+            while (o.requestQueue.try_pop(r)) {
+                requestQueue.push(r);
+            }
+
+            objects = std::move(o.objects);
+            render = std::move(o.render);
+        }
+
+        RenderWorld& operator=(RenderWorld&& o) noexcept {
+            *this = std::move(o);
+            return *this;
+        }
+
+        RenderWorld(const RenderWorld&) noexcept = delete;
+        RenderWorld& operator=(const RenderWorld&) noexcept = delete;
+
     private:
         RenderData* data;
+        Render* render;
 
         tbb::concurrent_queue<Request> requestQueue;
         std::vector<RenderObject*> objects;
         std::vector<Light*> lights;
-        Render* render;
     };
 }
 

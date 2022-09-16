@@ -4,20 +4,24 @@
 #include <boost/filesystem.hpp>
 export module VulkanRender;
 import ExecuteQueues;
-import Render;
-import BaseRenderWindow;
+import RenderData;
+import RenderAllocatorTypeRenderBuffer;
+import RenderHelper;
 import RenderBuffer;
 import Vector2;
 import Vector4;
 import Vector3;
 import Texture;
-import VulkanWindow;
+import CRenderAllocator;
 import Matrix4;
-import RenderObjects;
+/*Objects*/
 import VulkanObjects;
-import Camera;
-import CreateInfoStructures;
+/*Objects*/
 
+import Line;
+import CreateInfoStructures;
+import Vertex;
+import <span>;
 import <optional>;
 import <memory>;
 import <mutex>;
@@ -28,24 +32,6 @@ import <string>;
 class btIDrawDebug;
 
 const int MAX_FRAMES_IN_FLIGHT = 3;
-
-namespace BEbraEngine {
-    class SimpleCamera;
-    class DescriptorPool;
-    class CommandPool;
-    class VulkanPipeline;
-    class CommandBuffer;
-    class VulkanDirLight;
-    class VulkanPointLight;
-    class VulkanRenderObjectFactory;
-
-    template<typename RenderData>
-    class VulkanRenderBufferArray;
-
-    class RenderBufferView;
-    class RenderObjectFactory;
-}
-
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -58,55 +44,56 @@ using std::string;
 using std::atomic;
 
 
+namespace BEbraEngine {
+    export class VulkanWindow;
+    class DescriptorPool;
+    class CommandPool;
+    class VulkanPipeline;
+    class CommandBuffer;
+    class VulkanDirLight;
+    class VulkanPointLight;
+
+    template<typename RenderData>
+    class VulkanRenderBufferArray;
+
+    class RenderBufferView;
+}
 
 
 namespace BEbraEngine {
 
-    export class VulkanBitMap : public BitMap {
-    public:
-        vector<Rows> rows;
-        VulkanTexture* texture;
-        Rows& at(int index) override { return rows[index]; }
-    };
+    //export class VulkanBitMap : public BitMap {
+    //public:
+    //    vector<Rows> rows;
+    //    VulkanTexture* texture;
+    //    Rows& at(int index) override { return rows[index]; }
+    //};
 
-    export class VulkanRender : public Render
+    export class VulkanRender : public RenderHelper
     {
     public:
        
-        void create(BaseWindow* window) override;
+        void create(VulkanWindow& window);
 
-        void destroyBuffer(RenderBuffer* buffer); //override;
+        void destroyBuffer(RenderBuffer* buffer);
 
-        RenderBuffer* createUniformBuffer(uint32_t size); //override;
+        RenderBuffer* createUniformBuffer(uint32_t size);
 
-        RenderBuffer* createStorageBuffer(uint32_t size); //override;
+        RenderBuffer* createStorageBuffer(uint32_t size);
 
-        RenderBuffer* createIndexBuffer(vector<uint32_t> indices); //override;
+        RenderBuffer* createIndexBuffer(std::span<uint32_t> indices);
 
-        RenderBuffer* createVertexBuffer(vector<Vertex> vertices); //override;
+        RenderBuffer* createVertexBuffer(std::span<Vertex> vertices);
 
-        void addCamera(SimpleCamera& camera); //override;
+        void drawFrame();
 
-        void selectMainCamera(SimpleCamera& camera); //override;
+        void prepareDraw();
 
-        void removeCamera(SimpleCamera& camera); //override;
+        void update();
 
-        Render::Type getType() //override 
-        { return Render::Type::Vulkan; }
+        void updateState(RenderData& data);
 
-        RenderObjectFactory* getRenderObjectFactory(); //override;
-
-        void addGlobalLight(DirectionLight& globalLight); //override;
-
-        void drawFrame(); //override;
-
-        void prepareDraw(); //override;
-
-        void update(); //override;
-
-        void updateState(RenderData& data); //override;
-
-        void drawLine(const Vector3& from, const Vector3& to, const Vector3& color); //override;
+        void drawLine(const Vector3& from, const Vector3& to, const Vector3& color);
 
 
         Vector2 getCurrentRenderResolution() { 
@@ -116,7 +103,7 @@ namespace BEbraEngine {
             };
         }
 
-        uint32_t alignmentBuffer(uint32_t originalSize, Render::TypeBuffer type); //override;
+        uint32_t alignmentBuffer(uint32_t originalSize, TypeRenderBuffer type);
 
         VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
 
@@ -150,6 +137,16 @@ namespace BEbraEngine {
 
         void recreateSwapChain(uint32_t width, uint32_t height);
 
+        VulkanRender();
+
+        VulkanRender(VulkanRender&&) noexcept = default;
+        VulkanRender& operator=(VulkanRender&&) noexcept = default;
+        VulkanRender(const VulkanRender&) noexcept = delete;
+        VulkanRender& operator=(const VulkanRender&) noexcept = delete;
+
+        ~VulkanRender();
+
+
         VkPipelineLayout pipelineLayout;
 
         ExecuteQueues<function<void()>> executeQueues;
@@ -163,6 +160,7 @@ namespace BEbraEngine {
             Attachments,
             PhysicsDebug
         };
+
         struct QueueFamilyIndices {
             
             optional<uint32_t> graphicsFamily;
@@ -184,11 +182,6 @@ namespace BEbraEngine {
             unique_ptr<VulkanTexture> depth;
             unique_ptr<VulkanTexture> normal;
         };
-
-        VulkanRender();
-
-        ~VulkanRender();
-
         
     public:
 
@@ -208,6 +201,8 @@ namespace BEbraEngine {
 
         float totalTime;
 
+        RenderData currentData;
+
         VkDescriptorSet lineSet;
 
         atomic<size_t> linesToDraw{0};
@@ -222,13 +217,9 @@ namespace BEbraEngine {
 
         unique_ptr<VulkanRenderBufferArray<Line::ShaderData>> linePool;
 
-        unique_ptr<VulkanRenderObjectFactory> factory;
-
         list<VulkanCamera*> cameras;
 
         VulkanDirLight* globalLight;
-
-        VulkanWindow* window;
 
         VkPipeline graphicsPipeline;
 
@@ -384,7 +375,7 @@ namespace BEbraEngine {
        
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
-        void createInstance();
+        void createInstance(VulkanWindow& window);
 
         void createPools();
 
@@ -447,7 +438,6 @@ namespace BEbraEngine {
 
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 
-        vector<const char*> getRequiredExtensions();
 
         bool checkValidationLayerSupport();
 
@@ -469,9 +459,13 @@ namespace BEbraEngine {
 
         const bool enableValidationLayers = true;
 
+    };
 
 
+}
 
-};
-
+module :private;
+import CRender;
+namespace BEbraEngine {
+    static_assert(CRender<VulkanRender>);
 }

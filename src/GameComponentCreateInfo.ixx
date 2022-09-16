@@ -1,9 +1,9 @@
 export module GameComponentCreateInfo;
-
-import RenderObjects;
+import RenderObject;
 import RigidBody;
 import Collider;
 import Transform;
+
 namespace BEbraEngine {
     export class GameComponentCreateInfo {
     public:

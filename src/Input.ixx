@@ -85,7 +85,7 @@ namespace BEbraEngine {
 
         };
     public:
-        friend class BaseWindow;
+        friend class Window;
 
 
         static void setKeyBoardState(const Uint8* state)

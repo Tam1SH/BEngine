@@ -9,7 +9,6 @@ import <string>;
 import <optional>;
 import Debug;
 import GameComponent;
-//import ÑVisitorComponentDestroyer;
 
 using BE_STD::shared_ptr;
 using BE_STD::string;
@@ -20,8 +19,6 @@ namespace BEbraEngine {
         //DEBUG_DESTROY_CHECK_DECL()
     public:
 
-        //void destroy(VisitorGameComponentDestroyer& destroyer) { } //override;
-
         //void destroy(ÑVisitorComponentDestroyer auto& destroyer) {
         //    for (auto& comp : components_) {
         //        comp->destroy(destroyer);
@@ -29,6 +26,11 @@ namespace BEbraEngine {
         //    
         //    destroyer.destroyGameObject(*this);
         //}
+        template<typename T>
+        void destroy(T& destroyer) {
+            destroyer.destroyGameObject(*this);
+        }
+
         template<typename T, class _ = typename BE_STD::enable_if<BE_STD::is_base_of<GameComponent, T>::value>::type>
         shared_ptr<T> getComponentCheckedPtr() const noexcept {
             for (auto& component : components_) {

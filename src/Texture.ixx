@@ -1,9 +1,6 @@
 #include <vulkan.h>
 #include <boost/filesystem.hpp>
 export module Texture;
-
-
-import ÑVisitorGameComponentDestroyer;
 import GameComponent;
 import Debug;
 
@@ -26,7 +23,12 @@ namespace BEbraEngine {
         uint32_t height() { return height_; }
 
 
-        void destroy(CVisitorGameComponentDestroyer auto& destroyer) {
+        //void destroy(ÑGameComponentDestroyer auto& destroyer) {
+        //    destroyer.destroyTextureComponent(*this);
+        //}
+
+        template<typename T>
+        void destroy(T& destroyer) {
             destroyer.destroyTextureComponent(*this);
         }
 

@@ -1,4 +1,5 @@
 #include <tbb.h>
+#include <functional>
 export module ExecuteQueues;
 
 namespace BEbraEngine {
@@ -76,9 +77,31 @@ namespace BEbraEngine {
 			}
 
 		}
+
 		ExecuteQueues() {
 			parallelQueues.resize(tbb::this_task_arena::max_concurrency());
 		}
+
+
+		ExecuteQueues(ExecuteQueues&& o) noexcept {
+			Function f;
+			singleQueue.clear();
+			while (o.singleQueue.try_pop(f)) {
+				singleQueue.push(f);
+
+			}
+			parallelQueues = std::move(o.parallelQueues);
+			
+		}
+
+		ExecuteQueues& operator=(ExecuteQueues&& o) noexcept {
+			*this = std::move(o);
+			return *this;
+		}
+
+		ExecuteQueues(const ExecuteQueues&) noexcept = delete;
+		ExecuteQueues& operator=(const ExecuteQueues&) noexcept = delete;
+
 	private:
 		int getCurrentThreadIndex()
 		{

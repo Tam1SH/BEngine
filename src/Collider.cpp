@@ -1,9 +1,11 @@
 module Collider;
+
 namespace BEbraEngine {
 	void Collider::setScale(const Vector3& size) noexcept
 	{
 		this->size = size;
-		_collider->getCollisionShape()->setLocalScaling(size);
+		auto _size = btVector3(size.x, size.y, size.z);
+		_collider->getCollisionShape()->setLocalScaling(_size);
 	}
 	void Collider::setRotation(const Quaternion& quat) noexcept {
 		btTransform trans;
@@ -15,14 +17,14 @@ namespace BEbraEngine {
 	void Collider::setPosition(const Vector3& position) noexcept
 	{
 		btTransform trans;
-		trans.setOrigin(position);
+		auto _position = btVector3(position.x, position.y, position.z);
+		trans.setOrigin(_position);
 		trans.setRotation(_collider->getWorldTransform().getRotation());
 		_collider->setWorldTransform(trans);
 	}
 
 	void Collider::setMass(float mass) noexcept
 	{
-		//TODO: что это нахуй значит?
 		auto vec = btVector3(0, 0, 0);
 		_collider->getCollisionShape()->calculateLocalInertia(mass, vec);
 	}
@@ -37,18 +39,15 @@ namespace BEbraEngine {
 		this->body = &body;
 	}
 
+
 	Collider::Collider() noexcept
 	{
 		name_ = "Collider";
 	}
 
-	Collider::~Collider()
+	Collider::~Collider() noexcept
 	{
 		//DEBUG_DESTROY_CHECK("Collider has not destroyed", this, "", Debug::ObjectType::Collider, Debug::MessageType::Info);
 	}
 
-	void Collider::destroy(VisitorGameComponentDestroyer& destroyer)
-	{
-		//destroyer.destroyColliderComponent(*this);
-	}
 }

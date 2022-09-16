@@ -8,6 +8,7 @@ import Debug;
 
 
 namespace BEbraEngine {
+
     export class DescriptorPool final {
 
     public:
@@ -21,6 +22,7 @@ namespace BEbraEngine {
 
 
         DescriptorPool(VulkanDescriptorPoolInfo info) { this->info = info; }
+       
         ~DescriptorPool();
 
         void allocate(uint32_t count);
@@ -30,6 +32,14 @@ namespace BEbraEngine {
         std::optional<VkDescriptorSet> get();
 
         VulkanDescriptorPoolInfo getInfo() { return info; }
+
+        DescriptorPool(const DescriptorPool& o) = delete;
+        DescriptorPool& operator=(const DescriptorPool& o) = delete;
+        //TODO: переопределить move конструктор
+
+       //. DescriptorPool() noexcept {}
+        //~DescriptorPool() noexcept;
+
     private:
         VulkanDescriptorPoolInfo info{};
         VkDescriptorSetLayout layout{};

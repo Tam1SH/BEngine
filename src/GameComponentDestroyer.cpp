@@ -1,6 +1,7 @@
 #include <boost/filesystem.hpp>
+
 module GameComponentDestroyer;
-import Texture;
+
 import <memory>;
 using std::shared_ptr;
 
@@ -17,7 +18,7 @@ namespace BEbraEngine {
 	}
 	void GameComponentDestroyer::destroyRenderComponent(RenderObject& comp)
 	{
-		renderFactory->destroyObject(comp);
+		//renderFactory->destroyObject(comp);
 #ifdef _DEBUG
 		//comp.isDestroyed = true;
 #endif // _DEBUG
@@ -63,7 +64,7 @@ namespace BEbraEngine {
 	}
 	void GameComponentDestroyer::destroyPointLightComponent(Light& comp)
 	{
-		renderFactory->destroyPointLight(comp);
+		//renderFactory->destroyPointLight(comp);
 
 	}
 	void GameComponentDestroyer::destroyDirectionLightComponent(DirectionLight& comp)
@@ -73,7 +74,7 @@ namespace BEbraEngine {
 	}
 	void GameComponentDestroyer::destroyCameraComponent(SimpleCamera& comp)
 	{
-		renderFactory->destroyCamera(comp);
+		//renderFactory->destroyCamera(comp);
 	}
 
 	void GameComponentDestroyer::destroyTextureComponentAsync(shared_ptr<Texture> comp)
@@ -82,7 +83,7 @@ namespace BEbraEngine {
 #ifdef _DEBUG
 		//comp->isDestroyed = true;
 #endif // _DEBUG
-		renderFactory->getTextureFactory().destroyTextureAsync(comp);
+		//renderFactory->getTextureFactory().destroyTextureAsync(comp);
 
 	}
 

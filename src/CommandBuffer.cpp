@@ -2,7 +2,7 @@
 module CommandBuffer;
 import CommandPool;
 namespace BEbraEngine {
-    CommandBuffer::CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type)
+    CommandBuffer::CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type) noexcept
     {
         this->pool = pool;
         this->usage = usage;

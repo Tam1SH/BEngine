@@ -1,15 +1,34 @@
 #include <tbb.h>
+#include <exception>
+#include <variant>
 module RenderWorld;
-import Render;
-import RenderObjects;
+import CRender;
 namespace BEbraEngine {
+
     RenderWorld::RenderWorld(Render& render)
+        : render(&render) { }
+
+    void RenderWorld::selectMainCamera(SimpleCamera& camera)
     {
-        this->render = &render;
-        data = new RenderData();
+        data->mainCamera = &camera;
     }
 
-    void RenderWorld::removeObject(const RenderObject& object)
+    void RenderWorld::addGlobalLight(DirectionLight& globalLight)
+    {
+        throw std::exception("not implemented");
+    }
+
+    void RenderWorld::addCamera(SimpleCamera& camera)
+    {
+        throw std::exception("not implemented");
+    }
+
+    void RenderWorld::removeCamera(SimpleCamera& camera)
+    {
+        throw std::exception("not implemented");
+    }
+
+    void RenderWorld::removeObject(RenderObject& object)
     {
         
         auto iter = std::remove(objects.begin(), objects.end(), &object);
@@ -46,14 +65,17 @@ namespace BEbraEngine {
         for (auto& object : objects)
             object->update();
 
-        Request req;
-        if (requestQueue.try_pop(req)) {
-            RenderData data;
-            data.objects = objects;
-            data.lights = lights;
-            render->updateState(data);
-            requestQueue.clear();
-        }
+        std::visit([&](CRender auto& render) {
+            Request req;
+            if (requestQueue.try_pop(req)) {
+                RenderData data;
+                data.objects = objects;
+                data.lights = lights;
+                render.updateState(data);
+                requestQueue.clear();
+            }
+        }, *render);
+
         
     }
 

@@ -10,6 +10,7 @@ namespace BEbraEngine {
 	public:
 		float x{}, y{}, z{}, w{};
 		Quaternion() {}
+		Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) { }
 		Quaternion(const glm::quat& other) : x(other.x), y(other.y), z(other.z), w(other.w) { }
 		Quaternion(const Quaternion& other) : x(other.x), y(other.y), z(other.z), w(other.w) { }
 		Quaternion(const Vector4& other) : x(other.x), y(other.y), z(other.z), w(other.w) { }

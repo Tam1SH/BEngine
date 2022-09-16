@@ -12,7 +12,6 @@
 #undef max
 
 module VulkanTextureFactory;
-import RenderObjects;
 import VulkanRender;
 import <optional>;
 import <vector>;
@@ -43,21 +42,21 @@ namespace BEbraEngine {
             auto strExensionNormal = info.normal.extension().string();
 
             auto color = create(strColor + strExensionColor, true);
-            //Хуй знает, есть ли смысл создавать мип лвла для всего этого
+
             auto specular = create(strSpecular + strExensionSpecular, false);
             auto normal = create(strNormal + strExensionNormal, false);
             auto image_temp = std::shared_ptr<Texture>();
             
             mat->color.swap(image_temp);
             destroyTextureAsync(image_temp);
-            *mat = Material(color, specular, normal);
+            *mat = std::move(Material(color, specular, normal));
+
 
             onComplete(mat);
 
             });
         return mat;
-        
-        throw std::exception();
+
     }
     Texture* VulkanTextureFactory::createAsync(const boost::filesystem::path& path, std::function<void(Texture*)> onComplete)
     {
@@ -79,8 +78,7 @@ namespace BEbraEngine {
         });
 
         return image;
-        
-        throw std::exception();
+
     }
     Texture* VulkanTextureFactory::create(const boost::filesystem::path& path, bool generateMip)
     {
@@ -117,19 +115,17 @@ namespace BEbraEngine {
             image->setLoaded();
         }
 
-        render->createVkImage(rows, image, imageSize);
-        image->imageView = render->createImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+        render.createVkImage(rows, image, imageSize);
+        image->imageView = render.createImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
         stbi_image_free(rows);
         
-        render->createTextureSampler(image);
+        render.createTextureSampler(image);
         return image;
-        
-        throw std::exception();
+
     }
     Texture* VulkanTextureFactory::createEmpty()
     {
         return create("", false);
-        throw std::exception();
     }
     void VulkanTextureFactory::saveImage(const char* fileName, int width, int height, int channel_num, const void* rows, int quality) {
         stbi_write_jpg(fileName, width, height, channel_num, rows, quality);
@@ -159,16 +155,14 @@ namespace BEbraEngine {
         //});
        
     }
-    void VulkanTextureFactory::setDestroyer(VisitorGameComponentDestroyer& destroyer)
-    {
-        this->destroyer = &destroyer;
-    }
+    //void VulkanTextureFactory::setDestroyer(VisitorGameComponentDestroyer& destroyer)
+    //{
+    //    this->destroyer = &destroyer;
+    //}
 
-    VulkanTextureFactory::VulkanTextureFactory(Render* render) 
-        : render(dynamic_cast<VulkanRender*>(render))
-    { 
-        if (!render) throw std::runtime_error("render isn't VulkanRender"); 
-    }
+    VulkanTextureFactory::VulkanTextureFactory(VulkanRender& render) 
+        : render(render) { }
+
     void VulkanTextureFactory::destroyTexture(Texture& texture)
     {
         throw std::exception();
@@ -176,6 +170,6 @@ namespace BEbraEngine {
     void VulkanTextureFactory::destroyTextureAsync(shared_ptr<Texture> texture)
     {
         auto vTexture = std::static_pointer_cast<VulkanTexture>(texture);
-        render->destroyTextureAsync(vTexture);
+        render.destroyTextureAsync(vTexture);
     }
 }

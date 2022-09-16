@@ -91,8 +91,13 @@ namespace BEbraEngine {
 
 		Transform& getTransform() const noexcept { return *transform; }
 
-		~RigidBody() noexcept;
+		
 
+        RigidBody(const RigidBody& o) = delete;
+        RigidBody& operator=(const RigidBody& o) = delete;
+        //TODO: переопределить move конструктор
+
+        ~RigidBody() noexcept;
 	private:
 
 		RigidBody() noexcept;
