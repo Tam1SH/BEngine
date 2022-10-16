@@ -61,7 +61,8 @@ namespace BEbraEngine {
 
 	AngelScriptEngine::~AngelScriptEngine()
 	{
-		engine->ShutDownAndRelease();
+		if(!factory)
+			engine->ShutDownAndRelease();
 	}
 
 
@@ -81,7 +82,7 @@ namespace BEbraEngine {
 		script->setName(name);
 		return std::optional<AngelScript*>(script);
 	}
-	void AngelScriptEngine::executeScript(AngelScript* script, const std::string&& name)
+	void AngelScriptEngine::executeScript(AngelScript* script, const std::string& name)
 	{
 
 		asIScriptModule* mod = engine->GetModule(script->getName().c_str());

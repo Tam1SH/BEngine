@@ -18,7 +18,7 @@ import <optional>;
 namespace BEbraEngine {
 
     namespace create {
-        MeshFactory&& meshFactory(std::variant<VulkanRenderAllocator>& renderAlloc)
+        MeshFactory meshFactory(std::variant<VulkanRenderAllocator>& renderAlloc)
         {
             return MeshFactory(renderAlloc);
         }
@@ -77,7 +77,7 @@ namespace BEbraEngine {
     }
 
     MeshFactory::MeshFactory(std::variant<VulkanRenderAllocator>& renderAlloc)
-        : renderAlloc(renderAlloc) 
+        : renderAlloc(&renderAlloc) 
     {
 
         downloadDefaultModels(); 
@@ -122,7 +122,7 @@ namespace BEbraEngine {
             indices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createIndexBuffer(default_models[cylinder]->meshes[0].indices));
             default_models[cylinder]->meshes[0].indices_view = indices_view;
 
-        }, this->renderAlloc);
+        }, *renderAlloc);
     }
 
     void MeshFactory::processNode(Model* model, aiNode* node, const aiScene* scene, const std::string& path)
@@ -241,7 +241,7 @@ namespace BEbraEngine {
             _mesh.indices_view = indices_view;
             _mesh.vertices_view = vertices_view;
 
-        }, this->renderAlloc);
+        }, *renderAlloc);
 
 
         return _mesh;

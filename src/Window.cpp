@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 module Window;
+
 using std::vector;
 using std::string;
 
@@ -75,6 +76,7 @@ namespace BEbraEngine {
 	}
 	void Window::_onCreateWindow(int w, int h, const SurfaceType& type, const char* title)
 	{
+		SDL_Init(SDL_INIT_VIDEO);
 		SDL_WindowFlags flag{};
 		if (type == SurfaceType::Vulkan) {
 			flag = SDL_WINDOW_VULKAN;
@@ -127,13 +129,16 @@ namespace BEbraEngine {
 
 	Window::Window()
 	{
-		SDL_Init(SDL_INIT_VIDEO);
+		
 	}
 
 	Window::~Window()
 	{
-		SDL_DestroyWindow(handle);
-		SDL_Quit();
+		if (handle) {
+			SDL_DestroyWindow(handle);
+			SDL_Quit();
+		}
+
 	}
 
 	bool Window::isClose() {

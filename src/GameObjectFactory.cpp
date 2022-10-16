@@ -8,16 +8,13 @@ import CRenderAllocator;
 import CRenderObjectFactory;
 import RenderWorld;
 import RenderDecl;
-
 import CRenderObjectFactory;
 import RenderAllocatorDecl;
 import TransformFactory;
 import ColliderFactory;
 import RigidBodyFactory;
-import MeshFactory;
-import VulkanTextureFactory;
 import GameComponentDestroyer;
-
+import MeshFactory;
 using std::optional;
 using std::shared_ptr;
 using std::string;
@@ -28,17 +25,12 @@ namespace BEbraEngine {
 	GameObjectFactory::GameObjectFactory(Render& render, RenderAllocator& allocator, Physics& physics, RenderWorld& world) noexcept
 	{
 		
-		auto meshFactory = new MeshFactory(allocator);
 		std::visit([&](CRender auto& render) {
-			auto textureFactory = new VulkanTextureFactory(render);
+			auto meshFactory = MeshFactory(allocator);
 
 			std::visit([&](CRenderAllocator auto& allocator) {
-				renderFactory = BEbraEngine::create::renderObjectFactory(render, allocator);
+				renderFactory = BEbraEngine::create::renderObjectFactory(render, allocator, std::move(meshFactory));
 			}, allocator);
-
-			//destroyer = unique_ptr<VisitorGameComponentDestroyer>(new GameComponentDestroyer(
-			//	renderFactory, *colliderFactory, *rigidBodyFactory
-			//));
 
 			std::visit([&](CRenderObjectFactory auto& renderFactory) {
 				colliderFactory = physics.getColliderFactory();
@@ -47,7 +39,11 @@ namespace BEbraEngine {
 				//renderFactory.setComponentDestroyer(*destroyer);
 			}, renderFactory);
 
+			destroyer = std::unique_ptr<GameComponentDestroyer>(new GameComponentDestroyer(
+				renderFactory, *colliderFactory, *rigidBodyFactory, BEbraEngine::create::textureFactory(render)
+			));
 		}, render);
+
 
 
 
@@ -78,7 +74,7 @@ namespace BEbraEngine {
 				RigidBodyCreateInfo RigidBodyInfo{};
 				RigidBodyInfo.position = info.transformInfo->position;
 				if (opt_collider.has_value()) {
-					//RigidBodyInfo.collider = opt_collider.value();
+					RigidBodyInfo.collider = opt_collider.value();
 				}
 
 				opt_rigidBody = rigidBodyFactory->create(RigidBodyInfo);
@@ -117,11 +113,7 @@ namespace BEbraEngine {
 			shared_ptr<RigidBody> rigidbody;
 
 			comp = new GameObject();
-			//opt_renderObj.and_then([&]() {
 
-			//	renderObj = shared_ptr<RenderObject>(value);
-			//	comp->addComponent(renderObj);
-			//});
 
 			if (opt_renderObj.has_value()) {
 				renderObj = shared_ptr<RenderObject>(opt_renderObj.value());
@@ -242,16 +234,13 @@ namespace BEbraEngine {
 		colliderFactory->setShape(col, *colliderFactory->getShape(type).value());
 	}
 
-	
-
 	void GameObjectFactory::destroy(GameComponent& object)
 	{
-		//object.destroy(*destroyer);
 	}
 
 	void GameObjectFactory::destroy(GameObject& object)
 	{
-		//object.destroy(*destroyer);
+		object.destroy(*destroyer);
 	}
 
 	GameObjectFactory::~GameObjectFactory() noexcept

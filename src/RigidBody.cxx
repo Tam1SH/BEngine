@@ -1,5 +1,11 @@
 module RigidBody;
+//import GameComponentDestroyer;
 namespace BEbraEngine {
+
+
+    void RigidBody::destroy(GameComponentDestroyer& destroyer) {
+
+    }
     void RigidBody::moveTo(const Vector3& point) noexcept
     {
         transform->setPosition(point);
@@ -8,9 +14,6 @@ namespace BEbraEngine {
 
     void RigidBody::lockRotateX(bool yesno)
     {
-
-
-
 
         if (yesno) {
             AngularFactor.x = 0;

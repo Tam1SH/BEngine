@@ -44,6 +44,10 @@ namespace BEbraEngine {
 
 		Matrix4 translate(const Matrix4& mat, const Vector3& vec) noexcept;
 
+		Matrix4 perspective(float fovy, float aspect, float zNear, float zFar) noexcept;
+
+		Matrix4 lookAt(const Vector3& eye, const Vector3& center, const Vector3& up) noexcept;
+
 		float radians(float value) noexcept;
 
 		Matrix4 rotate(const Matrix4& mat, float angle, const Vector3& vec) noexcept;

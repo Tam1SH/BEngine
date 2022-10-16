@@ -1,3 +1,4 @@
+module;
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -36,7 +37,14 @@ namespace BEbraEngine {
 
         std::shared_ptr<Model> getDefaultModel(const string& name);
 
+        MeshFactory() {}
         MeshFactory(std::variant<VulkanRenderAllocator>& renderAlloc);
+
+        MeshFactory(const MeshFactory&) = delete;
+        MeshFactory operator=(const MeshFactory&) = delete;
+
+        MeshFactory(MeshFactory&&) noexcept = default;
+        MeshFactory& operator=(MeshFactory&&) noexcept = default;
     private:
 
 
@@ -50,14 +58,14 @@ namespace BEbraEngine {
 
         TextureFactory* _textureFactory;
 
-        std::variant<VulkanRenderAllocator>& renderAlloc;
+        std::variant<VulkanRenderAllocator>* renderAlloc;
 
         std::map<string, shared_ptr<Model>> default_models;
         
     };
 
     namespace create {
-        MeshFactory&& meshFactory(std::variant<VulkanRenderAllocator>& renderAlloc);
+        MeshFactory meshFactory(std::variant<VulkanRenderAllocator>& renderAlloc);
     }
     
 }

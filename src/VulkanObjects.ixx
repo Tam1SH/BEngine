@@ -12,8 +12,7 @@ import VulkanBuffer;
 
 namespace BEbraEngine {
     
-    export class VulkanRenderObject : public RenderObject {
-    public:
+    export struct VulkanRenderObject : RenderObject {
 
         ~VulkanRenderObject() {}
 
@@ -25,21 +24,19 @@ namespace BEbraEngine {
     };
 
 
-    export class VulkanPointLight : public Light {
-    public:
+    export struct VulkanPointLight : Light {
 
         VkDescriptorSet descriptor;
     };
 
-    export class VulkanDirLight : public DirectionLight {
-    public:
+    export struct VulkanDirLight : DirectionLight {
 
         VkDescriptorSet descriptor;
         ~VulkanDirLight() {}
     };
 
-    export class VulkanCamera : public SimpleCamera {
-    public:
+    export struct VulkanCamera : SimpleCamera {
+
         VulkanCamera(const Vector2& size, const Vector3& position) : SimpleCamera(size, position) {}
         VkDescriptorSet descriptor;
 

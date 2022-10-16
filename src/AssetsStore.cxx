@@ -1,9 +1,20 @@
 #include <boost/filesystem.hpp>
 module AssetsStore;
 namespace BEbraEngine {
+
+	Task<Asset<Model>> AssetsStore::getModel(const std::string& path)
+	{
+		return Task<Asset<Model>>();
+	}
+
 	Task<Asset<Texture>> AssetsStore::getTexture(const std::string& path)
 	{
-		return Asset<Texture>();
+		return Task<Asset<Texture>>();
+	}
+
+	void AssetsStore::setBasePath(const std::string& path)
+	{
+		basePath = path;
 	}
 
 	AssetsStore::AssetsStore(

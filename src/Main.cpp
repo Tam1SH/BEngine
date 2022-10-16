@@ -12,7 +12,7 @@ TODO: подумать над реализацей:
 */
 #include <boost/filesystem.hpp>
 #include "Engine.hpp"
-
+#include <spdlog/spdlog.h>
 import Debug;
 
 
@@ -25,6 +25,8 @@ extern "C"
 
 int main(int argc, char* argv[])
 {
+    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_pattern("[%H:%M:%S.%f] [%^%l%$] %v");
     //DEBUG_LOG1("BEGIN OF PIZDEC");
     BEbraEngine::Engine engine{};
 

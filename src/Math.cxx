@@ -45,10 +45,12 @@ namespace BEbraEngine {
 		{
 			return toVec3(glm::normalize(gtoVec3(vec)));
 		}
+		
 		Vector4 normalize(const Vector4& vec) noexcept
 		{
 			return toVec4(glm::normalize(gtoVec4(vec)));
 		}
+
 		Vector2 normalize(const Vector2& vec) noexcept
 		{
 			return toVec2(glm::normalize(gtoVec2(vec)));
@@ -58,6 +60,7 @@ namespace BEbraEngine {
 		{
 			return glm::length(gtoVec3(vec));
 		}
+
 		float distance(const Vector2& left, const Vector2& right) noexcept
 		{
 			return glm::distance(gtoVec2(left), gtoVec2(right));
@@ -129,6 +132,17 @@ namespace BEbraEngine {
 
 			return BEbraEngine::toMat4(glm::translate(BEbraEngine::gtoMat4(mat), gtoVec3(vec)));
 		}
+
+		Matrix4 perspective(float fovy, float aspect, float zNear, float zFar) noexcept
+		{
+			return BEbraEngine::toMat4(glm::perspective(fovy, aspect, zNear, zFar));
+		}
+
+		Matrix4 lookAt(const Vector3& eye, const Vector3& center, const Vector3& up) noexcept
+		{
+			return BEbraEngine::toMat4(glm::lookAt(gtoVec3(eye), gtoVec3(center), gtoVec3(up)));
+		}
+
 		float radians(float value) noexcept
 		{
 			return glm::radians(value);

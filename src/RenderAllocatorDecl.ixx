@@ -1,3 +1,4 @@
+module;
 #include <variant>
 export module RenderAllocatorDecl;
 import VulkanRenderAllocator;

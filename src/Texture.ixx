@@ -1,39 +1,26 @@
+module;
 #include <vulkan.h>
 #include <boost/filesystem.hpp>
 export module Texture;
 import GameComponent;
 import Debug;
+import GameComponentDestroyerDecl;
 
 namespace BEbraEngine {
     
-    export class Texture : public GameComponent { 
-        //DEBUG_DESTROY_CHECK_DECL()
+    export class Texture : public GameComponent {
     public:
+
+        void destroy(GameComponentDestroyer& destroyer) override;
 
         bool isLoaded() { return isLoaded_; }
         void setLoaded() { isLoaded_ = true; }
-        Texture()
-        {
-        }
-        ~Texture()
-        {
-            //DEBUG_DESTROY_CHECK("texture has not destroyed", this, "", Debug::ObjectType::Empty, Debug::MessageType::Info);
-        }
+
         uint32_t width() { return width_; }
         uint32_t height() { return height_; }
 
-
-        //void destroy(ÑGameComponentDestroyer auto& destroyer) {
-        //    destroyer.destroyTextureComponent(*this);
-        //}
-
-        template<typename T>
-        void destroy(T& destroyer) {
-            destroyer.destroyTextureComponent(*this);
-        }
-
-        
-
+        Texture() { }
+        ~Texture() { }
 
     protected:
         bool isLoaded_{};
@@ -55,9 +42,7 @@ namespace BEbraEngine {
             other.memory = 0;
             other.imageView = 0;
             other.sampler = 0;
-#ifdef _DEBUG
-           // this->isDestroyed = true;
-#endif
+
             return *this;
         }
         VulkanTexture& operator=(const VulkanTexture& other) {
@@ -66,9 +51,7 @@ namespace BEbraEngine {
             this->memory = other.memory;
             this->sampler = other.sampler;
             this->mipLevels = other.mipLevels;
-#ifdef _DEBUG
-            //this->isDestroyed = other.isDestroyed;
-#endif
+
             return *this;
         }
         VulkanTexture(const VulkanTexture& other) {
@@ -77,9 +60,7 @@ namespace BEbraEngine {
             this->memory = other.memory;
             this->sampler = other.sampler;
             this->mipLevels = other.mipLevels;
-#ifdef _DEBUG
-            //this->isDestroyed = other.isDestroyed;
-#endif
+
         }
         VulkanTexture() {}
         VulkanTexture(VulkanTexture&& other) noexcept {
@@ -92,9 +73,6 @@ namespace BEbraEngine {
             other.memory = 0;
             other.imageView = 0;
             other.sampler = 0;
-#ifdef _DEBUG
-           // this->isDestroyed = true;
-#endif
         }
         uint32_t mipLevels;
         VkImage image;

@@ -75,7 +75,7 @@ namespace BEbraEngine {
                     if (multiThreading) {
 
                         window.update();
-                        render.prepareDraw();
+                        
 
                         tbb::flow::graph g;
                         tbb::flow::broadcast_node<tbb::flow::continue_msg> input(g);
@@ -100,9 +100,10 @@ namespace BEbraEngine {
                         tbb::flow::make_edge(input, _window);
                         input.try_put(tbb::flow::continue_msg());
                         g.wait_for_all();
-
+                        this;
                         gameState.updateState();
                         render.drawFrame();
+                        render.prepareDraw();
                     }
                     else {
 

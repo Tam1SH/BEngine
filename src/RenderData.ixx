@@ -3,16 +3,15 @@ import <vector>;
 import <span>;
 
 export namespace BEbraEngine {
-	class RenderObject;
-	class SimpleCamera;
-	class DirectionLight;
-	class Light;
+	struct RenderObject;
+	struct SimpleCamera;
+	struct DirectionLight;
+	struct Light;
 }
 
 namespace BEbraEngine {
 
-	export class RenderData {
-	public:
+	export struct RenderData {
 		std::vector<RenderObject*> objects;
 		SimpleCamera* mainCamera;
 		std::span<DirectionLight*> globalLights;

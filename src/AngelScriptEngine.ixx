@@ -1,3 +1,4 @@
+module;
 #include "platform.hpp"
 #include <angelscript.h>
 #include <boost/filesystem.hpp>
@@ -12,7 +13,7 @@ import BaseScriptEngine;
 using std::optional;
 using std::string;
 namespace BEbraEngine {
-	export class ObjectFactoryFacade;
+	export struct ObjectFactoryFacade;
 }
 
 namespace BEbraEngine {
@@ -22,10 +23,12 @@ namespace BEbraEngine {
 
 		std::optional<AngelScript*> createScript(string path, string name);
 
-		void executeScript(AngelScript* script, const string&& name);
+		void executeScript(AngelScript* script, const string& name);
 
 		AngelScriptEngine(ObjectFactoryFacade* factory);
+
 		AngelScriptEngine() {}
+
 		~AngelScriptEngine();
 
 	private:

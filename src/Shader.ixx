@@ -5,16 +5,15 @@ export module Shader;
 import <vector>;
 namespace BEbraEngine {
 
-	export class AbstractShader {
-	public:
+	export struct AbstractShader {
 
 		AbstractShader() { }
 
 		virtual ~AbstractShader() { }
 	};
 
-    export class VulkanShader : public AbstractShader {
-	public:
+    export struct VulkanShader : AbstractShader {
+
 		VulkanShader() { }
 
 		~VulkanShader() { }

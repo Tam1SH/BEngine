@@ -2,10 +2,14 @@ export module DirectionLight;
 import GameComponent;
 import Vector3;
 import RenderBuffer;
+import GameComponentDestroyerDecl;
 
 import <memory>;
+
+
 namespace BEbraEngine {
 
+    //Рендер-компоненты по интерфейсу выглядят отвратительно.
     export class DirectionLight : public GameComponent {
     public:
         struct ShaderData {
@@ -23,10 +27,7 @@ namespace BEbraEngine {
 
     public:
 
-        template<typename T>
-        void destroy(T& destroyer) {
-            destroyer.destroyDirectionLightComponent(*this);
-        }
+        void destroy(GameComponentDestroyer& destroyer) override;
 
         std::shared_ptr<RenderBufferView> data;
 
@@ -62,7 +63,6 @@ namespace BEbraEngine {
     private:
         Vector3 color;
         Vector3 _direction;
-
 
     };
 }

@@ -45,7 +45,7 @@ using std::atomic;
 
 
 namespace BEbraEngine {
-    export class VulkanWindow;
+    export struct VulkanWindow;
     class DescriptorPool;
     class CommandPool;
     class VulkanPipeline;
@@ -69,10 +69,8 @@ namespace BEbraEngine {
     //    Rows& at(int index) override { return rows[index]; }
     //};
 
-    export class VulkanRender : public RenderHelper
+    export struct VulkanRender : public RenderHelper
     {
-    public:
-       
         void create(VulkanWindow& window);
 
         void destroyBuffer(RenderBuffer* buffer);
@@ -467,5 +465,5 @@ namespace BEbraEngine {
 module :private;
 import CRender;
 namespace BEbraEngine {
-    static_assert(CRender<VulkanRender>);
+    //static_assert(CRender<VulkanRender>);
 }

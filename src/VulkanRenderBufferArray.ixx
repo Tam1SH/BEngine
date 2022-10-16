@@ -1,3 +1,4 @@
+module;
 #include "platform.hpp"
 #include <tbb.h>
 export module VulkanRenderBufferArray;
@@ -17,10 +18,10 @@ using std::vector;
 
 namespace BEbraEngine {
 
-	export template<class RenderData>
+	export template<typename RenderData>
 	class VulkanRenderBufferArray : public RenderBufferArray<RenderData> {
 	public:
-		
+
 		void allocate(uint32_t count, uint32_t sizeofData, TypeRenderBuffer type) override
 		{
 

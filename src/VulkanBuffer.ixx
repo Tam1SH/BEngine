@@ -1,11 +1,12 @@
+module;
 #include <vulkan/vulkan.h>
 
 export module VulkanBuffer;
 import RenderBuffer;
 
 namespace BEbraEngine {
-    export class VulkanBuffer : public RenderBuffer {
-    public:
+    export struct VulkanBuffer : RenderBuffer {
+
         VkBuffer self = VK_NULL_HANDLE;
         VkDeviceMemory memory = VK_NULL_HANDLE;
         size_t size = 0;

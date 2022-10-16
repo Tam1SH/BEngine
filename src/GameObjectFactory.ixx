@@ -1,4 +1,4 @@
-
+module;
 #include "platform.hpp"
 #include <boost/filesystem.hpp>
 #include <variant>
@@ -12,18 +12,15 @@ import RenderAllocatorDecl;
 import RenderObjectFactoryDecl;
 import RenderWorld;
 import TransformFactory;
-/*Objects*/
 import Material;
 import DirectionLight;
 import GameComponent;
 import GameObject;
 import Collider;
-/*Objects*/
 
-//import VisitorGameComponentDestroyer;
 import GameComponentCreateInfo;
 import Vector3;
-
+import GameComponentDestroyerDecl;
 import <memory>;
 import <optional>;
 import <string>;
@@ -37,6 +34,7 @@ using std::string;
 namespace BEbraEngine {
 	export class ColliderFactory;
 	export class RigidBodyFactory;
+	export class Tranform;
 }
 
 namespace BEbraEngine {
@@ -67,19 +65,19 @@ namespace BEbraEngine {
 
 		void destroyPointLight(Light& light);
 
-
-		GameObjectFactory(GameObjectFactory&&) noexcept = default;
-		GameObjectFactory& operator=(GameObjectFactory&&) noexcept = default;
-		GameObjectFactory(const GameObjectFactory& o) = delete;
-		GameObjectFactory& operator=(const GameObjectFactory& o) = delete;
-
 		GameObjectFactory(Render& render, RenderAllocator& allocator, Physics& physics, RenderWorld& world) noexcept;
 
 		~GameObjectFactory() noexcept;
 
+		GameObjectFactory(GameObjectFactory&&) noexcept = default;
+		GameObjectFactory& operator=(GameObjectFactory&&) noexcept = default;
+
+		GameObjectFactory(const GameObjectFactory& o) = delete;
+		GameObjectFactory& operator=(const GameObjectFactory& o) = delete;
+
 	private:
 		TransformFactory transFactory;
-		//unique_ptr<VisitorGameComponentDestroyer> destroyer;
+		std::unique_ptr<GameComponentDestroyer> destroyer;
 		RenderObjectFactory renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;

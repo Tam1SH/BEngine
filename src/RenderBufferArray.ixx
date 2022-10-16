@@ -1,4 +1,4 @@
-
+module;
 #include "platform.hpp"
 export module RenderBufferArray;
 import <memory>;
@@ -7,6 +7,7 @@ import <vector>;
 import CRenderAllocator;
 import RenderBuffer;
 import RenderAllocatorTypeRenderBuffer;
+
 using std::shared_ptr;
 using std::optional;
 

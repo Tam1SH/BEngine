@@ -5,7 +5,7 @@
 #include <memory>
 
 export module CTextureFactory;
-
+import Task;
 
 using std::optional;
 using std::function;
@@ -21,9 +21,9 @@ namespace BEbraEngine {
     export template<typename T>
         concept CTextureFactory = requires(
 
-            /*optional<Material*> createMaterialAsync*/ const MaterialCreateInfo& info, function<void(Material*)> onComplete_,
+            /*Task<optional<Material*>> createMaterialAsync*/ const MaterialCreateInfo& info,
 
-            /*Texture* createAsync*/ const boost::filesystem::path& path, function<void(Texture*)> onComplete,
+            /*Task<optional<Texture*>> createAsync*/ const boost::filesystem::path& path,
 
             /*Texture* create*/ const boost::filesystem::path& _path, bool generateMip,
 
@@ -35,7 +35,7 @@ namespace BEbraEngine {
             T& self
             )
     {
-        { self.createAsync(path, onComplete) } -> std::same_as<Texture*>;
+        { self.createAsync(path) } -> std::same_as<Task<optional<Texture*>>>;
 
         { self.create(_path, generateMip) } -> std::same_as<Texture*>;
 
@@ -43,7 +43,7 @@ namespace BEbraEngine {
 
         //{ self.setDestroyer(destroyer) } -> std::same_as<void>;
 
-        { self.createMaterialAsync(info, onComplete_) } -> std::same_as<optional<Material*>>;
+        { self.createMaterialAsync(info) } -> std::same_as<Task<optional<Material*>>>;
 
         { self.destroyTexture(texture) } -> std::same_as<void>;
 

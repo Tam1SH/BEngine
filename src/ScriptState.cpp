@@ -11,7 +11,7 @@ import GameObject;
 import GameObjectFactory;
 import Input;
 import Collider;
-
+import BEbraMath;
 import ExecuteQueues;
 import Time;
 import ObjectFactoryFacade;
@@ -65,7 +65,7 @@ namespace BEbraEngine {
 
     ScriptState::ScriptState(Render& render, RenderAllocator& allocator, Physics& physics)
     {
-        //queues = std::move(ExecuteQueues<function<void()>>());
+        queues = ExecuteQueues<function<void()>>();
 
         this->physics = &physics;
         renderWorld = RenderWorld(render);
@@ -81,8 +81,8 @@ namespace BEbraEngine {
 
     void ScriptState::scriptInit()
     {
-        /*
-        scriptManager->InitScripts();
+        
+        scriptManager.InitScripts();
         camera = scriptObjectFactory->createCamera(Vector3(0, 40, 0));
         
         player = scriptObjectFactory->create(Vector3(-30, 30, 0));
@@ -147,14 +147,14 @@ namespace BEbraEngine {
         light->setColor(Vector3(0, 0, 1));
 
         rotate = Vector3(0, -0.5f, 0);
-        */
+        
     }
 
 
     void ScriptState::clearObjects() { }
 
     void ScriptState::fixedUpdate() {
-        /*
+        
         globalLight->setColor(Vector3(0));
         //step++;
         //if (step > 127) lightColor.x = 0; else lightColor.x = (128 - step) / 255.f * 2;
@@ -174,7 +174,7 @@ namespace BEbraEngine {
            // static bool b{};
            // b = !b;
            // if(b)
-                window->setFullScreen(BaseWindow::FullScreenType::FullScreenOnWindow);
+                //window->setFullScreen(BaseWindow::FullScreenType::FullScreenOnWindow);
            // else 
             //    window->setFullScreen(BaseWindow::FullScreenType::None);
 
@@ -198,20 +198,20 @@ namespace BEbraEngine {
            //  obj->getComponentChecked<Transform>().setPosition(Vector3(0, 80, 0));
              //obj->getComponentChecked<RigidBody>().setPosition(Vector3(0, 80, 0));
         }
-        */
+        
     }
 
 
     void ScriptState::update()
     {
-        /*
+        
         //auto obj = scriptObjectFactory->create(Vector3(0));
         //scriptObjectFactory->destroy(obj);
         auto pos = player->getComponentChecked<Transform>().getPosition();
        // pos.y += 10;
         //camera->moveTo(pos);
 
-        scriptManager->runScripts();
+        scriptManager.runScripts();
         float speed = 1;
         if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT)) {
             speed = 20;
@@ -221,11 +221,11 @@ namespace BEbraEngine {
             int rand_ = dice_rand();
             auto obj = scriptObjectFactory->create(Vector3(0, 40, 0));
             
-            scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand_));
+            //scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand_));
             //scriptObjectFactory->setModel(*obj, getPath(rand_).string());
 
             
-            obj->getComponentChecked<RenderObject>().setColor(Vector3((rand() % 256) / (float)256, rand() % 256 / (float)256, rand() % 256 / (float)256));
+            //obj->getComponentChecked<RenderObject>().setColor(Vector3((rand() % 256) / (float)256, rand() % 256 / (float)256, rand() % 256 / (float)256));
 
             
             Quaternion quat;
@@ -326,13 +326,13 @@ namespace BEbraEngine {
         time1 += Time::deltaTime();
         if (time1 > 0.001) {
             if (count < 0) {
-                DEBUG_LOG1(std::to_string(count));
+                //DEBUG_LOG1(std::to_string(count));
 
                 int rand = dice_rand();
                 auto obj = scriptObjectFactory->create(Vector3(0, 200, 0));
 
-                scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand));
-                scriptObjectFactory->setModel(*obj, getPath(rand).string());
+                //scriptObjectFactory->setCollider(obj->getComponentChecked<Collider>(), getShape(rand));
+                //scriptObjectFactory->setModel(*obj, getPath(rand).string());
                 //   scriptObjectFactory->setTexture(*obj, boost::filesystem::current_path() / "pizda.jpg");
                 obj->getComponentChecked<RenderObject>().setColor(Vector3(1));
 
@@ -377,7 +377,7 @@ namespace BEbraEngine {
                 body.moveTo(Vector3(pos.x, pos.y, 10));
             }
         }
-        */
+        
        // renderAlloc->drawLine(camera->Front + camera->Position, (Vector3(0, 0, 1) / 20 + camera->Position), Vector3(1, 0, 0));
        // renderAlloc->drawLine(camera->Front + camera->Position, (Vector3(0, 1, 0) / 20 + camera->Position), Vector3(0, 1, 0));
        // renderAlloc->drawLine(camera->Front + camera->Position, (Vector3(1, 0, 0) / 20 + camera->Position), Vector3(0, 0, 1));
@@ -454,7 +454,7 @@ namespace BEbraEngine {
         auto pCamera = &camera;
         queues.addTask(ExecuteType::Single,
             [=] {
-            renderWorld.addCamera(*pCamera);
+            //renderWorld.addCamera(*pCamera);
             renderWorld.selectMainCamera(*pCamera);
             }
         );

@@ -1,14 +1,14 @@
 module Camera;
-//import BEbraMath;
+//import GameComponentDestroyer;
 namespace BEbraEngine {
+    void SimpleCamera::destroy(GameComponentDestroyer& destroyer)
+    {
+        //destroyer.destroyCameraComponent(*this);
+    }
 
     Matrix4 SimpleCamera::getViewMatrix()
     {
-
-        //glm::vec3 _pos = Position;
-        //glm::vec3 pos_f = Position + Front;
-        //glm::vec3 up = Up;
-        return Matrix4();//glm::lookAt(_pos, pos_f, up);
+        return BEbraMath::lookAt(Position, Position + Front, Up);
     }
 
     void SimpleCamera::lookAt(const Vector3& at)
@@ -25,9 +25,9 @@ namespace BEbraEngine {
     {
 
         ShaderData vp;
-        //vp.proj = glm::perspective(glm::radians(45.0f), rectViewport.x / rectViewport.y, .1f, 10000.0f);
-        //vp.view = getViewMatrix();
-       // vp.position = Position;
+        vp.proj = BEbraMath::perspective(BEbraMath::radians(45.0f), rectViewport.x / rectViewport.y, .1f, 10000.0f);
+        vp.view = getViewMatrix();
+        vp.position = Position;
         processMouseMovement();
         cameraData->setData(&vp, sizeof(ShaderData));
     }

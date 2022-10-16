@@ -8,6 +8,7 @@ import BEbraMath;
 import RenderBuffer;
 import GameComponent;
 import Input;
+import GameComponentDestroyerDecl;
 
 namespace BEbraEngine {
 
@@ -69,10 +70,7 @@ namespace BEbraEngine {
         //    destroyer.destroyCameraComponent(*this);
         //}
 
-        template<class T>
-        void destroy(T& destroyer) {
-            destroyer.destroyCameraComponent(*this);
-        }
+        void destroy(GameComponentDestroyer& destroyer) override;
 
         Matrix4 getViewMatrix();
 

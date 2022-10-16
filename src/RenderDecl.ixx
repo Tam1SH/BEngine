@@ -1,3 +1,4 @@
+module;
 #include <variant>
 export module RenderDecl;
 import VulkanRender;

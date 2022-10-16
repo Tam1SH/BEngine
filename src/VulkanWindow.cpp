@@ -4,6 +4,7 @@ import VulkanRender;
 import Vector2;
 namespace BEbraEngine {
 
+	
 	void VulkanWindow::createWindow(const Vector2& size, const std::string& title)
 	{
 		
@@ -31,7 +32,7 @@ namespace BEbraEngine {
 	VulkanWindow::~VulkanWindow()
 	{
 	}
-
+	
 }
 
 namespace BEbraEngine {

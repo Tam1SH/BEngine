@@ -21,18 +21,23 @@ using std::optional;
 using std::vector;
 using std::shared_ptr;
 namespace BEbraEngine {
-    optional<Material*> VulkanTextureFactory::createMaterialAsync(const MaterialCreateInfo& info, function<void(Material*)> onComplete)
+    namespace create {
+        template<> std::variant<VulkanTextureFactory> textureFactory(VulkanRender& render) {
+            return std::variant<VulkanTextureFactory>(render);
+        }
+    }
+    Task<optional<Material*>> VulkanTextureFactory::createMaterialAsync(const MaterialCreateInfo& info)
     {
-        
+        auto task = Task<optional<Material*>>();
+
         auto strColorLow = ((info.color.parent_path().string() / info.color.stem()).string() + "_low");
         auto strExensionColor = info.color.extension().string();
         auto image = std::shared_ptr<Texture>(create(strColorLow + strExensionColor, false));
 
         
         tbb::task_arena g;
-        auto mat = new Material(image);
 
-        g.enqueue([=] {
+        g.enqueue([=]() {
             auto strColor = ((info.color.parent_path().string() / info.color.stem()).string());
             auto strSpecular = ((info.specular.parent_path().string() / info.specular.stem()).string());
             auto strNormal = ((info.normal.parent_path().string() / info.normal.stem()).string());
@@ -45,39 +50,35 @@ namespace BEbraEngine {
 
             auto specular = create(strSpecular + strExensionSpecular, false);
             auto normal = create(strNormal + strExensionNormal, false);
-            auto image_temp = std::shared_ptr<Texture>();
-            
-            mat->color.swap(image_temp);
-            destroyTextureAsync(image_temp);
-            *mat = std::move(Material(color, specular, normal));
 
+            task.execute(new Material(color, specular, normal), true);
 
-            onComplete(mat);
+        });
 
-            });
-        return mat;
+        return task;
 
     }
-    Texture* VulkanTextureFactory::createAsync(const boost::filesystem::path& path, std::function<void(Texture*)> onComplete)
+
+    Task<optional<Texture*>> VulkanTextureFactory::createAsync(const boost::filesystem::path& path)
     {
-        
+        auto task = Task<optional<Texture*>>();
         auto str = ((path.parent_path().string() / path.stem()).string() + "_low");
         auto str1 = path.extension().string();
         auto path_low = str + str1;
         auto image = create(path_low, false);
 
         tbb::task_arena g;
-        g.enqueue([=] {
+        g.enqueue([=]() {
             auto str = ((path.parent_path().string() / path.stem()).string());
             auto str1 = path.extension().string();
 
             std::string path = str + str1;
             Texture* image = create(path, true);
             
-            onComplete(image);
+            task.execute(image, true);
         });
 
-        return image;
+        return task;
 
     }
     Texture* VulkanTextureFactory::create(const boost::filesystem::path& path, bool generateMip)
@@ -115,11 +116,11 @@ namespace BEbraEngine {
             image->setLoaded();
         }
 
-        render.createVkImage(rows, image, imageSize);
-        image->imageView = render.createImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+        render->createVkImage(rows, image, imageSize);
+        image->imageView = render->createImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
         stbi_image_free(rows);
         
-        render.createTextureSampler(image);
+        render->createTextureSampler(image);
         return image;
 
     }
@@ -161,7 +162,7 @@ namespace BEbraEngine {
     //}
 
     VulkanTextureFactory::VulkanTextureFactory(VulkanRender& render) 
-        : render(render) { }
+        : render(&render) { }
 
     void VulkanTextureFactory::destroyTexture(Texture& texture)
     {
@@ -170,6 +171,6 @@ namespace BEbraEngine {
     void VulkanTextureFactory::destroyTextureAsync(shared_ptr<Texture> texture)
     {
         auto vTexture = std::static_pointer_cast<VulkanTexture>(texture);
-        render.destroyTextureAsync(vTexture);
+        render->destroyTextureAsync(vTexture);
     }
 }

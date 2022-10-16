@@ -1,11 +1,15 @@
+module;
 #include <boost/filesystem.hpp>
+#include <variant>
 export module VulkanTextureFactory;
 import VulkanRender;
 import Material;
 import Debug;
+import CRender;
+import Task;
 import Render;
 import Texture;
-
+import OnlyMovable;
 import <optional>;
 import <functional>;
 import <memory>;
@@ -18,9 +22,9 @@ namespace BEbraEngine {
     export class VulkanTextureFactory {
     public:
 
-        optional<Material*> createMaterialAsync(const MaterialCreateInfo& info, function<void(Material*)> onComplete);
+        Task<optional<Material*>> createMaterialAsync(const MaterialCreateInfo& info);
 
-        Texture* createAsync(const boost::filesystem::path& path, function<void(Texture*)> onComplete);
+        Task<optional<Texture*>> createAsync(const boost::filesystem::path& path);
 
         Texture* create(const boost::filesystem::path& path, bool generateMip);
 
@@ -37,12 +41,28 @@ namespace BEbraEngine {
         void destroyTextureAsync(shared_ptr<Texture> texture);
 
         VulkanTextureFactory(VulkanRender& render);
+        VulkanTextureFactory() {}
+
+        VulkanTextureFactory(const VulkanTextureFactory&) = delete;
+        VulkanTextureFactory& operator=(const VulkanTextureFactory&) = delete;
+
+        VulkanTextureFactory(VulkanTextureFactory&&) noexcept = default;
+        VulkanTextureFactory& operator=(VulkanTextureFactory&&) noexcept = default;
 
     private:
-        VulkanRender& render;
+        VulkanRender* render;
         //VisitorGameComponentDestroyer* destroyer;
 
     };
+    static_assert(OnlyMovable<VulkanTextureFactory>);
+
+    namespace create {
+        export std::variant<VulkanTextureFactory> textureFactory(CRender auto& render) {
+            static_assert("no implementation found, check type");
+        }
+
+        export template<> std::variant<VulkanTextureFactory> textureFactory(VulkanRender& render);
+    }
 }
 
 module :private;

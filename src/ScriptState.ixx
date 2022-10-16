@@ -1,4 +1,4 @@
-
+module;
 #include <boost/filesystem.hpp>
 #include "platform.hpp"
 #include <tbb.h>
@@ -7,12 +7,10 @@
 export module ScriptState;
 
 import RenderObject;
-/*Objects*/
 import Camera;
 import DirectionLight;
 import GameObject;
 import Light;
-/*Objects*/
 
 import RenderDecl;
 import RenderAllocatorDecl;
@@ -21,7 +19,6 @@ import Vector4;
 import Vector3;
 import ScriptManager;
 import RenderWorld;
-
 
 import <queue>;
 import <memory>;
@@ -43,16 +40,13 @@ using std::list;
 
 
 namespace BEbraEngine {
-    export class ObjectFactoryFacade;
-    export class Physics;
+    export struct ObjectFactoryFacade;
+    export struct Physics;
 }
 
 namespace BEbraEngine {
     
-    export class ScriptState {
-    public:
-
-        
+    export struct ScriptState {
 
         void scriptInit();
 

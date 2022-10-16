@@ -3,9 +3,10 @@
 #include <Physics/btBulletDynamicsCommon.h>
 
 #include "Physics.hpp"
+#include <spdlog/spdlog.h>
 module RigidBodyFactory;
 import Collider;
-
+import Exceptions;
 import <stdexcept>;
 namespace BEbraEngine {
 
@@ -17,7 +18,8 @@ namespace BEbraEngine {
     std::optional<RigidBody*> RigidBodyFactory::create(const RigidBodyCreateInfo& info)
 	{
         if (!info.collider) {
-            throw std::runtime_error("invalid pointer collider");
+            spdlog::error("info has no collider at {}, {}", __FILE__, __LINE__);
+            throw EmptyValueException();
         }
 
         RigidBody* rigidBody = new RigidBody();

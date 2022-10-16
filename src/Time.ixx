@@ -2,8 +2,7 @@
 export module Time;
 import <chrono>;
 namespace BEbraEngine {
-    export class Time {
-    public:
+    export struct Time {
 
         Time() { }
         static float& time() {

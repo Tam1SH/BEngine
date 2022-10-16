@@ -1,26 +1,39 @@
+module;
 #include <Physics/LinearMath/btVector3.h>
-#include <concepts>
 
 export module Vector3;
-
+import CVector3;
 
 namespace BEbraEngine {
 
-
-	export class Vector3
+	export struct Vector3
 	{
-	public:
-		float x{}, y{}, z{};
-	public:
-		constexpr Vector3() {}
+		constexpr Vector3(const CVector3 auto& v) {
+			if constexpr (CVector3FromProperties1<decltype(v)>) {
+				x = v.getX(), y = v.getY(), z = v.getZ();
+			}
+			else if constexpr (CVector3FromProperties2<decltype(v)>) {
+				x = v.x(), y = v.y(), z = v.z();
+			}
+			else if constexpr (CVector3FromStructure<decltype(v)>) {
+				x = v.x, y = v.y, z = v.z;
+			}
+			else if constexpr (CVector3FromArray<decltype(v)>) {
+				constexpr bool is_true = std::tuple_size<std::decay_t<decltype(v)>>::value >= 3;
+				if constexpr (is_true)
+					x = v[0], y = v[1], z = v[2];
+				else static_assert(is_true, "vector will not init");
+
+			}
+			else {
+				static_assert(true, "vector will not init");
+			}
+		}
+		constexpr Vector3() : x(0), y(0), z(0) {}
 
 		constexpr Vector3(float x, float y, float z) : x(x), y(y), z(z) { }
 
-		constexpr Vector3(const Vector3& other) : x(other.x), y(other.y), z(other.z) { }
-
 		constexpr Vector3(float all) : x(all), y(all), z(all) { }
-
-		Vector3(const btVector3& vec) : x(vec.x()), y(vec.y()), z(vec.z()) { }
 
 		operator btVector3() noexcept { return btVector3(x, y, z); }
 
@@ -42,6 +55,8 @@ namespace BEbraEngine {
 
 		bool operator!=(const Vector3& other) const noexcept;
 
-	};
+	public:
+		float x, y, z;
 
+	};
 }

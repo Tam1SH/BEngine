@@ -6,9 +6,8 @@ import <vector>;
 namespace BEbraEngine {
 
 	
-	export class VulkanPipeline
+	export struct VulkanPipeline
 	{
-	public:
 		VkPipeline& getPipeLine() { return pipe; }
 
 		void setViewports(const std::vector<VkViewport>& ports);

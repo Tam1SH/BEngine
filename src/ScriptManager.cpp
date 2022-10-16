@@ -7,6 +7,7 @@ module ScriptManager;
 import Time;
 
 import AngelScriptEngine;
+import ObjectFactoryFacade;
 using std::optional;
 using std::shared_ptr;
 using std::string;

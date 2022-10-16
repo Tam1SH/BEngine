@@ -6,6 +6,10 @@ import RenderBuffer;
 import <memory>;
 
 namespace BEbraEngine {
+    export class GameComponentDestroyer;
+}
+
+namespace BEbraEngine {
 
     export class Light : public GameComponent {
     public:
@@ -29,14 +33,7 @@ namespace BEbraEngine {
         };
 
     public:
-
-        //void destroy(ÑGameComponentDestroyer auto& destroyer) {
-        //    destroyer.destroyPointLightComponent(*this);
-        //}
-        template<class T>
-        void destroy(T& destroyer) {
-            destroyer.destroyPointLightComponent(*this);
-        }
+        void destroy(GameComponentDestroyer& destroyer) override;
 
         std::shared_ptr<RenderBufferView> data;
 

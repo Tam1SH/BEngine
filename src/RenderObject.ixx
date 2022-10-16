@@ -6,9 +6,8 @@ import Material;
 import Model;
 import RenderBuffer;
 import Transform;
-
+import GameComponentDestroyerDecl;
 import <memory>;
-
 
 namespace BEbraEngine {
 
@@ -29,21 +28,15 @@ namespace BEbraEngine {
         const DirectionLightCreateInfo* directionLightInfo;
     };
 
-    export class RenderObject : public GameComponent {
-        //DEBUG_DESTROY_CHECK_DECL()
-    public:
+    export struct RenderObject : GameComponent {
+
         struct ShaderData {
             Matrix4 model;
             alignas(16) Vector3 color;
             int hasMaps{ false };
         };
 
-    public:
-
-        template<typename T>
-        void destroy(T& destroyer) {
-            destroyer.destroyRenderComponent(*this);
-        }
+        void destroy(GameComponentDestroyer& destroyer) override;
 
         Material* material;
 

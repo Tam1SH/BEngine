@@ -1,3 +1,4 @@
+module;
 #include <boost/filesystem.hpp>
 export module ScriptManager;
 import <map>;
@@ -14,21 +15,12 @@ using std::unique_ptr;
 using std::optional;
 
 namespace BEbraEngine {
-	export class ObjectFactoryFacade;
+	export struct ObjectFactoryFacade;
 }
 
 namespace BEbraEngine {
 
-	export class ScriptManager
-	{
-	private:
-		AngelScriptEngine engine;
-
-		std::vector<shared_ptr<AngelScript>> scripts;
-
-		ObjectFactoryFacade* factory;
-
-	public:
+	export struct ScriptManager {
 
 		optional<shared_ptr<AngelScript>> getScriptByName(const string& name);
 
@@ -44,6 +36,12 @@ namespace BEbraEngine {
 
 		~ScriptManager();
 
+	private:
+		AngelScriptEngine engine;
+
+		std::vector<shared_ptr<AngelScript>> scripts;
+
+		ObjectFactoryFacade* factory;
 	};
 
 }

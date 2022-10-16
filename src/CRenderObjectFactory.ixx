@@ -1,6 +1,6 @@
+module;
 #include <variant>
 #include <boost/filesystem.hpp>
-
 
 export module CRenderObjectFactory;
 import Task;

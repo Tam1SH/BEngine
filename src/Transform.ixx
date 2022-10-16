@@ -5,7 +5,7 @@ import Debug;
 import BEbraMath;
 import Vector3;
 import Quaternion;
-
+import GameComponentDestroyerDecl;
 
 namespace BEbraEngine {
     class TransformFactory;
@@ -26,65 +26,25 @@ namespace BEbraEngine {
 
     public:
 
-        // void destroy(VisitorGameComponentDestroyer& destroyer) {}//override;
+        void destroy(GameComponentDestroyer& destroyer) override;
 
-         //void destroy(ÑVisitorGameComponentDestroyer auto& destroyer) {
-         //    destroyer.destroyTransformComponent(*this);
-         //}
+        void setPosition(const Vector3& position) noexcept;
 
-        void setPosition(const Vector3& position) noexcept
-        {
-            this->position = position;
-        }
+        void setScale(const Vector3& scale) noexcept;
 
-        void setScale(const Vector3& scale) noexcept
-        {
-            this->scale = scale;
-        }
+        void setRotation(const Quaternion& quat) noexcept;
 
-        void setRotation(const Quaternion& quat) noexcept
-        {
-            this->quat = quat;
-        }
+        Vector3 getPosition() const noexcept;
 
+        Quaternion getRotation() const noexcept;
 
-        Vector3& getPosition() noexcept
-        {
-            return position;
-        }
-        const Vector3& getPosition() const noexcept
-        {
-            return position;
-        }
-        Quaternion getRotation() const noexcept
-        {
-            return quat;
-        }
+        Matrix4 getBasis() const noexcept;
 
-        Matrix4 getBasis() const noexcept
-        {
-
-            auto model = Matrix4(1);
-
-            model = BEbraMath::translate(model, position);
-            model = BEbraMath::scale(model, scale);
-
-            model *= BEbraMath::toMat4(quat);
-
-            return Matrix4(model);
-        }
-
-        ~Transform()
-        {
-        }
+        ~Transform() { }
 
     private:
 
-        Transform(const Vector3& position)
-        {
-            this->position = position;
-            scale = Vector3(1);
-        }
+        Transform(const Vector3& position);
 
         Quaternion quat{};
 
@@ -95,26 +55,6 @@ namespace BEbraEngine {
 
 
     };
-
-
-
-
-
-
-
-    //void Transform::destroy(VisitorGameComponentDestroyer& destroyer)
-    //{
-    //    destroyer.destroyTransformComponent(*this);
-    //}
-
-
-
-
-
-
- 
-
-
 
 
 }

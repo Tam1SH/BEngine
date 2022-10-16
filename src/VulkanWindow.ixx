@@ -1,15 +1,17 @@
+module;
 #include <variant>
 export module VulkanWindow;
 import CRender;
-import VulkanRender;
 import Window;
+import VulkanRender;
 import Vector2;
 import <string>;
 
+using std::string;
+
 namespace BEbraEngine {
 
-	export class VulkanWindow : public Window {
-	public:
+	export struct VulkanWindow : Window {
 
 		void createWindow(const Vector2& size, const std::string& title = "BEbraEngine") override;
 
@@ -19,8 +21,13 @@ namespace BEbraEngine {
 
 		VulkanWindow() {}
 		VulkanWindow(VulkanRender& render);
-
 		~VulkanWindow();
+
+		VulkanWindow(VulkanWindow&&) noexcept = default;
+		VulkanWindow& operator=(VulkanWindow&&) noexcept = default;
+
+		VulkanWindow(const VulkanWindow&) = delete;
+		VulkanWindow& operator=(const VulkanWindow&) = delete;
 
 	private:
 		VulkanRender* render;
@@ -37,5 +44,27 @@ namespace BEbraEngine {
 		export template<> std::variant<VulkanWindow> window(VulkanRender& render);
 
 	}
+	/*
+	void VulkanWindow::createWindow(const Vector2& size, const std::string& title)
+	{
+	}
+
+	void VulkanWindow::onResizeCallback(int width, int height)
+	{
+	}
+
+	Vector2 VulkanWindow::getDrawableSize()
+	{
+		return Vector2();
+	}
+
+	VulkanWindow::VulkanWindow(VulkanRender& render)
+	{
+	}
+
+	VulkanWindow::~VulkanWindow()
+	{
+	}
+	*/
 }
 

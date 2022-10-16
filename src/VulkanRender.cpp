@@ -306,6 +306,7 @@ namespace BEbraEngine {
 
     void VulkanRender::recreateRenderObjects() {
         
+        throw std::exception("not implemented");
         //auto& dec1 = globalLight.lock()->descriptor;
         
         auto info1 = LightDescriptorInfo();
@@ -318,7 +319,7 @@ namespace BEbraEngine {
         
 
         //auto& data = world->getRenderData();
-        throw std::exception("not implemented");
+        
        /* for (auto& light : data.lights) {
 
             auto& vLight = light->as<VulkanPointLight>();
@@ -689,6 +690,7 @@ namespace BEbraEngine {
     
     VulkanTexture* VulkanRender::getBitMapFromSwapChainImage()
     {
+        throw std::runtime_error("not implemeted");
         bool supportsBlit = true;
 
         // Check blit support for source and destination
@@ -883,28 +885,9 @@ namespace BEbraEngine {
         }
 
 
-        auto begin = std::chrono::steady_clock::now();
-
-       
-        /*
-        auto mm = VulkanBitMap();
-        mm.rows.resize(currentRenderResolution.height);
-        for (uint32_t y = 0; y < currentRenderResolution.height; y++) {
-
-            unsigned int* row = (unsigned int*)data;
-            mm.rows[y].rows = row;
-            data += subResourceLayout.rowPitch;
-        }
-        */
-
-        auto end = std::chrono::steady_clock::now();
-
-  //      static_cast<VulkanTextureFactory&>(getRenderObjectFactory()->getTextureFactory()).saveImage(
-    //        "JOPA.jpg", currentRenderResolution.width, currentRenderResolution.height, 3, mm, 90
-     //   );
 
 
-        auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
+
         //DEBUG_LOG1(std::stringstream() << "time: " << elapsed_ms.count());
 
         std::cout << "Screenshot saved to disk" << std::endl;
@@ -1997,9 +1980,9 @@ namespace BEbraEngine {
     {
         if (currentRenderResolution.width == 0 && currentRenderResolution.height == 0) return;
 
-        linePool->reset(linesToDrawLastUpdate, 0);
-        linePool->setCountToMap(linesToDraw);
-        linePool->map();
+        //linePool->reset(linesToDrawLastUpdate, 0);
+        //linePool->setCountToMap(linesToDraw);
+        //linePool->map();
         //updateCmdBuffers();
 
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
@@ -2072,6 +2055,9 @@ namespace BEbraEngine {
 
         vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]);
 
+        vkQueueWaitIdle(graphicsQueue);
+        vkQueueWaitIdle(transferQueue);
+        
        
 
 
@@ -2102,6 +2088,8 @@ namespace BEbraEngine {
     void VulkanRender::update()
     {
         for (auto& camera : cameras) {
+
+
             camera->update();
 
             //drawLine(camera->Front + camera->Position, (Vector3(0, 0, 1) / 100 + camera->Position), Vector3(1, 0, 0));
@@ -2199,8 +2187,8 @@ namespace BEbraEngine {
                 auto& obj = object->as<VulkanRenderObject>();
                 obj.draw(RenderBuffers[i]);
             }
-            auto camera = data.mainCamera->as<VulkanCamera>();
-
+            auto& camera = data.mainCamera->as<VulkanCamera>();
+            //auto& camera1 = data.mainCamera->as<int>();
             vkCmdBindPipeline(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, linesDrawing);
             vkCmdBindDescriptorSets(RenderBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &camera.descriptor, 0, nullptr);
             
@@ -2471,8 +2459,8 @@ namespace BEbraEngine {
 
     void VulkanRender::prepareDraw()
     {
-        vkQueueWaitIdle(transferQueue);
-        vkQueueWaitIdle(graphicsQueue);
+        //vkQueueWaitIdle(transferQueue);
+        //vkQueueWaitIdle(graphicsQueue);
         for (auto& buf : buffersToDestroy)
             buf.destroy();
         buffersToDestroy.clear();

@@ -1,36 +1,30 @@
 module;
 #include <boost/filesystem.hpp>
 
-
-
 export module GameComponentDestroyer;
-import RenderObject;
-import Camera;
-import GameObject;
-import Light;
-import ColliderFactory;
-import RigidBodyFactory;
+//import ColliderFactory;
+import RigidBodyFactoryDecl;
+import TextureFactoryDecl;
 import RenderObjectFactoryDecl;
+import OnlyMovable;
+import RigidBody;
+import GameObject;
+import DirectionLight;
+import RenderObject;
+import Collider;
 import Texture;
 import Material;
-import Collider;
-import DirectionLight;
+import Transform;
+import Camera;
+import Light;
 import <memory>;
-
-
 
 using std::shared_ptr;
 
 
 namespace BEbraEngine {
 
-	export class GameComponentDestroyer
-	{
-	public:
-		GameComponentDestroyer(
-			RenderObjectFactory& renderFactory,
-			ColliderFactory& colliderFactory,
-			RigidBodyFactory& rigidBodyFactory);
+	export struct GameComponentDestroyer {
 		
 		void destroyGameObject(GameObject& comp);
 
@@ -44,28 +38,33 @@ namespace BEbraEngine {
 
 		void destroyRigidBodyComponent(RigidBody& comp);
 
-		void destroyColliderComponent(Collider& comp);
-	
-		void destroyTextureComponent(Texture& comp);
-
-		void destroyMaterialComponent(Material& comp);
-
 		void destroyTransformComponent(Transform& comp);
 
 		void destroyCameraComponent(SimpleCamera& comp);
+
+		void destroyColliderComponent(Collider& comp);
+
+		void destroyMaterialComponent(Material& comp);
+
+		void destroyTextureComponent(Texture& comp);
+
+		GameComponentDestroyer(
+			RenderObjectFactory& renderFactory,
+			ColliderFactory& colliderFactory,
+			RigidBodyFactory& rigidBodyFactory,
+			TextureFactory&& textureFactory);
+
+		GameComponentDestroyer(const GameComponentDestroyer&) = delete;
+		GameComponentDestroyer operator=(const GameComponentDestroyer&) = delete;
+
+		GameComponentDestroyer(GameComponentDestroyer&&) noexcept = default;
+		GameComponentDestroyer& operator=(GameComponentDestroyer&&) noexcept = default;
+
 
 	private:
 		RenderObjectFactory* renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;
-
-
+		TextureFactory textureFactory;
 	};
-
-}
-
-module :private;
-import ÑGameComponentDestroyer;
-namespace BEbraEngine {
-	static_assert(ÑGameComponentDestroyer<GameComponentDestroyer>);
 }

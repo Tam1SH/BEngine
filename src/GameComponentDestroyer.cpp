@@ -1,7 +1,10 @@
 #include <boost/filesystem.hpp>
-
+#include <variant>
 module GameComponentDestroyer;
-
+import CRenderObjectFactory;
+import CTextureFactory;
+import ColliderFactory;
+import RigidBodyFactory;
 import <memory>;
 using std::shared_ptr;
 
@@ -10,41 +13,38 @@ namespace BEbraEngine {
 	GameComponentDestroyer::GameComponentDestroyer(
 		RenderObjectFactory& renderFactory,
 		ColliderFactory& colliderFactory,
-		RigidBodyFactory& rigidBodyFactory)
+		RigidBodyFactory& rigidBodyFactory,
+		TextureFactory&& textureFactory)
 	{
 		this->renderFactory = &renderFactory;
 		this->colliderFactory = &colliderFactory;
 		this->rigidBodyFactory = &rigidBodyFactory;
+		this->textureFactory = std::move(textureFactory);
 	}
+
 	void GameComponentDestroyer::destroyRenderComponent(RenderObject& comp)
 	{
-		//renderFactory->destroyObject(comp);
-#ifdef _DEBUG
-		//comp.isDestroyed = true;
-#endif // _DEBUG
-
+		std::visit([&](CRenderObjectFactory auto& renderFactory) {
+			renderFactory.destroyObject(comp);
+		}, *renderFactory);
+		
 	}
+
 	void GameComponentDestroyer::destroyRigidBodyComponent(RigidBody& comp)
 	{
 		rigidBodyFactory->destroy(comp);
-#ifdef _DEBUG
-		//comp.isDestroyed = true;
-#endif // _DEBUG
 	}
+
 	void GameComponentDestroyer::destroyColliderComponent(Collider& comp)
 	{
 		colliderFactory->destroyCollider(comp);
-#ifdef _DEBUG
-		//comp.isDestroyed = true;
-#endif // _DEBUG
+
 	}
 	void GameComponentDestroyer::destroyTextureComponent(Texture& comp)
 	{
-#ifdef _DEBUG
-		//comp.isDestroyed = true;
-#endif // _DEBUG
-		//renderFactory->getTextureFactory().destroyTextureAsync(comp);
-
+		//std::visit([&](CTextureFactory auto& textureFactory) {
+		//	textureFactory.destroyTextureAsync(comp);
+		//}, *textureFactory);
 	}
 	void GameComponentDestroyer::destroyMaterialComponent(Material& comp)
 	{
@@ -54,43 +54,40 @@ namespace BEbraEngine {
 			destroyTextureComponentAsync(comp.specular);
 		if (comp.normal)
 			destroyTextureComponentAsync(comp.normal);
-#ifdef _DEBUG
-		//comp.isDestroyed = true;
-#endif // _DEBUG
 	}
 	void GameComponentDestroyer::destroyTransformComponent(Transform& comp)
 	{
 
 	}
+
 	void GameComponentDestroyer::destroyPointLightComponent(Light& comp)
 	{
-		//renderFactory->destroyPointLight(comp);
-
+		std::visit([&](CRenderObjectFactory auto& renderFactory) {
+			renderFactory.destroyPointLight(comp);
+		}, *renderFactory);
 	}
+
 	void GameComponentDestroyer::destroyDirectionLightComponent(DirectionLight& comp)
 	{
-		//renderFactory->des
 
 	}
 	void GameComponentDestroyer::destroyCameraComponent(SimpleCamera& comp)
 	{
-		//renderFactory->destroyCamera(comp);
+		std::visit([&](CRenderObjectFactory auto& renderFactory) {
+			renderFactory.destroyCamera(comp);
+		}, *renderFactory);
 	}
 
 	void GameComponentDestroyer::destroyTextureComponentAsync(shared_ptr<Texture> comp)
 	{
-
-#ifdef _DEBUG
-		//comp->isDestroyed = true;
-#endif // _DEBUG
-		//renderFactory->getTextureFactory().destroyTextureAsync(comp);
+		std::visit([&](CTextureFactory auto& textureFactory) {
+			textureFactory.destroyTextureAsync(comp);
+		}, textureFactory);
+		
 
 	}
 
 	void GameComponentDestroyer::destroyGameObject(GameObject& comp)
 	{
-#ifdef _DEBUG
-		//comp.isDestroyed = true;
-#endif // _DEBUG
 	}
 }

@@ -6,23 +6,8 @@ namespace BEbraEngine {
 
 	export class Matrix4 {
 	public:
-		alignas(16) Vector4 elements[4];
 
-	public:
-
-		constexpr Vector4& operator[](size_t i) {
-			return elements[i];
-		}
-
-		constexpr Matrix4() noexcept {}
-
-		constexpr Matrix4(
-			Vector4 v0,
-			Vector4 v1,
-			Vector4 v2,
-			Vector4 v3) noexcept;
-
-		Matrix4(float all) noexcept;
+		constexpr Vector4& operator[](size_t i) {return elements[i];}
 
 		Matrix4& operator*=(const Matrix4& other) noexcept;
 
@@ -34,6 +19,24 @@ namespace BEbraEngine {
 
 		bool operator!=(const Matrix4& other) const noexcept;
 
+		Matrix4(const Matrix4&) noexcept = default;
+		Matrix4& operator=(const Matrix4&) noexcept = default;
+
+		Matrix4(Matrix4&&) noexcept = default;
+		Matrix4& operator=(Matrix4&&) noexcept = default;
+
+		constexpr Matrix4() noexcept {}
+
+		constexpr Matrix4(
+			const Vector4& v0,
+			const Vector4& v1,
+			const Vector4& v2,
+			const Vector4& v3) noexcept;
+
+		Matrix4(float all) noexcept;
+
+	public:
+		alignas(16) Vector4 elements[4];
 
 	};
 }

@@ -1,12 +1,19 @@
 module Collider;
+//import GameComponentDestroyer;
 
 namespace BEbraEngine {
+	void Collider::destroy(GameComponentDestroyer& destroyer)
+	{
+		//destroyer.destroyColliderComponent(*this);
+	}
+
 	void Collider::setScale(const Vector3& size) noexcept
 	{
 		this->size = size;
 		auto _size = btVector3(size.x, size.y, size.z);
 		_collider->getCollisionShape()->setLocalScaling(_size);
 	}
+
 	void Collider::setRotation(const Quaternion& quat) noexcept {
 		btTransform trans;
 		trans.setRotation(static_cast<btQuaternion>(quat));

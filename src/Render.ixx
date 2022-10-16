@@ -6,7 +6,7 @@ namespace BEbraEngine {
 
 
 	export struct BitMap {
-	public:
+
 		struct Rows {
 			struct pixel {
 				char x, y, z;

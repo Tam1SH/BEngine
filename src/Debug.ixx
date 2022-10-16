@@ -30,9 +30,6 @@ using std::stringstream;
 
 namespace BEbraEngine {
 
-
-
-
 	export class Debug
 	{
 	public:

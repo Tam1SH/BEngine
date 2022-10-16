@@ -6,7 +6,9 @@ import CRender;
 namespace BEbraEngine {
 
     RenderWorld::RenderWorld(Render& render)
-        : render(&render) { }
+        : render(&render) {
+        data = new RenderData;
+    }
 
     void RenderWorld::selectMainCamera(SimpleCamera& camera)
     {
@@ -23,6 +25,21 @@ namespace BEbraEngine {
         throw std::exception("not implemented");
     }
 
+    /*
+    void RenderWorld::removeObject(RenderObject& object)
+    {
+            auto iter = std::remove(objects.begin(), objects.end(), &object);
+            if (iter != objects.end()) {
+                objects.erase(iter);
+                updateState({});
+            }
+            else {
+                            //DEBUG_LOG3("Object has not been in renderWorld", &object);
+                throw std::exception();
+            }
+
+    }
+    */
     void RenderWorld::removeCamera(SimpleCamera& camera)
     {
         throw std::exception("not implemented");
@@ -30,22 +47,13 @@ namespace BEbraEngine {
 
     void RenderWorld::removeObject(RenderObject& object)
     {
-        
-        auto iter = std::remove(objects.begin(), objects.end(), &object);
-        if (iter != objects.end()) {
-            objects.erase(iter);
-            updateState({});
-        }
-        else {
-                        //DEBUG_LOG3("Object has not been in renderWorld", &object);
-            throw std::exception();
-        }
-        
-
     }
+
+
+
     void RenderWorld::addObject(RenderObject& object)
     {
-        objects.push_back(&object);
+        //objects.push_back(&object);
         updateState({});
 
     }

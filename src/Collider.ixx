@@ -1,14 +1,16 @@
+module;
 #include "platform.hpp"
 #include <Physics/btBulletDynamicsCommon.h>
-
+#include <spdlog/spdlog.h>
 export module Collider;
 import Debug;
-import <memory>;
-import <exception>;
 import Vector3;
 import Quaternion;
-import Concepts;
+import OnlyMovable;
 import GameComponent;
+import GameComponentDestroyerDecl;
+import <memory>;
+import <exception>;
 
 using std::unique_ptr;
 
@@ -36,15 +38,11 @@ namespace BEbraEngine {
 	};
 
 	export class Collider : public GameComponent {
-		//DEBUG_DESTROY_CHECK_DECL()
 	public:
 		friend class ColliderFactory;
 	public:
 
-		template<typename T>
-		void destroy(T& destroyer) {
-			destroyer.destroyColliderComponent(*this);
-		}
+		void destroy(GameComponentDestroyer& destroyer) override;
 
 		btCollisionObject& get() noexcept { return *_collider; }
 
@@ -65,40 +63,24 @@ namespace BEbraEngine {
 		Vector3 getPosition() const noexcept;
 
 		void setRigidBody(RigidBody& body);
-
-		template<typename T>
-		void as() {
-			if (dynamic_cast<T*>(this))
-				return static_cast<T*>(this);
-
-			//throw std::runtime_error("object does not match of type");
-		}
 		
-
 		Collider(Collider&& o) noexcept = default;
 		Collider& operator=(Collider&& o) noexcept = default;
 
 		Collider(const Collider& o) = delete;
 		Collider& operator=(const Collider& o) = delete;
 
-
-		
 		Collider() noexcept;
 		~Collider() noexcept;
 
 
 	public:
-
 		RigidBody* body{};
 		unique_ptr<btCollisionObject> _collider;
 		Vector3 position{};
 		Vector3 size{};
 	};
-
-	//static_assert(OnlyMovable<Collider>);
+	static_assert(OnlyMovable<Collider>);
 	
-
-	
-
 }
 

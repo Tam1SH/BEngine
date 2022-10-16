@@ -16,7 +16,6 @@ namespace BEbraEngine {
 	export class RigidBodyFactory
 	{
 	public:
-		
 
 		optional<RigidBody*> create(const RigidBodyCreateInfo& info);
 
@@ -26,12 +25,14 @@ namespace BEbraEngine {
 
 		Collider& getCollider(RigidBody& body);
 
-		RigidBodyFactory(const RigidBodyFactory& o) = delete;
-		RigidBodyFactory& operator=(const RigidBodyFactory& o) = delete;
-		//TODO: переопределить move конструктор
-
 		RigidBodyFactory(Physics& physics) noexcept;
 		~RigidBodyFactory() noexcept {}
+
+		RigidBodyFactory(const RigidBodyFactory& o) = delete;
+		RigidBodyFactory& operator=(const RigidBodyFactory& o) = delete;
+
+		RigidBodyFactory(RigidBodyFactory&& o) noexcept = default;
+		RigidBodyFactory& operator=(RigidBodyFactory&& o) noexcept = default;
 
 	private:
 		Physics* physics;

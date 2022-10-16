@@ -7,8 +7,7 @@ import <stack>;
 
 namespace BEbraEngine {
 	export template<class T> 
-	class Task {
-	public:
+	struct Task {
 
 		Task<T>& then(std::function<void(T&)>&& func) {
 			onCompleted.push(func);
@@ -19,33 +18,25 @@ namespace BEbraEngine {
 			onFailure = func;
 		}
 
-		void execute(bool isSuccess) {
+		void execute(T&& value, bool isSuccess) const {
 			if (isSuccess) {
-				while (onCompleted.empty()) {
-					auto val = onCompleted.top();
-					val(*value);
-					onCompleted.pop();
+				auto _onCompleted = onCompleted;
+
+				while (!_onCompleted.empty()) {
+					_onCompleted.top()(value);
+					_onCompleted.pop();
 				}
 			}
 			else
 				onFailure();
 		}
 
-		void setValue(T& value) {
-		
-			this->value.reset();
-			this->value = std::shared_ptr<T>(&value);
-		}
-
 		constexpr Task() {}
-		Task(T&& value) { this->value = std::shared_ptr<T>(value); }
 
-		
 		Task(const Task&) noexcept = default;
 		Task& operator=(const Task&) noexcept = default;
 
 	private:
-		std::shared_ptr<T> value;
 		std::stack<std::function<void(T&)>> onCompleted;
 		std::function<void()> onFailure;
 	};

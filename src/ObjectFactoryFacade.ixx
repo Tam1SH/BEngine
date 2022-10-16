@@ -1,11 +1,8 @@
+module;
 #include "platform.hpp"
 #include <boost/filesystem.hpp>
-
-
-
 export module ObjectFactoryFacade;
 import GameObjectFactory;
-/*Objects*/
 import Light;
 import Camera;
 import Transform;
@@ -14,7 +11,6 @@ import DirectionLight;
 import GameObject;
 import Collider;
 import GameComponent;
-/*Objects*/
 
 import GameComponentCreateInfo;
 import Vector3;
@@ -22,20 +18,18 @@ import Vector3;
 import <memory>;
 import <string>;
 
-
 using std::shared_ptr; 
 using std::unique_ptr;
 using std::string;
 
 namespace BEbraEngine {
     //export class GameObjectFactory;
-    export class ScriptState;
+    export struct ScriptState;
 }
 
 namespace BEbraEngine {
 
-    export class ObjectFactoryFacade {
-    public:
+    export struct ObjectFactoryFacade {
         
         shared_ptr<GameObject> create(const Vector3& position);
 
@@ -65,6 +59,12 @@ namespace BEbraEngine {
         void setContext(ScriptState* logic);
 
         void destroyComponent(GameComponent& component);
+
+        ObjectFactoryFacade(const ObjectFactoryFacade&) noexcept = delete;
+        ObjectFactoryFacade& operator=(const ObjectFactoryFacade&) noexcept = delete;
+
+        ObjectFactoryFacade(ObjectFactoryFacade&&) noexcept = default;
+        ObjectFactoryFacade& operator=(ObjectFactoryFacade&&) noexcept = default;
 
         ObjectFactoryFacade() {}
 

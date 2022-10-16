@@ -1,0 +1,6 @@
+module GameComponent;
+
+
+namespace BEbraEngine {
+
+}

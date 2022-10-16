@@ -37,6 +37,24 @@
     <Filter Include="Файлы заголовков\declaration">
       <UniqueIdentifier>{a54818b6-c4b3-4a85-994c-a7bb58dc27c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\Objects">
+      <UniqueIdentifier>{21f619ed-156f-4245-a5b4-d16ebed3f019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Math">
+      <UniqueIdentifier>{8acc37cf-1ab1-4493-9988-7fb45df51cdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\utils">
+      <UniqueIdentifier>{96e10fb7-33ab-4997-8116-86889fea4028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Concepts">
+      <UniqueIdentifier>{9914bf86-6cb5-4b2d-84c4-3488ad9db92e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Factories">
+      <UniqueIdentifier>{8a109ae3-6076-4ced-ae39-95232208e8ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Objects">
+      <UniqueIdentifier>{9b47f1fc-2902-4753-86dc-40b5000e0cce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -96,58 +114,19 @@
     <ClCompile Include="AngelScriptEngine.cpp">
       <Filter>Исходные файлы\Script</Filter>
     </ClCompile>
-    <ClCompile Include="AngelScript.cpp">
-      <Filter>Исходные файлы\Script</Filter>
-    </ClCompile>
     <ClCompile Include="RigidBodyFactory.cxx">
       <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderFactory.cpp">
+    <ClCompile Include="ColliderFactory.cxx">
       <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
     <ClCompile Include="RenderWorld.cxx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="CTextureFactory.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector3.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="RenderWorld.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="GameComponent.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Line.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="Quaternion.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="RigidBody.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector4.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector2.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformFactory.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="RenderBuffer.ixx">
@@ -156,34 +135,16 @@
     <ClCompile Include="Debug.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="utils.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="VulkanObjects.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="VulkanBuffer.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="Render.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="Vertex.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="RigidBodyFactory.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshFactory.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="Time.ixx">
@@ -204,9 +165,6 @@
     <ClCompile Include="CommandBuffer.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderFactory.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="BaseScriptEngine.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
@@ -217,9 +175,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="AngelScriptEngine.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="AngelScript.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="DescriptorPool.ixx">
@@ -237,9 +192,6 @@
     <ClCompile Include="GameComponentDestroyer.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="GameObjectFactory.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="RenderBufferArray.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
@@ -247,9 +199,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="ScriptState.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanRenderObjectFactory.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="CommandPool.ixx">
@@ -261,16 +210,10 @@
     <ClCompile Include="Shader.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectFactoryFacade.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="VulkanRender.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="RenderData.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanTextureFactory.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="VulkanWindow.ixx">
@@ -279,17 +222,8 @@
     <ClCompile Include="VulkanRenderBufferArray.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Исходные файлы\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="RigidBody.cpp">
-      <Filter>Исходные файлы\Physics</Filter>
-    </ClCompile>
     <ClCompile Include="GameComponentDestroyer.cpp">
       <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Concepts.ixx">
-      <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="RenderHelper.ixx">
       <Filter>Файлы заголовков</Filter>
@@ -306,9 +240,6 @@
     <ClCompile Include="CRenderAllocator.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="CRenderObjectFactory.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="RenderDecl.ixx">
       <Filter>Файлы заголовков\declaration</Filter>
     </ClCompile>
@@ -318,15 +249,6 @@
     <ClCompile Include="RenderObjectFactoryDecl.ixx">
       <Filter>Файлы заголовков\declaration</Filter>
     </ClCompile>
-    <ClCompile Include="CGameComponentDestroyer.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectionLight.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="CRenderObjectFactoryDecl.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
@@ -335,9 +257,6 @@
     </ClCompile>
     <ClCompile Include="RenderAllocatorTypeRenderBuffer.ixx">
       <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Vector3.cxx">
       <Filter>Исходные файлы</Filter>
@@ -354,9 +273,6 @@
     <ClCompile Include="Matrix.cxx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="RenderObject.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="RenderObject.cxx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -366,16 +282,7 @@
     <ClCompile Include="RenderDataDecl.ixx">
       <Filter>Файлы заголовков\declaration</Filter>
     </ClCompile>
-    <ClCompile Include="Light.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="AssetsStore.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="Asset.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
     <ClCompile Include="TextureFactoryDecl.ixx">
@@ -383,6 +290,150 @@
     </ClCompile>
     <ClCompile Include="AssetsStore.cxx">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="AngelScript.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionLight.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameComponent.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderObject.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2.ixx">
+      <Filter>Файлы заголовков\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3.ixx">
+      <Filter>Файлы заголовков\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector4.ixx">
+      <Filter>Файлы заголовков\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.ixx">
+      <Filter>Файлы заголовков\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.ixx">
+      <Filter>Файлы заголовков\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="OnlyMovable.ixx">
+      <Filter>Файлы заголовков\Concepts</Filter>
+    </ClCompile>
+    <ClCompile Include="Exceptions.ixx">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanRenderObjectFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="CRenderObjectFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectFactoryFacade.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBodyFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanTextureFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="CTextureFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderFactory.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.ixx">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="GameComponentDestroyerDecl.ixx">
+      <Filter>Файлы заголовков\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBodyFactoryDecl.ixx">
+      <Filter>Файлы заголовков\declaration</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameComponent.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="AngelScript.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.ixx">
+      <Filter>Файлы заголовков\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cxx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionLight.cpp">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="CVector3.ixx">
+      <Filter>Файлы заголовков\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

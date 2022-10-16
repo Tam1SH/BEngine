@@ -1,7 +1,7 @@
 export module RenderAllocatorTypeRenderBuffer;
 
 namespace BEbraEngine {
-	export enum class TypeRenderBuffer {
+	export enum struct TypeRenderBuffer {
 		Storage,
 		Uniform,
 		StorageDynamic, //only vulkan

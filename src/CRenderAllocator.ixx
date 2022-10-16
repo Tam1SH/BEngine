@@ -7,12 +7,8 @@ import RenderAllocatorTypeRenderBuffer;
 
 namespace BEbraEngine {
 
-
-
 	export template<typename T>
 		concept CRenderAllocator = requires(
-			/* this */
-			T & self,
 
 			/*RenderBuffer* createIndexBuffer*/ std::span<uint32_t> indices,
 
@@ -22,7 +18,11 @@ namespace BEbraEngine {
 
 			/*RenderBuffer* alignmentBuffer*/ uint32_t originalSize, TypeRenderBuffer type,
 
-			/*void destroyBuffer*/ RenderBuffer* buffer
+			/*void destroyBuffer*/ RenderBuffer* buffer,
+
+			/* this */
+			T& self
+
 			)
 	{
 		{ self.createIndexBuffer(indices) } -> std::same_as<RenderBuffer*>;

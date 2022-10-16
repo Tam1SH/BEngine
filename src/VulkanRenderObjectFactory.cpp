@@ -33,9 +33,10 @@ namespace BEbraEngine {
 
         template<> std::variant<VulkanRenderObjectFactory> renderObjectFactory(
             VulkanRender& render,
-            VulkanRenderAllocator& allocator) {
+            VulkanRenderAllocator& allocator,
+            MeshFactory&& meshFactory) {
 
-            return std::variant<VulkanRenderObjectFactory>();
+            return std::variant<VulkanRenderObjectFactory>(VulkanRenderObjectFactory(render, allocator, std::forward<MeshFactory>(meshFactory)));
         }
     }
 
@@ -56,10 +57,10 @@ namespace BEbraEngine {
         
         auto obj = new VulkanRenderObject();
         obj->setName("RenderObject");
-        obj->model = meshFactory->getDefaultModel("BOX");
+        obj->model = meshFactory.getDefaultModel("BOX");
         
         obj->matrix = object_view;
-        obj->material = new Material(textureFactory->createEmpty(), textureFactory->createEmpty(), textureFactory->createEmpty());
+        obj->material = new Material(textureFactory.createEmpty(), textureFactory.createEmpty(), textureFactory.createEmpty());
         obj->hasMaps = false;
         obj->setColor(Vector3(1));
         VulkanDescriptorSetInfo setinfo{};
@@ -156,35 +157,19 @@ namespace BEbraEngine {
 
     Task<optional<Material*>> VulkanRenderObjectFactory::createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info)
     {
-        
-        //Не принципиально удалён ли был объект или нет
-        auto wObj = std::weak_ptr<RenderObject>(obj);
-        auto pointer = &*obj;
-        Task<optional<Material*>> task; 
+        auto task = textureFactory.createMaterialAsync(info).
+            then([=](optional<Material*> mat) {
 
-        auto mat = textureFactory->createMaterialAsync(info, [=](Material* mat) mutable {
-            render->executeQueues.addTask(ExecuteType::Multi,
-                [=]() mutable {
-                    if (!wObj.expired()) {
-                        auto& vObj = wObj.lock()->as<VulkanRenderObject>();
-                        setMaterial(vObj, *mat);
-                        task.execute(true);
-                        //world->updateState({});
-                    }
-                    else {
-                        //DEBUG_LOG3("Render object was destroyed during set material", pointer);
-                        //mat->destroy(*destroyer);
-                        task.execute(false);
-                        delete mat;
-                        
-                    }
+                mat.and_then([&](Material* mat) -> optional<Material*> {
+                        render->executeQueues.addTask(ExecuteType::Multi,
+                            [=]() { setMaterial(*obj, *mat); });
+
+                        return std::make_optional(mat);
+                });
+
             });
 
-        });
-
-        task.setValue(mat);
         return task;
-        
     }
 
 
@@ -242,9 +227,11 @@ namespace BEbraEngine {
     //}
 
     VulkanRenderObjectFactory::VulkanRenderObjectFactory(
-        VulkanRender& render, VulkanRenderAllocator& allocator)
-        : render(&render), allocator(&allocator)
+        VulkanRender& render, VulkanRenderAllocator& allocator, MeshFactory&& meshFactory
+    )
+        : render(&render), allocator(&allocator), meshFactory(std::move(meshFactory))
     {
+        textureFactory = VulkanTextureFactory(render);
         _poolofObjects = std::make_unique<VulkanRenderBufferArray<RenderObject::ShaderData>>(allocator);
         //_poolofObjects->setContext(&allocator);
         _poolofObjects->setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
@@ -294,7 +281,7 @@ namespace BEbraEngine {
         ModelCreateInfo info{};
         info.path = path;
         
-        auto m = meshFactory->create(info);
+        auto m = meshFactory.create(info);
         if (m.has_value()) {
             object.model = shared_ptr<Model>(m.value());
         }

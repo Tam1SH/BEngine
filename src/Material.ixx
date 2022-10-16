@@ -1,8 +1,12 @@
+module;
 #include <boost/filesystem.hpp>
 export module Material;
 import GameComponent;
 import Texture;
+import OnlyMovable;
+import GameComponentDestroyerDecl;
 import <memory>;
+
 
 namespace BEbraEngine {
 
@@ -14,6 +18,10 @@ namespace BEbraEngine {
 
     export class Material : public GameComponent {
     public:
+
+
+        void destroy(GameComponentDestroyer& destroyer) override;
+
         Material(std::shared_ptr<Texture> color)
         {
             this->color = color;
@@ -24,16 +32,6 @@ namespace BEbraEngine {
             this->color = std::shared_ptr<Texture>(color);
             this->specular = std::shared_ptr<Texture>(specular);
             this->normal = std::shared_ptr<Texture>(normal);
-        }
-
-        //void destroy(ÑGameComponentDestroyer auto& destroyer)
-        //{
-        //    destroyer.destroyMaterialComponent(*this);
-        //}
-
-        template<typename T>
-        void destroy(T& destroyer) {
-            destroyer.destroyMaterialComponent(*this);
         }
 
         ~Material()
@@ -50,4 +48,6 @@ namespace BEbraEngine {
         std::shared_ptr<Texture> normal;
 
     };
+
+    //static_assert()
 }

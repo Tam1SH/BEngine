@@ -86,16 +86,15 @@ namespace BEbraEngine {
 		ExecuteQueues(ExecuteQueues&& o) noexcept {
 			Function f;
 			singleQueue.clear();
-			while (o.singleQueue.try_pop(f)) {
-				singleQueue.push(f);
 
-			}
-			parallelQueues = std::move(o.parallelQueues);
 			
 		}
 
 		ExecuteQueues& operator=(ExecuteQueues&& o) noexcept {
-			*this = std::move(o);
+
+			Function f;
+			singleQueue.clear();
+
 			return *this;
 		}
 

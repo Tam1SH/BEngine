@@ -3,8 +3,12 @@
 #include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
 #include <stdexcept>
 #include "Physics.hpp"
+
 module ColliderFactory;
+import utils;
+import Exceptions;
 import RigidBody;
+import Logger;
 import <memory>;
 import <optional>;
 using std::unique_ptr;
@@ -15,8 +19,11 @@ namespace BEbraEngine {
 	ColliderFactory::ColliderFactory(Physics& physics) noexcept {
 		this->physics = &physics;
 	}
+
 	void ColliderFactory::setShape(Collider& collider, btCollisionShape& newShape)
 	{
+		Logger::debug("Set new shape, at {}, {}", __FILE__, __LINE__);
+
 		if (collider._collider->getCollisionShape() != &newShape)
 		{
 			delete collider._collider->getCollisionShape();
@@ -28,30 +35,37 @@ namespace BEbraEngine {
 
 	optional<Collider*> ColliderFactory::create(const ColliderCreateInfo& info)
 	{
+		Logger::debug("create new Collder with info: (scale = {}, {}, {}), (position = {}, {}, {}), (type = {})",
+			info.scale.x, info.scale.y, info.scale.z,
+			info.position.x, info.position.y, info.position.z,
+			utils::toString(info.type));
+
 		auto col = new Collider();
 		btCollisionShape* shape{};
 		col->_collider = unique_ptr<btCollisionObject>(new btCollisionObject());
-		auto opt_shape = getShape(info.type);
-		if (opt_shape.has_value())
-			shape = opt_shape.value();
-		else throw std::exception();
+		auto opt_shape = getShape(info.type)
+			.and_then([&](auto value) -> optional<btCollisionShape*> {
+				shape = value;
+				return value;
+			})
+			.or_else([&]() -> optional<btCollisionShape*> {
+				Logger::error("info has no object at {}, {}", __FILE__, __LINE__);
+				throw EmptyValueException();
+			});
 
 		col->_collider->setUserPointer(col);
 		col->_collider->setCollisionShape(shape);
 		col->setScale(info.scale);
 		col->setPosition(info.position);
-		return optional<Collider*>(col);
+		return std::make_optional(col);
 	}
 
 	void ColliderFactory::destroyCollider(Collider& col)
 	{
-#ifdef _DEBUG
-		//col.isDestroyed = true;
-#endif 
+		Logger::debug("destroy collider({}) at {}, {}", (void*)&col, __FILE__, __LINE__);
+
 		physics->removeCollider(col);
 	}
-
-
 
 	optional<btCollisionShape*> ColliderFactory::getShape(ColliderType type)
 	{
@@ -73,12 +87,12 @@ namespace BEbraEngine {
 			return optional<btCollisionShape*>(new btConeShape(1, 1));
 			break;
 		case ColliderType::Mesh:
-			throw std::runtime_error("not implemented xyu");
+			throw std::runtime_error("not implemented");
 			break;
 		default:
-			break;
+			return std::nullopt;
 		}
-		return optional<btCollisionShape*>();
 	}
+
 
 }

@@ -1,3 +1,4 @@
+module;
 #include <vulkan.h>
 #include "platform_window.hpp"
 export module Window;
@@ -11,8 +12,8 @@ using std::string;
 
 namespace BEbraEngine {
 
-	export class Window {
-	public:
+	export struct Window {
+
 		enum class Visibility {
 			Windowed,
 			Minimized,
@@ -28,7 +29,7 @@ namespace BEbraEngine {
 		enum class SurfaceType {
 			Vulkan
 		};
-	public:
+
 		virtual void createWindow(const Vector2& size, const std::string& title) = 0;
 		virtual void onResizeCallback(int width, int height) = 0;
 		bool isClose();
@@ -46,6 +47,13 @@ namespace BEbraEngine {
 		vector<const char*> vulkan_GetInstanceExtensions();
 
 		Window();
+
+		Window(Window&&) noexcept = default;
+		Window& operator=(Window&&) noexcept = default;
+
+		Window(const Window&) = delete;
+		Window& operator=(const Window&) = delete;
+
 		virtual ~Window();
 
 	protected:

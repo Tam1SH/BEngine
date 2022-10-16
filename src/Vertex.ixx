@@ -1,3 +1,4 @@
+module;
 #include <vulkan/vulkan.h>
 
 export module Vertex;
@@ -10,8 +11,8 @@ import <vector>;
 
 namespace BEbraEngine {
     
-    export class Vertex {
-    public:
+    export struct Vertex {
+
         Vector3 position;
         Vector4 color;
         Vector2 texCoord;

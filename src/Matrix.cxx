@@ -22,7 +22,7 @@ namespace BEbraEngine {
 		return glm::mat4(v0, v1, v2, v3);
 	}
 
-	constexpr Matrix4::Matrix4(Vector4 v0, Vector4 v1, Vector4 v2, Vector4 v3) noexcept
+	constexpr Matrix4::Matrix4(const Vector4& v0, const Vector4& v1, const Vector4& v2, const Vector4& v3) noexcept
 	{
 		elements[0] = v0;
 		elements[1] = v1;

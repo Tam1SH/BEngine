@@ -1,26 +1,28 @@
+module;
 #include "platform.hpp"
 #include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
 
 export module RigidBody;
-
 import Debug;
-import <optional>;
-import <memory>;
 import BEbraMath;
 import Vector3;
 import Quaternion;
 import Transform;
 import GameComponent;
+//import GameComponentDestroyerDecl;
 
-using BE_STD::shared_ptr;
-using BE_STD::unique_ptr;
-using BE_STD::optional;
+import <optional>;
+import <memory>;
+
+using std::shared_ptr;
+using std::unique_ptr;
+using std::optional;
 
 
 namespace BEbraEngine {
     export class Physics;
     export class Collider;
-    class VisitorGameComponentDestroyer;
+    export struct GameComponentDestroyer;
 }
 
 namespace BEbraEngine {
@@ -32,12 +34,9 @@ namespace BEbraEngine {
     };
 
     export class RigidBody : public GameComponent {
-        //DEBUG_DESTROY_CHECK_DECL()
     public:
-
         friend class RigidBodyFactory;
         friend class Physics;
-
 
         struct TransformSetInfo {
             optional<Transform*> old{};
@@ -46,7 +45,7 @@ namespace BEbraEngine {
     public:
 
 
-        void destroy(VisitorGameComponentDestroyer& destroyer) {}//override;
+        void destroy(GameComponentDestroyer& destroyer) override;//override;
 
         //void destroy(ÑVisitorComponentDestroyer auto& destroyer) {
         //	destroyer.destroyRigidBodyComponent(*this);

@@ -1,7 +1,7 @@
+module;
 #include "platform.hpp"
 #include <tbb.h>
 #include <variant>
-
 
 export module RenderWorld;
 import RenderDecl;
@@ -14,15 +14,11 @@ import RenderData;
 import <vector>;
 import <algorithm>;
 
-
-
 namespace BEbraEngine {
 
 
-    export class RenderWorld {
-    public:
+    export struct RenderWorld {
         struct Request { };
-    public:
 
         void selectMainCamera(SimpleCamera& camera);
 
@@ -51,20 +47,19 @@ namespace BEbraEngine {
         
         RenderWorld(RenderWorld&& o) noexcept {
             data = std::move(o.data);
-
-            Request r;
             requestQueue.clear();
-            while (o.requestQueue.try_pop(r)) {
-                requestQueue.push(r);
-            }
-
             objects = std::move(o.objects);
             render = std::move(o.render);
         }
 
         RenderWorld& operator=(RenderWorld&& o) noexcept {
-            *this = std::move(o);
+
+            data = std::move(o.data);
+            requestQueue.clear();
+            objects = std::move(o.objects);
+            render = std::move(o.render);
             return *this;
+
         }
 
         RenderWorld(const RenderWorld&) noexcept = delete;
@@ -74,7 +69,7 @@ namespace BEbraEngine {
         RenderData* data;
         Render* render;
 
-        tbb::concurrent_queue<Request> requestQueue;
+        tbb::concurrent_queue<Request> requestQueue{};
         std::vector<RenderObject*> objects;
         std::vector<Light*> lights;
     };

@@ -305,19 +305,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AngelScript.cpp" />
+    <ClCompile Include="AngelScript.cxx" />
     <ClCompile Include="AngelScriptEngine.cpp" />
     <ClCompile Include="Asset.ixx" />
     <ClCompile Include="AssetsStore.cxx" />
     <ClCompile Include="AssetsStore.ixx" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CGameComponentDestroyer.ixx" />
     <ClCompile Include="CRender.ixx" />
     <ClCompile Include="CRenderAllocator.ixx" />
     <ClCompile Include="CRenderObjectFactory.ixx" />
     <ClCompile Include="CRenderObjectFactoryDecl.ixx" />
+    <ClCompile Include="CVector3.ixx" />
+    <ClCompile Include="DirectionLight.cpp" />
     <ClCompile Include="DirectionLight.ixx" />
+    <ClCompile Include="Exceptions.ixx" />
+    <ClCompile Include="GameComponent.cxx" />
+    <ClCompile Include="GameComponentDestroyerDecl.ixx" />
+    <ClCompile Include="GameObject.cxx" />
+    <ClCompile Include="Light.cxx" />
     <ClCompile Include="Light.ixx" />
+    <ClCompile Include="Logger.ixx" />
+    <ClCompile Include="Material.cxx" />
     <ClCompile Include="Material.ixx" />
     <ClCompile Include="Math.cxx" />
     <ClCompile Include="Matrix.cxx" />
@@ -331,8 +339,11 @@
     </ClCompile>
     <ClCompile Include="RenderObjectDecl.ixx" />
     <ClCompile Include="RenderObjectFactoryDecl.ixx" />
+    <ClCompile Include="RigidBodyFactoryDecl.ixx" />
     <ClCompile Include="Task.ixx" />
+    <ClCompile Include="Texture.cxx" />
     <ClCompile Include="TextureFactoryDecl.ixx" />
+    <ClCompile Include="Transform.cxx" />
     <ClCompile Include="Vector2.cxx" />
     <ClCompile Include="Vector3.cxx" />
     <ClCompile Include="Vector4.cxx" />
@@ -343,14 +354,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="Collider.cxx" />
     <ClCompile Include="Collider.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ColliderFactory.cpp" />
+    <ClCompile Include="ColliderFactory.cxx" />
     <ClCompile Include="CommandBuffer.cpp" />
-    <ClCompile Include="Concepts.ixx" />
+    <ClCompile Include="OnlyMovable.ixx" />
     <ClCompile Include="CTextureFactory.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -385,7 +396,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="RigidBody.cxx" />
     <ClCompile Include="RigidBody.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
