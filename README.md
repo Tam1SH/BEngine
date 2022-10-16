@@ -7,3 +7,5 @@ GLM
 AngelScript
 stb
 Assimp
+spdlog
+
