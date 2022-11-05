@@ -35,10 +35,3 @@ namespace BEbraEngine {
 	
 }
 
-namespace BEbraEngine {
-	namespace create {
-		template<> std::variant<VulkanWindow> window(VulkanRender& render) {
-			return std::variant<VulkanWindow>(render);
-		}
-	}
-}

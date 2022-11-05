@@ -7,7 +7,7 @@ export module GameObjectFactory;
 import Light;
 import Camera;
 import CRender;
-import RenderDecl;
+import Render;
 import RenderAllocatorDecl;
 import RenderObjectFactoryDecl;
 import RenderWorld;

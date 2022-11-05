@@ -5,7 +5,6 @@ import Debug;
 import BEbraMath;
 import Vector3;
 import Quaternion;
-import GameComponentDestroyerDecl;
 
 namespace BEbraEngine {
     class TransformFactory;
@@ -26,7 +25,10 @@ namespace BEbraEngine {
 
     public:
 
-        void destroy(GameComponentDestroyer& destroyer) override;
+        template<typename Destroyer>
+        void destroy(Destroyer& destroyer) {
+            destroyer.destroyTransformComponent(*this);
+        }
 
         void setPosition(const Vector3& position) noexcept;
 

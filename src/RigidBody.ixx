@@ -9,7 +9,6 @@ import Vector3;
 import Quaternion;
 import Transform;
 import GameComponent;
-//import GameComponentDestroyerDecl;
 
 import <optional>;
 import <memory>;
@@ -45,7 +44,10 @@ namespace BEbraEngine {
     public:
 
 
-        void destroy(GameComponentDestroyer& destroyer) override;//override;
+        template<typename Destroyer>
+        void destroy(Destroyer& destroyer) {
+            //destroyer.destroyLight(*this);
+        }
 
         //void destroy(ÑVisitorComponentDestroyer auto& destroyer) {
         //	destroyer.destroyRigidBodyComponent(*this);

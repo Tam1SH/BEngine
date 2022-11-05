@@ -1,17 +1,12 @@
-module GameObject;
-//import GameComponentDestroyer;
+export module GameObject_impl;
+import GameObject;
 import <typeinfo>;
+import <string>;
 using std::string;
 
 namespace BEbraEngine {
     
 
-    void GameObject::destroy(GameComponentDestroyer& destroyer)
-    {
-    //    for (auto& components : components_) {
-    //        components->destroy(destroyer);
-    //    }
-    }
 
     GameObject::GameObject() noexcept
     {

@@ -1,8 +1,6 @@
 // TODO: скрипт двигло
 // TODO: сделать кластерный рендер
 //TODO: начать делать хотя бы что-то со звуком 
-//TODO: подумать на толчке о своей модели асинхронных задач в рендере.
-//TODO: compile-time выбор рендера и связанных классов.
 /*
 TODO: подумать над реализацей:
 ****************************************************************************************
@@ -12,9 +10,8 @@ TODO: подумать над реализацей:
 */
 #include <boost/filesystem.hpp>
 #include "Engine.hpp"
-#include <spdlog/spdlog.h>
 import Debug;
-
+import Logger;
 
 #ifndef __ANDROID__
 #undef main
@@ -25,8 +22,8 @@ extern "C"
 
 int main(int argc, char* argv[])
 {
-    spdlog::set_level(spdlog::level::debug);
-    spdlog::set_pattern("[%H:%M:%S.%f] [%^%l%$] %v");
+    BEbraEngine::Logger::init();
+
     //DEBUG_LOG1("BEGIN OF PIZDEC");
     BEbraEngine::Engine engine{};
 

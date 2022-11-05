@@ -1,35 +1,34 @@
-#include <boost/filesystem.hpp>
-#include <angelscript.h>
+//#include <boost/filesystem.hpp>
+//#include <angelscript.h>
 
-#include <typeinfo>
-
-#include <cassert>
-#define DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(ObjectType)	\
-int refCount{};										\
-void addRef() { ++refCount; }			\
-int release() {						\
-		if (--refCount == 0)						\
-		{											\
-			delete this;							\
-			return 0;								\
-		}											\
-			return refCount;						\
-}													\
+//#define DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(ObjectType)	\
+//int refCount{};										\
+//void addRef() { ++refCount; }			\
+//int release() {						\
+//		if (--refCount == 0)						\
+//		{											\
+//			delete this;							\
+//			return 0;								\
+//		}											\
+//			return refCount;						\
+//}													\
 
 
 
 export module ScriptWrappers;
-import <string>;
-import <memory>;
-import AngelScriptEngine;
-import ObjectFactoryFacade;
-import Vector3;
-import Input;
-import GameObject;
+//import <tbb.h>;
 
-import RigidBodyFactory;
-import RigidBody;
-import GameComponent;
+//import <string>;
+//import <memory>;
+//import AngelScriptEngine;
+//import ObjectFactoryFacade;
+//import Vector3;
+//import Input;
+//import GameObject;
+//import RigidBodyFactory;
+//import RigidBody;
+//import GameComponent;
+/*
 namespace BEbraEngine {
 	namespace Wrappers {
 		export template<typename T>
@@ -65,6 +64,7 @@ namespace BEbraEngine {
 			}
 
 			static void registerObj(asIScriptEngine* engine) {
+				
 				int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
 
 				r = engine->RegisterObjectBehaviour(__name,
@@ -78,9 +78,10 @@ namespace BEbraEngine {
 				// asMETHODPR(_Vector3, operator*, (float) const noexcept, _Vector3&&)
 
 				r = engine->RegisterGlobalProperty("_Input@ input", &instance); assert(r >= 0);
+				
 			}
 		private:								
-			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_Input)
+			//DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_Input)
 			bool isKeyPressed(int key) {
 				return Input::isKeyPressed((KeyCode)key);
 			}
@@ -107,7 +108,7 @@ namespace BEbraEngine {
 			static void registerObj(asIScriptEngine* engine, RigidBodyFactory* factory) {
 
 				int r = engine->RegisterObjectType(__name,
-					sizeof(RigidBody), asOBJ_REF); assert(r >= 0);
+					sizeof(RigidBody), asOBJ_REF); //assert(r >= 0);
 
 				//r = engine->RegisterObjectBehaviour(__name, asBEHAVE_FACTORY, "RigidBody@ f()", asFUNCTION(RigidBodyFactory::create), asCALL_CDECL); assert(r >= 0);
 
@@ -146,7 +147,7 @@ namespace BEbraEngine {
 			}
 
 			static void registerObj(asIScriptEngine* engine) {
-
+				
 				int r = engine->RegisterObjectType(__name,
 					sizeof(_Vector3), asOBJ_REF | asOBJ_SCOPED); assert(r >= 0);
 
@@ -194,6 +195,7 @@ namespace BEbraEngine {
 
 				r = engine->RegisterObjectProperty(__name,
 					"float z", asOFFSET(Vector3, z), asOFFSET(_Vector3, instance), false); assert(r >= 0);
+				
 			}
 
 			_Vector3(const _Vector3& vec) {
@@ -258,7 +260,7 @@ namespace BEbraEngine {
 
 			}
 		private:
-			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObjectComponent)
+			//DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObjectComponent)
 		};
 
 		export class _GameObject {
@@ -267,7 +269,7 @@ namespace BEbraEngine {
 			static ObjectFactoryFacade* factory;
 
 			static void registerObj(asIScriptEngine* engine) {
-
+				
 				int r = engine->RegisterObjectType(__name, 0, asOBJ_REF); assert(r >= 0);
 
 				r = engine->RegisterObjectBehaviour(__name,
@@ -281,7 +283,7 @@ namespace BEbraEngine {
 
 			////	r = engine->RegisterObjectMethod(__name,
 			//		"GameObjectComponent@ getComponentByName(const string& in)", asMETHOD(_GameObject, getComponentByName), asCALL_THISCALL); assert(r >= 0);
-
+				
 			}
 		private:
 		
@@ -310,12 +312,14 @@ namespace BEbraEngine {
 				//DEBUG_LOG("create script game object");
 
 			}
-			DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObject)
+			//DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(_GameObject)
 
 				std::shared_ptr<GameObject> instance;
 
 			static constexpr const char* __name = "GameObject";
 
+
+			int refCount;
 
 			static _GameObject* gameObjectFactory(const _Vector3& in) {
 				auto o = new _GameObject(in);
@@ -347,3 +351,4 @@ namespace BEbraEngine {
 		ObjectFactoryFacade* _GameObject::factory;
 	}
 }
+*/

@@ -27,10 +27,10 @@ namespace BEbraEngine {
 		{v.z()} -> std::convertible_to<Scalar>;
 	};
 	export template<typename Vector, typename Scalar = float>
-	concept CVector3FromArray = requires(Vector & v)
+	concept CVector3FromArray = 
+		std::tuple_size<std::decay_t<Vector>>::value >= 3 &&
+		requires(Vector & v)
 	{
-		//Без понятия, но в компайл-тайме не проверяет.
-		{std::tuple_size<std::decay_t<Vector>>::value >= 3};
 		{v[0]} -> std::convertible_to<Scalar>;
 
 	};

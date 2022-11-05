@@ -1,11 +1,11 @@
-module Transform;
+export module Transform_impl;
+import Transform;
+import BEbraMath;
+
 //import GameComponentDestroyer;
 
 namespace BEbraEngine {
-	void Transform::destroy(GameComponentDestroyer& destroyer)
-	{
-		//destroyer.destroyTransformComponent(*this);
-	}
+
 	void Transform::setPosition(const Vector3& position) noexcept
 	{
 		this->position = position;

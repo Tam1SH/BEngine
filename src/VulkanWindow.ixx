@@ -1,7 +1,7 @@
 module;
 #include <variant>
 export module VulkanWindow;
-import CRender;
+import Render;
 import Window;
 import VulkanRender;
 import Vector2;
@@ -36,13 +36,12 @@ namespace BEbraEngine {
 
 	namespace create {
 
+		export std::variant<VulkanWindow> window(Render& render) {
 
-		export std::variant<VulkanWindow> window(CRender auto& render) {
-			static_assert("no implementation found");
+			return std::visit([](VulkanRender& render) {
+				return std::variant<VulkanWindow>(render);
+			}, render);
 		}
-
-		export template<> std::variant<VulkanWindow> window(VulkanRender& render);
-
 	}
 	/*
 	void VulkanWindow::createWindow(const Vector2& size, const std::string& title)

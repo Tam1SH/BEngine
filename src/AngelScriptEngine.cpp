@@ -35,7 +35,7 @@ namespace BEbraEngine {
 
 	AngelScriptEngine::AngelScriptEngine(ObjectFactoryFacade* factory)
 	{
-		
+		/*
 		this->factory = factory;
 
 		engine = asCreateScriptEngine();
@@ -57,6 +57,7 @@ namespace BEbraEngine {
 		Wrappers::_Input::getInstance();
 		
 		Wrappers::_GameObject::factory = static_cast<ObjectFactoryFacade*>(factory);
+		*/
 	}
 
 	AngelScriptEngine::~AngelScriptEngine()

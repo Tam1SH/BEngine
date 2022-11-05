@@ -1,6 +1,7 @@
 module;
 #include "platform.hpp"
-#include <tbb.h>
+
+#include <boost/filesystem.hpp>
 export module VulkanRenderBufferArray;
 import RenderBufferArray;
 import VulkanBuffer;
@@ -8,6 +9,7 @@ import RenderBuffer;
 import VulkanRender;
 import VulkanRenderAllocator;
 import <optional>;
+import <tbb.h>;
 import <vector>;
 import <memory>;
 
@@ -31,11 +33,11 @@ namespace BEbraEngine {
 
 
 			if (_usage == RenderBufferPoolUsage::SeparateOneBuffer) {
-				alignsizeofData = allocator.alignmentBuffer(sizeofData, type);
+				alignsizeofData = allocator->alignmentBuffer(sizeofData, type);
 				if (type == TypeRenderBuffer::Storage)
-					_buffer = shared_ptr<RenderBuffer>(allocator.createStorageBuffer(sizeofData * count));
+					_buffer = shared_ptr<RenderBuffer>(allocator->createStorageBuffer(sizeofData * count));
 				if (type == TypeRenderBuffer::Uniform)
-					_buffer = shared_ptr<RenderBuffer>(allocator.createUniformBuffer(sizeofData * count));
+					_buffer = shared_ptr<RenderBuffer>(allocator->createUniformBuffer(sizeofData * count));
 
 			}
 
@@ -130,8 +132,38 @@ namespace BEbraEngine {
 			return optional<shared_ptr<RenderBufferView>>();
 		} 
 
-		VulkanRenderBufferArray(VulkanRenderAllocator& allocator) 
-			: allocator(allocator) { }
+		VulkanRenderBufferArray(VulkanRenderBufferArray&&) noexcept = default;
+		VulkanRenderBufferArray& operator=(VulkanRenderBufferArray&&) noexcept = default;
+
+		VulkanRenderBufferArray(const VulkanRenderBufferArray& other) noexcept {
+			dataSize = other.dataSize;
+			_buffer = other._buffer;
+			_data = other._data;
+			nullData = other.nullData;
+			std::copy(other._pool.unsafe_begin(), other._pool.unsafe_end(), _pool.unsafe_begin());
+
+			allocator = other.allocator;
+			totalCount = other.totalCount;
+			countToMap = other.countToMap;
+			_usage = other._usage;
+		}
+
+		VulkanRenderBufferArray& operator=(const VulkanRenderBufferArray& other) noexcept {
+			dataSize = other.dataSize;
+			_buffer = other._buffer;
+			_data = other._data;
+			nullData = other.nullData;
+			std::copy(other._pool.unsafe_begin(), other._pool.unsafe_end(), _pool.unsafe_begin());
+
+			allocator = other.allocator;
+			totalCount = other.totalCount;
+			countToMap = other.countToMap;
+			_usage = other._usage;
+			return *this;
+		}
+
+
+		VulkanRenderBufferArray(VulkanRenderAllocator& allocator) : allocator(&allocator) { }
 
 		~VulkanRenderBufferArray()
 		{
@@ -145,14 +177,10 @@ namespace BEbraEngine {
 		const vector<RenderData>* _data;
 		vector<RenderData> nullData;
 		tbb::concurrent_queue<shared_ptr<RenderBufferView>> _pool;
-		VulkanRenderAllocator& allocator;
+		VulkanRenderAllocator* allocator;
 		size_t totalCount;
 		size_t countToMap;
 		RenderBufferPoolUsage _usage{};
 	};
-
-
-
-
 }
 

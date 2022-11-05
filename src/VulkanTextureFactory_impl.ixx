@@ -1,7 +1,7 @@
 ﻿
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-
+#include <variant>
 #include <stb-master/stb_image.h>
 #include <stb-master/stb_image_write.h>
 #include <boost/filesystem.hpp>
@@ -9,10 +9,13 @@
 #include <vulkan.h>
 #include <cmath>
 #include <algorithm>
-#undef max
 
-module VulkanTextureFactory;
+export module VulkanTextureFactory_impl;
+import VulkanTextureFactory;
 import VulkanRender;
+import Task;
+import Render;
+import Material;
 import <optional>;
 import <vector>;
 import <memory>;
@@ -22,9 +25,6 @@ using std::vector;
 using std::shared_ptr;
 namespace BEbraEngine {
     namespace create {
-        template<> std::variant<VulkanTextureFactory> textureFactory(VulkanRender& render) {
-            return std::variant<VulkanTextureFactory>(render);
-        }
     }
     Task<optional<Material*>> VulkanTextureFactory::createMaterialAsync(const MaterialCreateInfo& info)
     {
@@ -108,9 +108,12 @@ namespace BEbraEngine {
             image->setWidth(texWidth);
         }
 
-        if (generateMip)
-            image->mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-        else {
+        if (generateMip) {
+            //auto max = std::max(texWidth, texHeight);
+            //auto log2 = std::log2(max);
+            //image->mipLevels = static_cast<uint32_t>(std::floor(log2)) + 1;
+        }
+         else {
 
             image->mipLevels = 1;
             image->setLoaded();

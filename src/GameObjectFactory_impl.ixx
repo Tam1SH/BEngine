@@ -2,12 +2,14 @@
 #include "Physics.hpp"
 #include <variant>
 
-module GameObjectFactory;
+export module GameObjectFactory_impl;
+import GameObjectFactory;
 import GameComponentCreateInfo;
+import CRender;
 import CRenderAllocator;
 import CRenderObjectFactory;
 import RenderWorld;
-import RenderDecl;
+import Render;
 import CRenderObjectFactory;
 import RenderAllocatorDecl;
 import TransformFactory;
@@ -25,24 +27,24 @@ namespace BEbraEngine {
 	GameObjectFactory::GameObjectFactory(Render& render, RenderAllocator& allocator, Physics& physics, RenderWorld& world) noexcept
 	{
 		
-		std::visit([&](CRender auto& render) {
-			auto meshFactory = MeshFactory(allocator);
+		
+		auto meshFactory = MeshFactory(allocator);
 
-			std::visit([&](CRenderAllocator auto& allocator) {
-				renderFactory = BEbraEngine::create::renderObjectFactory(render, allocator, std::move(meshFactory));
-			}, allocator);
+		std::visit([&](CRenderAllocator auto& allocator) {
+			renderFactory = BEbraEngine::create::renderObjectFactory(render, allocator, std::move(meshFactory));
+		}, allocator);
 
-			std::visit([&](CRenderObjectFactory auto& renderFactory) {
-				colliderFactory = physics.getColliderFactory();
-				rigidBodyFactory = physics.getRigidBodyFactory();
-				transFactory = TransformFactory();
-				//renderFactory.setComponentDestroyer(*destroyer);
-			}, renderFactory);
+		std::visit([&](CRenderObjectFactory auto& renderFactory) {
+			colliderFactory = physics.getColliderFactory();
+			rigidBodyFactory = physics.getRigidBodyFactory();
+			transFactory = TransformFactory();
+			//renderFactory.setComponentDestroyer(*destroyer);
+		}, renderFactory);
 
-			destroyer = std::unique_ptr<GameComponentDestroyer>(new GameComponentDestroyer(
-				renderFactory, *colliderFactory, *rigidBodyFactory, BEbraEngine::create::textureFactory(render)
-			));
-		}, render);
+		destroyer = std::unique_ptr<GameComponentDestroyer>(new GameComponentDestroyer(
+			renderFactory, *colliderFactory, *rigidBodyFactory, BEbraEngine::create::textureFactory(render)
+		));
+		
 
 
 

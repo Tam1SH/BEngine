@@ -1,18 +1,18 @@
-module;
-#include "platform.hpp"
-#include <tbb.h>
 #include <variant>
+#include <boost/filesystem.hpp>
 
 export module RenderWorld;
-import RenderDecl;
+import Render;
 import Camera;
 import DirectionLight;
 import Light;
 import RenderObject;
 import RenderData;
 
+import <tbb.h>;
 import <vector>;
 import <algorithm>;
+
 
 namespace BEbraEngine {
 
@@ -40,14 +40,13 @@ namespace BEbraEngine {
 
         RenderData& getRenderData();
 
-
         RenderWorld(Render& render);
         RenderWorld() {}
         
         
         RenderWorld(RenderWorld&& o) noexcept {
             data = std::move(o.data);
-            requestQueue.clear();
+            //requestQueue.clear();
             objects = std::move(o.objects);
             render = std::move(o.render);
         }
@@ -55,7 +54,7 @@ namespace BEbraEngine {
         RenderWorld& operator=(RenderWorld&& o) noexcept {
 
             data = std::move(o.data);
-            requestQueue.clear();
+            //requestQueue.clear();
             objects = std::move(o.objects);
             render = std::move(o.render);
             return *this;

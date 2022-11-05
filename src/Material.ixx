@@ -4,7 +4,6 @@ export module Material;
 import GameComponent;
 import Texture;
 import OnlyMovable;
-import GameComponentDestroyerDecl;
 import <memory>;
 
 
@@ -20,7 +19,10 @@ namespace BEbraEngine {
     public:
 
 
-        void destroy(GameComponentDestroyer& destroyer) override;
+        template<typename Destroyer>
+        void destroy(Destroyer& destroyer) {
+            //destroyer.destroyLight(*this);
+        }
 
         Material(std::shared_ptr<Texture> color)
         {

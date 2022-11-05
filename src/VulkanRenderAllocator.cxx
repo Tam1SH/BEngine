@@ -38,11 +38,3 @@ namespace BEbraEngine {
 	}
 }
 
-
-namespace BEbraEngine {
-	namespace create {
-		template<> std::variant<VulkanRenderAllocator> renderAllocator1(VulkanRender& render) {
-			return std::variant<VulkanRenderAllocator>(render);
-		}
-	}
-}

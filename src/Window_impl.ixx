@@ -1,9 +1,12 @@
-
+module;
 #include <SDL_vulkan.h>
 #include <SDL.h>
 
-module Window;
-
+export module Window_impl;
+import Window;
+import Input;
+import <vector>;
+import <string>;
 using std::vector;
 using std::string;
 

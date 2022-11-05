@@ -1,11 +1,9 @@
-module Collider;
+export module Collider_impl;
+import Collider;
 //import GameComponentDestroyer;
 
 namespace BEbraEngine {
-	void Collider::destroy(GameComponentDestroyer& destroyer)
-	{
-		//destroyer.destroyColliderComponent(*this);
-	}
+
 
 	void Collider::setScale(const Vector3& size) noexcept
 	{

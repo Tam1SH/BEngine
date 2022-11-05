@@ -4,14 +4,16 @@ module;
 export module Texture;
 import GameComponent;
 import Debug;
-import GameComponentDestroyerDecl;
 
 namespace BEbraEngine {
     
     export class Texture : public GameComponent {
     public:
 
-        void destroy(GameComponentDestroyer& destroyer) override;
+        template<typename Destroyer>
+        void destroy(Destroyer& destroyer) {
+            destroyer.destroyTexture(*this);
+        }
 
         bool isLoaded() { return isLoaded_; }
         void setLoaded() { isLoaded_ = true; }

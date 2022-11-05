@@ -3,7 +3,6 @@ module;
 export module GameObject;
 import Debug;
 import GameComponent;
-import GameComponentDestroyerDecl;
 
 import <exception>;
 import <typeinfo>;
@@ -21,7 +20,10 @@ namespace BEbraEngine {
     export class GameObject : public GameComponent { 
     public:
 
-        void destroy(GameComponentDestroyer& destroyer) override;
+        template<typename Destroyer>
+        void destroy(Destroyer& destroyer) {
+            destroyer.destroyGameObject(*this);
+        }
 
         template<typename RequiredType>
             requires std::is_base_of_v<GameComponent, RequiredType>

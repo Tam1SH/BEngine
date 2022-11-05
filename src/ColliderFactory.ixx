@@ -1,5 +1,4 @@
 module;
-#include "platform.hpp"
 #include <Physics/btBulletDynamicsCommon.h>
 #include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
 
@@ -15,7 +14,6 @@ namespace BEbraEngine {
 
 
 namespace BEbraEngine {
-	
 	
 
 	export class ColliderFactory

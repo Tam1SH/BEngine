@@ -1,14 +1,11 @@
 module;
-#include "platform.hpp"
 #include <Physics/btBulletDynamicsCommon.h>
-#include <spdlog/spdlog.h>
 export module Collider;
 import Debug;
 import Vector3;
 import Quaternion;
 import OnlyMovable;
 import GameComponent;
-import GameComponentDestroyerDecl;
 import <memory>;
 import <exception>;
 
@@ -42,7 +39,10 @@ namespace BEbraEngine {
 		friend class ColliderFactory;
 	public:
 
-		void destroy(GameComponentDestroyer& destroyer) override;
+		template<typename Destroyer>
+		void destroy(Destroyer& destroyer) {
+			destroyer.destroyCollider(*this);
+		}
 
 		btCollisionObject& get() noexcept { return *_collider; }
 

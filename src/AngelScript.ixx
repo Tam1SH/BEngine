@@ -2,7 +2,6 @@ module;
 #include <angelscript.h>
 export module AngelScript;
 import BaseScript;
-import GameComponentDestroyerDecl;
 
 namespace BEbraEngine {
 
@@ -10,7 +9,10 @@ namespace BEbraEngine {
 	{
 	public:
 
-		void destroy(GameComponentDestroyer& destroyer) override;
+		template<typename Destroyer>
+		void destroy(Destroyer& destroyer) {
+			//destroyer.destroyLight(*this);
+		}
 
 		asIScriptContext* getContext();
 

@@ -11,7 +11,7 @@ import VulkanRenderAllocator;
 import RenderHelper;
 import RenderWorld;
 import RenderAllocatorDecl;
-import RenderDecl;
+import Render;
 import ExecuteQueues;
 import CRender;
 import Time;
@@ -40,10 +40,8 @@ namespace BEbraEngine {
         Engine()
         {
 
-            std::visit([&](CRender auto& render) {
-                allocator = BEbraEngine::create::renderAllocator1(render);
-                window = BEbraEngine::create::window(render);
-            }, render);
+            allocator = BEbraEngine::create::renderAllocator1(render);
+            window = BEbraEngine::create::window(render);
 
             std::visit([&](VulkanWindow& window) {
                 window.createWindow(Vector2(1000, 1000), "BEEEBRA!!!");

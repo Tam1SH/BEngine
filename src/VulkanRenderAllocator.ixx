@@ -2,6 +2,7 @@ module;
 #include <variant>
 export module VulkanRenderAllocator;
 import CRender;
+import Render;
 import VulkanRender;
 import RenderAllocatorTypeRenderBuffer;
 import Vertex;
@@ -46,10 +47,12 @@ namespace BEbraEngine {
 		using RenderAllocator = std::variant<VulkanRenderAllocator>;
 
 		export RenderAllocator renderAllocator1(CRender auto& render) {
-			static_assert("no implementation found");
+			return std::visit([](VulkanRender& render) {
+				return std::variant<VulkanRenderAllocator>(render);
+			}, render);
+			
 		}
 
-		export template<> RenderAllocator renderAllocator1(VulkanRender& render);
 		
 	}
 

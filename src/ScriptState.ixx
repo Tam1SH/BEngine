@@ -1,18 +1,19 @@
 module;
 #include <boost/filesystem.hpp>
 #include "platform.hpp"
-#include <tbb.h>
+
 #include <variant>
 
 export module ScriptState;
 
 import RenderObject;
 import Camera;
+//import <tbb.h>;
 import DirectionLight;
 import GameObject;
 import Light;
 
-import RenderDecl;
+import Render;
 import RenderAllocatorDecl;
 import ExecuteQueues;
 import Vector4;
@@ -27,7 +28,6 @@ import <list>;
 import <vector>;
 import <optional>;
 import <string>;
-
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -88,7 +88,7 @@ namespace BEbraEngine {
 
         vector<shared_ptr<Light>> lights;
 
-        tbb::concurrent_hash_map<const GameObject*, shared_ptr<GameObject>> objectsCache;
+        //tbb::concurrent_hash_map<const GameObject*, shared_ptr<GameObject>> objectsCache;
 
         ExecuteQueues<function<void()>> queues;
 

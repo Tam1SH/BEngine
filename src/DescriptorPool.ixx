@@ -1,8 +1,10 @@
 #include <vulkan.h>
-#include <tbb.h>
+
 export module DescriptorPool;
 import <optional>;
+import <tbb.h>;
 import <list>;
+import <mutex>;
 import CreateInfoStructures;
 import Debug;
 

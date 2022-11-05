@@ -1,3 +1,4 @@
+module;
 export module RenderObject;
 import GameComponent;
 import Matrix4;
@@ -6,7 +7,6 @@ import Material;
 import Model;
 import RenderBuffer;
 import Transform;
-import GameComponentDestroyerDecl;
 import <memory>;
 
 namespace BEbraEngine {
@@ -36,7 +36,10 @@ namespace BEbraEngine {
             int hasMaps{ false };
         };
 
-        void destroy(GameComponentDestroyer& destroyer) override;
+        template<typename Destroyer>
+        void destroy(Destroyer& destroyer) {
+            destroyer.destroyRenderObject(*this);
+        }
 
         Material* material;
 

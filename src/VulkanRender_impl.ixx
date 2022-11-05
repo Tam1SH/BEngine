@@ -7,7 +7,9 @@
 #include <boost/filesystem.hpp>
 #include <iostream>
 #include <fstream>
-module VulkanRender;
+const int MAX_FRAMES_IN_FLIGHT = 3;
+export module VulkanRender_impl;
+import VulkanRender;
 import VulkanWindow;
 import RenderWorld;
 import VulkanBuffer;
@@ -17,6 +19,7 @@ import <vector>;
 import DescriptorSetLayouts;
 import DescriptorPool;
 import CommandBuffer;
+
 import CommandPool;
 import CreateInfoStructures;
 import DescriptorSet;
@@ -2795,39 +2798,39 @@ namespace BEbraEngine {
     //    this->globalLight = dynamic_cast<VulkanDirLight*>(&globalLight);
     //}
     
-    VkDescriptorSet VulkanRender::createDescriptor(VulkanDescriptorSetInfo* info)
+    VkDescriptorSet VulkanRender::createDescriptor(const VulkanDescriptorSetInfo& info)
     {
         VkDescriptorSet set{};
         auto opt_set = vulkanRenderBufferPool->get();
         if (opt_set.has_value()) {
             set = opt_set.value();
 
-            auto vkbuffer = static_cast<VulkanBuffer*>(info->bufferView->buffer.get());
+            auto vkbuffer = static_cast<VulkanBuffer*>(info.bufferView->buffer.get());
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = vkbuffer->self;
-            bufferInfo.offset = info->bufferView->offset;
-            bufferInfo.range = info->bufferView->availableRange;
+            bufferInfo.offset = info.bufferView->offset;
+            bufferInfo.range = info.bufferView->availableRange;
 
             VkDescriptorImageInfo image{};
-            if (info->image) {
+            if (info.image) {
 
                 image.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                image.imageView = info->image->imageView;
-                image.sampler = info->image->sampler;
+                image.imageView = info.image->imageView;
+                image.sampler = info.image->sampler;
             }
             VkDescriptorImageInfo specular{};
-            if (info->specular) {
+            if (info.specular) {
                 specular.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                specular.imageView = info->specular->imageView;
-                specular.sampler = info->specular->sampler;
+                specular.imageView = info.specular->imageView;
+                specular.sampler = info.specular->sampler;
             }
 
 
             VkDescriptorImageInfo normal{};
-            if (info->normal) {
+            if (info.normal) {
                 normal.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                normal.imageView = info->normal->imageView;
-                normal.sampler = info->normal->sampler;
+                normal.imageView = info.normal->imageView;
+                normal.sampler = info.normal->sampler;
             }
 
 
@@ -2843,7 +2846,7 @@ namespace BEbraEngine {
             descriptorWrites[0].descriptorType = types[0].type;
             descriptorWrites[0].descriptorCount = 1;
             descriptorWrites[0].pBufferInfo = &bufferInfo;
-            if (info->image) {
+            if (info.image) {
                 descriptorWrites.resize(2);
                 descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 descriptorWrites[1].dstSet = set;
@@ -2853,7 +2856,7 @@ namespace BEbraEngine {
                 descriptorWrites[1].descriptorCount = 1;
                 descriptorWrites[1].pImageInfo = &image;
             }
-            if (info->specular) {
+            if (info.specular) {
 
                 descriptorWrites.resize(3);
                 descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -2864,7 +2867,7 @@ namespace BEbraEngine {
                 descriptorWrites[2].descriptorCount = 1;
                 descriptorWrites[2].pImageInfo = &specular;
             }
-            if (info->normal) {
+            if (info.normal) {
 
                 descriptorWrites.resize(4);
                 descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

@@ -1,11 +1,10 @@
-module RigidBody;
-//import GameComponentDestroyer;
+#include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
+export module RigidBody_impl;
+import RigidBody;
+import BEbraMath;
+
 namespace BEbraEngine {
 
-
-    void RigidBody::destroy(GameComponentDestroyer& destroyer) {
-
-    }
     void RigidBody::moveTo(const Vector3& point) noexcept
     {
         transform->setPosition(point);
@@ -70,7 +69,6 @@ namespace BEbraEngine {
         body->getWorldTransform().setRotation(transform->getRotation());
     }
 
-    btRigidBody& RigidBody::getRigidBody() const noexcept { return *body; }
 
     void RigidBody::setTransform(TransformSetInfo& info) noexcept
     {

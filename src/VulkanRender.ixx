@@ -1,23 +1,25 @@
-#include "platform.hpp"
+module;
 #include <vulkan.h>
-#include <tbb.h>
 #include <boost/filesystem.hpp>
+
+
 export module VulkanRender;
 import ExecuteQueues;
+import <tbb.h>;
 import RenderData;
 import RenderAllocatorTypeRenderBuffer;
 import RenderHelper;
 import RenderBuffer;
 import Vector2;
+import CommandBuffer;
+import DescriptorPool;
 import Vector4;
 import Vector3;
 import Texture;
 import CRenderAllocator;
 import Matrix4;
-/*Objects*/
 import VulkanObjects;
-/*Objects*/
-
+import VulkanPipeline;
 import Line;
 import CreateInfoStructures;
 import Vertex;
@@ -46,15 +48,9 @@ using std::atomic;
 
 namespace BEbraEngine {
     export struct VulkanWindow;
-    class DescriptorPool;
-    class CommandPool;
     class VulkanPipeline;
-    class CommandBuffer;
     class VulkanDirLight;
     class VulkanPointLight;
-
-    template<typename RenderData>
-    class VulkanRenderBufferArray;
 
     class RenderBufferView;
 }
@@ -103,7 +99,7 @@ namespace BEbraEngine {
 
         uint32_t alignmentBuffer(uint32_t originalSize, TypeRenderBuffer type);
 
-        VkDescriptorSet createDescriptor(VulkanDescriptorSetInfo* info);
+        VkDescriptorSet createDescriptor(const VulkanDescriptorSetInfo& info);
 
         void updateDesriptor(VkDescriptorSet& set, VulkanDescriptorSetInfo* info);
 
@@ -213,7 +209,7 @@ namespace BEbraEngine {
 
         vector<Line::ShaderData> linesMemory{ 30000 };
 
-        unique_ptr<VulkanRenderBufferArray<Line::ShaderData>> linePool;
+        //unique_ptr<VulkanRenderBufferArray<Line::ShaderData>> linePool;
 
         list<VulkanCamera*> cameras;
 
@@ -359,8 +355,6 @@ namespace BEbraEngine {
 
         void copyBuffer1(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkCommandBuffer& cmdBuffer);
 
-        //static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
-
         VkDevice getDevice();
 
         static uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
@@ -463,7 +457,7 @@ namespace BEbraEngine {
 }
 
 module :private;
-import CRender;
+//import CRender;
 namespace BEbraEngine {
     //static_assert(CRender<VulkanRender>);
 }

@@ -2,7 +2,6 @@ export module DirectionLight;
 import GameComponent;
 import Vector3;
 import RenderBuffer;
-import GameComponentDestroyerDecl;
 
 import <memory>;
 
@@ -27,7 +26,10 @@ namespace BEbraEngine {
 
     public:
 
-        void destroy(GameComponentDestroyer& destroyer) override;
+        template<typename Destroyer>
+        void destroy(Destroyer& destroyer) {
+            destroyer.destroyLight(*this);
+        }
 
         std::shared_ptr<RenderBufferView> data;
 

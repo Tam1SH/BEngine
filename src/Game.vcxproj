@@ -139,10 +139,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd;$(SolutionDir)Include\spdlog</AdditionalIncludeDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
@@ -151,11 +149,13 @@
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;angelscript64_$(Configuration).lib;spdlogd_$(Configuration).lib;tbb12_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;BulletDynamics_$(Configuration).lib;BulletCollision_$(Configuration).lib;LinearMath_$(Configuration).lib;angelscript64_$(Configuration).lib;spdlogd_$(Configuration).lib;tbb12_$(Configuration).lib;tbb_$(Configuration).lib;SDL2_$(Configuration).lib;assimp_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -305,61 +305,62 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AngelScript.cxx" />
+    <ClCompile Include="AllocationStrategy.ixx" />
+    <ClCompile Include="AngelScript_impl.ixx" />
     <ClCompile Include="AngelScriptEngine.cpp" />
     <ClCompile Include="Asset.ixx" />
     <ClCompile Include="AssetsStore.cxx" />
     <ClCompile Include="AssetsStore.ixx" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Camera_impl.ixx" />
     <ClCompile Include="CRender.ixx" />
     <ClCompile Include="CRenderAllocator.ixx" />
     <ClCompile Include="CRenderObjectFactory.ixx" />
     <ClCompile Include="CRenderObjectFactoryDecl.ixx" />
+    <ClCompile Include="CRenderState.ixx" />
     <ClCompile Include="CVector3.ixx" />
-    <ClCompile Include="DirectionLight.cpp" />
     <ClCompile Include="DirectionLight.ixx" />
+    <ClCompile Include="Error.ixx" />
     <ClCompile Include="Exceptions.ixx" />
-    <ClCompile Include="GameComponent.cxx" />
     <ClCompile Include="GameComponentDestroyerDecl.ixx" />
-    <ClCompile Include="GameObject.cxx" />
-    <ClCompile Include="Light.cxx" />
+    <ClCompile Include="GameObject_impl.ixx" />
     <ClCompile Include="Light.ixx" />
     <ClCompile Include="Logger.ixx" />
-    <ClCompile Include="Material.cxx" />
+    <ClCompile Include="LOL.ixx" />
     <ClCompile Include="Material.ixx" />
     <ClCompile Include="Math.cxx" />
     <ClCompile Include="Matrix.cxx" />
     <ClCompile Include="RenderAllocatorDecl.ixx" />
     <ClCompile Include="RenderAllocatorTypeRenderBuffer.ixx" />
     <ClCompile Include="RenderDataDecl.ixx" />
-    <ClCompile Include="RenderDecl.ixx" />
+    <ClCompile Include="Render.ixx" />
     <ClCompile Include="RenderObject.cxx" />
     <ClCompile Include="RenderObject.ixx">
       <FileType>Document</FileType>
     </ClCompile>
     <ClCompile Include="RenderObjectDecl.ixx" />
     <ClCompile Include="RenderObjectFactoryDecl.ixx" />
+    <ClCompile Include="RenderState.ixx" />
     <ClCompile Include="RigidBodyFactoryDecl.ixx" />
     <ClCompile Include="Task.ixx" />
-    <ClCompile Include="Texture.cxx" />
     <ClCompile Include="TextureFactoryDecl.ixx" />
-    <ClCompile Include="Transform.cxx" />
+    <ClCompile Include="Transform_impl.ixx" />
     <ClCompile Include="Vector2.cxx" />
     <ClCompile Include="Vector3.cxx" />
     <ClCompile Include="Vector4.cxx" />
     <ClCompile Include="VulkanRenderAllocator.cxx" />
     <ClCompile Include="VulkanRenderAllocator.ixx" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="VulkanRenderState.ixx" />
+    <ClCompile Include="Window_impl.ixx" />
     <ClCompile Include="Camera.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Collider.cxx" />
+    <ClCompile Include="Collider_impl.ixx" />
     <ClCompile Include="Collider.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ColliderFactory.cxx" />
+    <ClCompile Include="ColliderFactory_impl.ixx" />
     <ClCompile Include="CommandBuffer.cpp" />
     <ClCompile Include="OnlyMovable.ixx" />
     <ClCompile Include="CTextureFactory.ixx">
@@ -368,7 +369,7 @@
     </ClCompile>
     <ClCompile Include="Debug.ixx" />
     <ClCompile Include="GameComponent.ixx" />
-    <ClCompile Include="GameComponentDestroyer.cpp" />
+    <ClCompile Include="GameComponentDestroyer_impl.ixx" />
     <ClCompile Include="RenderHelper.ixx" />
     <ClCompile Include="Line.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -396,7 +397,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="RigidBody.cxx" />
+    <ClCompile Include="RigidBody_impl.ixx" />
     <ClCompile Include="RigidBody.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -432,16 +433,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="VulkanRender.cpp" />
+    <ClCompile Include="VulkanRender_impl.ixx" />
     <ClCompile Include="CommandPool.cpp" />
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="ScriptState.cpp" />
-    <ClCompile Include="GameObjectFactory.cpp" />
-    <ClCompile Include="VulkanTextureFactory.cpp" />
+    <ClCompile Include="GameObjectFactory_impl.ixx" />
+    <ClCompile Include="VulkanTextureFactory_impl.ixx" />
     <ClCompile Include="MeshFactory.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pipeline.cpp" />
-    <ClCompile Include="VulkanRenderObjectFactory.cpp" />
+    <ClCompile Include="VulkanRenderObjectFactory_impl.ixx" />
     <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="VulkanBuffer.cxx" />
@@ -463,7 +464,7 @@
     <Text Include="..\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Render.ixx">
+    <ClCompile Include="BitMap.ixx">
       <FileType>Document</FileType>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

@@ -1,11 +1,33 @@
-module Camera;
-//import GameComponentDestroyer;
-namespace BEbraEngine {
-    void SimpleCamera::destroy(GameComponentDestroyer& destroyer)
-    {
-        //destroyer.destroyCameraComponent(*this);
-    }
+export module Camera_impl;
+import Camera;
+import BEbraMath;
+import Input;
 
+namespace BEbraEngine {
+
+    const float YAW = -90.0f;
+    const float PITCH = 0.0f;
+    const float SPEED = 2.5f;
+    const float SENSITIVITY = 1.f;
+    const float ZOOM = 45.0f;
+
+    SimpleCamera::~SimpleCamera()
+    {
+        this->cameraData->buffer->destroy();
+    }
+    SimpleCamera::SimpleCamera(const Vector2& size, const Vector3& position, Vector3 up, float yaw, float pitch)
+        : MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+    {
+        rectViewport = size;
+        Position = position;
+        WorldUp = up;
+        Yaw = yaw;
+        Front = Vector3(0, 0, -1);
+        Pitch = pitch;
+        lastX = Input::getX();
+        lastY = Input::getY();
+        updateCameraVectors();
+    }
     Matrix4 SimpleCamera::getViewMatrix()
     {
         return BEbraMath::lookAt(Position, Position + Front, Up);
@@ -14,6 +36,27 @@ namespace BEbraEngine {
     void SimpleCamera::lookAt(const Vector3& at)
     {
         Front = BEbraMath::normalize(at - Position);
+    }
+
+    bool SimpleCamera::isMain()
+    {
+        return _isMain;
+    }
+
+    void SimpleCamera::setMain(bool value)
+    {
+        _isMain = value;
+    }
+
+    void SimpleCamera::updateCameraVectors()
+    {
+        Vector3 front;
+        front.x = cos(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
+        front.y = sin(BEbraMath::radians(Pitch));
+        front.z = sin(BEbraMath::radians(Yaw)) * cos(BEbraMath::radians(Pitch));
+        Front = BEbraMath::normalize(front);
+        Right = BEbraMath::normalize(BEbraMath::cross(Front, WorldUp));
+        Up = BEbraMath::normalize(BEbraMath::cross(Right, Front));
     }
 
     void SimpleCamera::resize(Vector2 newSize)

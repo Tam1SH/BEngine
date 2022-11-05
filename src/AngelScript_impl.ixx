@@ -1,5 +1,6 @@
 #include <angelscript.h>
-module AngelScript;
+export module AngelScript_impl;
+import AngelScript;
 //import GameComponentDestroyer;
 namespace BEbraEngine {
 
@@ -13,7 +14,4 @@ namespace BEbraEngine {
 		this->context = context;
 	}
 	
-	void AngelScript::destroy(GameComponentDestroyer& destroyer)
-	{
-	}
 }
