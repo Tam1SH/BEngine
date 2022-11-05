@@ -1,4 +1,4 @@
-export module DirectionLight;
+п»їexport module DirectionLight;
 import GameComponent;
 import Vector3;
 import RenderBuffer;
@@ -8,7 +8,7 @@ import <memory>;
 
 namespace BEbraEngine {
 
-    //Рендер-компоненты по интерфейсу выглядят отвратительно.
+    //пїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     export class DirectionLight : public GameComponent {
     public:
         struct ShaderData {

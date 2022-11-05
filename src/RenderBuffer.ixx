@@ -1,4 +1,4 @@
-module;
+﻿module;
 export module RenderBuffer;
 import <string>;
 import <memory>;

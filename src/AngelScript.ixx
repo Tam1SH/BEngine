@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <angelscript.h>
 export module AngelScript;
 import BaseScript;

@@ -1,4 +1,4 @@
-#define GLM_FORCE_XYZW_ONLY
+﻿#define GLM_FORCE_XYZW_ONLY
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 

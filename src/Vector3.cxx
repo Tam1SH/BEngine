@@ -1,4 +1,4 @@
-module Vector3;
+﻿module Vector3;
 #define GLM_FORCE_XYZW_ONLY
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

@@ -1,4 +1,4 @@
-export module AllocationStrategy;
+﻿export module AllocationStrategy;
 import <concepts>;
 import <algorithm>;
 import <functional>;

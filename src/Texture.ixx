@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <vulkan.h>
 #include <boost/filesystem.hpp>
 export module Texture;

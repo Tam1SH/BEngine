@@ -1,4 +1,4 @@
-
+п»ї
 #include <vulkan/vulkan.h>
 #include "platform.hpp"
 
@@ -39,7 +39,7 @@ namespace BEbraEngine {
 
         //CommandBuffer(const CommandBuffer& o) = delete;
         //CommandBuffer& operator=(const CommandBuffer& o) = delete;
-        //TODO: переопределить move конструктор
+        //TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ move пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
         CommandBuffer() noexcept {}
         CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type) noexcept;

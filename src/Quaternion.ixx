@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <glm/gtc/quaternion.hpp>
 #include <btBulletCollisionCommon.h>
 export module Quaternion;

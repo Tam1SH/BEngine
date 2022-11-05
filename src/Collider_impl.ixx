@@ -1,4 +1,4 @@
-export module Collider_impl;
+﻿export module Collider_impl;
 import Collider;
 //import GameComponentDestroyer;
 

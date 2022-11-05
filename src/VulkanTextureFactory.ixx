@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <boost/filesystem.hpp>
 #include <variant>
 export module VulkanTextureFactory;

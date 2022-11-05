@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include "platform.hpp"
 #include <angelscript.h>
 #include <boost/filesystem.hpp>

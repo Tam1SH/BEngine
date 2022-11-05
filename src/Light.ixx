@@ -1,4 +1,4 @@
-export module Light;
+﻿export module Light;
 import GameComponent;
 import Vector3;
 import Transform;

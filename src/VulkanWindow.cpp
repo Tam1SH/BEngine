@@ -1,4 +1,4 @@
-#include <variant>
+﻿#include <variant>
 module VulkanWindow;
 import VulkanRender;
 import Vector2;

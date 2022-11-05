@@ -1,4 +1,4 @@
-module RenderObject;
+﻿module RenderObject;
 import Transform;
 import RenderBuffer;
 //import GameComponentDestroyer;

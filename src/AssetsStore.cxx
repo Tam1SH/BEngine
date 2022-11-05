@@ -1,4 +1,4 @@
-#include <boost/filesystem.hpp>
+﻿#include <boost/filesystem.hpp>
 module AssetsStore;
 namespace BEbraEngine {
 

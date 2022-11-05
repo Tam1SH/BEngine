@@ -1,4 +1,4 @@
-export module RenderAllocatorTypeRenderBuffer;
+﻿export module RenderAllocatorTypeRenderBuffer;
 
 namespace BEbraEngine {
 	export enum struct TypeRenderBuffer {

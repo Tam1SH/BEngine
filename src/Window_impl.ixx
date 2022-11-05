@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <SDL_vulkan.h>
 #include <SDL.h>
 

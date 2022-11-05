@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <Physics/btBulletDynamicsCommon.h>
 export module Collider;
 import Debug;

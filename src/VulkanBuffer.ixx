@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <vulkan/vulkan.h>
 
 export module VulkanBuffer;

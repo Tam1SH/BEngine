@@ -1,4 +1,4 @@
-
+﻿
 export module BaseScript;
 
 import GameComponent;

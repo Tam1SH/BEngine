@@ -1,4 +1,4 @@
-export module Camera_impl;
+﻿export module Camera_impl;
 import Camera;
 import BEbraMath;
 import Input;

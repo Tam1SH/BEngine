@@ -1,4 +1,4 @@
-#include <vulkan.h>
+п»ї#include <vulkan.h>
 
 export module DescriptorPool;
 import <optional>;
@@ -37,7 +37,7 @@ namespace BEbraEngine {
 
         DescriptorPool(const DescriptorPool& o) = delete;
         DescriptorPool& operator=(const DescriptorPool& o) = delete;
-        //TODO: переопределить move конструктор
+        //TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ move пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
        //. DescriptorPool() noexcept {}
         //~DescriptorPool() noexcept;

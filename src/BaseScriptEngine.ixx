@@ -1,11 +1,11 @@
-export module BaseScriptEngine;
+п»їexport module BaseScriptEngine;
 import <string>;
 import BaseScript;
 namespace BEbraEngine {
     class BaseScriptEngine {
     public:
         virtual BaseScript* CreateScript(std::string code) = 0;
-        //TODO: string bad идея для этого ( как и весь алгоритм)
+        //TODO: string bad пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ ( пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         /*
         virtual std::string DownloadScript(const std::filesystem::path& path) {
             std::string code;

@@ -1,3 +1,3 @@
-export module RenderObjectDecl;
+﻿export module RenderObjectDecl;
 
 export namespace BEbraEngine { class RenderObject; }

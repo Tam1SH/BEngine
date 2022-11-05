@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <variant>
 #include <expected.hpp>
 export module RenderState;

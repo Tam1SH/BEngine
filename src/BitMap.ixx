@@ -1,4 +1,4 @@
-
+﻿
 #include "platform.hpp"
 export module BitMap;
 

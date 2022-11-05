@@ -1,4 +1,4 @@
-#include <boost/filesystem.hpp>
+﻿#include <boost/filesystem.hpp>
 #include <variant>
 export module GameComponentDestroyer_impl;
 import GameComponentDestroyer;

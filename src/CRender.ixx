@@ -1,4 +1,4 @@
-export module CRender;
+﻿export module CRender;
 import <concepts>;
 namespace BEbraEngine {
 	export class RenderData;

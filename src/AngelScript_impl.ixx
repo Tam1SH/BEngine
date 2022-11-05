@@ -1,4 +1,4 @@
-#include <angelscript.h>
+﻿#include <angelscript.h>
 export module AngelScript_impl;
 import AngelScript;
 //import GameComponentDestroyer;

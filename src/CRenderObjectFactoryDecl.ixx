@@ -1,4 +1,4 @@
-export module CRenderObjectFactoryDecl;
+﻿export module CRenderObjectFactoryDecl;
 export namespace BEbraEngine {
     class RenderObject;
     class Light;

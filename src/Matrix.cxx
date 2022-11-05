@@ -1,10 +1,10 @@
-#define GLM_FORCE_XYZW_ONLY
+п»ї#define GLM_FORCE_XYZW_ONLY
 #include <glm/glm.hpp>
 module Matrix4;
 
 namespace BEbraEngine {
 
-	//Да-да, DRY всякие там, да.
+	//пїЅпїЅ-пїЅпїЅ, DRY пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅ.
 	Matrix4 toMat4(glm::mat4 mat) {
 		Vector4 v0 = Vector4(mat[0].x, mat[0].y, mat[0].z, mat[0].w);
 		Vector4 v1 = Vector4(mat[1].x, mat[1].y, mat[1].z, mat[1].w);

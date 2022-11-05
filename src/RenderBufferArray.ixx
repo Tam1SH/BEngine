@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include "platform.hpp"
 export module RenderBufferArray;
 import <memory>;

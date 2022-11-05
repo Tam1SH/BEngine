@@ -1,4 +1,4 @@
-export module CRenderAllocator;
+﻿export module CRenderAllocator;
 import <span>;
 import <concepts>;
 import Vertex;

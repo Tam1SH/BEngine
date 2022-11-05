@@ -1,4 +1,4 @@
-#include <boost/filesystem.hpp>
+﻿#include <boost/filesystem.hpp>
 
 module ObjectFactoryFacade;
 import ScriptState;

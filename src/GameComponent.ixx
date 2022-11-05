@@ -1,4 +1,4 @@
-
+п»ї
 export module GameComponent;
 import OnlyMovable;
 //import Logger;
@@ -32,7 +32,7 @@ namespace BEbraEngine {
 			if (auto p = dynamic_cast<RequiredType*>(this); p)
 				return *p;
 
-			//Защита от дурака(себя)
+			//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ(пїЅпїЅпїЅпїЅ)
 			//Logger::error("Failed to cast the object to this type.");
 			throw std::bad_cast();
 		}
@@ -66,7 +66,7 @@ namespace BEbraEngine {
 		GameComponent& operator=(const GameComponent& o) = delete;
 
 	protected:
-		//должен быть вызван в конструкторе производного класса.
+		//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
 		void itWasDestroyed() { __isDestroyed = true; }
 
 		string name_{};

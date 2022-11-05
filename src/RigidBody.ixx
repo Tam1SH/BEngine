@@ -1,4 +1,4 @@
-module;
+п»їmodule;
 #include "platform.hpp"
 #include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
 
@@ -49,7 +49,7 @@ namespace BEbraEngine {
             //destroyer.destroyLight(*this);
         }
 
-        //void destroy(СVisitorComponentDestroyer auto& destroyer) {
+        //void destroy(пїЅVisitorComponentDestroyer auto& destroyer) {
         //	destroyer.destroyRigidBodyComponent(*this);
         //}
 		void moveTo(const Vector3& point) noexcept;
@@ -96,7 +96,7 @@ namespace BEbraEngine {
 
         RigidBody(const RigidBody& o) = delete;
         RigidBody& operator=(const RigidBody& o) = delete;
-        //TODO: переопределить move конструктор
+        //TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ move пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
         ~RigidBody() noexcept;
 	private:

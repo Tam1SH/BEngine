@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include "platform.hpp"
 #include <vulkan.h>
 export module CreateInfoStructures;

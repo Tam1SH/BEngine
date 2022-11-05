@@ -1,4 +1,4 @@
-export module GameObject_impl;
+п»їexport module GameObject_impl;
 import GameObject;
 import <typeinfo>;
 import <string>;
@@ -21,7 +21,7 @@ namespace BEbraEngine {
     {
         for (auto& component : components_) {
 
-            //TODO: нестрогое сравнение == выстрел в ногу.
+            //TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ == пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ.
             const std::string componentName = typeid(*component).name();
 
             if (componentName.find(name) != string::npos) {

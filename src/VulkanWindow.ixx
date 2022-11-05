@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <variant>
 export module VulkanWindow;
 import Render;

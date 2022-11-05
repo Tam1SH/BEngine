@@ -1,4 +1,4 @@
-
+п»ї
 #include "platform.hpp"
 #include <vulkan.h>
 export module CommandPool;
@@ -28,7 +28,7 @@ namespace BEbraEngine {
 
         CommandPool(const CommandPool& o) = delete;
         CommandPool& operator=(const CommandPool& o) = delete;
-        //TODO: переопределить move конструктор
+        //TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ move пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
         CommandPool() noexcept {}
         ~CommandPool() noexcept;

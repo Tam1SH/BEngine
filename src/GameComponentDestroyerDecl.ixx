@@ -1,4 +1,4 @@
-export module GameComponentDestroyerDecl;
+﻿export module GameComponentDestroyerDecl;
 
 namespace BEbraEngine {
 	export class GameComponentDestroyer;

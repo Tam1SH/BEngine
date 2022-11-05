@@ -1,4 +1,4 @@
-module;
+п»їmodule;
 #include <vulkan.h>
 #include <boost/filesystem.hpp>
 
@@ -340,7 +340,7 @@ namespace BEbraEngine {
 
         void recreateRenderObjects();
 
-        //TODO: потеряла свой смысл.
+        //TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
         void createDepthResources();
 
         VkFormat findSupportedFormat(const vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);

@@ -1,4 +1,4 @@
-export module Vector2;
+﻿export module Vector2;
 //import FormattableToString;
 ///import <string>;
 

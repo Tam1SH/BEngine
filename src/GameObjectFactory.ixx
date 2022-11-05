@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include "platform.hpp"
 #include <boost/filesystem.hpp>
 #include <variant>

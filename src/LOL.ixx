@@ -1,9 +1,9 @@
-module;
+п»їmodule;
 #include <source_location>
 #include <boost/filesystem.hpp>
 #include <tbb.h>
 //https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0478r0.pdf
-//Когда-нибудь завезут.
+//пїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 #include <spdlog/spdlog.h>
 export module Logger1;
 

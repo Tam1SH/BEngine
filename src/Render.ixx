@@ -1,4 +1,4 @@
-module;
+п»їmodule;
 #include <variant>
 #include <boost/filesystem.hpp>
 export module Render;
@@ -21,7 +21,7 @@ namespace BEbraEngine {
 		requires AreRenders<RenderTypes...>
 	struct _Render : public std::variant<RenderTypes...> {
 		
-		//Юзать макросы????7 Не, не слышали?
+		//Р®Р·Р°С‚СЊ РјР°РєСЂРѕСЃС‹????7 РќРµ, РЅРµ СЃР»С‹С€Р°Р»Рё?
 		using Self = std::variant<RenderTypes...>&;
 
 		constexpr void update() {
@@ -50,8 +50,8 @@ namespace BEbraEngine {
 
 		template<typename RenderType>
 		constexpr _Render(RenderType&& render) requires CRender<RenderType> {
-			//Не знаю, не является ли UB это. Ну по сути стейта у этого объекта нет, чё бы и нет.
-			//Да если так подумать, то вызывается конструктор у родителя, не затрагивая текущий объект.
+			//РќРµ Р·РЅР°СЋ, РЅРµ СЏРІР»СЏРµС‚СЃСЏ Р»Рё UB СЌС‚Рѕ. РќСѓ РїРѕ СЃСѓС‚Рё СЃС‚РµР№С‚Р° Сѓ СЌС‚РѕРіРѕ РѕР±СЉРµРєС‚Р° РЅРµС‚, С‡С‘ Р±С‹ Рё РЅРµС‚.
+			//Р”Р° РµСЃР»Рё С‚Р°Рє РїРѕРґСѓРјР°С‚СЊ, С‚Рѕ РІС‹Р·С‹РІР°РµС‚СЃСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Сѓ СЂРѕРґРёС‚РµР»СЏ, РЅРµ Р·Р°С‚СЂР°РіРёРІР°СЏ С‚РµРєСѓС‰РёР№ РѕР±СЉРµРєС‚.
 			static_cast<Self>(*this) = std::forward<RenderType>(render);
 		}
 		_Render() {}

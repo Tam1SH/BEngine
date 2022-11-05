@@ -1,4 +1,4 @@
-export module GameComponentCreateInfo;
+﻿export module GameComponentCreateInfo;
 import RenderObject;
 import RigidBody;
 import Collider;

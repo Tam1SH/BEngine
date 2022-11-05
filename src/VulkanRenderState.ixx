@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <expected.hpp>
 export module VulkanRenderState;
 import VulkanRenderBufferArray;

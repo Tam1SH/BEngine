@@ -1,4 +1,4 @@
-export module GameComponentDestroyerParamsDecl;
+﻿export module GameComponentDestroyerParamsDecl;
 
 export namespace BEbraEngine {
 	class RigidBody;

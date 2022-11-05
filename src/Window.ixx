@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include <vulkan.h>
 #include "platform_window.hpp"
 export module Window;

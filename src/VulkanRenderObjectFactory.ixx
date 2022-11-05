@@ -1,4 +1,4 @@
-
+﻿
 
 #include "platform.hpp"
 #include <boost/filesystem.hpp>

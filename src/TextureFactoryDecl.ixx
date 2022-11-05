@@ -1,4 +1,4 @@
-#include <variant>
+﻿#include <variant>
 #include <boost/filesystem.hpp>
 export module TextureFactoryDecl;
 import VulkanTextureFactory;

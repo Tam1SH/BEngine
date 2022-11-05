@@ -1,4 +1,4 @@
-#include <variant>
+﻿#include <variant>
 module VulkanRenderAllocator;
 import <span>;
 import Vertex;
