@@ -1,15 +1,13 @@
 {
   "files": {
-    "main.css": "/BebraEngine/static/css/main.cdc2df30.css",
-    "main.js": "/BebraEngine/static/js/main.77f7f29d.js",
-    "static/js/787.951124fb.chunk.js": "/BebraEngine/static/js/787.951124fb.chunk.js",
-    "index.html": "/BebraEngine/index.html",
-    "main.cdc2df30.css.map": "/BebraEngine/static/css/main.cdc2df30.css.map",
-    "main.77f7f29d.js.map": "/BebraEngine/static/js/main.77f7f29d.js.map",
-    "787.951124fb.chunk.js.map": "/BebraEngine/static/js/787.951124fb.chunk.js.map"
+    "main.css": "/GXHMDGXHYMHGDM/static/css/main.cdc2df30.css",
+    "main.js": "/GXHMDGXHYMHGDM/static/js/main.fb96532a.js",
+    "index.html": "/GXHMDGXHYMHGDM/index.html",
+    "main.cdc2df30.css.map": "/GXHMDGXHYMHGDM/static/css/main.cdc2df30.css.map",
+    "main.fb96532a.js.map": "/GXHMDGXHYMHGDM/static/js/main.fb96532a.js.map"
   },
   "entrypoints": [
     "static/css/main.cdc2df30.css",
-    "static/js/main.77f7f29d.js"
+    "static/js/main.fb96532a.js"
   ]
 }
