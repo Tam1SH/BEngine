@@ -1,14 +1,17 @@
 ﻿module;
-#include <boost/filesystem.hpp>
-#include "platform.hpp"
-
 #include <variant>
-
+#include <tbb.h>
+#include <queue>;
+#include <memory>;
+#include <functional>;
+#include <list>;
+#include <vector>;
+#include <optional>;
+#include <string>;
 export module ScriptState;
 
 import RenderObject;
 import Camera;
-//import <tbb.h>;
 import DirectionLight;
 import GameObject;
 import Light;
@@ -21,13 +24,7 @@ import Vector3;
 import ScriptManager;
 import RenderWorld;
 
-import <queue>;
-import <memory>;
-import <functional>;
-import <list>;
-import <vector>;
-import <optional>;
-import <string>;
+
 
 using std::shared_ptr;
 using std::unique_ptr;

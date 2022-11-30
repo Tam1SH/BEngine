@@ -1,5 +1,7 @@
-﻿export module OnlyMovable;
-import <concepts>;
+﻿module;
+#include "stdafx.h"
+export module OnlyMovable;
+
 
 namespace BEbraEngine {
 	export template<class T>

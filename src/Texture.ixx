@@ -1,9 +1,8 @@
 ﻿module;
+
 #include <vulkan.h>
-#include <boost/filesystem.hpp>
 export module Texture;
 import GameComponent;
-import Debug;
 
 namespace BEbraEngine {
     

@@ -1,12 +1,10 @@
 ﻿#include <vulkan.h>
-
+#include <tbb.h>
+#include <optional>
+#include <list>
+#include <mutex>
 export module DescriptorPool;
-import <optional>;
-import <tbb.h>;
-import <list>;
-import <mutex>;
 import CreateInfoStructures;
-import Debug;
 
 
 namespace BEbraEngine {

@@ -1,6 +1,7 @@
-﻿export module CVector3;
-import <concepts>;
-import <tuple>;
+﻿module;
+#include "stdafx.h"
+export module CVector3;
+
 
 namespace BEbraEngine {
 	export template<typename Vector, typename Scalar = float>

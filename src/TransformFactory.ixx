@@ -1,11 +1,10 @@
-﻿
+﻿#include <optional>
 export module TransformFactory;
 import Transform;
-import <optional>;
 
 namespace BEbraEngine {
-    export class TransformFactory {
-    public:
+    export struct TransformFactory {
+
         std::optional<Transform*> create(const Transform::CreateInfo& info)
         {
             auto trans = new Transform(info.position);
@@ -18,6 +17,6 @@ namespace BEbraEngine {
         {
         }
     private:
-        friend class Transform;
+        friend struct Transform;
     };
 }

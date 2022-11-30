@@ -1,18 +1,14 @@
 ﻿module;
-#include "platform.hpp"
 #include <vulkan.h>
+#include <vector>
 export module CreateInfoStructures;
-import <vector>;
-import RenderBuffer;
+import RenderBufferView;
 import Vector3;
 import Texture;
 import Material;
 
 
-using BE_STD::vector;
-
-namespace BEbraEngine {
-}
+using std::vector;
 
 namespace BEbraEngine {
 

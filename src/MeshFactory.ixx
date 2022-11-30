@@ -2,16 +2,17 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <boost/filesystem.hpp>
+
 
 #include <fstream>
 #include "platform.hpp"
 #include <variant>
+#include <map>
+#include <string>
+#include <vector>
+#include <optional>
 export module MeshFactory;
-import <map>;
-import <string>;
-import <vector>;
-import <optional>;
+
 import VulkanRenderAllocator;
 import Model;
 import Texture;

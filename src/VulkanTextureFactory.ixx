@@ -1,19 +1,19 @@
 ﻿module;
-#include <boost/filesystem.hpp>
 #include <variant>
+
+#include <optional>
+#include <functional>
+#include <memory>
+#include <string>
 export module VulkanTextureFactory;
 import VulkanRender;
 import Material;
-import Debug;
 import CRender;
 import Render;
 import Task;
 import BitMap;
 import Texture;
 import OnlyMovable;
-import <optional>;
-import <functional>;
-import <memory>;
 
 using std::shared_ptr;
 using std::function;
@@ -25,9 +25,9 @@ namespace BEbraEngine {
 
         Task<optional<Material*>> createMaterialAsync(const MaterialCreateInfo& info);
 
-        Task<optional<Texture*>> createAsync(const boost::filesystem::path& path);
+        Task<optional<Texture*>> createAsync(const std::string& path);
 
-        Texture* create(const boost::filesystem::path& path, bool generateMip);
+        Texture* create(const std::string& path, bool generateMip);
 
         Texture* createEmpty();
 

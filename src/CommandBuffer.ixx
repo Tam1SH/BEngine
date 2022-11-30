@@ -1,10 +1,7 @@
-﻿
-#include <vulkan/vulkan.h>
-#include "platform.hpp"
-
-
+﻿#include <vulkan/vulkan.h>
+#include <functional>
 export module CommandBuffer;
-import <functional>;
+
 
 namespace BEbraEngine {
     export class CommandPool;

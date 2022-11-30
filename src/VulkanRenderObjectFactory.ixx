@@ -1,15 +1,15 @@
 ﻿
-
-#include "platform.hpp"
-#include <boost/filesystem.hpp>
-
+#include <tbb.h>
 #include <variant>
 
+#include <memory>;
+#include <string>;
+#include <boost/pool/object_pool.hpp>;
+#include <optional>;
 export module VulkanRenderObjectFactory;
 import Light;
 import Camera;
-import <tbb.h>;
-import <boost/pool/object_pool.hpp>;
+
 import RenderObject;
 import Material;
 import DirectionLight;
@@ -30,9 +30,7 @@ import Task;
 import Model;
 import Vector3;
 
-import <memory>;
-import <string>;
-import <optional>;
+
 //разделить логику и создание/удаление(назв. Adjuster?) также для рендера создать чтоли стораге?
 using std::shared_ptr;
 using std::unique_ptr;

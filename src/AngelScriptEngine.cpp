@@ -1,4 +1,4 @@
-﻿#include <boost/filesystem.hpp>
+﻿
 #include <angelscript.h>
 #include <add_on/scriptstdstring/scriptstdstring.h>
 #include <add_on/scriptbuilder/scriptbuilder.h>

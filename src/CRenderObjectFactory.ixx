@@ -1,13 +1,12 @@
 ﻿module;
 #include <variant>
-#include <boost/filesystem.hpp>
-
+#include <memory>
+#include <string>
+#include <optional>
 export module CRenderObjectFactory;
 import Task;
 import Vector3;
-import <memory>;
-import <string>;
-import <optional>;
+
 
 using std::shared_ptr;
 using std::string;

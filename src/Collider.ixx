@@ -1,13 +1,13 @@
 ﻿module;
 #include <Physics/btBulletDynamicsCommon.h>
+#include <memory>
+#include <exception>
 export module Collider;
-import Debug;
 import Vector3;
 import Quaternion;
 import OnlyMovable;
 import GameComponent;
-import <memory>;
-import <exception>;
+
 
 using std::unique_ptr;
 

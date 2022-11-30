@@ -1,20 +1,19 @@
 ﻿export module Transform;
 import GameComponent;
 import Matrix4;
-import Debug;
 import BEbraMath;
 import Vector3;
 import Quaternion;
 
 namespace BEbraEngine {
-    class TransformFactory;
+    struct TransformFactory;
 }
 
 namespace BEbraEngine {
 
-    export class Transform final : public GameComponent {
-    public:
-        friend class TransformFactory;
+    export struct Transform : GameComponent {
+
+        friend struct TransformFactory;
 
         struct CreateInfo {
 
@@ -22,8 +21,6 @@ namespace BEbraEngine {
             Vector3 scale{ 1 };
             //Quartion quat;
         };
-
-    public:
 
         template<typename Destroyer>
         void destroy(Destroyer& destroyer) {
@@ -53,8 +50,6 @@ namespace BEbraEngine {
         Vector3 position{};
 
         Vector3 scale{};
-
-
 
     };
 

@@ -1,17 +1,16 @@
 ﻿module;
 #include "platform.hpp"
+#include <tbb.h>
+#include <optional>
+#include <vector>
+#include <memory>
 
-#include <boost/filesystem.hpp>
 export module VulkanRenderBufferArray;
 import RenderBufferArray;
 import VulkanBuffer;
 import RenderBuffer;
 import VulkanRender;
 import VulkanRenderAllocator;
-import <optional>;
-import <tbb.h>;
-import <vector>;
-import <memory>;
 
 using std::shared_ptr;
 using std::optional;

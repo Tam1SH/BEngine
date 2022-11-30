@@ -1,6 +1,5 @@
 ﻿module;
 #include <variant>
-#include <boost\filesystem.hpp>
 
 export module RenderObjectFactoryDecl;
 import VulkanRenderObjectFactory;

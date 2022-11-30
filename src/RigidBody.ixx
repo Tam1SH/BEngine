@@ -1,17 +1,14 @@
 ﻿module;
-#include "platform.hpp"
 #include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
-
+#include <optional>
+#include <memory>
 export module RigidBody;
-import Debug;
 import BEbraMath;
 import Vector3;
 import Quaternion;
 import Transform;
 import GameComponent;
 
-import <optional>;
-import <memory>;
 
 using std::shared_ptr;
 using std::unique_ptr;

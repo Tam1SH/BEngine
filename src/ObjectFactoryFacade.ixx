@@ -1,6 +1,6 @@
 ﻿module;
-#include "platform.hpp"
-#include <boost/filesystem.hpp>
+#include <memory>;
+#include <string>;
 export module ObjectFactoryFacade;
 import GameObjectFactory;
 import Light;
@@ -15,8 +15,7 @@ import GameComponent;
 import GameComponentCreateInfo;
 import Vector3;
 
-import <memory>;
-import <string>;
+
 
 using std::shared_ptr; 
 using std::unique_ptr;

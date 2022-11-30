@@ -1,14 +1,14 @@
 ﻿module;
 #include "platform.hpp"
+#include <exception>
+#include <typeinfo>
+#include <memory>
+#include <string>
+#include <optional>
+
 export module GameObject;
-import Debug;
 import GameComponent;
 
-import <exception>;
-import <typeinfo>;
-import <memory>;
-import <string>;
-import <optional>;
 
 using std::shared_ptr;
 using std::string;

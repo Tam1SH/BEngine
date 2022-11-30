@@ -8,7 +8,7 @@ TODO: подумать над реализацей:
 ****************************************************************************************
 
 */
-#include <boost/filesystem.hpp>
+
 #include "Engine.hpp"
 import Debug;
 import Logger;

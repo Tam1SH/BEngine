@@ -1,11 +1,16 @@
 ﻿module;
 #include <vulkan.h>
-#include <boost/filesystem.hpp>
-
+//#include <tbb.h>
+#include <span>
+#include <optional>
+#include <memory>
+#include <mutex>
+#include <map>
+#include <functional>
+#include <string>
 
 export module VulkanRender;
 import ExecuteQueues;
-import <tbb.h>;
 import RenderData;
 import RenderAllocatorTypeRenderBuffer;
 import RenderHelper;
@@ -16,24 +21,14 @@ import DescriptorPool;
 import Vector4;
 import Vector3;
 import Texture;
-import CRenderAllocator;
-import Matrix4;
 import VulkanObjects;
 import VulkanPipeline;
 import Line;
 import CreateInfoStructures;
 import Vertex;
-import <span>;
-import <optional>;
-import <memory>;
-import <mutex>;
-import <map>;
-import <functional>;
-import <string>;
+
 
 class btIDrawDebug;
-
-const int MAX_FRAMES_IN_FLIGHT = 3;
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -48,24 +43,15 @@ using std::atomic;
 
 namespace BEbraEngine {
     export struct VulkanWindow;
-    class VulkanPipeline;
     class VulkanDirLight;
     class VulkanPointLight;
-
-    class RenderBufferView;
 }
 
 
 namespace BEbraEngine {
 
-    //export class VulkanBitMap : public BitMap {
-    //public:
-    //    vector<Rows> rows;
-    //    VulkanTexture* texture;
-    //    Rows& at(int index) override { return rows[index]; }
-    //};
 
-    export struct VulkanRender : public RenderHelper
+    export struct VulkanRender : RenderHelper
     {
         void create(VulkanWindow& window);
 
@@ -189,13 +175,21 @@ namespace BEbraEngine {
 
     
     private:
+
+
         std::mutex m;
 
         bool needCmdBuffersUpdate{ true };
 
         float totalTime;
 
+        //tbb::concurrent_queue<CommandBuffer> BufferRenderQueue;
+
+        //tbb::concurrent_queue<CommandBuffer> BufferTransferQueue;
+
         RenderData currentData;
+
+
 
         VkDescriptorSet lineSet;
 
@@ -266,10 +260,6 @@ namespace BEbraEngine {
         VkDebugUtilsMessengerEXT debugMessenger;
 
         VkSurfaceKHR surface;
-
-        tbb::concurrent_queue<CommandBuffer> BufferRenderQueue;
-
-        tbb::concurrent_queue<CommandBuffer> BufferTransferQueue;
 
         VkQueue graphicsQueue;
 

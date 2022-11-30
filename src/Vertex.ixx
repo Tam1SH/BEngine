@@ -1,12 +1,12 @@
 ﻿module;
 #include <vulkan/vulkan.h>
-
+#include <array>
+#include <vector>
 export module Vertex;
 import Vector2;
 import Vector4;
 import Vector3;
-import <array>;
-import <vector>;
+
 
 
 namespace BEbraEngine {

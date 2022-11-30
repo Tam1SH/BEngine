@@ -1,6 +1,6 @@
-﻿export module RenderData;
-import <vector>;
-import <span>;
+﻿#include <vector>
+#include <span>
+export module RenderData;
 
 export namespace BEbraEngine {
 	struct RenderObject;

@@ -1,7 +1,6 @@
 ﻿#include <tbb.h>
 #include <functional>
 export module ExecuteQueues;
-
 namespace BEbraEngine {
 	
 	export enum class ExecuteType {

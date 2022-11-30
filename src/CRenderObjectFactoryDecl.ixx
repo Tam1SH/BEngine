@@ -1,4 +1,7 @@
-﻿export module CRenderObjectFactoryDecl;
+﻿
+module;
+#include "stdafx.h"
+export module CRenderObjectFactoryDecl;
 export namespace BEbraEngine {
     class RenderObject;
     class Light;

@@ -1,9 +1,11 @@
-﻿#include <boost/filesystem.hpp>
+﻿
 #include <random>
 #include <tbb.h>
 #include "Physics.hpp"
 #include <variant>
 #include <functional>
+#include <functional>;
+#include <memory>;
 module ScriptState;
 import ScriptManager;
 import RenderWorld;
@@ -17,8 +19,7 @@ import Time;
 import ObjectFactoryFacade;
 import CreateInfoStructures;
 
-import <functional>;
-import <memory>;
+
 using std::shared_ptr;
 
 namespace BEbraEngine {
@@ -29,12 +30,12 @@ namespace BEbraEngine {
 
     auto getPath(int rand) {
 
-        auto path = (boost::filesystem::current_path() / "Models");
+        //auto path = (boost::filesystem::current_path() / "Models");
 
         switch (rand) {
-        case 1: return path / "Box.fbx";
-        case 2: return path / "Cylinder.fbx";
-        case 3: return path / "Sphere.fbx";
+        case 1: return "Box.fbx";
+        case 2: return "Cylinder.fbx";
+        case 3: return "Sphere.fbx";
         }
 
     }
@@ -88,9 +89,9 @@ namespace BEbraEngine {
         player = scriptObjectFactory->create(Vector3(-30, 30, 0));
         player->getComponentChecked<Transform>().setScale(Vector3(2));
         player->getComponentChecked<Collider>().setScale(Vector3(2));
-        scriptObjectFactory->setMaterialAsync(player, { boost::filesystem::current_path() / "textures" / "textureTest.jpg",
-                                                    boost::filesystem::current_path() / "textures" / "specularTest.jpg", 
-                                                    boost::filesystem::current_path() / "textures" / "normalTest.jpg" });
+       // scriptObjectFactory->setMaterialAsync(player, { boost::filesystem::current_path() / "textures" / "textureTest.jpg",
+       //                                             boost::filesystem::current_path() / "textures" / "specularTest.jpg", 
+       //                                             boost::filesystem::current_path() / "textures" / "normalTest.jpg" });
 
         auto& body = player->getComponentChecked<RigidBody>();
         body.setMaxVelocity(20);
@@ -131,7 +132,7 @@ namespace BEbraEngine {
         scriptObjectFactory->destroy(*body1);
 
         object6->getComponentChecked<Transform>().setScale(Vector3(2));
-        scriptObjectFactory->setModel(*object6, (boost::filesystem::current_path() / "Models/Sphere.fbx").string());
+        //scriptObjectFactory->setModel(*object6, (boost::filesystem::current_path() / "Models/Sphere.fbx").string());
 
         light = scriptObjectFactory->createLight(Vector3(-20, 25, 0));
         lights.push_back(light);

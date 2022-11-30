@@ -1,4 +1,4 @@
-﻿#include <boost/filesystem.hpp>
+﻿
 module AssetsStore;
 namespace BEbraEngine {
 
@@ -21,7 +21,7 @@ namespace BEbraEngine {
 		TextureFactory& textureFactory, 
 		MeshFactory& meshFactory) : textureFactory(&textureFactory), meshFactory(&meshFactory)
 	{
-		basePath = boost::filesystem::current_path().string();
+		//basePath = boost::filesystem::current_path().string();
 
 	}
 }

@@ -1,12 +1,10 @@
 ﻿module;
 #include "platform.hpp"
 #include <angelscript.h>
-#include <boost/filesystem.hpp>
+#include <optional>
+#include <string>
 export module AngelScriptEngine;
-import <optional>;
-import <string>;
 import AngelScript;
-import Debug;
 import BaseScriptEngine;
 
 

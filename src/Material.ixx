@@ -1,18 +1,19 @@
 ﻿module;
-#include <boost/filesystem.hpp>
+#include <memory>
+#include <string>
 export module Material;
 import GameComponent;
 import Texture;
 import OnlyMovable;
-import <memory>;
+
 
 
 namespace BEbraEngine {
 
     export struct MaterialCreateInfo {
-        boost::filesystem::path color;
-        boost::filesystem::path specular;
-        boost::filesystem::path normal;
+        std::string color;
+        std::string specular;
+        std::string normal;
     };
 
     export class Material : public GameComponent {

@@ -1,4 +1,5 @@
 ﻿module;
+#include "stdafx.h"
 export module RenderObject;
 import GameComponent;
 import Matrix4;
@@ -6,8 +7,9 @@ import Vector3;
 import Material;
 import Model;
 import RenderBuffer;
+import RenderBufferView;
 import Transform;
-import <memory>;
+
 
 namespace BEbraEngine {
 
@@ -43,9 +45,9 @@ namespace BEbraEngine {
 
         Material* material;
 
-        std::shared_ptr<Model> model;
+        Model* model;
 
-        std::shared_ptr<RenderBufferView> matrix;
+        RenderBufferView* matrix;
 
         Transform* transform;
 

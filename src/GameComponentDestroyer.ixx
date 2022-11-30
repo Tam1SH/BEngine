@@ -1,6 +1,5 @@
 ﻿module;
-#include <boost/filesystem.hpp>
-
+#include <memory>
 export module GameComponentDestroyer;
 //import ColliderFactory;
 import RigidBodyFactoryDecl;
@@ -17,7 +16,7 @@ import Material;
 import Transform;
 import Camera;
 import Light;
-import <memory>;
+
 
 using std::shared_ptr;
 

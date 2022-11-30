@@ -1,10 +1,6 @@
-﻿#include "platform.hpp"
-#include <boost/filesystem.hpp>
-
-#include <optional>
-#include <memory>
-
+﻿#include "stdafx.h"
 export module CTextureFactory;
+
 import Task;
 
 using std::optional;
@@ -23,9 +19,9 @@ namespace BEbraEngine {
 
             /*Task<optional<Material*>> createMaterialAsync*/ const MaterialCreateInfo& info,
 
-            /*Task<optional<Texture*>> createAsync*/ const boost::filesystem::path& path,
+            /*Task<optional<Texture*>> createAsync*/ const std::string& path,
 
-            /*Texture* create*/ const boost::filesystem::path& _path, bool generateMip,
+            /*Texture* create*/ const std::string& _path, bool generateMip,
 
             /*void destroyTexture*/ Texture& texture,
 

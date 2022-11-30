@@ -1,8 +1,9 @@
 ﻿module;
 #include <functional>
+#include <memory>
+#include <stack>
 export module Task;
-import <memory>;
-import <stack>;
+
 
 namespace BEbraEngine {
 	export template<class T> 

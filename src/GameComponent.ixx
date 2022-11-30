@@ -1,13 +1,8 @@
-﻿
+﻿module;
+#include "stdafx.h"
 export module GameComponent;
 import OnlyMovable;
 //import Logger;
-import <memory>;
-import <list>;
-import <string>;
-import <concepts>;
-import <optional>;
-
 using std::optional;
 using std::shared_ptr;
 using std::string;

@@ -4,21 +4,20 @@
 #include <variant>
 #include <stb-master/stb_image.h>
 #include <stb-master/stb_image_write.h>
-#include <boost/filesystem.hpp>
 #include <tbb.h>
 #include <vulkan.h>
 #include <cmath>
 #include <algorithm>
-
+#include <optional>;
+#include <vector>;
+#include <memory>;
 export module VulkanTextureFactory_impl;
 import VulkanTextureFactory;
 import VulkanRender;
 import Task;
 import Render;
 import Material;
-import <optional>;
-import <vector>;
-import <memory>;
+
 using std::function;
 using std::optional;
 using std::vector;
@@ -29,9 +28,9 @@ namespace BEbraEngine {
     Task<optional<Material*>> VulkanTextureFactory::createMaterialAsync(const MaterialCreateInfo& info)
     {
         auto task = Task<optional<Material*>>();
-
-        auto strColorLow = ((info.color.parent_path().string() / info.color.stem()).string() + "_low");
-        auto strExensionColor = info.color.extension().string();
+        /*
+        auto strColorLow = "";//((info.color.parent_path().string() / info.color.stem()).string() + "_low");
+        auto strExensionColor = "";//info.color.extension().string();
         auto image = std::shared_ptr<Texture>(create(strColorLow + strExensionColor, false));
 
         
@@ -54,14 +53,15 @@ namespace BEbraEngine {
             task.execute(new Material(color, specular, normal), true);
 
         });
-
+        */
         return task;
 
     }
 
-    Task<optional<Texture*>> VulkanTextureFactory::createAsync(const boost::filesystem::path& path)
+    Task<optional<Texture*>> VulkanTextureFactory::createAsync(const std::string& path)
     {
         auto task = Task<optional<Texture*>>();
+        /*
         auto str = ((path.parent_path().string() / path.stem()).string() + "_low");
         auto str1 = path.extension().string();
         auto path_low = str + str1;
@@ -77,18 +77,18 @@ namespace BEbraEngine {
             
             task.execute(image, true);
         });
-
+        */
         return task;
 
     }
-    Texture* VulkanTextureFactory::create(const boost::filesystem::path& path, bool generateMip)
+    Texture* VulkanTextureFactory::create(const std::string& path, bool generateMip)
     {
         
         VulkanTexture* image = new VulkanTexture();
         int texWidth, texHeight, texChannels;
        // stbi_set_flip_vertically_on_load(true);
         
-        stbi_uc* rows = stbi_load(path.string().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        stbi_uc* rows = stbi_load(path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         image->setHeight(texHeight);
         image->setWidth(texWidth);
         VkDeviceSize imageSize = texWidth * texHeight * 4;

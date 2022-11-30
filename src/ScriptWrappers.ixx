@@ -1,4 +1,4 @@
-﻿//#include <boost/filesystem.hpp>
+﻿
 //#include <angelscript.h>
 
 //#define DECLARATE_SCRIPT_OBJECT_DEFAULT_BEHAVIOR(ObjectType)	\

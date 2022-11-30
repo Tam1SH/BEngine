@@ -1,24 +1,20 @@
 ﻿module;
 #include <source_location>
-#include <boost/filesystem.hpp>
 //https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0478r0.pdf
 //�����-������ �������.
-//#include <spdlog/spdlog.h>
+#include <spdlog/spdlog.h>
+#include <tbb.h>
+#include <sstream>;
+#include <string>;
 export module Logger;
-
-import <algorithm>;
-import <tbb.h>;
-import <string_view>;
-import <sstream>;
-
 
 namespace BEbraEngine {
 
 	namespace Logger {
 		
 		export void init() {
-			//spdlog::set_level(spdlog::level::debug);
-			//spdlog::set_pattern("[%H:%M:%S.%f] [%^%l%$] %v");
+			spdlog::set_level(spdlog::level::debug);
+			spdlog::set_pattern("[%H:%M:%S.%f] [%^%l%$] %v");
 		}
 
 		std::string format(const std::source_location& loc) {
@@ -30,28 +26,28 @@ namespace BEbraEngine {
 		export template <typename FormatString, typename... Args>
 			struct error {
 			error(FormatString&& t, Args&&... args, const std::source_location& loc = std::source_location::current()) {
-				//spdlog::error(fmt::runtime(format(loc) + t), std::forward<Args>(args)...);
+				spdlog::error(fmt::runtime(format(loc) + t), std::forward<Args>(args)...);
 			}
 		};
 
 		export template <typename FormatString, typename... Args>
 		struct warn {
 			warn(FormatString&& t, Args&&... args, const std::source_location& loc = std::source_location::current()) {
-				//spdlog::warn(fmt::runtime(format(loc) + t), std::forward<Args>(args)...);
+				spdlog::warn(fmt::runtime(format(loc) + t), std::forward<Args>(args)...);
 			}
 		};
 
 		export template <typename FormatString, typename... Args>
 		struct info {
 			info(FormatString&& t, Args&&... args, const std::source_location& loc = std::source_location::current()) {
-				//spdlog::info(fmt::runtime(format(loc) + t), std::forward<Args>(args)...);
+				spdlog::info(fmt::runtime(format(loc) + t), std::forward<Args>(args)...);
 			}
 		};
 
 		export template <typename FormatString, typename... Args>
 			struct debug {
 			debug(FormatString&& t, Args&&... args, const std::source_location& loc = std::source_location::current()) {
-				//spdlog::debug(fmt::runtime(format(loc) + t), std::forward<Args>(args)...);
+				spdlog::debug(fmt::runtime(format(loc) + t), std::forward<Args>(args)...);
 			}
 		};
 

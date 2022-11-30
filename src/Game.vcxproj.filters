@@ -135,9 +135,6 @@
     <ClCompile Include="RenderBuffer.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="Debug.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="VulkanObjects.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
@@ -438,8 +435,11 @@
     <ClCompile Include="AllocationStrategy.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="LOL.ixx">
+    <ClCompile Include="RenderBufferView.ixx">
       <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderBufferView_impl.ixx">
+      <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -485,6 +485,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Physics.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

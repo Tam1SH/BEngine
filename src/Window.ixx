@@ -1,12 +1,12 @@
 ﻿module;
 #include <vulkan.h>
 #include "platform_window.hpp"
+#include <vector>
+#include <string>
 export module Window;
-import Debug;
 import Input;
 import Vector2;
-import <vector>;
-import <string>;
+
 using std::vector;
 using std::string;
 

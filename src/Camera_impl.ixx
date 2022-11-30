@@ -1,7 +1,10 @@
-﻿export module Camera_impl;
+﻿#include <cmath>
+export module Camera_impl;
 import Camera;
 import BEbraMath;
 import Input;
+import RenderBuffer;
+
 
 namespace BEbraEngine {
 

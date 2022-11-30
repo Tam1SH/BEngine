@@ -1,6 +1,7 @@
-﻿export module CRenderAllocator;
-import <span>;
-import <concepts>;
+﻿#include <span>
+#include <concepts>
+export module CRenderAllocator;
+
 import Vertex;
 import RenderBuffer;
 import RenderAllocatorTypeRenderBuffer;

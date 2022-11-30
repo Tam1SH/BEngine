@@ -1,6 +1,7 @@
 ﻿
+#include <chrono>
 export module Time;
-import <chrono>;
+
 namespace BEbraEngine {
     export struct Time {
 

@@ -1,12 +1,13 @@
-﻿#include <boost/filesystem.hpp>
+﻿
 #include <variant>
+#include <memory>
 export module GameComponentDestroyer_impl;
 import GameComponentDestroyer;
 import CRenderObjectFactory;
 import CTextureFactory;
 import ColliderFactory;
 import RigidBodyFactory;
-import <memory>;
+
 import RenderObjectFactoryDecl;
 using std::shared_ptr;
 

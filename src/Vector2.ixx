@@ -1,6 +1,4 @@
 ﻿export module Vector2;
-//import FormattableToString;
-///import <string>;
 
 namespace BEbraEngine {
 

@@ -1,8 +1,10 @@
 ﻿module;
 #include "platform.hpp"
-#include <boost/filesystem.hpp>
-#include <variant>
 
+#include <variant>
+#include <memory>
+#include <optional>
+#include <string>
 export module GameObjectFactory;
 import Light;
 import Camera;
@@ -21,9 +23,7 @@ import Collider;
 import GameComponentCreateInfo;
 import Vector3;
 import GameComponentDestroyerDecl;
-import <memory>;
-import <optional>;
-import <string>;
+
 
 
 using std::shared_ptr;

@@ -1,11 +1,11 @@
 ﻿module;
-#include <boost/filesystem.hpp>
+#include <map>
+#include <string>
+#include <optional>
+#include <memory>
+#include <vector>
 export module ScriptManager;
-import <map>;
-import <string>;
-import <optional>;
-import <memory>;
-import <vector>;
+
 
 import AngelScriptEngine;
 import AngelScript;

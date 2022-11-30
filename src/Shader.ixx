@@ -1,8 +1,8 @@
 ﻿#include <vulkan.h>
-#include <boost/filesystem.hpp>
 #include <fstream>
+#include <vector>
 export module Shader;
-import <vector>;
+
 namespace BEbraEngine {
 
 	export struct AbstractShader {
@@ -18,10 +18,10 @@ namespace BEbraEngine {
 
 		~VulkanShader() { }
 
-		static VulkanShader* createFromFile(const VkDevice& device, const boost::filesystem::path& path)
+		static VulkanShader* createFromFile(const VkDevice& device, const std::string& path)
         {
             //DEBUG_LOG1(path.string());
-            std::ifstream file(path.string(), std::ios::ate | std::ios::binary);
+            std::ifstream file(path, std::ios::ate | std::ios::binary);
 
             if (!file.is_open()) {
                 //DEBUG_LOG1("failed to open file with path: " + path.string());

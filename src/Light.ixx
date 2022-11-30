@@ -1,9 +1,11 @@
-﻿export module Light;
+﻿module;
+#include "stdafx.h"
+export module Light;
 import GameComponent;
 import Vector3;
+import RenderBufferView;
 import Transform;
-import RenderBuffer;
-import <memory>;
+
 
 namespace BEbraEngine {
 
@@ -34,7 +36,7 @@ namespace BEbraEngine {
             destroyer.destroyLight(*this);
         }
 
-        std::shared_ptr<RenderBufferView> data;
+        RenderBufferView* data;
 
         Transform* transform;
 

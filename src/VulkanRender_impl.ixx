@@ -4,9 +4,10 @@
 #include <SDL_vulkan.h>
 #include <vulkan.h>
 #include <tbb.h>
-#include <boost/filesystem.hpp>
 #include <iostream>
 #include <fstream>
+#include <memory>;
+#include <vector>;
 const int MAX_FRAMES_IN_FLIGHT = 3;
 export module VulkanRender_impl;
 import VulkanRender;
@@ -14,8 +15,7 @@ import VulkanWindow;
 import RenderWorld;
 import VulkanBuffer;
 import utils;
-import <memory>;
-import <vector>;
+
 import DescriptorSetLayouts;
 import DescriptorPool;
 import CommandBuffer;
@@ -1427,8 +1427,8 @@ namespace BEbraEngine {
 
             VulkanShader* vertShaderModule{}, * fragShaderModule{};
 
-            vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "writeVert.spv");
-            fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "writeFrag.spv");
+           // vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "writeVert.spv");
+           // fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "writeFrag.spv");
 
             VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
             vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -1597,8 +1597,8 @@ namespace BEbraEngine {
             {
                 VulkanShader* vertShaderModule{}, * fragShaderModule{};
 
-                vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "readVert.spv");
-                fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "readFrag.spv");
+                //vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "readVert.spv");
+                //fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "readFrag.spv");
 
                 VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
                 vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -1630,8 +1630,8 @@ namespace BEbraEngine {
 
                 VulkanShader* vertShaderModule{}, * fragShaderModule{};
 
-                vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "LineVert.spv");
-                fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "LineFrag.spv");
+                //vertShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "LineVert.spv");
+               // fragShaderModule = VulkanShader::createFromFile(device, boost::filesystem::current_path() / "LineFrag.spv");
 
                 VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
                 vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
