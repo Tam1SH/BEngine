@@ -1,16 +1,15 @@
 {
   "files": {
-    "main.css": "/%7BGithub-repo-name%7D/static/css/main.073c9b0a.css",
-    "main.js": "/%7BGithub-repo-name%7D/static/js/main.713ca427.js",
-    "static/js/787.951124fb.chunk.js": "/%7BGithub-repo-name%7D/static/js/787.951124fb.chunk.js",
-    "static/media/logo.svg": "/%7BGithub-repo-name%7D/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/%7BGithub-repo-name%7D/index.html",
-    "main.073c9b0a.css.map": "/%7BGithub-repo-name%7D/static/css/main.073c9b0a.css.map",
-    "main.713ca427.js.map": "/%7BGithub-repo-name%7D/static/js/main.713ca427.js.map",
-    "787.951124fb.chunk.js.map": "/%7BGithub-repo-name%7D/static/js/787.951124fb.chunk.js.map"
+    "main.css": "/BebraEngine/static/css/main.cdc2df30.css",
+    "main.js": "/BebraEngine/static/js/main.77f7f29d.js",
+    "static/js/787.951124fb.chunk.js": "/BebraEngine/static/js/787.951124fb.chunk.js",
+    "index.html": "/BebraEngine/index.html",
+    "main.cdc2df30.css.map": "/BebraEngine/static/css/main.cdc2df30.css.map",
+    "main.77f7f29d.js.map": "/BebraEngine/static/js/main.77f7f29d.js.map",
+    "787.951124fb.chunk.js.map": "/BebraEngine/static/js/787.951124fb.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.073c9b0a.css",
-    "static/js/main.713ca427.js"
+    "static/css/main.cdc2df30.css",
+    "static/js/main.77f7f29d.js"
   ]
 }
