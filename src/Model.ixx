@@ -1,6 +1,6 @@
 ﻿module;
-#include <boost/filesystem.hpp>
 #include <vector>
+#include <string>
 export module Model;
 
 import Texture;
@@ -26,7 +26,7 @@ namespace BEbraEngine {
 
     export struct ModelCreateInfo 
     {
-        boost::filesystem::path path;
+        std::string path;
     };
 
     export class Model

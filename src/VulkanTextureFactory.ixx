@@ -13,7 +13,7 @@ import Render;
 import Task;
 import BitMap;
 import Texture;
-import OnlyMovable;
+import Concepts;
 
 using std::shared_ptr;
 using std::function;
@@ -57,15 +57,6 @@ namespace BEbraEngine {
     };
     static_assert(OnlyMovable<VulkanTextureFactory>);
 
-    namespace create {
-
-        export std::variant<VulkanTextureFactory> textureFactory(Render& render) {
-
-            return std::visit([](VulkanRender& render) {
-                return std::variant<VulkanTextureFactory>(render);
-            }, render);
-        }
-    }
 }
 
 module :private;

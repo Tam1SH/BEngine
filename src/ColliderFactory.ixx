@@ -5,7 +5,7 @@
 export module ColliderFactory;
 import <optional>;
 import Collider;
-import OnlyMovable;
+import Concepts;
 using std::optional;
 
 namespace BEbraEngine {

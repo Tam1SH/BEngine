@@ -1,29 +1,26 @@
 ﻿module;
-#include "platform.hpp"
 
 #include <variant>
 #include <memory>
 #include <optional>
 #include <string>
+#include "Physics.hpp"
 export module GameObjectFactory;
 import Light;
 import Camera;
-import CRender;
-import Render;
-import RenderAllocatorDecl;
 import RenderObjectFactoryDecl;
-import RenderWorld;
 import TransformFactory;
 import Material;
 import DirectionLight;
 import GameComponent;
 import GameObject;
 import Collider;
-
 import GameComponentCreateInfo;
 import Vector3;
 import GameComponentDestroyerDecl;
-
+import RenderWorld;
+import RenderAllocator;
+import Render;
 
 
 using std::shared_ptr;
@@ -32,6 +29,7 @@ using std::optional;
 using std::string;
 
 namespace BEbraEngine {
+	class Physics;
 	export class ColliderFactory;
 	export class RigidBodyFactory;
 	export class Tranform;
@@ -76,9 +74,9 @@ namespace BEbraEngine {
 		GameObjectFactory& operator=(const GameObjectFactory& o) = delete;
 
 	private:
-		TransformFactory transFactory;
-		std::unique_ptr<GameComponentDestroyer> destroyer;
-		RenderObjectFactory renderFactory;
+		TransformFactory* transFactory;
+		GameComponentDestroyer* destroyer;
+		RenderObjectFactory* renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;
 

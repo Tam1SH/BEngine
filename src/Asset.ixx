@@ -13,9 +13,9 @@ namespace BEbraEngine {
 	export template<typename T>
 	class Asset {
 	public:
-		std::optional<T*> get() { return value; }
-		Asset(std::optional<T*> value) : value(value) {}
+		std::optional<T> get() { return value; }
+		Asset(std::optional<T> value) : value(value) {}
 	private:
-		std::optional<T*> value;
+		std::optional<T> value;
 	};
 }

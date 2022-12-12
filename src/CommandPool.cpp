@@ -1,7 +1,6 @@
 ﻿#include <vulkan.h>
-
+#include "CommandBuffer.hpp"
 module CommandPool;
-import CommandBuffer;
 import VulkanRender;
 namespace BEbraEngine {
     void CommandPool::create(uint32_t queueFamilyIndex)

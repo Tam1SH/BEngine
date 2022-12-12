@@ -1,5 +1,7 @@
-﻿#include "stdafx.h"
+﻿
 export module AllocationStrategy;
+import <tuple>;
+import <functional>;
 
 namespace BEbraEngine {
 	export enum struct EnumAllocationStrategy {

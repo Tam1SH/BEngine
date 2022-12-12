@@ -1,7 +1,4 @@
-﻿
-#include <tbb.h>
-#include <variant>
-
+﻿#include <variant>
 #include <memory>;
 #include <string>;
 #include <boost/pool/object_pool.hpp>;
@@ -9,11 +6,9 @@
 export module VulkanRenderObjectFactory;
 import Light;
 import Camera;
-
 import RenderObject;
 import Material;
 import DirectionLight;
-import Texture;
 import Transform;
 import VulkanTextureFactory;
 import MeshFactory;
@@ -40,8 +35,6 @@ using std::string;
 
 namespace BEbraEngine {
     
-
-
     export struct VulkanRenderObjectFactory : AllocationStrategy
     {
         Task<optional<Material*>> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info);
@@ -68,7 +61,7 @@ namespace BEbraEngine {
 
         void setModel(RenderObject& object, const string& path);
 
-        VulkanRenderObjectFactory(VulkanRender& render, VulkanRenderAllocator& allocator, MeshFactory&& meshFactory);
+        VulkanRenderObjectFactory(VulkanRender& render, VulkanRenderAllocator& allocator, MeshFactory& meshFactory);
 
         VulkanRenderObjectFactory() {}
         ~VulkanRenderObjectFactory();
@@ -85,23 +78,8 @@ namespace BEbraEngine {
         VulkanRenderAllocator* allocator;
         VulkanRenderState* state;
         VulkanTextureFactory textureFactory;
-        MeshFactory meshFactory;
+        MeshFactory* meshFactory;
         
     };
-
-    namespace create {
-
-
-        export std::variant<VulkanRenderObjectFactory> renderObjectFactory(Render& render, CRenderAllocator auto& allocator, MeshFactory&& meshFactory) {
-            static_assert("no implementation found, check type");
-        }
-
-        export template<> std::variant<VulkanRenderObjectFactory> renderObjectFactory(Render& render, VulkanRenderAllocator& allocator, MeshFactory&& meshFactory);
-    }
 }
 
-module :private;
-import CRenderObjectFactory;
-namespace BEbraEngine {
-    //static_assert(CRenderObjectFactory<VulkanRenderObjectFactory>);
-}

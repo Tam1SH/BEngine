@@ -1,8 +1,6 @@
 ﻿#include <concepts>
 export module CRender;
-namespace BEbraEngine {
-	export class RenderData;
-}
+import RenderData;
 namespace BEbraEngine {
 
 	export template<typename T>

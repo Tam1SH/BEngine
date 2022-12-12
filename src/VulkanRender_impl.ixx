@@ -8,6 +8,7 @@
 #include <fstream>
 #include <memory>;
 #include <vector>;
+#include "CommandBuffer.hpp"
 const int MAX_FRAMES_IN_FLIGHT = 3;
 export module VulkanRender_impl;
 import VulkanRender;
@@ -15,11 +16,12 @@ import VulkanWindow;
 import RenderWorld;
 import VulkanBuffer;
 import utils;
-
+import Texture;
+import RenderObject;
 import DescriptorSetLayouts;
 import DescriptorPool;
-import CommandBuffer;
-
+import VulkanObjects;
+import RenderBufferView;
 import CommandPool;
 import CreateInfoStructures;
 import DescriptorSet;
@@ -305,6 +307,11 @@ namespace BEbraEngine {
         for (auto& camera : cameras) {
             camera->resize(Vector2(width, height));
         }
+    }
+
+    VulkanRender::~VulkanRender()
+    {
+        cleanUpDefault();
     }
 
     void VulkanRender::recreateRenderObjects() {
@@ -598,6 +605,14 @@ namespace BEbraEngine {
         }
 
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
+    }
+
+    Vector2 VulkanRender::getCurrentRenderResolution()
+    {
+        return {
+        static_cast<float>(currentRenderResolution.width),
+        static_cast<float>(currentRenderResolution.height)
+        };
     }
 
     uint32_t VulkanRender::alignmentBuffer(uint32_t originalSize, TypeRenderBuffer type)
@@ -2117,9 +2132,9 @@ namespace BEbraEngine {
     {
        // std::lock_guard<mutex> g(m);
         volatile int _linesToDraw = linesToDraw++;
-        linesMemory[_linesToDraw].from = from;
-        linesMemory[_linesToDraw].to = to;
-        linesMemory[_linesToDraw].color = color;
+        linesMemory[_linesToDraw].from = from.toVec<Vector3LineSharedDataTrashMSFixThisShit>();
+        linesMemory[_linesToDraw].to = to.toVec<Vector3LineSharedDataTrashMSFixThisShit>();
+        linesMemory[_linesToDraw].color = color.toVec<Vector3LineSharedDataTrashMSFixThisShit>();
    
 
     }
@@ -2531,19 +2546,14 @@ namespace BEbraEngine {
     {
         return device;
     }
-    
-    VulkanRender::~VulkanRender()
-    {
 
-        cleanUpDefault();
-    }
 
     void VulkanRender::createCameraSet()
     {
         cameraPlug = shared_ptr<RenderBuffer>(createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
         setMainCamera = createDescriptor(cameraPlug.get());
 
-        auto buf = createStorageBuffer(sizeof(Line::ShaderData) * 10000);
+        auto buf = createStorageBuffer(sizeof(LineShaderData) * 10000);
 
         physicsDebugSet = PhysicsDebugPool->get().value();
 
@@ -2685,7 +2695,7 @@ namespace BEbraEngine {
     
     }
 
-    RenderBuffer* VulkanRender::createIndexBuffer(std::span<uint32_t> indices)
+    RenderBuffer* VulkanRender::createIndexBuffer(std::vector<uint32_t> indices)
     {
         return createBufferAsync(indices.data(), sizeof(indices[0]) * indices.size(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     }
@@ -3031,12 +3041,10 @@ namespace BEbraEngine {
         _createBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer->self, buffer->memory);
         return buffer;
     }
-    RenderBuffer* VulkanRender::createVertexBuffer(std::span<Vertex> vertices)
+    RenderBuffer* VulkanRender::createVertexBuffer(std::vector<Vertex> vertices)
     {
         return createBufferAsync(vertices.data(), sizeof(vertices[0]) * vertices.size(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
-
-    VulkanRender::VulkanRender() {}
 
 
 }

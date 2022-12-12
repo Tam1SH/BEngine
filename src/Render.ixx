@@ -1,60 +1,63 @@
 ﻿module;
+#include "MethodDefineMacros.hpp"
 #include <variant>
 export module Render;
-import VulkanRender;
+import Concepts;
+
 import CRender;
+import RenderData;
+import VulkanRenderProxy;
+import VulkanRender;
 
 namespace BEbraEngine {
 
-	template <typename RenderType, typename... RenderTypes>
-	struct _AreRenderStates : std::conditional_t<CRender<RenderType>, _AreRenderStates<RenderTypes...>, std::false_type> {};
+	template<typename T>
+	struct Concept : std::bool_constant<CRender<T>> {};
 
-	template <typename RenderType>
-	struct _AreRenderStates<RenderType> : std::bool_constant<CRender<RenderType>> {};
-
-	export template <typename RenderType, typename... RenderTypes>
-	constexpr bool AreRenders = _AreRenderStates< RenderType, RenderTypes...>::value;
+	template <class...Ts>
+	constexpr bool AreRenders = AreSuitableToBe<Concept, Ts...>;
 
 	export template<typename... RenderTypes>
 		requires AreRenders<RenderTypes...>
-	struct _Render : public std::variant<RenderTypes...> {
+	struct _Render {
+
+		METHOD_DEFINE_0(update, CRender)
+		METHOD_DEFINE_0(prepareDraw, CRender)
+		METHOD_DEFINE_0(drawFrame, CRender)
+		METHOD_DEFINE_1(updateState, CRender, data)
 		
-		//Юзать макросы????7 Не, не слышали?
-		using Self = std::variant<RenderTypes...>&;
 
-		void update() {
-			return std::visit([](CRender auto& render) {
-				return render.update();
-			}, static_cast<Self>(*this));
+		template<typename RenderType>
+		RenderType& get() {
+			return std::get<RenderType>(self);
 		}
 
-		void prepareDraw() {
-			return std::visit([](CRender auto& render) {
-				return render.prepareDraw();
-			}, static_cast<Self>(*this));
-		}
-
-		void drawFrame() {
-			return std::visit([](CRender auto& render) {
-				return render.drawFrame();
-			}, static_cast<Self>(*this));
-		}
-
-		void updateState(RenderData& data) {
-			return std::visit([](CRender auto& render) {
-				return render.updateState(data);
-			}, static_cast<Self>(*this));
+		std::variant<RenderTypes...>& variant() {
+			return self;
 		}
 
 		template<typename RenderType>
 		_Render(RenderType&& render) requires CRender<RenderType> {
-			//Не знаю, не является ли UB это. Ну по сути стейта у этого объекта нет, чё бы и нет.
-			//Да если так подумать, то вызывается конструктор у родителя, не затрагивая текущий объект.
-			static_cast<Self>(*this) = std::forward<RenderType>(render);
-		}
-		_Render() {}
 
+			//static_assert(
+			//	are_same<remove_cvrefs<RenderTypes...>::type,
+			//	remove_cvrefs<RenderType>::type>::value,
+			//	"corresponds to the concept but does not correspond to the available types");
+
+			self = std::forward<RenderType>(render);
+		}
+
+		template<int index = 0>
+		_Render(std::in_place_index_t<index> i) {
+			self = std::variant<RenderTypes...>(i);
+		}
+	private:
+		std::variant<RenderTypes...> self;
+	};
+	export struct RenderType {
+		static constexpr auto Vulkan = std::in_place_index<0>;
 	};
 
 	export using Render = _Render<VulkanRender>;
+
 }

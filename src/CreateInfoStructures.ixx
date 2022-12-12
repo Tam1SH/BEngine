@@ -1,14 +1,17 @@
 ﻿module;
 #include <vulkan.h>
-#include <vector>
-export module CreateInfoStructures;
-import RenderBufferView;
-import Vector3;
-import Texture;
-import Material;
 
+export module CreateInfoStructures;
+import Vector3;
+import <vector>;
 
 using std::vector;
+
+namespace BEbraEngine {
+	export struct RenderBufferView;
+	export struct VulkanTexture;
+	export class Material;
+}
 
 namespace BEbraEngine {
 
@@ -37,19 +40,14 @@ namespace BEbraEngine {
 		const VulkanTexture* specular;
 		const VulkanTexture* normal;
 
-		static VulkanDescriptorSetInfo create(RenderBufferView* bufferView, Material& mat) {
-			VulkanDescriptorSetInfo info{};
-			info.bufferView = bufferView;
-			info.image = &mat.getColor().as<VulkanTexture>();
-			info.specular = &mat.getSpecular().as<VulkanTexture>();
-			info.normal = &mat.getNormal().as<VulkanTexture>();
-			return info;
-		}
+		static VulkanDescriptorSetInfo create(RenderBufferView* bufferView, Material& mat);
 
 	};
+
 	export class VulkanDescriptorPoolInfo {
 	public:
 		std::vector<VkDescriptorPoolSize> types;
 		VkDescriptorSetLayout layout;
 	};
+
 }

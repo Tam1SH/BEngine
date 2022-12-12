@@ -1,9 +1,12 @@
 ﻿module;
 export module Line;
-import RenderBuffer;
-import RenderBufferView;
 import Vector3;
+import <memory>;
 
+namespace BEbraEngine {
+    export struct RenderBuffer;
+    export struct RenderBufferView;
+}
 
 namespace BEbraEngine {
     export class Line {
@@ -33,10 +36,8 @@ namespace BEbraEngine {
             //_data = { from, to, color };
 
         }
-        RenderBufferView* data;
-        RenderBuffer* vertices;
-       // std::shared_ptr<RenderBufferView> data;
-        //std::shared_ptr<RenderBuffer> vertices;
+        std::shared_ptr<RenderBufferView> data;
+        std::shared_ptr<RenderBuffer> vertices;
     };
 
 

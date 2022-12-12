@@ -1,6 +1,7 @@
 ﻿#include <variant>
+#include <span>
 module VulkanRenderAllocator;
-import <span>;
+
 import Vertex;
 import Render;
 import CRender;

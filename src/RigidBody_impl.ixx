@@ -18,10 +18,10 @@ namespace BEbraEngine {
             AngularFactor.x = 0;
             body->setDamping(0.5, 0);
             body->setFriction(5);
-            body->setAngularFactor(AngularFactor);
+            body->setAngularFactor(AngularFactor.toVec<btVector3>());
         }
         else {
-            body->setAngularFactor(AngularFactor);
+            body->setAngularFactor(AngularFactor.toVec<btVector3>());
         }
     }
 
@@ -29,10 +29,10 @@ namespace BEbraEngine {
     {
         if (yesno) {
             AngularFactor.y = 0;
-            body->setAngularFactor(AngularFactor);
+            body->setAngularFactor(AngularFactor.toVec<btVector3>());
         }
         else {
-            body->setAngularFactor(AngularFactor);
+            body->setAngularFactor(AngularFactor.toVec<btVector3>());
         }
     }
 
@@ -40,10 +40,10 @@ namespace BEbraEngine {
     {
         if (yesno) {
             AngularFactor.z = 0;
-            body->setAngularFactor(AngularFactor);
+            body->setAngularFactor(AngularFactor.toVec<btVector3>());
         }
         else {
-            body->setAngularFactor(AngularFactor);
+            body->setAngularFactor(AngularFactor.toVec<btVector3>());
         }
     }
 
@@ -65,7 +65,7 @@ namespace BEbraEngine {
 
         body->clearForces();
         body->clearGravity();
-        body->getWorldTransform().setOrigin(transform->getPosition());
+        body->getWorldTransform().setOrigin(transform->getPosition().toVec<btVector3>());
         body->getWorldTransform().setRotation(transform->getRotation());
     }
 
@@ -95,8 +95,8 @@ namespace BEbraEngine {
     {
         this->isActive = isActive;
         if (this->isActive) {
-            body->setLinearFactor(linearFactor);
-            body->setAngularFactor(AngularFactor);
+            body->setLinearFactor(linearFactor.toVec<btVector3>());
+            body->setAngularFactor(AngularFactor.toVec<btVector3>());
             body->setCollisionFlags(btCollisionObject::CollisionFlags::CF_DYNAMIC_OBJECT);
         }
         else {
@@ -132,7 +132,7 @@ namespace BEbraEngine {
         if (BEbraMath::length(pos - point) < radius) {
             if (!body->isActive())
                 body->activate(true);
-            body->applyImpulse(direction * force, _point);
+            body->applyImpulse((direction * force).toVec<btVector3>(), _point);
         }
     }
 

@@ -1,5 +1,7 @@
 ﻿module;
 #include <variant>
+#include <span>
+#include <concepts>
 export module VulkanRenderAllocator;
 import CRender;
 import Render;
@@ -7,12 +9,12 @@ import VulkanRender;
 import RenderAllocatorTypeRenderBuffer;
 import Vertex;
 import RenderBuffer;
-import <span>;
-import <concepts>;
+import CRenderAllocator;
 
 namespace BEbraEngine {
 
 	export struct VulkanRenderAllocator {
+		
 
 		RenderBuffer* createIndexBuffer(std::span<uint32_t> indices);
 
@@ -41,28 +43,6 @@ namespace BEbraEngine {
 	private:
 		VulkanRender* render;
 	};
-	
-	namespace create {
-
-		using RenderAllocator = std::variant<VulkanRenderAllocator>;
-
-		export RenderAllocator renderAllocator1(CRender auto& render) {
-			return std::visit([](VulkanRender& render) {
-				return std::variant<VulkanRenderAllocator>(render);
-			}, render);
-			
-		}
-
-		
-	}
-
-
-}
-
-module :private;
-import CRenderAllocator;
-
-namespace BEbraEngine {
 	static_assert(CRenderAllocator<VulkanRenderAllocator>);
 
 }

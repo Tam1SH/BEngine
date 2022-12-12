@@ -4,10 +4,9 @@
 #include <assimp/postprocess.h>
 #include <fstream>
 #include <iostream>
-#include <boost/filesystem.hpp>
 #include <variant>
 module MeshFactory;
-import RenderBuffer;
+import RenderBufferView;
 import CRenderAllocator;
 import VulkanRenderAllocator;
 import Model;
@@ -28,7 +27,7 @@ namespace BEbraEngine {
     {
 
         auto model = new Model();
-        auto name = info.path.filename().filename().string();
+        auto name = info.path;
         if (name == "Box") {
             auto box = getDefaultModel("BOX");
             if (box.get())
@@ -50,7 +49,7 @@ namespace BEbraEngine {
         }
         // ������ ����� � ������� Assimp
         Assimp::Importer imposter;
-        const aiScene* scene = imposter.ReadFile(info.path.string(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+        const aiScene* scene = imposter.ReadFile(info.path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
         // �������� �� ������
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // ���� �� 0
@@ -62,7 +61,7 @@ namespace BEbraEngine {
         // ��������� ���� � �����
         //directory = path.substr(0, path.find_last_of('/'));
         // ����������� ��������� ��������� ���� Assimp
-        processNode(model, scene->mRootNode, scene, info.path.string());
+        processNode(model, scene->mRootNode, scene, info.path);
         auto model_out = std::make_optional<Model*>(model);
         return model_out;
     }

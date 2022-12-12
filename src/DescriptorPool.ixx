@@ -1,11 +1,15 @@
 ﻿#include <vulkan.h>
-#include <tbb.h>
 #include <optional>
-#include <list>
 #include <mutex>
+#include <tbb.h>
+#include <memory>
+#include <list>
 export module DescriptorPool;
-import CreateInfoStructures;
 
+
+namespace BEbraEngine {
+    export class VulkanDescriptorPoolInfo;
+}
 
 namespace BEbraEngine {
 
@@ -20,8 +24,7 @@ namespace BEbraEngine {
             return &pool;
         }
 
-
-        DescriptorPool(VulkanDescriptorPoolInfo info) { this->info = info; }
+        DescriptorPool(VulkanDescriptorPoolInfo& info);
        
         ~DescriptorPool();
 
@@ -31,23 +34,18 @@ namespace BEbraEngine {
 
         std::optional<VkDescriptorSet> get();
 
-        VulkanDescriptorPoolInfo getInfo() { return info; }
+        VulkanDescriptorPoolInfo& getInfo();
 
         DescriptorPool(const DescriptorPool& o) = delete;
         DescriptorPool& operator=(const DescriptorPool& o) = delete;
-        //TODO: �������������� move �����������
-
-       //. DescriptorPool() noexcept {}
-        //~DescriptorPool() noexcept;
 
     private:
-        VulkanDescriptorPoolInfo info{};
+        std::unique_ptr<VulkanDescriptorPoolInfo> info;
         VkDescriptorSetLayout layout{};
         VkDescriptorPool pool{};
 
         tbb::concurrent_queue<VkDescriptorSet> sets;
         
-
         std::list<VkDescriptorSet> setsUses;
         std::mutex mutex;
 

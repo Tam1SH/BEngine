@@ -1,4 +1,5 @@
 ﻿#include <vulkan.h>
+#include <memory>
 module VulkanBuffer;
 import VulkanRender;
 

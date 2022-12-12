@@ -1,4 +1,4 @@
-#include "platform.hpp"
+
 #include <Physics/LinearMath/btIDebugDraw.h>
 
 //#include "BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"
@@ -9,14 +9,12 @@
 #include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h"
 #include "BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h"
 #include <Physics/btBulletDynamicsCommon.h>
-#include <tbb.h>
 
 #include <vector>;
 #include <memory>;
 #include <functional>;
 #include <optional>;
 import ExecuteQueues;
-
 import Vector4;
 import Vector3;
 import RigidBody;
@@ -31,17 +29,18 @@ class btVector3;
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
 class btConstraintSolver;
+
 using std::unique_ptr;
 using std::optional;
 using std::string;
 using std::function;
 
-BE_NAMESPACE_STD_BEGIN
+namespace std {
 
     template<class T, class D>
     class unique_ptr;
 
-BE_NAMESPACE_STD_END
+}
 
 
 namespace BEbraEngine {

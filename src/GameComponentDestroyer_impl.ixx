@@ -1,14 +1,14 @@
-﻿
-#include <variant>
+﻿#include <variant>
 #include <memory>
 export module GameComponentDestroyer_impl;
 import GameComponentDestroyer;
 import CRenderObjectFactory;
 import CTextureFactory;
 import ColliderFactory;
+import TextureFactoryDecl;
 import RigidBodyFactory;
-
 import RenderObjectFactoryDecl;
+
 using std::shared_ptr;
 
 namespace BEbraEngine {
@@ -17,12 +17,12 @@ namespace BEbraEngine {
 		RenderObjectFactory& renderFactory,
 		ColliderFactory& colliderFactory,
 		RigidBodyFactory& rigidBodyFactory,
-		TextureFactory&& textureFactory)
+		TextureFactory& textureFactory)
 	{
 		this->renderFactory = &renderFactory;
 		this->colliderFactory = &colliderFactory;
 		this->rigidBodyFactory = &rigidBodyFactory;
-		this->textureFactory = std::move(textureFactory);
+		this->textureFactory = &textureFactory;
 	}
 
 	void GameComponentDestroyer::destroyRenderComponent(RenderObject& comp)
@@ -83,9 +83,9 @@ namespace BEbraEngine {
 
 	void GameComponentDestroyer::destroyTextureComponentAsync(shared_ptr<Texture> comp)
 	{
-		std::visit([&](CTextureFactory auto& textureFactory) {
-			textureFactory.destroyTextureAsync(comp);
-		}, textureFactory);
+		//std::visit([&](CTextureFactory auto& textureFactory) {
+		//	textureFactory.destroyTextureAsync(comp);
+		//}, *textureFactory);
 		
 
 	}

@@ -3,9 +3,13 @@
 #include <tbb.h>
 module DescriptorPool;
 import VulkanRender;
-
+import CreateInfoStructures;
 
 namespace BEbraEngine {
+    DescriptorPool::DescriptorPool(VulkanDescriptorPoolInfo& info)
+    {
+        this->info = std::make_unique(info);
+    }
     DescriptorPool::~DescriptorPool()
     {
         vkDestroyDescriptorPool(VulkanRender::device, pool, 0);
@@ -33,10 +37,10 @@ namespace BEbraEngine {
             allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
             allocInfo.descriptorPool = pool;
             allocInfo.descriptorSetCount = 1;
-            allocInfo.pSetLayouts = &info.layout;
+            //allocInfo.pSetLayouts = &info.layout;
             VkResult res;
             res = vkAllocateDescriptorSets(VulkanRender::device, &allocInfo, &set);
-            sets.push(set);
+            //sets.push(set);
         }
         
     }
@@ -67,5 +71,9 @@ namespace BEbraEngine {
         
         return std::optional<VkDescriptorSet>();
         
+    }
+    VulkanDescriptorPoolInfo& DescriptorPool::getInfo()
+    {
+        return *info.get();
     }
 }

@@ -1,5 +1,4 @@
 ﻿module;
-//#include <memory>
 export module RenderBuffer;
 
 namespace BEbraEngine {

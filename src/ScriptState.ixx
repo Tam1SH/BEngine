@@ -1,30 +1,16 @@
 ﻿module;
 #include <variant>
-#include <tbb.h>
-#include <queue>;
-#include <memory>;
-#include <functional>;
-#include <list>;
-#include <vector>;
-#include <optional>;
-#include <string>;
+#include <queue>
+#include <memory>
+#include <functional>
+#include <list>
+#include <vector>
+#include <optional>
+#include <string>
 export module ScriptState;
-
-import RenderObject;
-import Camera;
-import DirectionLight;
-import GameObject;
-import Light;
-
-import Render;
-import RenderAllocatorDecl;
-import ExecuteQueues;
 import Vector4;
 import Vector3;
-import ScriptManager;
-import RenderWorld;
-
-
+import ExecuteQueues;
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -34,11 +20,18 @@ using std::function;
 using std::vector;
 using std::list;
 
-
-
 namespace BEbraEngine {
     export struct ObjectFactoryFacade;
-    export struct Physics;
+    struct Physics;
+    export struct Render;
+    export struct RenderObject;
+    export class SimpleCamera;
+    export class Light;
+    export class GameObject;
+    export class DirectionLight;
+    export struct ScriptManager;
+    export struct RenderWorld;
+    export class RenderAllocator;
 }
 
 namespace BEbraEngine {
@@ -75,17 +68,11 @@ namespace BEbraEngine {
 
         ~ScriptState();
 
-        
-
     private:
-
-        //std::variant<VulkanWindow>* window;
 
         vector<shared_ptr<GameObject>> objects_;
 
         vector<shared_ptr<Light>> lights;
-
-        //tbb::concurrent_hash_map<const GameObject*, shared_ptr<GameObject>> objectsCache;
 
         ExecuteQueues<function<void()>> queues;
 
@@ -93,11 +80,11 @@ namespace BEbraEngine {
 
         Physics* physics;
         
-        RenderWorld renderWorld;
+        RenderWorld* renderWorld;
 
         ObjectFactoryFacade* scriptObjectFactory;
 
-        ScriptManager scriptManager;
+        ScriptManager* scriptManager;
 
         //std::unique_ptr<RenderObjectFactory> factory;
 
@@ -112,6 +99,7 @@ namespace BEbraEngine {
         shared_ptr<GameObject> player;
 
         list<shared_ptr<GameObject>> bounds;
+
         list<shared_ptr<GameObject>> objects;
         Vector3 scale;
         Vector3 rotate;

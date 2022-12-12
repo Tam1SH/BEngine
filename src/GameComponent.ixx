@@ -1,7 +1,7 @@
 ﻿module;
 #include "stdafx.h"
 export module GameComponent;
-import OnlyMovable;
+import Concepts;
 //import Logger;
 using std::optional;
 using std::shared_ptr;

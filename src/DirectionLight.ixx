@@ -1,10 +1,12 @@
 ﻿module;
-#include "stdafx.h"
+#include <memory>
 export module DirectionLight;
 import GameComponent;
 import Vector3;
-import RenderBufferView;
 
+namespace BEbraEngine {
+    export struct RenderBufferView;
+}
 
 namespace BEbraEngine {
 
@@ -14,7 +16,6 @@ namespace BEbraEngine {
         
         struct ShaderData {
             alignas(16) Vector3 direction;
-
             alignas(16) Vector3 color;
             alignas(16) Vector3 diffuse;
             alignas(16) Vector3 specular;
@@ -32,7 +33,7 @@ namespace BEbraEngine {
             destroyer.destroyLight(*this);
         }
 
-        RenderBufferView* data;
+        std::shared_ptr<RenderBufferView> data;
 
         void setColor(const Vector3& color) {
 
@@ -41,14 +42,8 @@ namespace BEbraEngine {
         void setDirection(const Vector3& direction) {
             _direction = direction;
         }
-        void update() {
-            ShaderData data1;
-            data1.direction = _direction;
-            data1.color = color;
-            data1.diffuse = color;
-            data1.specular = color;
-            data->setData(&data1, sizeof(ShaderData), 0);
-        }
+        void update();
+
         Vector3& getDirection() {
             return _direction;
         }
@@ -68,4 +63,5 @@ namespace BEbraEngine {
         Vector3 _direction;
     
     };
+
 }

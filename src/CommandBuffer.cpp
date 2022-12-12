@@ -1,5 +1,5 @@
 ﻿#include <vulkan.h>
-module CommandBuffer;
+#include "CommandBuffer.hpp"
 import CommandPool;
 namespace BEbraEngine {
     CommandBuffer::CommandBuffer(CommandPool* pool, VkCommandBufferUsageFlagBits usage, CommandBuffer::Type type) noexcept

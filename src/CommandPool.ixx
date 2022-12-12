@@ -1,14 +1,12 @@
 ﻿
-#include "platform.hpp"
 #include <vulkan.h>
+#include "CommandBuffer.hpp"
+#include <vector>
 export module CommandPool;
-import CommandBuffer;
-
-import <vector>;
 
 
 namespace BEbraEngine {
-    export class CommandPool final {
+    export class CommandPool {
 
     public:
 

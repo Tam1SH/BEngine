@@ -4,7 +4,7 @@
 export module Material;
 import GameComponent;
 import Texture;
-import OnlyMovable;
+import Concepts;
 
 
 

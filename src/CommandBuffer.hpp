@@ -1,15 +1,13 @@
 ﻿#include <vulkan/vulkan.h>
 #include <functional>
-export module CommandBuffer;
-
 
 namespace BEbraEngine {
-    export class CommandPool;
+    class CommandPool;
 }
 
 namespace BEbraEngine {
 
-    export class CommandBuffer final {
+    class CommandBuffer final {
     public:
         friend class CommandPool;
 

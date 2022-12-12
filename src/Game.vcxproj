@@ -140,8 +140,8 @@
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd;$(SolutionDir)Include\spdlog</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd;$(SolutionDir)Include\spdlog;C:\.BEbraEngine\Include\ctti</AdditionalIncludeDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
       <EnableModules>true</EnableModules>
@@ -312,6 +312,7 @@
     <ClCompile Include="AssetsStore.cxx" />
     <ClCompile Include="AssetsStore.ixx" />
     <ClCompile Include="Camera_impl.ixx" />
+    <ClCompile Include="CreateInfoStructures_impl.ixx" />
     <ClCompile Include="CRender.ixx" />
     <ClCompile Include="CRenderAllocator.ixx" />
     <ClCompile Include="CRenderObjectFactory.ixx" />
@@ -319,16 +320,22 @@
     <ClCompile Include="CRenderState.ixx" />
     <ClCompile Include="CVector3.ixx" />
     <ClCompile Include="DirectionLight.ixx" />
+    <ClCompile Include="DirectionLight_impl.ixx" />
+    <ClCompile Include="Engine.ixx" />
+    <ClCompile Include="Engine_impl.ixx" />
     <ClCompile Include="Error.ixx" />
     <ClCompile Include="Exceptions.ixx" />
     <ClCompile Include="GameComponentDestroyerDecl.ixx" />
     <ClCompile Include="GameObject_impl.ixx" />
     <ClCompile Include="Light.ixx" />
+    <ClCompile Include="Light_impl.ixx" />
+    <ClCompile Include="LineShaderData.ixx" />
     <ClCompile Include="Logger.ixx" />
+    <ClCompile Include="LOL.ixx" />
     <ClCompile Include="Material.ixx" />
     <ClCompile Include="Math.cxx" />
     <ClCompile Include="Matrix.cxx" />
-    <ClCompile Include="RenderAllocatorDecl.ixx" />
+    <ClCompile Include="RenderAllocator.ixx" />
     <ClCompile Include="RenderAllocatorTypeRenderBuffer.ixx" />
     <ClCompile Include="RenderBufferView.ixx" />
     <ClCompile Include="RenderBufferView_impl.ixx" />
@@ -346,10 +353,13 @@
     <ClCompile Include="TextureFactoryDecl.ixx" />
     <ClCompile Include="Transform_impl.ixx" />
     <ClCompile Include="Vector2.cxx" />
-    <ClCompile Include="Vector3.cxx" />
+    <ClCompile Include="Vector3_impl.ixx" />
     <ClCompile Include="Vector4.cxx" />
     <ClCompile Include="VulkanRenderAllocator.cxx" />
     <ClCompile Include="VulkanRenderAllocator.ixx" />
+    <ClCompile Include="VulkanRenderBufferArray_impl.ixx" />
+    <ClCompile Include="VulkanRenderProxy.ixx" />
+    <ClCompile Include="VulkanRenderProxy_impl.ixx" />
     <ClCompile Include="VulkanRenderState.ixx" />
     <ClCompile Include="Window_impl.ixx" />
     <ClCompile Include="Camera.ixx">
@@ -363,7 +373,7 @@
     </ClCompile>
     <ClCompile Include="ColliderFactory_impl.ixx" />
     <ClCompile Include="CommandBuffer.cpp" />
-    <ClCompile Include="OnlyMovable.ixx" />
+    <ClCompile Include="Concepts.ixx" />
     <ClCompile Include="CTextureFactory.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -479,7 +489,9 @@
     <ClCompile Include="ColliderFactory.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClCompile Include="CommandBuffer.ixx" />
+    <ClInclude Include="CommandBuffer.hpp">
+      <FileType>Document</FileType>
+    </ClInclude>
     <ClCompile Include="CommandPool.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -519,6 +531,8 @@
     <ClCompile Include="ObjectFactoryFacade.ixx">
       <FileType>Document</FileType>
     </ClCompile>
+    <ClInclude Include="di.hpp" />
+    <ClInclude Include="MethodDefineMacros.hpp" />
     <ClInclude Include="Physics.hpp">
       <FileType>Document</FileType>
     </ClInclude>

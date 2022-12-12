@@ -16,7 +16,6 @@ export module MeshFactory;
 import VulkanRenderAllocator;
 import Model;
 import Texture;
-
 using std::optional;
 using std::shared_ptr;
 using std::string;
@@ -24,7 +23,7 @@ using std::map;
 using std::vector;
 
 
-namespace BEbraEngine {
+export namespace BEbraEngine {
     class TextureFactory;
 }
 namespace BEbraEngine {

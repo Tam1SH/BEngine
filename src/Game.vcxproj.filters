@@ -162,9 +162,6 @@
     <ClCompile Include="CreateInfoStructures.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="CommandBuffer.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="BaseScriptEngine.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
@@ -240,9 +237,6 @@
     <ClCompile Include="CRenderAllocator.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="RenderAllocatorDecl.ixx">
-      <Filter>Файлы заголовков\declaration</Filter>
-    </ClCompile>
     <ClCompile Include="RenderObjectFactoryDecl.ixx">
       <Filter>Файлы заголовков\declaration</Filter>
     </ClCompile>
@@ -255,7 +249,7 @@
     <ClCompile Include="RenderAllocatorTypeRenderBuffer.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="Vector3.cxx">
+    <ClCompile Include="Vector3_impl.ixx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Math.cxx">
@@ -348,7 +342,7 @@
     <ClCompile Include="utils.ixx">
       <Filter>Файлы заголовков\utils</Filter>
     </ClCompile>
-    <ClCompile Include="OnlyMovable.ixx">
+    <ClCompile Include="Concepts.ixx">
       <Filter>Файлы заголовков\Concepts</Filter>
     </ClCompile>
     <ClCompile Include="Exceptions.ixx">
@@ -441,6 +435,39 @@
     <ClCompile Include="RenderBufferView_impl.ixx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanRenderBufferArray_impl.ixx">
+      <Filter>Исходные файлы\Render\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateInfoStructures_impl.ixx">
+      <Filter>Исходные файлы\Render\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="LineShaderData.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionLight_impl.ixx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="LOL.ixx">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="Light_impl.ixx">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.ixx">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine_impl.ixx">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanRenderProxy.ixx">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanRenderProxy_impl.ixx">
+      <Filter>Исходные файлы\Render\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderAllocator.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="TAA.vert">
@@ -489,6 +516,15 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandBuffer.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="di.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="MethodDefineMacros.hpp">
+      <Filter>Файлы заголовков\Factories</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

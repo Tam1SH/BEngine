@@ -1,31 +1,18 @@
-﻿
-#include <variant>
-#include <tbb.h>
+﻿#include <variant>
 #include <boost/pool/object_pool.hpp>;
 export module VulkanRenderObjectFactory_impl;
-
+import VulkanObjects;
 import VulkanRenderObjectFactory;
 import Logger;
+import RenderObject;
+import Render;
+import <optional>;
 using std::optional;
 using std::shared_ptr;
 
 
 //#include <stb-master/stb_image_write.h>
 namespace BEbraEngine {
-
-    namespace create {
-
-        template<> std::variant<VulkanRenderObjectFactory> renderObjectFactory(
-            Render& render,
-            VulkanRenderAllocator& allocator,
-            MeshFactory&& meshFactory) {
-            return std::visit([&](VulkanRender& render) {
-                
-                return std::variant<VulkanRenderObjectFactory>(VulkanRenderObjectFactory(render, allocator, std::forward<MeshFactory>(meshFactory)));
-
-            }, render);
-        }
-    }
     
     optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObjectCreateInfo& info)
     {
@@ -49,7 +36,7 @@ namespace BEbraEngine {
         auto obj = new VulkanRenderObject();
         
         obj->setName("RenderObject");
-        obj->model = meshFactory.getDefaultModel("BOX");
+        obj->model = meshFactory->getDefaultModel("BOX");
         obj->matrix = object_view;
         obj->material = new Material(textureFactory.createEmpty(), textureFactory.createEmpty(), textureFactory.createEmpty());
         obj->hasMaps = false;
@@ -58,7 +45,7 @@ namespace BEbraEngine {
         VulkanDescriptorSetInfo setinfo{};
 
         obj->descriptor = render->createDescriptor(VulkanDescriptorSetInfo::create(object_view.get(), *obj->material));
-        obj->layout = &render->pipelineLayout;
+        //obj->layout = &render->pipelineLayout;
 
         if (!obj->descriptor) {
             //DEBUG_LOG2("Can't create renderAlloc object", 0, "VulkanRenderObject", Debug::ObjectType::RenderObject, Debug::MessageType::Error);
@@ -144,8 +131,8 @@ namespace BEbraEngine {
             then([=](optional<Material*> mat) {
 
                 mat.and_then([&](Material* mat) -> optional<Material*> {
-                        render->executeQueues.addTask(ExecuteType::Multi,
-                            [=]() { setMaterial(*obj, *mat); });
+                        //render->executeQueues.addTask(ExecuteType::Multi,
+                        //    [=]() { setMaterial(*obj, *mat); });
 
                         return std::make_optional(mat);
                 });
@@ -189,32 +176,32 @@ namespace BEbraEngine {
 
 
     VulkanRenderObjectFactory::VulkanRenderObjectFactory(
-        VulkanRender& render, VulkanRenderAllocator& allocator, MeshFactory&& meshFactory
+        VulkanRender& render, VulkanRenderAllocator& allocator, MeshFactory& meshFactory
     )
-        : render(&render), allocator(&allocator), meshFactory(std::move(meshFactory))
+        : render(&render), allocator(&allocator), meshFactory(&meshFactory)
     {
         textureFactory = VulkanTextureFactory(render);
-        state->_poolofObjects = VulkanRenderBufferArray<RenderObject::ShaderData>(allocator);
+        //state->_poolofObjects = VulkanRenderBufferArray<RenderObject::ShaderData>(allocator);
         //_poolofObjects->setContext(&allocator);
         state->_poolofObjects.setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
         state->_poolofObjects.allocate(10000, sizeof(RenderObject::ShaderData), TypeRenderBuffer::Storage);
 
-        state->_poolofDirLights = VulkanRenderBufferArray<DirectionLight::ShaderData>(allocator);
+        //state->_poolofDirLights = VulkanRenderBufferArray<DirectionLight::ShaderData>(allocator);
         //_poolofDirLights->setContext(&allocator);
         state->_poolofDirLights.allocate(1, sizeof(DirectionLight::ShaderData), TypeRenderBuffer::Storage);
 
-        state->_poolofPointLights = VulkanRenderBufferArray<Light::ShaderData>(allocator);
+        //state->_poolofPointLights = VulkanRenderBufferArray<Light::ShaderData>(allocator);
         //_poolofPointLights->setContext(&allocator);
         state->_poolofPointLights.setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
         state->_poolofPointLights.allocate(10000, sizeof(Light::ShaderData), TypeRenderBuffer::Storage);
 
-        auto v = RenderBufferView();
-        v.buffer = state->_poolofPointLights.getBuffer();
-        v.availableRange = sizeof(Light::ShaderData) * 100;
+       // auto v = RenderBufferView();
+        //v.buffer = state->_poolofPointLights.getBuffer();
+       // v.availableRange = sizeof(Light::ShaderData) * 100;
 
-        auto info = LightDescriptorInfo();
-        info.bufferView = &v;
-        info.type = LightDescriptorInfo::Type::Point;
+       // auto info = LightDescriptorInfo();
+       // info.bufferView = &v;
+       // info.type = LightDescriptorInfo::Type::Point;
     }
 
     VulkanRenderObjectFactory::~VulkanRenderObjectFactory()
@@ -228,7 +215,7 @@ namespace BEbraEngine {
         auto camera = new VulkanCamera(render->getCurrentRenderResolution(), position);
         auto view = new RenderBufferView();
         view->availableRange = sizeof(SimpleCamera::ShaderData);
-        view->buffer = shared_ptr<RenderBuffer>(render->createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
+       // view->buffer = shared_ptr<RenderBuffer>(render->createStorageBuffer(sizeof(SimpleCamera::ShaderData)));
         camera->cameraData = view;
         camera->descriptor = render->createDescriptor(camera->cameraData->buffer.get());
         return camera;
@@ -243,7 +230,7 @@ namespace BEbraEngine {
         ModelCreateInfo info{};
         info.path = path;
         
-        auto m = meshFactory.create(info);
+        auto m = meshFactory->create(info);
         if (m.has_value()) {
             object.model = shared_ptr<Model>(m.value());
         }

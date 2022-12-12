@@ -1,21 +1,19 @@
-﻿
+﻿#include <variant>
 #include "Physics.hpp"
-#include <variant>
-
 export module GameObjectFactory_impl;
 import GameObjectFactory;
-import GameComponentCreateInfo;
-import CRender;
-import CRenderAllocator;
-import CRenderObjectFactory;
+import RenderAllocator;
 import RenderWorld;
 import Render;
+import GameComponentCreateInfo;
+
+import CRenderAllocator;
 import CRenderObjectFactory;
-import RenderAllocatorDecl;
 import TransformFactory;
 import ColliderFactory;
 import RigidBodyFactory;
 import GameComponentDestroyer;
+import RenderObjectFactoryDecl;
 import MeshFactory;
 using std::optional;
 using std::shared_ptr;
@@ -24,33 +22,33 @@ using std::unique_ptr;
 
 namespace BEbraEngine {
 	
+	
 	GameObjectFactory::GameObjectFactory(Render& render, RenderAllocator& allocator, Physics& physics, RenderWorld& world) noexcept
 	{
 		
-		
-		auto meshFactory = MeshFactory(allocator);
+		//auto meshFactory = MeshFactory(allocator);
 
-		std::visit([&](CRenderAllocator auto& allocator) {
-			renderFactory = BEbraEngine::create::renderObjectFactory(render, allocator, std::move(meshFactory));
-		}, allocator);
+		//std::visit([&](CRenderAllocator auto& allocator) {
+			//renderFactory = BEbraEngine::create::renderObjectFactory(render, allocator, std::move(meshFactory));
+		//}, allocator);
 
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-			colliderFactory = physics.getColliderFactory();
-			rigidBodyFactory = physics.getRigidBodyFactory();
-			transFactory = TransformFactory();
+		//std::visit([&](CRenderObjectFactory auto& renderFactory) {
+			//colliderFactory = physics.getColliderFactory();
+			//rigidBodyFactory = physics.getRigidBodyFactory();
+			//transFactory = TransformFactory();
 			//renderFactory.setComponentDestroyer(*destroyer);
-		}, renderFactory);
+		//}, renderFactory);
 
-		destroyer = std::unique_ptr<GameComponentDestroyer>(new GameComponentDestroyer(
-			renderFactory, *colliderFactory, *rigidBodyFactory, BEbraEngine::create::textureFactory(render)
-		));
+		//destroyer = std::unique_ptr<GameComponentDestroyer>(new GameComponentDestroyer(
+			//renderFactory, *colliderFactory, *rigidBodyFactory, BEbraEngine::create::textureFactory(render)
+		//));
 		
 
 
 
 
 	}
-
+	
 
 	optional<GameComponent*> GameObjectFactory::create(const GameComponentCreateInfo& info)
 	{
@@ -91,10 +89,10 @@ namespace BEbraEngine {
 			}
 
 			if (info.transformInfo)
-				opt_transform = transFactory.create(*info.transformInfo);
+				opt_transform = transFactory->create(*info.transformInfo);
 			else {
 				Transform::CreateInfo info{};
-				opt_transform = transFactory.create(info);
+				opt_transform = transFactory->create(info);
 				//DEBUG_LOG1("transformInfo doesn't exist in GameObjectCreateInfo");
 			}
 
@@ -144,7 +142,7 @@ namespace BEbraEngine {
 				comp->addComponent(collider);
 				comp->addComponent(rigidbody);
 			}
-		}, renderFactory);
+		}, *renderFactory);
 		if (opt_renderObj.has_value() && 
 			opt_transform.has_value()) {
 
@@ -164,7 +162,7 @@ namespace BEbraEngine {
 		std::visit([&](CRenderObjectFactory auto& renderFactory) {
 			Transform::CreateInfo info{};
 			info.position = position;
-			auto transform = shared_ptr<Transform>(transFactory.create(info).value());
+			auto transform = shared_ptr<Transform>(transFactory->create(info).value());
 			light = shared_ptr<Light>(renderFactory.createLight(Vector3(1), position));
 			light->addComponent(transform);
 
@@ -176,7 +174,7 @@ namespace BEbraEngine {
 			renderFactory.bindTransform(*light, *transform);
 
 			light->update();
-		}, renderFactory);
+		}, *renderFactory);
 
 		//renderAlloc->addLight(light);
 		return light;
@@ -199,7 +197,7 @@ namespace BEbraEngine {
 						.or_else([&]() -> std::optional<Material*> { throw std::exception(); });
 				})
 				.failure([&]() { throw std::exception(); });
-		}, renderFactory);
+		}, *renderFactory);
 	}
 
 
@@ -215,7 +213,7 @@ namespace BEbraEngine {
 
 			light->update();
 
-		}, renderFactory);
+		}, *renderFactory);
 
 		return light;
 		
@@ -227,7 +225,7 @@ namespace BEbraEngine {
 		
 		std::visit([&](CRenderObjectFactory auto& renderFactory) {
 			renderFactory.setModel(object.getComponentChecked<RenderObject>(), path);
-		}, renderFactory);
+		}, *renderFactory);
 		
 	}
 
@@ -253,7 +251,7 @@ namespace BEbraEngine {
 	{
 		std::visit([&](CRenderObjectFactory auto& renderFactory) {
 			renderFactory.destroyPointLight(light);
-		}, this->renderFactory);
+		}, *renderFactory);
 
 	}
 
@@ -267,7 +265,7 @@ namespace BEbraEngine {
 			camera = shared_ptr<SimpleCamera>(renderFactory.createCamera(position));
 			//renderAlloc->addCamera(camera);
 			//renderAlloc->selectMainCamera(camera.get());
-		}, renderFactory);
+		}, *renderFactory);
 
 
 		return camera;

@@ -1,35 +1,28 @@
 ﻿module;
+#include <tbb.h>
 #include <vulkan.h>
-//#include <tbb.h>
-#include <span>
 #include <optional>
 #include <memory>
 #include <mutex>
 #include <map>
 #include <functional>
 #include <string>
-
+#include "CommandBuffer.hpp"
 export module VulkanRender;
 import ExecuteQueues;
 import RenderData;
 import RenderAllocatorTypeRenderBuffer;
 import RenderHelper;
-import RenderBuffer;
 import Vector2;
-import CommandBuffer;
-import DescriptorPool;
-import Vector4;
 import Vector3;
-import Texture;
-import VulkanObjects;
 import VulkanPipeline;
-import Line;
+import LineShaderData;
 import CreateInfoStructures;
 import Vertex;
-
-
+import VulkanRenderBufferArray;
+import CommandPool;
+import DescriptorPool;
 class btIDrawDebug;
-
 using std::shared_ptr;
 using std::unique_ptr;
 using std::vector;
@@ -42,17 +35,29 @@ using std::atomic;
 
 
 namespace BEbraEngine {
+    export struct RenderBuffer;
     export struct VulkanWindow;
-    class VulkanDirLight;
-    class VulkanPointLight;
+    export struct VulkanDirLight;
+    export struct VulkanPointLight;
+    export struct VulkanCamera;
+    export struct VulkanRenderObject;
+    export class VulkanTexture;
+    export class Texture;
 }
 
 
 namespace BEbraEngine {
 
-
-    export struct VulkanRender : RenderHelper
+    export struct VulkanRender
     {
+        void update();
+
+        void prepareDraw();
+
+        void drawFrame();
+
+        void updateState(RenderData& data);
+
         void create(VulkanWindow& window);
 
         void destroyBuffer(RenderBuffer* buffer);
@@ -61,27 +66,14 @@ namespace BEbraEngine {
 
         RenderBuffer* createStorageBuffer(uint32_t size);
 
-        RenderBuffer* createIndexBuffer(std::span<uint32_t> indices);
+        RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices);
 
-        RenderBuffer* createVertexBuffer(std::span<Vertex> vertices);
-
-        void drawFrame();
-
-        void prepareDraw();
-
-        void update();
-
-        void updateState(RenderData& data);
+        RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices);
 
         void drawLine(const Vector3& from, const Vector3& to, const Vector3& color);
 
 
-        Vector2 getCurrentRenderResolution() { 
-            return { 
-            static_cast<float>(currentRenderResolution.width), 
-            static_cast<float>(currentRenderResolution.height) 
-            };
-        }
+        Vector2 getCurrentRenderResolution();
 
         uint32_t alignmentBuffer(uint32_t originalSize, TypeRenderBuffer type);
 
@@ -117,19 +109,13 @@ namespace BEbraEngine {
 
         void recreateSwapChain(uint32_t width, uint32_t height);
 
-        VulkanRender();
-
-        VulkanRender(VulkanRender&&) noexcept = default;
-        VulkanRender& operator=(VulkanRender&&) noexcept = default;
-        VulkanRender(const VulkanRender&) noexcept = delete;
-        VulkanRender& operator=(const VulkanRender&) noexcept = delete;
+        VulkanRender() {}
+        VulkanRender(const VulkanRender&) noexcept {}
+        VulkanRender& operator=(const VulkanRender&) noexcept { return *this; }
+        //VulkanRender(VulkanRender&&) noexcept = default;
+        //VulkanRender& operator=(VulkanRender&&) noexcept = default;
 
         ~VulkanRender();
-
-
-        VkPipelineLayout pipelineLayout;
-
-        ExecuteQueues<function<void()>> executeQueues;
 
     public:
         enum class DescriptorLayoutType {
@@ -176,6 +162,10 @@ namespace BEbraEngine {
     
     private:
 
+        VkPipelineLayout pipelineLayout;
+
+        ExecuteQueues<function<void()>> executeQueues;
+
 
         std::mutex m;
 
@@ -183,13 +173,12 @@ namespace BEbraEngine {
 
         float totalTime;
 
-        //tbb::concurrent_queue<CommandBuffer> BufferRenderQueue;
+        //Лол, компилер еррор момент, меня эта падла заставляет хедеры возращать обратно
+        tbb::concurrent_queue<CommandBuffer> BufferRenderQueue;
 
-        //tbb::concurrent_queue<CommandBuffer> BufferTransferQueue;
+        tbb::concurrent_queue<CommandBuffer> BufferTransferQueue;
 
         RenderData currentData;
-
-
 
         VkDescriptorSet lineSet;
 
@@ -201,9 +190,9 @@ namespace BEbraEngine {
 
         VkDescriptorSet objectSet;
 
-        vector<Line::ShaderData> linesMemory{ 30000 };
+        vector<LineShaderData> linesMemory{ 30000 };
 
-        //unique_ptr<VulkanRenderBufferArray<Line::ShaderData>> linePool;
+        unique_ptr<VulkanRenderBufferArray<LineShaderData>> linePool;
 
         list<VulkanCamera*> cameras;
 
@@ -330,7 +319,7 @@ namespace BEbraEngine {
 
         void recreateRenderObjects();
 
-        //TODO: �������� ���� �����.
+
         void createDepthResources();
 
         VkFormat findSupportedFormat(const vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
@@ -442,12 +431,4 @@ namespace BEbraEngine {
         const bool enableValidationLayers = true;
 
     };
-
-
-}
-
-module :private;
-//import CRender;
-namespace BEbraEngine {
-    //static_assert(CRender<VulkanRender>);
 }

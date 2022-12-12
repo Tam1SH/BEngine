@@ -1,4 +1,5 @@
-﻿export module Collider_impl;
+﻿#include <LinearMath/btVector3.h>
+export module Collider_impl;
 import Collider;
 //import GameComponentDestroyer;
 
@@ -15,7 +16,7 @@ namespace BEbraEngine {
 	void Collider::setRotation(const Quaternion& quat) noexcept {
 		btTransform trans;
 		trans.setRotation(static_cast<btQuaternion>(quat));
-		trans.setOrigin(position);
+		trans.setOrigin(position.toVec<btVector3>());
 		_collider->setWorldTransform(trans);
 	}
 

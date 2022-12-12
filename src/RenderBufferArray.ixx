@@ -1,17 +1,20 @@
 ﻿module;
-#include "platform.hpp"
 #include <memory>
 #include <optional>
 #include <vector>
 export module RenderBufferArray;
 
 import CRenderAllocator;
-import RenderBuffer;
-import RenderBufferView;
 import RenderAllocatorTypeRenderBuffer;
 
 using std::shared_ptr;
 using std::optional;
+
+namespace BEbraEngine {
+	export struct RenderBuffer;
+	export struct VulkanBuffer;
+	export struct RenderBufferView;
+}
 
 namespace BEbraEngine {
 

@@ -5,7 +5,7 @@ export module GameComponentDestroyer;
 import RigidBodyFactoryDecl;
 import TextureFactoryDecl;
 import RenderObjectFactoryDecl;
-import OnlyMovable;
+import Concepts;
 import RigidBody;
 import GameObject;
 import DirectionLight;
@@ -51,7 +51,7 @@ namespace BEbraEngine {
 			RenderObjectFactory& renderFactory,
 			ColliderFactory& colliderFactory,
 			RigidBodyFactory& rigidBodyFactory,
-			TextureFactory&& textureFactory);
+			TextureFactory& textureFactory);
 
 		GameComponentDestroyer(const GameComponentDestroyer&) = delete;
 		GameComponentDestroyer operator=(const GameComponentDestroyer&) = delete;
@@ -64,6 +64,6 @@ namespace BEbraEngine {
 		RenderObjectFactory* renderFactory;
 		ColliderFactory* colliderFactory;
 		RigidBodyFactory* rigidBodyFactory;
-		TextureFactory textureFactory;
+		TextureFactory* textureFactory;
 	};
 }

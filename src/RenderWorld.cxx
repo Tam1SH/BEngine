@@ -3,6 +3,9 @@
 #include <variant>
 module RenderWorld;
 import CRender;
+import RenderData;
+import RenderObject;
+import Light;
 namespace BEbraEngine {
 
     RenderWorld::RenderWorld(Render& render)

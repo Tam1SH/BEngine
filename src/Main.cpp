@@ -9,8 +9,7 @@ TODO: подумать над реализацей:
 
 */
 
-#include "Engine.hpp"
-import Debug;
+import Engine;
 import Logger;
 
 #ifndef __ANDROID__
@@ -23,11 +22,6 @@ extern "C"
 int main(int argc, char* argv[])
 {
     BEbraEngine::Logger::init();
-
-    //DEBUG_LOG1("BEGIN OF PIZDEC");
-    BEbraEngine::Engine engine{};
-
-    engine.Main({false,false});
-    return 1337228;
+    return BEbraEngine::Engine{}.run();
 }
 

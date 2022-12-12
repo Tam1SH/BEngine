@@ -4,20 +4,20 @@
 #include <algorithm>
 
 export module RenderWorld;
-import Render;
-import Camera;
-import DirectionLight;
-import Light;
-import RenderObject;
-import RenderData;
 
-
-
+namespace BEbraEngine {
+    export class SimpleCamera;
+    export class DirectionLight;
+    export struct RenderObject;
+    export class Light;
+    export struct Render;
+    export struct RenderData;
+}
 
 namespace BEbraEngine {
 
-
     export struct RenderWorld {
+
         struct Request { };
 
         void selectMainCamera(SimpleCamera& camera);
@@ -41,12 +41,13 @@ namespace BEbraEngine {
         RenderData& getRenderData();
 
         RenderWorld(Render& render);
+
         RenderWorld() {}
         
         
         RenderWorld(RenderWorld&& o) noexcept {
             data = std::move(o.data);
-            //requestQueue.clear();
+            requestQueue.clear();
             objects = std::move(o.objects);
             render = std::move(o.render);
         }
@@ -54,7 +55,7 @@ namespace BEbraEngine {
         RenderWorld& operator=(RenderWorld&& o) noexcept {
 
             data = std::move(o.data);
-            //requestQueue.clear();
+            requestQueue.clear();
             objects = std::move(o.objects);
             render = std::move(o.render);
             return *this;
@@ -68,7 +69,7 @@ namespace BEbraEngine {
         RenderData* data;
         Render* render;
 
-        tbb::concurrent_queue<Request> requestQueue{};
+        tbb::concurrent_queue<Request> requestQueue;
         std::vector<RenderObject*> objects;
         std::vector<Light*> lights;
     };

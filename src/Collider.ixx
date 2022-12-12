@@ -5,9 +5,9 @@
 export module Collider;
 import Vector3;
 import Quaternion;
-import OnlyMovable;
+import Concepts;
 import GameComponent;
-
+import Concepts;
 
 using std::unique_ptr;
 
