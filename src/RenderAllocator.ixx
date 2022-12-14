@@ -1,7 +1,7 @@
 #include "MethodDefineMacros.hpp"
-#include <variant>
 export module RenderAllocator;
 import <concepts>;
+import <variant>;
 import CRenderAllocator;
 import VulkanRenderAllocator;
 import Concepts;
@@ -52,9 +52,6 @@ namespace BEbraEngine {
 			//	"corresponds to the concept but does not correspond to the available types");
 			this->self = std::forward<RenderAllocator>(member);
 		}
-
-
-
 
 	private:
 		std::variant<RenderAllocators...> self;

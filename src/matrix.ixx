@@ -1,10 +1,9 @@
 ﻿export module Matrix4;
 import Vector4;
 
-
 namespace BEbraEngine {
 
-	export class Matrix4 {
+	export struct Matrix4 {
 	public:
 
 		constexpr Vector4& operator[](size_t i) {return elements[i];}

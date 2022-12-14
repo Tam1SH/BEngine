@@ -4,7 +4,7 @@ export module GameComponentDestroyer;
 //import ColliderFactory;
 import RigidBodyFactoryDecl;
 import TextureFactoryDecl;
-import RenderObjectFactoryDecl;
+import RenderObjectFactory;
 import Concepts;
 import RigidBody;
 import GameObject;

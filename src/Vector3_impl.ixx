@@ -56,6 +56,12 @@ namespace BEbraEngine {
 		return Vector3(result.x, result.y, result.z);
 	}
 
+	Vector3 Vector3::operator-() const noexcept
+	{
+		auto vec = Vector3(-this->x, -this->y, -this->z);
+		return vec;
+	}
+
 	Vector3 Vector3::operator+(const Vector3& other) const noexcept {
 		glm::vec3 l = glm::vec3(this->x, this->y, this->z);
 		glm::vec3 r = glm::vec3(other.x, other.y, other.z);

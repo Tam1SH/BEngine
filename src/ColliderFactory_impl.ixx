@@ -1,6 +1,4 @@
 ﻿module;
-#include <Physics/btBulletDynamicsCommon.h>
-#include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
 #include <stdexcept>
 #include "Physics.hpp"
 export module ColliderFactory_impl;

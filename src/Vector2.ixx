@@ -2,7 +2,7 @@
 
 namespace BEbraEngine {
 
-	export class Vector2
+	export struct Vector2
 	{
 	public:
 

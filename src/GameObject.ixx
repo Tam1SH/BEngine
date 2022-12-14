@@ -17,7 +17,7 @@ using std::optional;
 
 namespace BEbraEngine {
 
-    export class GameObject : public GameComponent { 
+    export struct GameObject : GameComponent { 
     public:
 
         template<typename Destroyer>

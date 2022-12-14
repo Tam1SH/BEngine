@@ -1,6 +1,5 @@
 ﻿module;
-#include <memory>;
-#include <string>;
+
 export module ObjectFactoryFacade;
 import GameObjectFactory;
 import Light;
@@ -11,9 +10,10 @@ import DirectionLight;
 import GameObject;
 import Collider;
 import GameComponent;
-
 import GameComponentCreateInfo;
 import Vector3;
+import <memory>;
+import <string>;
 
 
 

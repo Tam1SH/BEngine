@@ -1,22 +1,27 @@
 ﻿module;
 #include <vulkan/vulkan.h>
-#include <array>
-#include <vector>
+#include <array>;
+#include <vector>;
 export module Vertex;
 import Vector2;
 import Vector4;
-import Vector3;
-
 
 
 namespace BEbraEngine {
     
+    //Импортишь вектор 3? Компайл ерор. А мб это всё из-за CVector3, кто его знает
+    export struct UnbelivableVector3FromMSVC {
+        int x, y, z;
+        UnbelivableVector3FromMSVC(int x, int y, int z) : x(x), y(y), z(z) { }
+        UnbelivableVector3FromMSVC() {}
+    };
+
     export struct Vertex {
 
-        Vector3 position;
+        UnbelivableVector3FromMSVC position;
         Vector4 color;
         Vector2 texCoord;
-        Vector3 Normal;
+        UnbelivableVector3FromMSVC Normal;
         //Vector3 Tangent;
         //Vector3 Bitangent;
         static VkVertexInputBindingDescription getBindingDescription() {

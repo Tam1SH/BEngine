@@ -108,7 +108,7 @@
     <ClCompile Include="Pipeline.cpp">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanRenderObjectFactory_impl.ixx">
+    <ClCompile Include="VulkanRenderObjectFactory.cxx">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="VulkanObjects.cxx">
@@ -237,7 +237,7 @@
     <ClCompile Include="CRenderAllocator.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="RenderObjectFactoryDecl.ixx">
+    <ClCompile Include="RenderObjectFactory.ixx">
       <Filter>Файлы заголовков\declaration</Filter>
     </ClCompile>
     <ClCompile Include="CRenderObjectFactoryDecl.ixx">

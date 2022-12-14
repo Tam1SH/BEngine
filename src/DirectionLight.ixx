@@ -1,17 +1,15 @@
 ﻿module;
-#include <memory>
+
 export module DirectionLight;
 import GameComponent;
 import Vector3;
+import <memory>;
+import RenderBufferView;
 
 namespace BEbraEngine {
-    export struct RenderBufferView;
-}
-
-namespace BEbraEngine {
 
 
-    export class DirectionLight : public GameComponent {
+    export struct DirectionLight : GameComponent {
     public:
         
         struct ShaderData {

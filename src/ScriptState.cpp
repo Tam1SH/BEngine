@@ -1,12 +1,10 @@
-﻿
+﻿#include <tbb.h>
 #include <random>
-#include <tbb.h>
 #include "Physics.hpp"
-#include <variant>
-#include <functional>
-#include <functional>;
-#include <memory>;
 module ScriptState;
+import <variant>;
+import <functional>;
+import <memory>;
 import ScriptManager;
 import RenderWorld;
 import GameObject;
@@ -64,18 +62,23 @@ namespace BEbraEngine {
     }
 
 
-    ScriptState::ScriptState(Render& render, RenderAllocator& allocator, Physics& physics)
+    ScriptState::ScriptState(Render& render, RenderAllocator& allocator, Physics& physics,
+                             RenderWorld& renderWorld, ScriptManager& manager, ObjectFactoryFacade& objectFactory)
     {
-        queues = ExecuteQueues<function<void()>>();
+        //queues = ExecuteQueues<function<void()>>();
 
         this->physics = &physics;
-        renderWorld = RenderWorld(render);
-        scriptObjectFactory = new ObjectFactoryFacade(new GameObjectFactory(render, allocator, physics, renderWorld));
+        //renderWorld = RenderWorld(render);
+        this->renderWorld = &renderWorld;
+        //scriptObjectFactory = new ObjectFactoryFacade(new GameObjectFactory(render, allocator, physics, renderWorld));
+        scriptObjectFactory = &objectFactory;
+
         scriptObjectFactory->setContext(this);
 
-        scriptManager = ScriptManager(scriptObjectFactory);
+       // scriptManager = ScriptManager(scriptObjectFactory);
+        scriptManager = &manager;
 
-        scriptManager.LoadScripts();
+        scriptManager->LoadScripts();
 
         scriptInit();
     }
@@ -83,7 +86,7 @@ namespace BEbraEngine {
     void ScriptState::scriptInit()
     {
         
-        scriptManager.InitScripts();
+        scriptManager->InitScripts();
         camera = scriptObjectFactory->createCamera(Vector3(0, 40, 0));
         
         player = scriptObjectFactory->create(Vector3(-30, 30, 0));
@@ -212,7 +215,7 @@ namespace BEbraEngine {
        // pos.y += 10;
         //camera->moveTo(pos);
 
-        scriptManager.runScripts();
+        scriptManager->runScripts();
         float speed = 1;
         if (Input::isKeyPressed(KeyCode::KEY_LEFT_SHIFT)) {
             speed = 20;
@@ -284,9 +287,9 @@ namespace BEbraEngine {
         }
         if (Input::isKeyPressed(KeyCode::KEY_S) && !inFly) {
             camera->processKeyboard(BACKWARD, Time::deltaTime() * speed);
-            auto pos = camera->Front;
+            auto pos = -(camera->Front);
             pos.y = 0;
-            rigidBodyPlayer.applyImpulse(-pos, (camera->Front * Time::deltaTime() * speed));
+            rigidBodyPlayer.applyImpulse(pos, (camera->Front * Time::deltaTime() * speed));
         }
         if (Input::isKeyPressed(KeyCode::KEY_F)) {
             auto pos = camera->Position;
@@ -387,19 +390,21 @@ namespace BEbraEngine {
 
     void ScriptState::updateState()
     {
-        renderWorld.update();
-        queues.execute();
+        renderWorld->update();
+        throw std::exception("not implemented");
+       // queues.execute();
     }
 
 
     void ScriptState::addObject(shared_ptr<GameObject> object)
     {
-        
+        /*
         queues.addTask(ExecuteType::Single, 
             [=] {
+                throw std::exception("not implemented");
                 auto renderObj = object->getComponent<RenderObject>();
                 if (renderObj.has_value()) {
-                    renderWorld.addObject(object->getComponentChecked<RenderObject>());
+                    renderWorld->addObject(object->getComponentChecked<RenderObject>());
                 }
                 //else
                 //    DEBUG_LOG1("Object has no component 'RenderObject'");
@@ -407,7 +412,7 @@ namespace BEbraEngine {
 
                 auto rigidBody = object->getComponent<RigidBody>();
                 if (rigidBody.has_value()) {
-                    physics->addRigidBody(object->getComponentChecked<RigidBody>());
+                   // physics->addRigidBody(object->getComponentChecked<RigidBody>());
                 }
                // else
                 //    DEBUG_LOG1("Object has no component 'RigidBody'");
@@ -417,27 +422,30 @@ namespace BEbraEngine {
             
 
         );
-        
+        */
     }
 
     void ScriptState::removeObject(
         shared_ptr<GameObject> object,
         std::function<void(GameObject&)> callback)
     {
-        
+        throw std::exception("not implemented");
+        /*
         queues.addTask(ExecuteType::Single,
              [&, object, callback] () {
 
+                throw std::exception("not implemented");
+
                 auto renderObj = object->getComponent<RenderObject>();
                 if (renderObj.has_value()) {
-                    renderWorld.removeObject(object->getComponentChecked<RenderObject>());
+                    renderWorld->removeObject(object->getComponentChecked<RenderObject>());
                 }
                 //else
                 //    DEBUG_LOG1("Object has no component 'RenderObject'");
 
                 auto rigidBody = object->getComponent<RigidBody>();
                 if (rigidBody.has_value()) {
-                    physics->removeRigidBody(object->getComponentChecked<RigidBody>());
+                   // physics->removeRigidBody(object->getComponentChecked<RigidBody>());
                 }
                 //else
                 //    DEBUG_LOG1("Object has no component 'RigidBody'");
@@ -446,44 +454,49 @@ namespace BEbraEngine {
                
                 callback(*object);
             });
-            
+        */
     }
 
     void ScriptState::addCamera(SimpleCamera& camera)
     {
-        
+        throw std::exception("not implemented");
         auto pCamera = &camera;
+        /*
         queues.addTask(ExecuteType::Single,
             [=] {
             //renderWorld.addCamera(*pCamera);
-            renderWorld.selectMainCamera(*pCamera);
+            renderWorld->selectMainCamera(*pCamera);
             }
         );
+        */
         
     }
 
     void ScriptState::addLight(Light& light)
     {
         auto pLight = &light;
+        throw std::exception("not implemented");
+        /*
         queues.addTask(ExecuteType::Single,
             [=] {
-            renderWorld.addLight(*pLight);
+            renderWorld->addLight(*pLight);
             }
         );
-        
+        */
     }
 
     void ScriptState::addDirLight(DirectionLight& light)
     {
         
-        
+        throw std::exception("not implemented");
+        /*
         auto pLight = &light;
         queues.addTask(ExecuteType::Single,
             [=] {
-            renderWorld.addGlobalLight(*pLight);
+            renderWorld->addGlobalLight(*pLight);
             }
         );
-        
+        */
     }
 
     ScriptState::~ScriptState()

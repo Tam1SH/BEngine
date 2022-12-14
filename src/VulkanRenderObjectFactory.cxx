@@ -1,12 +1,12 @@
-﻿#include <variant>
+﻿
 #include <boost/pool/object_pool.hpp>;
-export module VulkanRenderObjectFactory_impl;
+module VulkanRenderObjectFactory;
 import VulkanObjects;
-import VulkanRenderObjectFactory;
 import Logger;
 import RenderObject;
 import Render;
 import <optional>;
+import <variant>;
 using std::optional;
 using std::shared_ptr;
 

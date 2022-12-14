@@ -7,7 +7,7 @@ import CTextureFactory;
 import ColliderFactory;
 import TextureFactoryDecl;
 import RigidBodyFactory;
-import RenderObjectFactoryDecl;
+import RenderObjectFactory;
 
 using std::shared_ptr;
 
@@ -27,10 +27,7 @@ namespace BEbraEngine {
 
 	void GameComponentDestroyer::destroyRenderComponent(RenderObject& comp)
 	{
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-			renderFactory.destroyObject(comp);
-		}, *renderFactory);
-		
+		renderFactory->destroyObject(comp);
 	}
 
 	void GameComponentDestroyer::destroyRigidBodyComponent(RigidBody& comp)
@@ -65,9 +62,7 @@ namespace BEbraEngine {
 
 	void GameComponentDestroyer::destroyPointLightComponent(Light& comp)
 	{
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-			renderFactory.destroyPointLight(comp);
-		}, *renderFactory);
+		renderFactory->destroyPointLight(comp);
 	}
 
 	void GameComponentDestroyer::destroyDirectionLightComponent(DirectionLight& comp)
@@ -76,9 +71,7 @@ namespace BEbraEngine {
 	}
 	void GameComponentDestroyer::destroyCameraComponent(SimpleCamera& comp)
 	{
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-			renderFactory.destroyCamera(comp);
-		}, *renderFactory);
+		renderFactory->destroyCamera(comp);
 	}
 
 	void GameComponentDestroyer::destroyTextureComponentAsync(shared_ptr<Texture> comp)

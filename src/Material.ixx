@@ -16,9 +16,7 @@ namespace BEbraEngine {
         std::string normal;
     };
 
-    export class Material : public GameComponent {
-    public:
-
+    export struct Material : GameComponent {
 
         template<typename Destroyer>
         void destroy(Destroyer& destroyer) {

@@ -1,5 +1,5 @@
 ﻿module;
-#include <memory>
+
 export module RenderObject;
 import GameComponent;
 import Matrix4;
@@ -8,10 +8,10 @@ import Material;
 import RenderBuffer;
 import RenderBufferView;
 import Transform;
+import <memory>;
 
 namespace BEbraEngine {
-    export struct RenderBufferView;
-    export class Model;
+    export struct Model;
 }
 namespace BEbraEngine {
 

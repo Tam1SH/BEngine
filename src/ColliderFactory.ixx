@@ -9,14 +9,14 @@ import Concepts;
 using std::optional;
 
 namespace BEbraEngine {
-	export class Physics;
+	export struct Physics;
 }
 
 
 namespace BEbraEngine {
 	
 
-	export class ColliderFactory
+	export struct ColliderFactory
 	{
 	public:
 

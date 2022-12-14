@@ -1,8 +1,6 @@
-﻿#include <variant>
-#include <memory>;
-#include <string>;
+﻿
 #include <boost/pool/object_pool.hpp>;
-#include <optional>;
+
 export module VulkanRenderObjectFactory;
 import Light;
 import Camera;
@@ -18,13 +16,17 @@ import VulkanRender;
 import VulkanRenderAllocator;
 import RenderBufferArray;
 import CRenderAllocator;
+import CreateInfoStructures;
 import Render;
 import VulkanRenderState;
 import AllocationStrategy;
 import Task;
 import Model;
 import Vector3;
-
+import <optional>;
+import <variant>;
+import <memory>;
+import <string>;
 
 //разделить логику и создание/удаление(назв. Adjuster?) также для рендера создать чтоли стораге?
 using std::shared_ptr;
@@ -35,7 +37,7 @@ using std::string;
 
 namespace BEbraEngine {
     
-    export struct VulkanRenderObjectFactory : AllocationStrategy
+    export struct VulkanRenderObjectFactory : private AllocationStrategy
     {
         Task<optional<Material*>> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info);
 

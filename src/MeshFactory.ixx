@@ -3,19 +3,17 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
-#include <fstream>
-#include "platform.hpp"
-#include <variant>
-#include <map>
-#include <string>
-#include <vector>
-#include <optional>
 export module MeshFactory;
-
 import VulkanRenderAllocator;
 import Model;
 import Texture;
+import <fstream>;
+import <variant>;
+import <map>;
+import <string>;
+import <vector>;
+import <optional>;
+
 using std::optional;
 using std::shared_ptr;
 using std::string;
@@ -23,12 +21,12 @@ using std::map;
 using std::vector;
 
 
-export namespace BEbraEngine {
-    class TextureFactory;
+namespace BEbraEngine {
+    export class TextureFactory;
 }
 namespace BEbraEngine {
     
-    export class MeshFactory {
+    export struct MeshFactory {
     public:
         
         std::optional<Model*> create(const ModelCreateInfo& info);

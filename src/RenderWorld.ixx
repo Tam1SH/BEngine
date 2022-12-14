@@ -6,10 +6,10 @@
 export module RenderWorld;
 
 namespace BEbraEngine {
-    export class SimpleCamera;
-    export class DirectionLight;
+    export struct SimpleCamera;
+    export struct DirectionLight;
     export struct RenderObject;
-    export class Light;
+    export struct Light;
     export struct Render;
     export struct RenderData;
 }

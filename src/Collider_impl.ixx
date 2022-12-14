@@ -1,4 +1,5 @@
-﻿#include <LinearMath/btVector3.h>
+﻿#include <Physics/btBulletDynamicsCommon.h>
+#include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
 export module Collider_impl;
 import Collider;
 //import GameComponentDestroyer;

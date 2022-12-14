@@ -3,15 +3,14 @@
 export module ExecuteQueues;
 namespace BEbraEngine {
 	
-	export enum class ExecuteType {
+	export enum struct ExecuteType {
 		Single,
 		Multi
 	};
 
 	export template<typename Function>
-	class ExecuteQueues {
+	struct ExecuteQueues {
 
-	public:
 		using Queue = tbb::concurrent_queue<Function>;
 
 

@@ -1,8 +1,9 @@
 ﻿module;
 #include <Physics/btBulletDynamicsCommon.h>
-#include <memory>
-#include <exception>
+#include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
 export module Collider;
+import <memory>;
+import <exception>;
 import Vector3;
 import Quaternion;
 import Concepts;
@@ -11,14 +12,13 @@ import Concepts;
 
 using std::unique_ptr;
 
-
 namespace BEbraEngine {
-	export class RigidBody;
+	export struct RigidBody;
 }
 
 namespace BEbraEngine {
 
-	export enum class ColliderType {
+	export enum struct ColliderType {
 		Box,
 		Sphere,
 		Capsule,
@@ -34,10 +34,9 @@ namespace BEbraEngine {
 		ColliderType type{};
 	};
 
-	export class Collider : public GameComponent {
-	public:
-		friend class ColliderFactory;
-	public:
+	export struct Collider : GameComponent {
+
+		friend struct ColliderFactory;
 
 		template<typename Destroyer>
 		void destroy(Destroyer& destroyer) {

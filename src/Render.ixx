@@ -1,9 +1,9 @@
 ﻿module;
 #include "MethodDefineMacros.hpp"
-#include <variant>
+
 export module Render;
 import Concepts;
-
+import <variant>;
 import CRender;
 import RenderData;
 import VulkanRenderProxy;

@@ -1,28 +1,28 @@
 ﻿module;
-#include <variant>
-#include <memory>
-#include <string>
-#include <optional>
+
 export module CRenderObjectFactory;
 import Task;
 import Vector3;
-
+import <variant>;
+import <memory>;
+import <string>;
+import <optional>;
 
 using std::shared_ptr;
 using std::string;
 using std::optional; 
 
 namespace BEbraEngine {
-    export class RenderObject;
-    export class Light;
-    export class SimpleCamera;
-    export class RenderObjectCreateInfo;
-    export class MaterialCreateInfo;
-    export class Material;
-    export class Transform;
+    export struct RenderObject;
+    export struct Light;
+    export struct SimpleCamera;
+    export struct RenderObjectCreateInfo;
+    export struct MaterialCreateInfo;
+    export struct Material;
+    export struct Transform;
     //export class TextureFactory;
     //export class VisitorGameComponentDestroyer;
-    export class DirectionLight;
+    export struct DirectionLight;
 }
 
 namespace BEbraEngine {

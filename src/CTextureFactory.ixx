@@ -1,15 +1,17 @@
-﻿#include "stdafx.h"
-export module CTextureFactory;
-
+﻿export module CTextureFactory;
 import Task;
+import <optional>;
+import <functional>;
+import <string>;
+import <memory>;
 
 using std::optional;
 using std::function;
 
 export namespace BEbraEngine {
-    class Texture;
-    class Material;
-    class MaterialCreateInfo;
+    struct Texture;
+    struct Material;
+    struct MaterialCreateInfo;
 }
 
 namespace BEbraEngine {

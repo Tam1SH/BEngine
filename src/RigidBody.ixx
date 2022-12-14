@@ -16,8 +16,8 @@ using std::optional;
 
 
 namespace BEbraEngine {
-    export class Physics;
-    export class Collider;
+    export struct Physics;
+    export struct Collider;
     export struct GameComponentDestroyer;
 }
 
@@ -29,10 +29,10 @@ namespace BEbraEngine {
         float mass{};
     };
 
-    export class RigidBody : public GameComponent {
+    export struct RigidBody :  GameComponent {
     public:
-        friend class RigidBodyFactory;
-        friend class Physics;
+        friend struct RigidBodyFactory;
+        friend struct Physics;
 
         struct TransformSetInfo {
             optional<Transform*> old{};

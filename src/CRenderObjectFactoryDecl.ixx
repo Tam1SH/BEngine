@@ -1,16 +1,14 @@
-﻿
-module;
-#include "stdafx.h"
+﻿module;
 export module CRenderObjectFactoryDecl;
 export namespace BEbraEngine {
-    class RenderObject;
-    class Light;
-    class RenderObjectCreateInfo;
-    class MaterialCreateInfo;
-    class Material;
-    class Transform;
-    class SimpleCamera;
-    class TextureFactory;
-    class VisitorGameComponentDestroyer;
-    class DirectionLight;
+    struct RenderObject;
+    struct Light;
+    struct RenderObjectCreateInfo;
+    struct MaterialCreateInfo;
+    struct Material;
+    struct Transform;
+    struct SimpleCamera;
+    struct TextureFactory;
+    struct VisitorGameComponentDestroyer;
+    struct DirectionLight;
 }

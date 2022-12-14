@@ -1,18 +1,17 @@
-﻿
-export module Asset;
+﻿export module Asset;
 import <string>;
 import <optional>;
 
 namespace BEbraEngine {
-	export class AssetInfo {
+	export struct AssetInfo {
 		std::string filename;
 		std::string localDirectory;
 	};
 
 
 	export template<typename T>
-	class Asset {
-	public:
+	struct Asset {
+
 		std::optional<T> get() { return value; }
 		Asset(std::optional<T> value) : value(value) {}
 	private:

@@ -1,11 +1,11 @@
 ﻿module;
-#include <vector>
-#include <string>
-export module Model;
 
+export module Model;
 import Texture;
 import Vertex;
 import RenderBufferView;
+import <vector>;
+import <string>;
 
 namespace BEbraEngine {
 
@@ -29,7 +29,7 @@ namespace BEbraEngine {
         std::string path;
     };
 
-    export class Model
+    export struct Model
     {
     public:
         std::vector<Texture*> textures_loaded;

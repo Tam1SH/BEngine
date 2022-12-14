@@ -1,16 +1,16 @@
 ﻿module;
-#include <variant>
-#include <queue>
-#include <memory>
-#include <functional>
-#include <list>
-#include <vector>
-#include <optional>
-#include <string>
 export module ScriptState;
 import Vector4;
 import Vector3;
-import ExecuteQueues;
+//import ExecuteQueues;
+import <variant>;
+import <queue>;
+import <memory>;
+import <functional>;
+import <list>;
+import <vector>;
+import <optional>;
+import <string>;
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -21,17 +21,20 @@ using std::vector;
 using std::list;
 
 namespace BEbraEngine {
-    export struct ObjectFactoryFacade;
     struct Physics;
+    export struct ObjectFactoryFacade;
     export struct Render;
     export struct RenderObject;
-    export class SimpleCamera;
-    export class Light;
-    export class GameObject;
-    export class DirectionLight;
-    export struct ScriptManager;
+    export struct SimpleCamera;
+    export struct Light;
+    export struct GameObject;
+    export struct DirectionLight;
     export struct RenderWorld;
-    export class RenderAllocator;
+    export struct RenderAllocator;
+    export struct ScriptManager;
+    export template<typename T>
+    struct ExecuteQueues;
+
 }
 
 namespace BEbraEngine {
@@ -58,7 +61,8 @@ namespace BEbraEngine {
 
         void addDirLight(DirectionLight& light);
 
-        ScriptState(Render& render, RenderAllocator& allocator, Physics& physics);
+        ScriptState(Render& render, RenderAllocator& allocator, Physics& physics, 
+                    RenderWorld& renderWorld, ScriptManager& manager, ObjectFactoryFacade& objectFactory);
         ScriptState() {}
 
         ScriptState(ScriptState&&) noexcept = default;
@@ -74,7 +78,7 @@ namespace BEbraEngine {
 
         vector<shared_ptr<Light>> lights;
 
-        ExecuteQueues<function<void()>> queues;
+        //ExecuteQueues<function<void()>> queues;
 
         Render* render;
 

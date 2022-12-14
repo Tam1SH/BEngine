@@ -1,6 +1,4 @@
 ﻿module;
-
-
 export module Camera;
 import Vector2;
 import Matrix4;
@@ -17,19 +15,15 @@ namespace BEbraEngine {
         RIGHT
     };
 
-
-
-
-    export class SimpleCamera : public GameComponent
+    export struct SimpleCamera : GameComponent
     {
-    public:
         struct ShaderData {
             Matrix4 proj;
             Matrix4 view;
             alignas(16) Vector3 position;
 
         };
-    public:
+
         RenderBufferView* cameraData{};
 
         Vector3 Position{};
@@ -37,8 +31,6 @@ namespace BEbraEngine {
         Vector3 Up{};
         Vector3 Right{};
         Vector3 WorldUp{};
-
-    public:
 
         SimpleCamera() {}
 

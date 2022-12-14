@@ -1,18 +1,15 @@
 ﻿module;
-#include <memory>
 export module Light;
 import GameComponent;
 import Vector3;
 import Transform;
+import RenderBufferView;
+import <memory>;
 
 namespace BEbraEngine {
-    export struct RenderBufferView;
-}
 
-namespace BEbraEngine {
+    export struct Light : GameComponent {
 
-    export class Light : public GameComponent {
-    public:
         struct ShaderData {
             alignas(16) Vector3 position;
 
@@ -32,7 +29,7 @@ namespace BEbraEngine {
             float quadratic{};
         };
 
-    public:
+
         template<typename Destroyer>
         void destroy(Destroyer& destroyer) {
             destroyer.destroyLight(*this);

@@ -1,20 +1,23 @@
-﻿#include <variant>
-#include "Physics.hpp"
+﻿
 export module GameObjectFactory_impl;
 import GameObjectFactory;
 import RenderAllocator;
 import RenderWorld;
 import Render;
 import GameComponentCreateInfo;
-
 import CRenderAllocator;
 import CRenderObjectFactory;
 import TransformFactory;
 import ColliderFactory;
 import RigidBodyFactory;
 import GameComponentDestroyer;
-import RenderObjectFactoryDecl;
+import RenderObjectFactory;
 import MeshFactory;
+import <variant>;
+import <memory>;
+import <optional>;
+import <string>;
+
 using std::optional;
 using std::shared_ptr;
 using std::string;
@@ -142,7 +145,7 @@ namespace BEbraEngine {
 				comp->addComponent(collider);
 				comp->addComponent(rigidbody);
 			}
-		}, *renderFactory);
+		}, renderFactory->variant());
 		if (opt_renderObj.has_value() && 
 			opt_transform.has_value()) {
 
@@ -156,14 +159,12 @@ namespace BEbraEngine {
 
 	shared_ptr<Light> GameObjectFactory::createLight(const Vector3& position)
 	{
-		
-		shared_ptr<Light> light;
+		return std::visit([&](CRenderObjectFactory auto& renderFactory) {
 
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
 			Transform::CreateInfo info{};
 			info.position = position;
 			auto transform = shared_ptr<Transform>(transFactory->create(info).value());
-			light = shared_ptr<Light>(renderFactory.createLight(Vector3(1), position));
+			auto light = shared_ptr<Light>(renderFactory.createLight(Vector3(1), position));
 			light->addComponent(transform);
 
 			auto name = light->getName();
@@ -174,46 +175,37 @@ namespace BEbraEngine {
 			renderFactory.bindTransform(*light, *transform);
 
 			light->update();
-		}, *renderFactory);
 
-		//renderAlloc->addLight(light);
-		return light;
-		
+			return light;
+
+		}, renderFactory->variant());
 	}
 
 	void GameObjectFactory::setMaterialAsync(shared_ptr<GameObject> object, const MaterialCreateInfo& info)
 	{
 		auto renderObject = object->getComponentCheckedPtr<RenderObject>();
+		auto& renderFactory_ = *renderFactory;
 
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-			renderFactory
-				.createMaterialAsync(renderObject, info)
-				.then([&](std::optional<Material*> material) {
-					material
-						.and_then([&](Material* material) -> std::optional<Material*> {
-							object->addComponent(shared_ptr<Material>(material));
-							return std::make_optional(material);
-						})
-						.or_else([&]() -> std::optional<Material*> { throw std::exception(); });
-				})
-				.failure([&]() { throw std::exception(); });
-		}, *renderFactory);
+		renderFactory_
+			.createMaterialAsync(renderObject, info)
+			.then([&](std::optional<Material*> material) {
+				material
+					.and_then([&](Material* material) -> std::optional<Material*> {
+						object->addComponent(shared_ptr<Material>(material));
+						return std::make_optional(material);
+					})
+					.or_else([&]() -> std::optional<Material*> { throw std::exception(); });
+			})
+			.failure([&]() { throw std::exception(); });
 	}
 
 
 	shared_ptr<DirectionLight> GameObjectFactory::createDirLight(const Vector3& direction)
 	{
 		
-		shared_ptr<DirectionLight> light;
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-
-			light = shared_ptr<DirectionLight>(renderFactory.createDirLight(Vector3(0.1f), direction));
-
-			auto name = light->getName();
-
-			light->update();
-
-		}, *renderFactory);
+		auto light = shared_ptr<DirectionLight>(renderFactory->createDirLight(Vector3(0.1f), direction));
+		auto name = light->getName();
+		light->update();
 
 		return light;
 		
@@ -222,11 +214,7 @@ namespace BEbraEngine {
 
 	void GameObjectFactory::setModel(GameObject& object, const string& path)
 	{
-		
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-			renderFactory.setModel(object.getComponentChecked<RenderObject>(), path);
-		}, *renderFactory);
-		
+		renderFactory->setModel(object.getComponentChecked<RenderObject>(), path);
 	}
 
 	void GameObjectFactory::setCollider(Collider& col, ColliderType type)
@@ -249,25 +237,14 @@ namespace BEbraEngine {
 
 	void GameObjectFactory::destroyPointLight(Light& light)
 	{
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-			renderFactory.destroyPointLight(light);
-		}, *renderFactory);
-
+		renderFactory->destroyPointLight(light);
 	}
 
 
 
 	shared_ptr<SimpleCamera> GameObjectFactory::createCamera(const Vector3& position)
 	{
-		shared_ptr<SimpleCamera> camera;
-
-		std::visit([&](CRenderObjectFactory auto& renderFactory) {
-			camera = shared_ptr<SimpleCamera>(renderFactory.createCamera(position));
-			//renderAlloc->addCamera(camera);
-			//renderAlloc->selectMainCamera(camera.get());
-		}, *renderFactory);
-
-
+		auto camera = shared_ptr<SimpleCamera>(renderFactory->createCamera(position));
 		return camera;
 	}
 	void GameObjectFactory::destroyCamera(SimpleCamera& camera)

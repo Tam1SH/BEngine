@@ -1,6 +1,6 @@
-﻿#include <optional>
-export module TransformFactory;
+﻿export module TransformFactory;
 import Transform;
+import <optional>;
 
 namespace BEbraEngine {
     export struct TransformFactory {
@@ -12,7 +12,6 @@ namespace BEbraEngine {
             trans->setName("Transform");
             return std::optional<Transform*>(trans);
         }
-
         TransformFactory()
         {
         }

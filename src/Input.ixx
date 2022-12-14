@@ -4,7 +4,7 @@ export module Input;
 
 namespace BEbraEngine {
     
-    export enum class KeyCode {
+    export enum struct KeyCode {
         
         KEY_0 = SDL_SCANCODE_0,
         KEY_1 = SDL_SCANCODE_1,
@@ -78,14 +78,14 @@ namespace BEbraEngine {
     };
     
 
-    export class Input {
+    export struct Input {
         struct InputState {
             float x{}, y{};
             float scrollX{}, scrollY{};
 
         };
     public:
-        friend class Window;
+        friend struct Window;
 
 
         static void setKeyBoardState(const Uint8* state)

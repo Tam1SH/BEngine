@@ -1,19 +1,16 @@
 ﻿#include "platform.hpp"
-
 export module RigidBodyFactory;
 import <optional>;
 import RigidBody;
 using std::optional;
 
-
 namespace BEbraEngine {
-	export class Physics;
+	export struct Physics;
 }
 
-
 namespace BEbraEngine {
 
-	export class RigidBodyFactory
+	export struct RigidBodyFactory
 	{
 	public:
 

@@ -1,7 +1,7 @@
 ﻿module;
-#include <concepts>
-#include <tuple>
 export module CVector3;
+import <concepts>;
+import <tuple>;
 
 namespace BEbraEngine {
 	export template<typename Vector, typename Scalar = float>

@@ -1,11 +1,12 @@
 ﻿#include <tbb.h>
 #include <exception>
-#include <variant>
 module RenderWorld;
 import CRender;
 import RenderData;
 import RenderObject;
 import Light;
+import <variant>;
+
 namespace BEbraEngine {
 
     RenderWorld::RenderWorld(Render& render)
@@ -50,6 +51,7 @@ namespace BEbraEngine {
 
     void RenderWorld::removeObject(RenderObject& object)
     {
+        throw std::exception("not implemented");
     }
 
 
@@ -69,25 +71,23 @@ namespace BEbraEngine {
 
     void RenderWorld::update()
     {
-        
+        throw std::exception("not implemented");
+
         for (auto& light : lights) {
             light->update();
         }
         for (auto& object : objects)
             object->update();
 
-        std::visit([&](CRender auto& render) {
-            Request req;
-            if (requestQueue.try_pop(req)) {
-                RenderData data;
-                data.objects = objects;
-                data.lights = lights;
-                render.updateState(data);
-                requestQueue.clear();
-            }
-        }, *render);
 
-        
+        Request req;
+        if (requestQueue.try_pop(req)) {
+            RenderData data;
+            data.objects = objects;
+            data.lights = lights;
+          //  render->updateState(data);
+            requestQueue.clear();
+        }
     }
 
     void RenderWorld::updateState(const Request& request)

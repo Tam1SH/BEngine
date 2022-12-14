@@ -118,7 +118,7 @@ namespace BEbraEngine {
 
                 auto velocity = BEbraMath::normalize(rigidbody.getLinearVelocity()) * body.getMaxVelocity();
 
-                rigidbody.setLinearVelocity(velocity);
+                rigidbody.setLinearVelocity(velocity.toVec<btVector3>());
             }
             body.getTransform().setPosition(pos);
             body.getTransform().setRotation(quat);

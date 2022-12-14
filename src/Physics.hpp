@@ -10,10 +10,7 @@
 #include "BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h"
 #include <Physics/btBulletDynamicsCommon.h>
 
-#include <vector>;
-#include <memory>;
-#include <functional>;
-#include <optional>;
+
 import ExecuteQueues;
 import Vector4;
 import Vector3;
@@ -22,6 +19,11 @@ import Collider;
 import Transform;
 import Quaternion;
 import RenderHelper;
+
+import <vector>;
+import <memory>;
+import <functional>;
+import <optional>;
 class btDynamicsWorld;
 class btConstraintSolverPoolMt;
 class btSequentialImpulseConstraintSolverMt;
@@ -44,9 +46,9 @@ namespace std {
 
 
 namespace BEbraEngine {
-    class RigidBody;
-    class RigidBodyFactory;
-    class ColliderFactory;
+    struct RigidBody;
+    struct RigidBodyFactory;
+    struct ColliderFactory;
     class ParallelDiscreteDynamicsWorld;
     class btTaskSchedulerManager;
 }
@@ -95,8 +97,7 @@ namespace BEbraEngine {
     };
 
     
-    class Physics {
-    public:
+    struct Physics {
 
         optional<Collider*> getObjectRayCast(const Vector3& start, Vector3& end);
 

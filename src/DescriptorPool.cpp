@@ -8,7 +8,7 @@ import CreateInfoStructures;
 namespace BEbraEngine {
     DescriptorPool::DescriptorPool(VulkanDescriptorPoolInfo& info)
     {
-        this->info = std::make_unique(info);
+        //this->info = std::make_unique(info);
     }
     DescriptorPool::~DescriptorPool()
     {
@@ -21,8 +21,8 @@ namespace BEbraEngine {
 
         VkDescriptorPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        poolInfo.poolSizeCount = static_cast<uint32_t>(info.types.size());
-        poolInfo.pPoolSizes = info.types.data();
+       // poolInfo.poolSizeCount = static_cast<uint32_t>(info.types.size());
+       // poolInfo.pPoolSizes = info.types.data();
         poolInfo.maxSets = countDescriptors;
         VkResult result;
 

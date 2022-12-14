@@ -5,7 +5,7 @@ import BaseScript;
 
 namespace BEbraEngine {
 
-	export class AngelScript final : public BaseScript 
+	export struct AngelScript : BaseScript 
 	{
 	public:
 

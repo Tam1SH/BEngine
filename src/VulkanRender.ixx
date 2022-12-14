@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <map>
+#include <vector>
 #include <functional>
 #include <string>
 #include "CommandBuffer.hpp"
@@ -14,10 +15,8 @@ import RenderData;
 import RenderAllocatorTypeRenderBuffer;
 import RenderHelper;
 import Vector2;
-import Vector3;
 import VulkanPipeline;
 import LineShaderData;
-import CreateInfoStructures;
 import Vertex;
 import VulkanRenderBufferArray;
 import CommandPool;
@@ -41,8 +40,11 @@ namespace BEbraEngine {
     export struct VulkanPointLight;
     export struct VulkanCamera;
     export struct VulkanRenderObject;
-    export class VulkanTexture;
-    export class Texture;
+    export struct VulkanTexture;
+    export struct Texture;
+    export struct LightDescriptorInfo;
+    export struct VulkanDescriptorSetInfo;
+    export struct Vector3;
 }
 
 
@@ -50,6 +52,7 @@ namespace BEbraEngine {
 
     export struct VulkanRender
     {
+        
         void update();
 
         void prepareDraw();
@@ -59,20 +62,20 @@ namespace BEbraEngine {
         void updateState(RenderData& data);
 
         void create(VulkanWindow& window);
-
+        
         void destroyBuffer(RenderBuffer* buffer);
 
         RenderBuffer* createUniformBuffer(uint32_t size);
 
         RenderBuffer* createStorageBuffer(uint32_t size);
 
-        RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices);
+        RenderBuffer* createIndexBuffer(vector<uint32_t> indices);
 
-        RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices);
-
+        RenderBuffer* createVertexBuffer(vector<Vertex> vertices);
+        
         void drawLine(const Vector3& from, const Vector3& to, const Vector3& color);
 
-
+        
         Vector2 getCurrentRenderResolution();
 
         uint32_t alignmentBuffer(uint32_t originalSize, TypeRenderBuffer type);
@@ -86,7 +89,7 @@ namespace BEbraEngine {
         VkDescriptorSet createDescriptor2(RenderBufferView* buffer);
 
         VkDescriptorSet createDescriptor(RenderBuffer* buffer);
-
+        
         void freeDescriptor(VulkanRenderObject& set);
 
         void freeDescriptor(VulkanDirLight* set);
@@ -116,9 +119,10 @@ namespace BEbraEngine {
         //VulkanRender& operator=(VulkanRender&&) noexcept = default;
 
         ~VulkanRender();
+        
 
     public:
-        enum class DescriptorLayoutType {
+        enum struct DescriptorLayoutType {
             Object,
             SimpleCamera,
             LightPoint,
@@ -161,7 +165,8 @@ namespace BEbraEngine {
 
     
     private:
-
+        
+        
         VkPipelineLayout pipelineLayout;
 
         ExecuteQueues<function<void()>> executeQueues;
@@ -429,6 +434,6 @@ namespace BEbraEngine {
         };
 
         const bool enableValidationLayers = true;
-
+        
     };
 }

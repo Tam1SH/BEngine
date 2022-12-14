@@ -1,10 +1,5 @@
 ﻿module;
-#include <variant>
 
-#include <optional>
-#include <functional>
-#include <memory>
-#include <string>
 export module VulkanTextureFactory;
 import VulkanRender;
 import Material;
@@ -14,14 +9,18 @@ import Task;
 import BitMap;
 import Texture;
 import Concepts;
+import <variant>;
+import <optional>;
+import <functional>;
+import <memory>;
+import <string>;
 
 using std::shared_ptr;
 using std::function;
 using std::optional;
 
 namespace BEbraEngine {
-    export class VulkanTextureFactory {
-    public:
+    export struct VulkanTextureFactory {
 
         Task<optional<Material*>> createMaterialAsync(const MaterialCreateInfo& info);
 

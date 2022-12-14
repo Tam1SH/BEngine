@@ -3,37 +3,37 @@
 
 export module CreateInfoStructures;
 import Vector3;
+import RenderBufferView;
 import <vector>;
 
 using std::vector;
 
 namespace BEbraEngine {
-	export struct RenderBufferView;
 	export struct VulkanTexture;
-	export class Material;
+	export struct Material;
 }
 
 namespace BEbraEngine {
 
 
-	export class LightDescriptorInfo {
-	public:
-		enum class Type {
+	export struct LightDescriptorInfo {
+
+		enum struct Type {
 			Point,
 			Direction
 		};
-	public:
+
 		RenderBufferView* bufferView;
 		Type type;
 	};
 
-	export class RenderObjectInfo {
+	export struct RenderObjectInfo {
 	public:
 		RenderBufferView* bufferView;
 	};
 
-	export class VulkanDescriptorSetInfo {
-	public:
+	export struct VulkanDescriptorSetInfo {
+
 		RenderBufferView* bufferView;
 
 		const VulkanTexture* image;
@@ -44,7 +44,7 @@ namespace BEbraEngine {
 
 	};
 
-	export class VulkanDescriptorPoolInfo {
+	export struct VulkanDescriptorPoolInfo {
 	public:
 		std::vector<VkDescriptorPoolSize> types;
 		VkDescriptorSetLayout layout;

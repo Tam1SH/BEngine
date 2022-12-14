@@ -1,13 +1,11 @@
 ﻿module;
-
 #include <Physics/LinearMath/btVector3.h>
-
 export module Vector4;
 
 namespace BEbraEngine {
 
 
-	export class Vector4
+	export struct Vector4
 	{
 	public:
 		float x{}, y{}, z{}, w{};

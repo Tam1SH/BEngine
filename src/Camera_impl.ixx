@@ -1,5 +1,5 @@
-﻿#include <cmath>
-export module Camera_impl;
+﻿export module Camera_impl;
+import <cmath>;
 import Camera;
 import BEbraMath;
 import Input;
@@ -7,7 +7,7 @@ import RenderBuffer;
 
 
 namespace BEbraEngine {
-
+    
     const float YAW = -90.0f;
     const float PITCH = 0.0f;
     const float SPEED = 2.5f;
@@ -66,17 +66,18 @@ namespace BEbraEngine {
     {
         rectViewport = newSize;
     }
-
+    
     void SimpleCamera::update()
     {
 
-        ShaderData vp;
-        vp.proj = BEbraMath::perspective(BEbraMath::radians(45.0f), rectViewport.x / rectViewport.y, .1f, 10000.0f);
-        vp.view = getViewMatrix();
-        vp.position = Position;
-        processMouseMovement();
-        cameraData->setData(&vp, sizeof(ShaderData));
+        //ShaderData vp;
+        //vp.proj = BEbraMath::perspective(BEbraMath::radians(45.0f), rectViewport.x / rectViewport.y, .1f, 10000.0f);
+        //vp.view = getViewMatrix();
+       // vp.position = Position;
+       // processMouseMovement();
+       // cameraData->setData(&vp, sizeof(ShaderData));
     }
+    
     void SimpleCamera::processMouseScroll(float yoffset)
     {
         if (Zoom >= 1.0f && Zoom <= 45.0f)
@@ -106,7 +107,7 @@ namespace BEbraEngine {
 
         updateCameraVectors();
     }
-
+    
     void SimpleCamera::_move(float& x, float& y)
     {
 
@@ -121,7 +122,7 @@ namespace BEbraEngine {
     {
         Position = newPos;
     }
-
+    
     void SimpleCamera::processKeyboard(Camera_Movement direction, float deltaTime)
     {
 
@@ -135,5 +136,5 @@ namespace BEbraEngine {
         if (direction == RIGHT)
             Position += Right * velocity;
     }
-
+    
 }

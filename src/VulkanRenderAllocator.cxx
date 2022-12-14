@@ -1,6 +1,6 @@
-﻿#include <variant>
-#include <span>
+﻿#include <span>
 module VulkanRenderAllocator;
+import <variant>;
 
 import Vertex;
 import Render;
@@ -9,11 +9,11 @@ import CRenderAllocator;
 import VulkanRender;
 namespace BEbraEngine {
 	
-	RenderBuffer* VulkanRenderAllocator::createIndexBuffer(std::span<uint32_t> indices) {
+	RenderBuffer* VulkanRenderAllocator::createIndexBuffer(std::vector<uint32_t> indices) {
 		return render->createIndexBuffer(indices);
 	}
 
-	RenderBuffer* VulkanRenderAllocator::createVertexBuffer(std::span<Vertex> vertices) {
+	RenderBuffer* VulkanRenderAllocator::createVertexBuffer(std::vector<Vertex> vertices) {
 		return render->createVertexBuffer(vertices);
 	}
 

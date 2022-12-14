@@ -1,19 +1,17 @@
-﻿#include <span>
-#include <concepts>
-export module CRenderAllocator;
-
+﻿export module CRenderAllocator;
 import Vertex;
 import RenderBuffer;
 import RenderAllocatorTypeRenderBuffer;
-
+import <concepts>;
+import <vector>;
 namespace BEbraEngine {
 
 	export template<typename T>
 		concept CRenderAllocator = requires(
 
-			/*RenderBuffer* createIndexBuffer*/ std::span<uint32_t> indices,
+			/*RenderBuffer* createIndexBuffer*/ std::vector<uint32_t> indices,
 
-			/*RenderBuffer* createVertexBuffer*/ std::span<Vertex> vertices,
+			/*RenderBuffer* createVertexBuffer*/ std::vector<Vertex> vertices,
 
 			/*RenderBuffer* createUniformBuffer*/ uint32_t size,
 

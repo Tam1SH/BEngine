@@ -1,3 +1,3 @@
 ﻿export module RenderObjectDecl;
 
-export namespace BEbraEngine { class RenderObject; }
+export namespace BEbraEngine { struct RenderObject; }

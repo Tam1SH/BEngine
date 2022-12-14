@@ -1,20 +1,18 @@
 ﻿module;
-#include <string>
 export module AssetsStore;
 import Asset;
 import Task;
-
+import <string>;
 export namespace BEbraEngine {
-	class Model;
+	struct Model;
 	class TextureFactory;
-	class MeshFactory;
-	class Texture;
+	struct MeshFactory;
+	struct Texture;
 }
 
 namespace BEbraEngine {
 
-	export class AssetsStore {
-	public:
+	export struct AssetsStore {
 
 		Task<Asset<Model*>> getModel(const std::string& path);
 

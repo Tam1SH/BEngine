@@ -1,12 +1,11 @@
 ﻿module;
-
 #include <vulkan.h>
 export module Texture;
 import GameComponent;
 
 namespace BEbraEngine {
     
-    export class Texture : public GameComponent {
+    export struct Texture : GameComponent {
     public:
 
         template<typename Destroyer>
@@ -29,7 +28,7 @@ namespace BEbraEngine {
         uint32_t height_{};
     };
 
-    export class VulkanTexture : public Texture {
+    export struct VulkanTexture : Texture {
     public:
         void setWidth(uint32_t value) { width_ = value; }
         void setHeight(uint32_t value) { height_ = value; }

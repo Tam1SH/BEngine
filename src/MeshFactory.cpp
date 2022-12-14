@@ -2,9 +2,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <fstream>
 #include <iostream>
-#include <variant>
 module MeshFactory;
 import RenderBufferView;
 import CRenderAllocator;
@@ -13,6 +11,8 @@ import Model;
 import Vector3;
 import Vector2;
 import <optional>;
+import <fstream>;
+import <variant>;
 
 namespace BEbraEngine {
 
@@ -93,7 +93,7 @@ namespace BEbraEngine {
 
             ModelCreateInfo info{};
 
-            info.path = boost::filesystem::current_path() / "Models/Box.fbx";;
+            //info.path = boost::filesystem::current_path() / "Models/Box.fbx";;
             default_models[box] = std::shared_ptr<Model>(create(info).value());
             auto vertices_view = new RenderBufferView();
             vertices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createVertexBuffer(default_models[box]->meshes[0].vertices));
@@ -103,7 +103,7 @@ namespace BEbraEngine {
             default_models[box]->meshes[0].indices_view = indices_view;
 
 
-            info.path = boost::filesystem::current_path() / "Models/Sphere.fbx";;
+           // info.path = boost::filesystem::current_path() / "Models/Sphere.fbx";;
             default_models[sphere] = std::shared_ptr<Model>(create(info).value());
             vertices_view = new RenderBufferView();
             vertices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createVertexBuffer(default_models[sphere]->meshes[0].vertices));
@@ -112,7 +112,7 @@ namespace BEbraEngine {
             indices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createIndexBuffer(default_models[sphere]->meshes[0].indices));
             default_models[sphere]->meshes[0].indices_view = indices_view;
 
-            info.path = boost::filesystem::current_path() / "Models/Cylinder.fbx";;
+           // info.path = boost::filesystem::current_path() / "Models/Cylinder.fbx";;
             default_models[cylinder] = std::shared_ptr<Model>(create(info).value());
             vertices_view = new RenderBufferView();
             vertices_view->buffer = std::shared_ptr<RenderBuffer>(renderAlloc.createVertexBuffer(default_models[cylinder]->meshes[0].vertices));
@@ -159,13 +159,13 @@ namespace BEbraEngine {
             vector.x = mesh->mVertices[i].x;
             vector.y = mesh->mVertices[i].y;
             vector.z = mesh->mVertices[i].z;
-            vertex.position = vector;
+            vertex.position = vector.toVec<UnbelivableVector3FromMSVC>();
 
             // �������
             vector.x = mesh->mNormals[i].x;
             vector.y = mesh->mNormals[i].y;
             vector.z = mesh->mNormals[i].z;
-            vertex.Normal = vector;
+            vertex.Normal = vector.toVec<UnbelivableVector3FromMSVC>();
 
             // ���������� ����������
             if (mesh->mTextureCoords[0]) // ���� ��� �������� ���������� ����������
