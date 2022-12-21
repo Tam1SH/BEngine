@@ -1,6 +1,4 @@
-﻿
-#include <boost/pool/object_pool.hpp>;
-
+﻿#include <boost/pool/object_pool.hpp>;
 export module VulkanRenderObjectFactory;
 import Light;
 import Camera;
@@ -8,8 +6,7 @@ import RenderObject;
 import Material;
 import DirectionLight;
 import Transform;
-import VulkanTextureFactory;
-import MeshFactory;
+
 import RenderBuffer;
 import VulkanRenderBufferArray;
 import VulkanRender;
@@ -34,6 +31,11 @@ using std::unique_ptr;
 using std::optional;
 using std::string;
 
+
+namespace BEbraEngine {
+    export struct VulkanTextureFactory;
+    export struct MeshFactory;
+}
 
 namespace BEbraEngine {
     
@@ -63,7 +65,8 @@ namespace BEbraEngine {
 
         void setModel(RenderObject& object, const string& path);
 
-        VulkanRenderObjectFactory(VulkanRender& render, VulkanRenderAllocator& allocator, MeshFactory& meshFactory);
+        VulkanRenderObjectFactory(VulkanRender& render, VulkanRenderAllocator& allocator, 
+                                  MeshFactory& meshFactory, VulkanTextureFactory& factory);
 
         VulkanRenderObjectFactory() {}
         ~VulkanRenderObjectFactory();
@@ -79,7 +82,7 @@ namespace BEbraEngine {
         VulkanRender* render;
         VulkanRenderAllocator* allocator;
         VulkanRenderState* state;
-        VulkanTextureFactory textureFactory;
+        VulkanTextureFactory* textureFactory;
         MeshFactory* meshFactory;
         
     };

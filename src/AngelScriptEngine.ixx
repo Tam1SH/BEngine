@@ -1,5 +1,5 @@
 ﻿module;
-#include "platform.hpp"
+
 #include <angelscript.h>
 #include <optional>
 #include <string>

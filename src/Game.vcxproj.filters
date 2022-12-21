@@ -58,6 +58,9 @@
     <Filter Include="Файлы заголовков\Factories\Destroyers">
       <UniqueIdentifier>{92293e32-1d61-4577-87e3-91deda63ed93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\Interfaces">
+      <UniqueIdentifier>{051baa13-91ee-4f7c-97d9-f619f9c9c45b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -102,7 +105,7 @@
     <ClCompile Include="CommandBuffer.cpp">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanTextureFactory_impl.ixx">
+    <ClCompile Include="VulkanTextureFactory.cxx">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="Pipeline.cpp">
@@ -231,15 +234,6 @@
     <ClCompile Include="VulkanRenderAllocator.cxx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="CRender.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="CRenderAllocator.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderObjectFactory.ixx">
-      <Filter>Файлы заголовков\declaration</Filter>
-    </ClCompile>
     <ClCompile Include="CRenderObjectFactoryDecl.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
@@ -275,9 +269,6 @@
     </ClCompile>
     <ClCompile Include="AssetsStore.ixx">
       <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureFactoryDecl.ixx">
-      <Filter>Файлы заголовков\declaration</Filter>
     </ClCompile>
     <ClCompile Include="AssetsStore.cxx">
       <Filter>Исходные файлы</Filter>
@@ -351,9 +342,6 @@
     <ClCompile Include="VulkanRenderObjectFactory.ixx">
       <Filter>Файлы заголовков\Factories</Filter>
     </ClCompile>
-    <ClCompile Include="CRenderObjectFactory.ixx">
-      <Filter>Файлы заголовков\Factories</Filter>
-    </ClCompile>
     <ClCompile Include="GameObjectFactory.ixx">
       <Filter>Файлы заголовков\Factories</Filter>
     </ClCompile>
@@ -370,9 +358,6 @@
       <Filter>Файлы заголовков\Factories</Filter>
     </ClCompile>
     <ClCompile Include="VulkanTextureFactory.ixx">
-      <Filter>Файлы заголовков\Factories</Filter>
-    </ClCompile>
-    <ClCompile Include="CTextureFactory.ixx">
       <Filter>Файлы заголовков\Factories</Filter>
     </ClCompile>
     <ClCompile Include="ColliderFactory.ixx">
@@ -411,9 +396,6 @@
     <ClCompile Include="CVector3.ixx">
       <Filter>Файлы заголовков\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Render.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="RenderState.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
@@ -447,9 +429,6 @@
     <ClCompile Include="DirectionLight_impl.ixx">
       <Filter>Исходные файлы\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="LOL.ixx">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="Light_impl.ixx">
       <Filter>Исходные файлы\Objects</Filter>
     </ClCompile>
@@ -465,8 +444,47 @@
     <ClCompile Include="VulkanRenderProxy_impl.ixx">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="RenderAllocator.ixx">
+    <ClCompile Include="MeshLoader.ixx">
       <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureLoader.ixx">
+      <Filter>Файлы заголовков\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="stdDeclaration.ixx">
+      <Filter>Файлы заголовков\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureData.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureLoader.cxx">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderAllocator.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="CRenderObjectFactory.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="CTextureFactory.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderObjectFactory.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureFactory.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="CRenderAllocator.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Render.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="CRender.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanIHateMS.ixx">
+      <Filter>Файлы заголовков</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -518,9 +536,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="CommandBuffer.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="di.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="MethodDefineMacros.hpp">

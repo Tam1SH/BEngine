@@ -207,13 +207,6 @@ namespace BEbraEngine {
         // ������������ ���������
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        // �� ������ ���������� �� ������ ��������� � ��������. ������ ��������� �������� ����� ���������� 'texture_diffuseN',
-        // ��� N - ���������� ����� �� 1 �� MAX_SAMPLER_NUMBER. 
-        // ���� ����� ��������� � � ������ ���������:
-        // ��������� - texture_diffuseN
-        // ��������� - texture_specularN
-        // ������� - texture_normalN
-
 
         std::vector<Texture*> diffuseMaps = loadMaterialTextures(model, material, aiTextureType_DIFFUSE, "texture_diffuse", path);
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());

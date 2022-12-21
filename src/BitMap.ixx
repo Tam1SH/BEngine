@@ -1,9 +1,5 @@
-﻿
-#include "platform.hpp"
-export module BitMap;
-
+﻿export module BitMap;
 namespace BEbraEngine {
-
 
 	export struct BitMap {
 

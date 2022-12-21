@@ -331,10 +331,10 @@
     <ClCompile Include="Light_impl.ixx" />
     <ClCompile Include="LineShaderData.ixx" />
     <ClCompile Include="Logger.ixx" />
-    <ClCompile Include="LOL.ixx" />
     <ClCompile Include="Material.ixx" />
     <ClCompile Include="Math.cxx" />
     <ClCompile Include="Matrix.cxx" />
+    <ClCompile Include="MeshLoader.ixx" />
     <ClCompile Include="RenderAllocator.ixx" />
     <ClCompile Include="RenderAllocatorTypeRenderBuffer.ixx" />
     <ClCompile Include="RenderBufferView.ixx" />
@@ -349,12 +349,17 @@
     <ClCompile Include="RenderObjectFactory.ixx" />
     <ClCompile Include="RenderState.ixx" />
     <ClCompile Include="RigidBodyFactoryDecl.ixx" />
+    <ClCompile Include="stdDeclaration.ixx" />
     <ClCompile Include="Task.ixx" />
-    <ClCompile Include="TextureFactoryDecl.ixx" />
+    <ClCompile Include="TextureData.ixx" />
+    <ClCompile Include="TextureFactory.ixx" />
+    <ClCompile Include="TextureLoader.cxx" />
+    <ClCompile Include="TextureLoader.ixx" />
     <ClCompile Include="Transform_impl.ixx" />
     <ClCompile Include="Vector2.cxx" />
     <ClCompile Include="Vector3_impl.ixx" />
     <ClCompile Include="Vector4.cxx" />
+    <ClCompile Include="VulkanIHateMS.ixx" />
     <ClCompile Include="VulkanRenderAllocator.cxx" />
     <ClCompile Include="VulkanRenderAllocator.ixx" />
     <ClCompile Include="VulkanRenderBufferArray_impl.ixx" />
@@ -448,7 +453,7 @@
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="ScriptState.cpp" />
     <ClCompile Include="GameObjectFactory_impl.ixx" />
-    <ClCompile Include="VulkanTextureFactory_impl.ixx" />
+    <ClCompile Include="VulkanTextureFactory.cxx" />
     <ClCompile Include="MeshFactory.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pipeline.cpp" />
@@ -531,7 +536,6 @@
     <ClCompile Include="ObjectFactoryFacade.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="di.hpp" />
     <ClInclude Include="MethodDefineMacros.hpp" />
     <ClInclude Include="Physics.hpp">
       <FileType>Document</FileType>

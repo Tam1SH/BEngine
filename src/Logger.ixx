@@ -1,7 +1,7 @@
 ﻿module;
 #include <source_location>
 //https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0478r0.pdf
-//�����-������ �������.
+//в следующей жизни.
 #include <spdlog/spdlog.h>
 #include <tbb.h>
 #include <sstream>;

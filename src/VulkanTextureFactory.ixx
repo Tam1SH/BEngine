@@ -1,46 +1,27 @@
 ﻿module;
-
 export module VulkanTextureFactory;
 import VulkanRender;
 import Material;
-import CRender;
-import Render;
+import TextureData;
+import TextureLoader;
 import Task;
 import BitMap;
 import Texture;
-import Concepts;
-import <variant>;
-import <optional>;
-import <functional>;
-import <memory>;
+import stdDeclaration;
 import <string>;
-
-using std::shared_ptr;
-using std::function;
-using std::optional;
 
 namespace BEbraEngine {
     export struct VulkanTextureFactory {
 
         Task<optional<Material*>> createMaterialAsync(const MaterialCreateInfo& info);
 
-        Task<optional<Texture*>> createAsync(const std::string& path);
+        Task<optional<Texture*>> createAsync(const CreateTextureInfo& info);
 
-        Texture* create(const std::string& path, bool generateMip);
-
-        Texture* createEmpty();
-
-        void saveImage(const char* fileName, int width, int height, int channel_num, const void* rows, int quality);
-        
-        void saveImage(const char* fileName, int width, int height, int channel_num, BEbraEngine::BitMap& bitMap, int quality);
-
-       // void setDestroyer(VisitorGameComponentDestroyer& destroyer); //override;
-
-        void destroyTexture(Texture& texture);
+        optional<Texture*> createEmpty();
 
         void destroyTextureAsync(shared_ptr<Texture> texture);
 
-        VulkanTextureFactory(VulkanRender& render);
+        VulkanTextureFactory(VulkanRender& render, TextureLoader& loader);
         VulkanTextureFactory() {}
 
         VulkanTextureFactory(const VulkanTextureFactory&) = delete;
@@ -50,17 +31,10 @@ namespace BEbraEngine {
         VulkanTextureFactory& operator=(VulkanTextureFactory&&) noexcept = default;
 
     private:
+        void createVkTexture(const TextureData& data, VulkanTexture* tex, size_t imageSize);
+
+    private:
         VulkanRender* render;
-        //VisitorGameComponentDestroyer* destroyer;
-
+        TextureLoader* loader;
     };
-    static_assert(OnlyMovable<VulkanTextureFactory>);
-
-}
-
-module :private;
-import CTextureFactory;
-
-namespace BEbraEngine {
-    static_assert(CTextureFactory<VulkanTextureFactory>);
 }

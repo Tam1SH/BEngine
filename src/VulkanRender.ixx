@@ -10,6 +10,7 @@
 #include <string>
 #include "CommandBuffer.hpp"
 export module VulkanRender;
+
 import ExecuteQueues;
 import RenderData;
 import RenderAllocatorTypeRenderBuffer;
@@ -45,6 +46,7 @@ namespace BEbraEngine {
     export struct LightDescriptorInfo;
     export struct VulkanDescriptorSetInfo;
     export struct Vector3;
+    export struct LolCompileErrorXD;
 }
 
 
@@ -178,7 +180,6 @@ namespace BEbraEngine {
 
         float totalTime;
 
-        //Лол, компилер еррор момент, меня эта падла заставляет хедеры возращать обратно
         tbb::concurrent_queue<CommandBuffer> BufferRenderQueue;
 
         tbb::concurrent_queue<CommandBuffer> BufferTransferQueue;
@@ -202,7 +203,8 @@ namespace BEbraEngine {
         list<VulkanCamera*> cameras;
 
         VulkanDirLight* globalLight;
-
+        
+        
         VkPipeline graphicsPipeline;
 
         VkPipeline linesDrawing;
@@ -222,12 +224,8 @@ namespace BEbraEngine {
         unique_ptr<DescriptorPool> lightPool;
 
         unique_ptr<DescriptorPool> PhysicsDebugPool;
-
-        vector<unique_ptr<CommandPool>> concurrentCommandPools_RenderQueue;
-
-        unique_ptr<CommandPool> swapChainRenderCommandPool;
-
-        vector<unique_ptr<CommandPool>> concurrentCommandPools_TransferQueue;
+        
+        LolCompileErrorXD* t;
 
         VkExtent2D currentRenderResolution;
 
@@ -238,7 +236,8 @@ namespace BEbraEngine {
         VkDescriptorSet pointLightsSet;
 
         VkDescriptorSet physicsDebugSet;
-
+        
+        
         vector<VkDescriptorSet> attachmentsSets;
 
         vector<shared_ptr<VulkanTexture>> normalAttachments;
@@ -307,7 +306,7 @@ namespace BEbraEngine {
 
 
         size_t currentFrame = 0;
-
+        
     private:
 
         void createCameraSet(); 

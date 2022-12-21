@@ -12,6 +12,7 @@
 const int MAX_FRAMES_IN_FLIGHT = 3;
 export module VulkanRender_impl;
 import VulkanRender;
+import VulkanIHateMS;
 import VulkanWindow;
 import RenderWorld;
 import VulkanBuffer;
@@ -86,7 +87,7 @@ namespace BEbraEngine {
 
         int32_t mipWidth = texture->width();
         int32_t mipHeight = texture->height();
-        auto buffer1 = concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
+        auto buffer1 = t->concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
             VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         buffer1.startRecord();
 
@@ -240,7 +241,7 @@ namespace BEbraEngine {
         vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &_data);
         memcpy(_data, data, static_cast<size_t>(imageSize));
         vkUnmapMemory(device, stagingBufferMemory);
-        auto buffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+        auto buffer = t->concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
         if (texture->mipLevels != 1)
             createImage(texture, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
@@ -560,9 +561,9 @@ namespace BEbraEngine {
             vkDestroyFence(device, inFlightFences[i], nullptr);
         }
 
-        for (int i = 0; i < concurrentCommandPools_RenderQueue.size(); i++) {
-            concurrentCommandPools_RenderQueue[i].reset();
-            concurrentCommandPools_TransferQueue[i].reset();
+        for (int i = 0; i < t->concurrentCommandPools_RenderQueue.size(); i++) {
+            t->concurrentCommandPools_RenderQueue[i].reset();
+            t->concurrentCommandPools_TransferQueue[i].reset();
         }
 
         vkDestroyDevice(device, nullptr);
@@ -633,7 +634,7 @@ namespace BEbraEngine {
     void VulkanRender::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
     {
         
-        auto commandBuffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
+        auto commandBuffer = t->concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
             CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
         commandBuffer.startRecord();
@@ -767,7 +768,7 @@ namespace BEbraEngine {
 
         // Do the actual blit from the swapchain image to our host visible destination image
         
-        auto cmd = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
+        auto cmd = t->concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
             CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         cmd.startRecord();
         
@@ -1951,7 +1952,7 @@ namespace BEbraEngine {
             sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
             destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
             
-            auto buffer1 = concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
+            auto buffer1 = t->concurrentCommandPools_RenderQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(CommandBuffer::Type::Primary,
                 VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
             buffer1.startRecord();
@@ -1987,7 +1988,7 @@ namespace BEbraEngine {
         RenderBuffers.resize(swapChainFramebuffers.size());
 
         for (int i = 0; i < RenderBuffers.size(); i++) {
-            RenderBuffers[i] = swapChainRenderCommandPool->createCommandBuffer(CommandBuffer::Type::Primary,
+            RenderBuffers[i] = t->swapChainRenderCommandPool->createCommandBuffer(CommandBuffer::Type::Primary,
                 VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
         }
 
@@ -2524,7 +2525,7 @@ namespace BEbraEngine {
 
         _createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer->self, buffer->memory);
 
-        auto commandBuffer = concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
+        auto commandBuffer = t->concurrentCommandPools_TransferQueue[utils::getCurrentThreadIndex()]->createCommandBuffer(
             CommandBuffer::Type::Primary, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
         commandBuffer.startRecord();
 
@@ -2642,7 +2643,8 @@ namespace BEbraEngine {
 
         //factory = std::unique_ptr<VulkanRenderObjectFactory>(new VulkanRenderObjectFactory());
         
-        
+        t = new LolCompileErrorXD();
+
         auto size = window.getDrawableSize() ;// * (1/2.f);
         currentRenderResolution = { static_cast<uint32_t>(size.x),static_cast<uint32_t>(size.y) };
         createInstance(window);
@@ -2662,16 +2664,16 @@ namespace BEbraEngine {
 
         createPools();
         createAttachmentsSet();
-        concurrentCommandPools_RenderQueue.resize(tbb::this_task_arena::max_concurrency());
-        concurrentCommandPools_TransferQueue.resize(tbb::this_task_arena::max_concurrency());
-        for (int i = 0; i < concurrentCommandPools_RenderQueue.size(); i++) {
-            concurrentCommandPools_RenderQueue[i] = std::make_unique<CommandPool>();
-            concurrentCommandPools_TransferQueue[i] = std::make_unique<CommandPool>();
-            concurrentCommandPools_RenderQueue[i]->create(FamilyIndices.graphicsFamily.value());
-            concurrentCommandPools_TransferQueue[i]->create(FamilyIndices.transferFamily.value());
+        t->concurrentCommandPools_RenderQueue.resize(tbb::this_task_arena::max_concurrency());
+        t->concurrentCommandPools_TransferQueue.resize(tbb::this_task_arena::max_concurrency());
+        for (int i = 0; i < t->concurrentCommandPools_RenderQueue.size(); i++) {
+            t->concurrentCommandPools_RenderQueue[i] = std::make_unique<CommandPool>();
+            t->concurrentCommandPools_TransferQueue[i] = std::make_unique<CommandPool>();
+            t->concurrentCommandPools_RenderQueue[i]->create(FamilyIndices.graphicsFamily.value());
+            t->concurrentCommandPools_TransferQueue[i]->create(FamilyIndices.transferFamily.value());
         }
-        swapChainRenderCommandPool = std::make_unique<CommandPool>();
-        swapChainRenderCommandPool->create(FamilyIndices.graphicsFamily.value());
+        t->swapChainRenderCommandPool = std::make_unique<CommandPool>();
+        t->swapChainRenderCommandPool->create(FamilyIndices.graphicsFamily.value());
         createCmdBuffers();
 
         createPointAndDirectionLightsSets();

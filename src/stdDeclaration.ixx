@@ -1,0 +1,18 @@
+export module stdDeclaration;
+import <optional>;
+import <variant>;
+import <array>;
+import <vector>;
+import <memory>;
+import <string>;
+import <functional>;
+import <list>;
+export using std::function;
+export using std::optional;
+export using std::vector;
+export using std::array;
+export using std::shared_ptr;
+export using std::unique_ptr;
+export using std::variant;
+export using std::string;
+export using std::list;

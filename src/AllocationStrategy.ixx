@@ -1,5 +1,4 @@
-﻿
-export module AllocationStrategy;
+﻿export module AllocationStrategy;
 import <tuple>;
 import <functional>;
 
@@ -49,7 +48,7 @@ namespace BEbraEngine {
 		using FuncPair = std::pair<EnumAllocationStrategy, std::function<ReturnType()>>;
 
 		template<typename ReturnType = void>
-		auto with(std::initializer_list<FuncPair<ReturnType>> list) {
+		auto with(const std::initializer_list<FuncPair<ReturnType>>& list) {
 
 			auto lolDontCare = FuncPair<ReturnType>(EnumAllocationStrategy::None, {});
 
@@ -57,12 +56,13 @@ namespace BEbraEngine {
 				if (pair.first == EnumAllocationStrategy::AbsolutelyDontCare)
 					lolDontCare = pair;
 				return pair.first == currentStrategy;
-				});
+			});
 
 			if (strategy != std::end(list))
 				return strategy->second();
 			else if (lolDontCare.first != EnumAllocationStrategy::None)
 				return lolDontCare.second();
+
 			return lolDontCare.second();
 		}
 

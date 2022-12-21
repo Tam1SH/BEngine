@@ -2,15 +2,9 @@
 #include <tbb.h>
 export module utils;
 import Collider;
-//import FormattableToString;
-
 namespace BEbraEngine {
 
     export namespace utils {
-
-        //export std::string toString(FormattableToString auto& object) {
-        //    return object.toString();
-        //}
 
         size_t getCurrentThreadIndex()
         {
@@ -22,7 +16,6 @@ namespace BEbraEngine {
             return index;
         }
 
-        
         std::string toString(ColliderType type) {
             switch (type)
             {

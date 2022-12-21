@@ -5,7 +5,7 @@ import GameComponentDestroyer;
 import CRenderObjectFactory;
 import CTextureFactory;
 import ColliderFactory;
-import TextureFactoryDecl;
+import TextureFactory;
 import RigidBodyFactory;
 import RenderObjectFactory;
 

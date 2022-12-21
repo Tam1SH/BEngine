@@ -1,10 +1,9 @@
 ﻿module;
-#include <functional>
-#include <memory>
-#include <stack>
 export module Task;
-
-
+import <functional>;
+import <memory>;
+import <stack>;
+//TODO: есть ли смысл от велосипеда? Думаю нет.
 namespace BEbraEngine {
 	export template<class T> 
 	struct Task {
@@ -19,6 +18,8 @@ namespace BEbraEngine {
 		}
 
 		void execute(T&& value, bool isSuccess) const {
+			//TODO: думаю надо хотя бы лок какой-нибудь сделать чтобы подождать появление хотя бы какой-нибудь задачи,
+			// либо сделать какой-нибудь submit
 			if (isSuccess) {
 				auto _onCompleted = onCompleted;
 

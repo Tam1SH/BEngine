@@ -1,12 +1,10 @@
 ﻿export module CTextureFactory;
 import Task;
-import <optional>;
-import <functional>;
+import stdDeclaration;
+import TextureData;
+import stdDeclaration;
 import <string>;
-import <memory>;
 
-using std::optional;
-using std::function;
 
 export namespace BEbraEngine {
     struct Texture;
@@ -21,31 +19,23 @@ namespace BEbraEngine {
 
             /*Task<optional<Material*>> createMaterialAsync*/ const MaterialCreateInfo& info,
 
-            /*Task<optional<Texture*>> createAsync*/ const std::string& path,
+            /*Task<optional<Texture*>> createAsync*/ const CreateTextureInfo& info_,
 
-            /*Texture* create*/ const std::string& _path, bool generateMip,
+            /*optional<Texture*> createEmpty*/
 
-            /*void destroyTexture*/ Texture& texture,
-
-            /*void destroyTextureAsync*/ std::shared_ptr<Texture> shared_ptr_texture,
+            /*void destroyTextureAsync*/ shared_ptr<Texture> texture,
 
             //this 
             T& self
             )
     {
-        { self.createAsync(path) } -> std::same_as<Task<optional<Texture*>>>;
+        { self.createAsync(info_) } -> std::same_as<Task<optional<Texture*>>>;
 
-        { self.create(_path, generateMip) } -> std::same_as<Texture*>;
-
-        { self.createEmpty() } -> std::same_as<Texture*>;
-
-        //{ self.setDestroyer(destroyer) } -> std::same_as<void>;
+        { self.createEmpty() } -> std::same_as<optional<Texture*>>;
 
         { self.createMaterialAsync(info) } -> std::same_as<Task<optional<Material*>>>;
 
-        { self.destroyTexture(texture) } -> std::same_as<void>;
-
-        { self.destroyTextureAsync(shared_ptr_texture) } -> std::same_as<void>;
+        { self.destroyTextureAsync(texture) } -> std::same_as<void>;
 
     };
             

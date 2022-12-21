@@ -6,8 +6,6 @@ import GameComponent;
 import Texture;
 import Concepts;
 
-
-
 namespace BEbraEngine {
 
     export struct MaterialCreateInfo {

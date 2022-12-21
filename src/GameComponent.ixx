@@ -2,7 +2,7 @@
 #include "stdafx.h"
 export module GameComponent;
 import Concepts;
-//import Logger;
+import Logger;
 using std::optional;
 using std::shared_ptr;
 using std::string;
@@ -27,7 +27,7 @@ namespace BEbraEngine {
 			if (auto p = dynamic_cast<RequiredType*>(this); p)
 				return *p;
 
-			//������ �� ������(����)
+			//Защита от дурака(себя)
 			//Logger::error("Failed to cast the object to this type.");
 			throw std::bad_cast();
 		}

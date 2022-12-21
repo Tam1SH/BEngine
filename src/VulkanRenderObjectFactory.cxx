@@ -3,15 +3,11 @@
 module VulkanRenderObjectFactory;
 import VulkanObjects;
 import Logger;
-import RenderObject;
-import Render;
-import <optional>;
-import <variant>;
+import VulkanTextureFactory;
+import MeshFactory;
 using std::optional;
 using std::shared_ptr;
 
-
-//#include <stb-master/stb_image_write.h>
 namespace BEbraEngine {
     
     optional<RenderObject*> VulkanRenderObjectFactory::create(const RenderObjectCreateInfo& info)
@@ -38,7 +34,7 @@ namespace BEbraEngine {
         obj->setName("RenderObject");
         obj->model = meshFactory->getDefaultModel("BOX");
         obj->matrix = object_view;
-        obj->material = new Material(textureFactory.createEmpty(), textureFactory.createEmpty(), textureFactory.createEmpty());
+        //obj->material = new Material(textureFactory.createEmpty(), textureFactory.createEmpty(), textureFactory.createEmpty());
         obj->hasMaps = false;
         obj->setColor(Vector3(1));
 
@@ -116,29 +112,32 @@ namespace BEbraEngine {
 
     void VulkanRenderObjectFactory::destroyPointLight(Light& light)
     {
+        
         auto& light_ = light.as<VulkanPointLight>();
         state->_poolofPointLights.free(light_.data);
     }
 
     void VulkanRenderObjectFactory::destroyCamera(SimpleCamera& camera)
     {
+        
     }
 
     Task<optional<Material*>> VulkanRenderObjectFactory::createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info)
     {
-        
-        auto task = textureFactory.createMaterialAsync(info).
+        Task<optional<Material*>> task;
+        /*
+        task = textureFactory->createMaterialAsync(info).
             then([=](optional<Material*> mat) {
 
                 mat.and_then([&](Material* mat) -> optional<Material*> {
                         //render->executeQueues.addTask(ExecuteType::Multi,
                         //    [=]() { setMaterial(*obj, *mat); });
 
-                        return std::make_optional(mat);
+                        return mat;
                 });
 
             });
-
+            */
         return task;
     }
 
@@ -176,11 +175,10 @@ namespace BEbraEngine {
 
 
     VulkanRenderObjectFactory::VulkanRenderObjectFactory(
-        VulkanRender& render, VulkanRenderAllocator& allocator, MeshFactory& meshFactory
+        VulkanRender& render, VulkanRenderAllocator& allocator, MeshFactory& meshFactory, VulkanTextureFactory& factory
     )
-        : render(&render), allocator(&allocator), meshFactory(&meshFactory)
+        : render(&render), allocator(&allocator), meshFactory(&meshFactory), textureFactory(&factory)
     {
-        textureFactory = VulkanTextureFactory(render);
         //state->_poolofObjects = VulkanRenderBufferArray<RenderObject::ShaderData>(allocator);
         //_poolofObjects->setContext(&allocator);
         state->_poolofObjects.setUsage(RenderBufferPoolUsage::SeparateOneBuffer);
