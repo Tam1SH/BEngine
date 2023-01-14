@@ -1,24 +1,20 @@
 ﻿module;
 #include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
-#include <optional>
-#include <memory>
 export module RigidBody;
 import BEbraMath;
 import Vector3;
 import Quaternion;
 import Transform;
 import GameComponent;
-
-
+import PoolObject;
+import <optional>;
+import <memory>;
 using std::shared_ptr;
 using std::unique_ptr;
 using std::optional;
 
-
 namespace BEbraEngine {
-    export struct Physics;
     export struct Collider;
-    export struct GameComponentDestroyer;
 }
 
 namespace BEbraEngine {
@@ -29,10 +25,9 @@ namespace BEbraEngine {
         float mass{};
     };
 
-    export struct RigidBody :  GameComponent {
+    export struct RigidBody : GameComponent, PoolObject<RigidBody>  {
     public:
         friend struct RigidBodyFactory;
-        friend struct Physics;
 
         struct TransformSetInfo {
             optional<Transform*> old{};
@@ -63,7 +58,7 @@ namespace BEbraEngine {
 
 		void resetState() noexcept;
 
-		btRigidBody& getRigidBody() const noexcept { return *body; }
+        btRigidBody& getRigidBody() const noexcept;
 
 		void setTransform(TransformSetInfo& transform) noexcept;
 
@@ -93,12 +88,11 @@ namespace BEbraEngine {
 
         RigidBody(const RigidBody& o) = delete;
         RigidBody& operator=(const RigidBody& o) = delete;
-        //TODO: �������������� move �����������
 
+        RigidBody() noexcept;
         ~RigidBody() noexcept;
 	private:
 
-		RigidBody() noexcept;
 
         unique_ptr<btRigidBody> body;
 

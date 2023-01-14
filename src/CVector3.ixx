@@ -43,8 +43,8 @@ namespace BEbraEngine {
 
 	export template<typename Vector>
 	concept CVector3 = CVector3FromProperties1<Vector>
-		|| CVector3FromProperties2<Vector>
-		|| CVector3FromStructure<Vector>
-		|| CVector3FromArray<Vector>
-		|| CVector3FromInitList<Vector>;
+					|| CVector3FromProperties2<Vector>
+					|| CVector3FromStructure<Vector>
+					|| CVector3FromArray<Vector>
+					|| CVector3FromInitList<Vector>;
 }

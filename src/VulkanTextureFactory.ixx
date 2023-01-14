@@ -8,18 +8,19 @@ import Task;
 import BitMap;
 import Texture;
 import stdDeclaration;
+import TextureFactory;
 import <string>;
 
 namespace BEbraEngine {
-    export struct VulkanTextureFactory {
+    export struct VulkanTextureFactory : public TextureFactory {
 
-        Task<optional<Material*>> createMaterialAsync(const MaterialCreateInfo& info);
+        Task<optional<Material*>> createMaterialAsync(const MaterialCreateInfo& info) override;
 
-        Task<optional<Texture*>> createAsync(const CreateTextureInfo& info);
+        Task<optional<Texture*>> createAsync(const CreateTextureInfo& info) override;
 
-        optional<Texture*> createEmpty();
+        optional<Texture*> createEmpty() override;
 
-        void destroyTextureAsync(shared_ptr<Texture> texture);
+        void destroyTextureAsync(shared_ptr<Texture> texture) override;
 
         VulkanTextureFactory(VulkanRender& render, TextureLoader& loader);
         VulkanTextureFactory() {}

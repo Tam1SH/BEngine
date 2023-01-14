@@ -9,10 +9,12 @@ namespace BEbraEngine {
 		Low,
 		AbsolutelyDontCare,
 		throwOnAllocate,
-		None,
+		Any,
+		None	
 	};
 
-	export struct AllocationStrategy {
+	export template<EnumAllocationStrategy staticStrat = EnumAllocationStrategy::None>
+	struct AllocationStrategy {
 
 		static void setGlobalStrategy(EnumAllocationStrategy value) {
 			AllocationStrategy::globalStrategy = value;
@@ -49,6 +51,12 @@ namespace BEbraEngine {
 
 		template<typename ReturnType = void>
 		auto with(const std::initializer_list<FuncPair<ReturnType>>& list) {
+			if constexpr (staticStrat != EnumAllocationStrategy::Any) {
+				auto f = std::find_if(list.begin(), list.end(), [&](FuncPair<ReturnType> pair) {
+					return pair.first == staticStrat;
+				});
+				return f->second();
+			}
 
 			auto lolDontCare = FuncPair<ReturnType>(EnumAllocationStrategy::None, {});
 
@@ -69,5 +77,6 @@ namespace BEbraEngine {
 	private:
 		static inline EnumAllocationStrategy globalStrategy;
 		EnumAllocationStrategy currentStrategy;
+
 	};
 }

@@ -11,13 +11,12 @@
 #include "BulletDynamics/ConstraintSolver/btNNCGConstraintSolver.h"
 #include <iostream>
 #include <tbb.h>
-#include "Physics.hpp"
+#include "PhysicsImpl.hpp"
 import Time;
 import RigidBody;
 import Collider;
 import ColliderFactory;
 import GameObject;
-
 import RigidBodyFactory;
 import BEbraMath;
 using std::optional;
@@ -89,17 +88,18 @@ namespace BEbraEngine {
     };
 
     
-    optional<Collider*> Physics::getObjectRayCast(const Vector3& start, Vector3& end)
+    optional<Collider*> PhysicsImpl::getObjectRayCast(const Vector3& start, Vector3& end)
     {
         auto _start = btVector3(start.x, start.y, start.z);
         auto _end = btVector3(end.x, end.y, end.z);
         btCollisionWorld::ClosestRayResultCallback result(_start, _end);
         dynamicsWorld->rayTest(_start, btVector3(0,0,0), result);
-        auto collider = static_cast<Collider*>(result.m_collisionObject->getUserPointer());
-        return optional<Collider*>(collider);//optional<Collider*>(collider);
+        
+        auto collider = reinterpret_cast<Collider*>(result.m_collisionObject->getUserPointer());
+        return std::make_optional(collider);
     }
     
-    void Physics::update()
+    void PhysicsImpl::update()
     {
 
         
@@ -128,20 +128,20 @@ namespace BEbraEngine {
         queues.execute();
     }
     
-    void Physics::setDebugDrawer(btIDebugDraw* drawer)
+    void PhysicsImpl::setDebugDrawer(btIDebugDraw* drawer)
     {
         this->drawer = std::unique_ptr<btIDebugDraw>(drawer);
         dynamicsWorld->setDebugDrawer(drawer);
     }
 
-    void Physics::addRigidBody(RigidBody& body)
+    void PhysicsImpl::addRigidBody(RigidBody& body)
     {
         dynamicsWorld->addRigidBody(&body.getRigidBody());
         bodies.push_back(&body);
     }
 
 
-    void Physics::removeRigidBody(RigidBody& body)
+    void PhysicsImpl::removeRigidBody(RigidBody& body)
     {
         rigidBodyFactory->destroy(body);
         dynamicsWorld->removeRigidBody(&body.getRigidBody());
@@ -149,23 +149,23 @@ namespace BEbraEngine {
         bodies.erase(iter);
     }
 
-    void Physics::removeCollider(Collider& col)
+    void PhysicsImpl::removeCollider(Collider* col)
     {
         dynamicsWorld->removeCollisionObject(&col.get());
     }
 
-    void Physics::debugDraw()
+    void PhysicsImpl::debugDraw()
     {
         dynamicsWorld->debugDrawWorld();
     }
 
-    void Physics::setCollder(RigidBody& body, Collider& collider)
+    void PhysicsImpl::setCollder(RigidBody& body, Collider& collider)
     {
         colliderFactory->destroyCollider(rigidBodyFactory->getCollider(body));
 
         rigidBodyFactory->setCollder(body, collider);
     }
-    Physics::Physics()
+    PhysicsImpl::PhysicsImpl()
     {
         
         colliderFactory = std::unique_ptr<ColliderFactory>(new ColliderFactory(*this));
@@ -218,7 +218,7 @@ namespace BEbraEngine {
         queues.setStrategy(ExecuteType::Single);
         
     }
-    Physics::~Physics()
+    PhysicsImpl::~PhysicsImpl()
     {
         dynamicsWorld.reset();
         bodies.clear();

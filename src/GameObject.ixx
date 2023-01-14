@@ -1,6 +1,7 @@
 ﻿module;
 export module GameObject;
 import GameComponent;
+import PoolObject;
 import <exception>;
 import <typeinfo>;
 import <memory>;
@@ -14,7 +15,7 @@ using std::optional;
 
 namespace BEbraEngine {
 
-    export struct GameObject : GameComponent { 
+    export struct GameObject : GameComponent, PoolObject<GameObject> {
     public:
 
         template<typename Destroyer>

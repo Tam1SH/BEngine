@@ -125,6 +125,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)Include;C:\VulkanSDK\1.3.216.0\Include;C:\VulkanSDK\1.3.216.0\Include\vulkan;$(IncludePath);C:\boost_1_79_0\boost;C:\boost_1_79_0</IncludePath>
     <LibraryPath>$(SolutionDir)platform\libs\$(Configuration)\win;C:\boost_1_79_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -141,7 +142,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd;$(SolutionDir)Include\spdlog;C:\.BEbraEngine\Include\ctti</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd;$(SolutionDir)Include\spdlog;C:\.BEbraEngine\Include\ctti;C:\.BEbraEngine\Include\ftl</AdditionalIncludeDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
       <EnableModules>true</EnableModules>
@@ -228,12 +229,12 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd;$(SolutionDir)Include\spdlog</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include\stb-master;$(SolutionDir)Include\Physics;$(SolutionDir)Include\FMOD;$(SolutionDir)Include\oneapi;$(SolutionDir)Include\SDL;$(SolutionDir)Include\oneapi\tbb;$(SolutionDir)Include\angelscript;$(SolutionDir)Include;$(SolutionDir)Include\json;C:\.BEbraEngine\headers;$(SolutionDir)Include\xsimd;$(SolutionDir)Include\spdlog;;C:\.BEbraEngine\Include\ftl</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -312,10 +313,7 @@
     <ClCompile Include="AssetsStore.cxx" />
     <ClCompile Include="AssetsStore.ixx" />
     <ClCompile Include="Camera_impl.ixx" />
-    <ClCompile Include="CreateInfoStructures_impl.ixx" />
-    <ClCompile Include="CRender.ixx" />
-    <ClCompile Include="CRenderAllocator.ixx" />
-    <ClCompile Include="CRenderObjectFactory.ixx" />
+    <ClCompile Include="CreateInfoStructures.cxx" />
     <ClCompile Include="CRenderObjectFactoryDecl.ixx" />
     <ClCompile Include="CRenderState.ixx" />
     <ClCompile Include="CVector3.ixx" />
@@ -335,6 +333,10 @@
     <ClCompile Include="Math.cxx" />
     <ClCompile Include="Matrix.cxx" />
     <ClCompile Include="MeshLoader.ixx" />
+    <ClCompile Include="Physics.ixx" />
+    <ClCompile Include="PhysicsProxy.cxx" />
+    <ClCompile Include="PhysicsProxy.ixx" />
+    <ClCompile Include="PoolObject.ixx" />
     <ClCompile Include="RenderAllocator.ixx" />
     <ClCompile Include="RenderAllocatorTypeRenderBuffer.ixx" />
     <ClCompile Include="RenderBufferView.ixx" />
@@ -376,15 +378,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ColliderFactory_impl.ixx" />
+    <ClCompile Include="ColliderFactory.cxx" />
     <ClCompile Include="CommandBuffer.cpp" />
     <ClCompile Include="Concepts.ixx" />
-    <ClCompile Include="CTextureFactory.ixx">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="GameComponent.ixx" />
-    <ClCompile Include="GameComponentDestroyer_impl.ixx" />
+    <ClCompile Include="GameComponentDestroyer.cxx" />
     <ClCompile Include="RenderHelper.ixx" />
     <ClCompile Include="Line.ixx">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -452,10 +450,10 @@
     <ClCompile Include="CommandPool.cpp" />
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="ScriptState.cpp" />
-    <ClCompile Include="GameObjectFactory_impl.ixx" />
+    <ClCompile Include="GameObjectFactory.cxx" />
     <ClCompile Include="VulkanTextureFactory.cxx" />
     <ClCompile Include="MeshFactory.cpp" />
-    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PhysicsImpl.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="VulkanRenderObjectFactory.cxx" />
     <ClCompile Include="ScriptManager.cpp" />
@@ -537,7 +535,7 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="MethodDefineMacros.hpp" />
-    <ClInclude Include="Physics.hpp">
+    <ClInclude Include="PhysicsImpl.hpp">
       <FileType>Document</FileType>
     </ClInclude>
     <ClCompile Include="VulkanPipeline.ixx">

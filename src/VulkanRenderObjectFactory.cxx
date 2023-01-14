@@ -5,6 +5,9 @@ import VulkanObjects;
 import Logger;
 import VulkanTextureFactory;
 import MeshFactory;
+import PoolObject;
+import RenderObject;
+
 using std::optional;
 using std::shared_ptr;
 
@@ -53,24 +56,24 @@ namespace BEbraEngine {
         
     }
 
-    
-
-    Light* VulkanRenderObjectFactory::createLight(const Vector3& color, const Vector3& position)
+    optional<Light*> VulkanRenderObjectFactory::createLight(const LightCreateInfo& info)
     {
         auto maybe_object_view = state->_poolofPointLights.get();
         shared_ptr<RenderBufferView> object_view;
         if (maybe_object_view.has_value()) {
             object_view = maybe_object_view.value();
         }
-        else throw std::runtime_error("");
+        else 
+            return std::make_optional();
+
         auto light = new VulkanPointLight();
-        light->setColor(color);
+        light->setColor(info.color);
         light->data = object_view;
 
-        return light;
+        return std::make_optional(light);
     }
 
-    DirectionLight* VulkanRenderObjectFactory::createDirLight(const Vector3& color, const Vector3& direction)
+    optional<DirectionLight*> VulkanRenderObjectFactory::createDirLight(const CreateDirectionLightInfo& info)
     {
         
         auto maybe_light_view = state->_poolofDirLights.get();
@@ -79,9 +82,11 @@ namespace BEbraEngine {
         if (maybe_light_view.has_value()) {
             view = maybe_light_view.value();
         }
+        else
+            return std::make_optional();
 
         auto light = new VulkanDirLight();
-        light->setColor(color);
+        light->setColor(info.color);
         light->setDirection(direction);
 
 
@@ -90,12 +95,8 @@ namespace BEbraEngine {
         info.type = LightDescriptorInfo::Type::Direction;
 
         light->data = view;
-        return light;
-
+        return std::make_optional(light);
     }
-
-
-
 
     void VulkanRenderObjectFactory::destroyObject(RenderObject& object)
     {
@@ -200,6 +201,9 @@ namespace BEbraEngine {
        // auto info = LightDescriptorInfo();
        // info.bufferView = &v;
        // info.type = LightDescriptorInfo::Type::Point;
+        PoolObject<RenderObject>::setDeleter([&](RenderObject& o) {
+            destroyObject(o);
+        });
     }
 
     VulkanRenderObjectFactory::~VulkanRenderObjectFactory()

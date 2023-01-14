@@ -2,6 +2,7 @@
 
 export module RenderObject;
 import GameComponent;
+import PoolObject;
 import Matrix4;
 import Vector3;
 import Material;
@@ -32,7 +33,7 @@ namespace BEbraEngine {
         const DirectionLightCreateInfo* directionLightInfo;
     };
 
-    export struct RenderObject : GameComponent {
+    export struct RenderObject : GameComponent, PoolObject<RenderObject> {
 
         struct ShaderData {
             Matrix4 model;

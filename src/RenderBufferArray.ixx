@@ -4,7 +4,6 @@
 #include <vector>
 export module RenderBufferArray;
 
-import CRenderAllocator;
 import RenderAllocatorTypeRenderBuffer;
 
 using std::shared_ptr;

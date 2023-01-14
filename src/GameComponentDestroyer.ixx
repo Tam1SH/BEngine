@@ -1,9 +1,10 @@
 ﻿module;
-#include <memory>
+
 export module GameComponentDestroyer;
 //import ColliderFactory;
 import RigidBodyFactoryDecl;
 import TextureFactory;
+import GameComponent;
 import RenderObjectFactory;
 import Concepts;
 import RigidBody;
@@ -16,7 +17,7 @@ import Material;
 import Transform;
 import Camera;
 import Light;
-
+import <memory>;
 
 using std::shared_ptr;
 

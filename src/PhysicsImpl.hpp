@@ -19,6 +19,7 @@ import Collider;
 import Transform;
 import Quaternion;
 import RenderHelper;
+import Physics;
 
 import <vector>;
 import <memory>;
@@ -97,11 +98,11 @@ namespace BEbraEngine {
     };
 
     
-    struct Physics {
+    struct PhysicsImpl : public Physics {
 
-        optional<Collider*> getObjectRayCast(const Vector3& start, Vector3& end);
+        optional<Collider*> getObjectRayCast(const Vector3& start, Vector3& end) override;
 
-        void update();
+        void update() override;
 
         void setDebugDrawer(btIDebugDraw* drawer);
 
@@ -109,19 +110,19 @@ namespace BEbraEngine {
 
         RigidBodyFactory* getRigidBodyFactory() { return rigidBodyFactory.get(); }
 
-        void addRigidBody(RigidBody& body);
+        void addRigidBody(RigidBody& body) override;
 
-        void removeRigidBody(RigidBody& body);
+        void removeRigidBody(RigidBody& body) override;
 
-        void removeCollider(Collider& col);
+        void removeCollider(Collider& col) override;
 
-        void debugDraw();
+        void debugDraw() override;
 
-        void setCollder(RigidBody& body, Collider& collider);
+        void setCollder(RigidBody& body, Collider& collider) override;
 
-        Physics();
+        PhysicsImpl();
 
-        ~Physics();
+        ~PhysicsImpl();
 
     private:
 

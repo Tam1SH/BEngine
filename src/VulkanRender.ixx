@@ -10,7 +10,7 @@
 #include <string>
 #include "CommandBuffer.hpp"
 export module VulkanRender;
-
+import Render;
 import ExecuteQueues;
 import RenderData;
 import RenderAllocatorTypeRenderBuffer;
@@ -52,16 +52,16 @@ namespace BEbraEngine {
 
 namespace BEbraEngine {
 
-    export struct VulkanRender
+    export struct VulkanRender : public Render
     {
         
-        void update();
+        void update() override;
 
-        void prepareDraw();
+        void prepareDraw() override;
 
-        void drawFrame();
+        void drawFrame() override;
 
-        void updateState(RenderData& data);
+        void updateState(RenderData& data) override;
 
         void create(VulkanWindow& window);
         
@@ -168,6 +168,7 @@ namespace BEbraEngine {
     
     private:
         
+        bool isCreated{};
         
         VkPipelineLayout pipelineLayout;
 

@@ -2,10 +2,10 @@
 #include <vulkan.h>
 export module Texture;
 import GameComponent;
-
+import PoolObject;
 namespace BEbraEngine {
     
-    export struct Texture : GameComponent {
+    export struct Texture : GameComponent, PoolObject<Texture> {
     public:
 
         template<typename Destroyer>

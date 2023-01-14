@@ -2,9 +2,9 @@
 #include <Physics/BulletDynamics/Dynamics/btRigidBody.h>
 #include <Physics/btBulletDynamicsCommon.h>
 
-#include "Physics.hpp"
 module RigidBodyFactory;
 import Collider;
+import Physics;
 import Exceptions;
 import <stdexcept>;
 namespace BEbraEngine {

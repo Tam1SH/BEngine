@@ -1,4 +1,4 @@
-﻿#include "platform.hpp"
+﻿
 export module RigidBodyFactory;
 import <optional>;
 import RigidBody;

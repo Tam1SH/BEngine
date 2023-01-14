@@ -26,6 +26,7 @@ namespace BEbraEngine {
     export struct ScriptState;
 }
 
+//Избавится думаю надо от этого чучела
 namespace BEbraEngine {
 
     export struct ObjectFactoryFacade {
@@ -67,7 +68,7 @@ namespace BEbraEngine {
 
         ObjectFactoryFacade() {}
 
-        ObjectFactoryFacade(GameObjectFactory* factory);
+        ObjectFactoryFacade(GameObjectFactory& factory);
         
 
     private:

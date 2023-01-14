@@ -1,7 +1,6 @@
 ﻿#include <tbb.h>
 #include <exception>
 module RenderWorld;
-import CRender;
 import RenderData;
 import RenderObject;
 import Light;

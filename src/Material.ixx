@@ -1,11 +1,11 @@
 ﻿module;
-#include <memory>
-#include <string>
 export module Material;
 import GameComponent;
 import Texture;
 import Concepts;
-
+import PoolObject;
+import <memory>;
+import <string>;
 namespace BEbraEngine {
 
     export struct MaterialCreateInfo {
@@ -14,7 +14,7 @@ namespace BEbraEngine {
         std::string normal;
     };
 
-    export struct Material : GameComponent {
+    export struct Material : GameComponent, PoolObject<Material> {
 
         template<typename Destroyer>
         void destroy(Destroyer& destroyer) {

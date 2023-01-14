@@ -1,10 +1,8 @@
 ﻿#include <tbb.h>
 #include <random>
-#include "Physics.hpp"
+
 module ScriptState;
-import <variant>;
-import <functional>;
-import <memory>;
+import Physics;
 import ScriptManager;
 import RenderWorld;
 import GameObject;
@@ -16,7 +14,9 @@ import ExecuteQueues;
 import Time;
 import ObjectFactoryFacade;
 import CreateInfoStructures;
-
+import <variant>;
+import <functional>;
+import <memory>;
 
 using std::shared_ptr;
 
@@ -62,22 +62,16 @@ namespace BEbraEngine {
     }
 
 
-    ScriptState::ScriptState(Render& render, RenderAllocator& allocator, Physics& physics,
+    ScriptState::ScriptState(Render& render, Physics& physics,
                              RenderWorld& renderWorld, ScriptManager& manager, ObjectFactoryFacade& objectFactory)
     {
         //queues = ExecuteQueues<function<void()>>();
 
         this->physics = &physics;
-        //renderWorld = RenderWorld(render);
         this->renderWorld = &renderWorld;
-        //scriptObjectFactory = new ObjectFactoryFacade(new GameObjectFactory(render, allocator, physics, renderWorld));
         scriptObjectFactory = &objectFactory;
-
         scriptObjectFactory->setContext(this);
-
-       // scriptManager = ScriptManager(scriptObjectFactory);
         scriptManager = &manager;
-
         scriptManager->LoadScripts();
 
         scriptInit();

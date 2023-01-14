@@ -2,24 +2,21 @@
 export module VulkanRenderObjectFactory;
 import Light;
 import Camera;
-import RenderObject;
 import Material;
 import DirectionLight;
 import Transform;
-
 import RenderBuffer;
 import VulkanRenderBufferArray;
-import VulkanRender;
 import VulkanRenderAllocator;
 import RenderBufferArray;
-import CRenderAllocator;
+
 import CreateInfoStructures;
-import Render;
 import VulkanRenderState;
 import AllocationStrategy;
 import Task;
 import Model;
 import Vector3;
+import RenderObjectFactory;
 import <optional>;
 import <variant>;
 import <memory>;
@@ -33,23 +30,26 @@ using std::string;
 
 
 namespace BEbraEngine {
+    export struct VulkanRender;
     export struct VulkanTextureFactory;
     export struct MeshFactory;
+    export struct RenderObject;
+    export struct RenderObjectCreateInfo;
 }
 
 namespace BEbraEngine {
     
-    export struct VulkanRenderObjectFactory : private AllocationStrategy
+    export struct VulkanRenderObjectFactory : public RenderObjectFactory, private AllocationStrategy<EnumAllocationStrategy::Any>
     {
-        Task<optional<Material*>> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info);
+        Task<optional<Material*>> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info) override;
 
-        optional<RenderObject*> create(const RenderObjectCreateInfo& info);
+        optional<RenderObject*> create(const RenderObjectCreateInfo& info) override;
 
-        Light* createLight(const Vector3& color, const Vector3& position);
+        optional<Light*> createLight(const LightCreateInfo& info) override;
 
-        DirectionLight* createDirLight(const Vector3& color, const Vector3& direction);
+        optional<DirectionLight*> createDirLight(const DirectionLightCreateInfo& info) override;
 
-        SimpleCamera* createCamera(const Vector3& position);
+        optional<SimpleCamera*> createCamera(const CameraCreateInfo& info) override;
 
         void setMaterial(RenderObject& obj, Material& material);
 

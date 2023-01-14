@@ -69,6 +69,11 @@ namespace BEbraEngine {
         body->getWorldTransform().setRotation(transform->getRotation());
     }
 
+    btRigidBody& RigidBody::getRigidBody() const noexcept
+    {
+        return *body;
+    }
+
 
     void RigidBody::setTransform(TransformSetInfo& info) noexcept
     {

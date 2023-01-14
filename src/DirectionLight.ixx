@@ -1,15 +1,18 @@
 ﻿module;
-
 export module DirectionLight;
 import GameComponent;
 import Vector3;
-import <memory>;
 import RenderBufferView;
-
+import PoolObject;
+import <memory>;
 namespace BEbraEngine {
 
+    export struct DirectionLightCreateInfo {
+        Vector3 color;
+        Vector3 direction;
+    };
 
-    export struct DirectionLight : GameComponent {
+    export struct DirectionLight : GameComponent, PoolObject<DirectionLight> {
     public:
         
         struct ShaderData {

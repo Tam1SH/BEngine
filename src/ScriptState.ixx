@@ -21,7 +21,7 @@ using std::vector;
 using std::list;
 
 namespace BEbraEngine {
-    struct Physics;
+    export struct Physics;
     export struct ObjectFactoryFacade;
     export struct Render;
     export struct RenderObject;
@@ -30,7 +30,6 @@ namespace BEbraEngine {
     export struct GameObject;
     export struct DirectionLight;
     export struct RenderWorld;
-    export struct RenderAllocator;
     export struct ScriptManager;
     export template<typename T>
     struct ExecuteQueues;
@@ -61,7 +60,7 @@ namespace BEbraEngine {
 
         void addDirLight(DirectionLight& light);
 
-        ScriptState(Render& render, RenderAllocator& allocator, Physics& physics, 
+        ScriptState(Render& render, Physics& physics, 
                     RenderWorld& renderWorld, ScriptManager& manager, ObjectFactoryFacade& objectFactory);
         ScriptState() {}
 

@@ -1,14 +1,9 @@
 ﻿module;
-#include "stdafx.h"
 export module GameComponent;
 import Concepts;
 import Logger;
-using std::optional;
-using std::shared_ptr;
-using std::string;
-using std::list;
-
-
+import stdDeclaration;
+import <string>;
 
 namespace BEbraEngine {
 
@@ -22,7 +17,7 @@ namespace BEbraEngine {
 
 		template<typename RequiredType>
 			requires std::is_base_of_v<GameComponent, RequiredType>
-		RequiredType& as() noexcept {
+		RequiredType& as() noexcept(false) {
 
 			if (auto p = dynamic_cast<RequiredType*>(this); p)
 				return *p;
@@ -38,19 +33,18 @@ namespace BEbraEngine {
 
 		virtual bool isComposite() const noexcept;
 
-		std::string& getName() noexcept;
+		
 
 		int getSize() noexcept;
 
+		std::string& getName() noexcept;
 		GameComponent& getParent() noexcept;
-
 		void setParent(GameComponent& parent) noexcept;
-
 		void setName(string name) noexcept;
 
 		GameComponent(string name) noexcept;
 
-		constexpr GameComponent() noexcept = default;
+		GameComponent() noexcept {}
 
 		virtual ~GameComponent() noexcept;
 
@@ -61,7 +55,7 @@ namespace BEbraEngine {
 		GameComponent& operator=(const GameComponent& o) = delete;
 
 	protected:
-		//������ ���� ������ � ������������ ������������ ������.
+
 		void itWasDestroyed() { __isDestroyed = true; }
 
 		string name_{};

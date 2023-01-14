@@ -4,6 +4,7 @@ import Matrix4;
 import BEbraMath;
 import Vector3;
 import Quaternion;
+import PoolObject;
 
 namespace BEbraEngine {
     struct TransformFactory;
@@ -11,7 +12,7 @@ namespace BEbraEngine {
 
 namespace BEbraEngine {
 
-    export struct Transform : GameComponent {
+    export struct Transform : GameComponent, PoolObject<Transform> {
 
         friend struct TransformFactory;
 

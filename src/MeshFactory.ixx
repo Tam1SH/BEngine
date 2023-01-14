@@ -4,11 +4,10 @@
 #include <assimp/postprocess.h>
 
 export module MeshFactory;
-import VulkanRenderAllocator;
+import RenderAllocator;
 import Model;
 import Texture;
 import <fstream>;
-import <variant>;
 import <map>;
 import <string>;
 import <vector>;
@@ -36,7 +35,7 @@ namespace BEbraEngine {
         std::shared_ptr<Model> getDefaultModel(const string& name);
 
         MeshFactory() {}
-        MeshFactory(std::variant<VulkanRenderAllocator>& renderAlloc);
+        MeshFactory(RenderAllocator& renderAlloc);
 
         MeshFactory(const MeshFactory&) = delete;
         MeshFactory operator=(const MeshFactory&) = delete;
@@ -56,15 +55,11 @@ namespace BEbraEngine {
 
         TextureFactory* _textureFactory;
 
-        std::variant<VulkanRenderAllocator>* renderAlloc;
+        RenderAllocator* renderAlloc;
 
         std::map<string, shared_ptr<Model>> default_models;
         
     };
 
-    namespace create {
-        MeshFactory meshFactory(std::variant<VulkanRenderAllocator>& renderAlloc);
-    }
-    
 }
 

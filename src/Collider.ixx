@@ -9,7 +9,7 @@ import Quaternion;
 import Concepts;
 import GameComponent;
 import Concepts;
-
+import PoolObject;
 using std::unique_ptr;
 
 namespace BEbraEngine {
@@ -34,7 +34,7 @@ namespace BEbraEngine {
 		ColliderType type{};
 	};
 
-	export struct Collider : GameComponent {
+	export struct Collider : GameComponent, PoolObject<Collider> {
 
 		friend struct ColliderFactory;
 

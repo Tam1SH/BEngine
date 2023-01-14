@@ -1,5 +1,4 @@
-export module CreateInfoStructures_impl;
-import CreateInfoStructures;
+module CreateInfoStructures;
 import Material;
 import Texture;
 

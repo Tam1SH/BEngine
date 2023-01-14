@@ -1,14 +1,6 @@
-﻿#include <variant>
-#include <memory>
-export module GameComponentDestroyer_impl;
-import GameComponentDestroyer;
-import CRenderObjectFactory;
-import CTextureFactory;
-import ColliderFactory;
-import TextureFactory;
+﻿module GameComponentDestroyer;
 import RigidBodyFactory;
-import RenderObjectFactory;
-
+import ColliderFactory;
 using std::shared_ptr;
 
 namespace BEbraEngine {

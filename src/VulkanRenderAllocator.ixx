@@ -1,34 +1,32 @@
 ﻿module;
-
 export module VulkanRenderAllocator;
-import CRender;
-import Render;
-import VulkanRender;
 import RenderAllocatorTypeRenderBuffer;
 import Vertex;
 import RenderBuffer;
-import CRenderAllocator;
+import RenderAllocator;
 import <variant>;
 import <concepts>;
 import <vector>;
 
+namespace BEbraEngine {
+	export struct VulkanRender;
+}
 
 namespace BEbraEngine {
-
-	export struct VulkanRenderAllocator {
+	
+	export struct VulkanRenderAllocator : public RenderAllocator {
 		
+		RenderBuffer* createIndexBuffer(const std::vector<uint32_t>& indices) override;
 
-		RenderBuffer* createIndexBuffer(std::vector<uint32_t> indices);
+		RenderBuffer* createVertexBuffer(const std::vector<Vertex>& vertices) override;
 
-		RenderBuffer* createVertexBuffer(std::vector<Vertex> vertices);
+		RenderBuffer* createUniformBuffer(uint32_t size) override;
 
-		RenderBuffer* createUniformBuffer(uint32_t size);
+		RenderBuffer* createStorageBuffer(uint32_t size) override;
 
-		RenderBuffer* createStorageBuffer(uint32_t size);
+		uint32_t alignmentBuffer(uint32_t originalSize, TypeRenderBuffer type) override;
 
-		uint32_t alignmentBuffer(uint32_t originalSize, TypeRenderBuffer type);
-
-		void destroyBuffer(RenderBuffer* buffer);
+		void destroyBuffer(RenderBuffer* buffer) override;
 
 		VulkanRenderAllocator(VulkanRender& render);
 
@@ -45,6 +43,6 @@ namespace BEbraEngine {
 	private:
 		VulkanRender* render;
 	};
-	static_assert(CRenderAllocator<VulkanRenderAllocator>);
+
 
 }

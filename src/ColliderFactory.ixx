@@ -4,13 +4,10 @@
 
 export module ColliderFactory;
 import <optional>;
+import Physics;
 import Collider;
 import Concepts;
 using std::optional;
-
-namespace BEbraEngine {
-	export struct Physics;
-}
 
 
 namespace BEbraEngine {

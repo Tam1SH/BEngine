@@ -4,6 +4,7 @@
 #include <SDL_vulkan.h>
 #include <vulkan.h>
 #include <tbb.h>
+#include <spdlog.h>
 #include <iostream>
 #include <fstream>
 #include <memory>;
@@ -312,7 +313,8 @@ namespace BEbraEngine {
 
     VulkanRender::~VulkanRender()
     {
-        cleanUpDefault();
+        if(isCreated)
+            cleanUpDefault();
     }
 
     void VulkanRender::recreateRenderObjects() {
@@ -2639,6 +2641,7 @@ namespace BEbraEngine {
     }
     void VulkanRender::create(VulkanWindow& window)
     {
+        isCreated = true;
         std::system("C:/.BEbraEngine/src/shaders/sh.bat");
 
         //factory = std::unique_ptr<VulkanRenderObjectFactory>(new VulkanRenderObjectFactory());

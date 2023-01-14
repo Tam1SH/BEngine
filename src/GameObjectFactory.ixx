@@ -1,6 +1,6 @@
 ﻿module;
-#include "Physics.hpp"
 export module GameObjectFactory;
+import Physics;
 import Light;
 import Camera;
 import TransformFactory;
@@ -44,11 +44,11 @@ namespace BEbraEngine {
 
 		void destroy(GameObject& object);
 
-		shared_ptr<Light> createLight(const Vector3& position);
+		optional<shared_ptr<Light>> createLight(const LightCreateInfo& info);
 
-		shared_ptr<DirectionLight> createDirLight(const Vector3& direction);
+		optional<shared_ptr<DirectionLight>> createDirLight(const DirectionLightCreateInfo& info);
 
-		shared_ptr<SimpleCamera> createCamera(const Vector3& position);
+		optional<shared_ptr<SimpleCamera>> createCamera(const CameraCreateInfo& info);
 
 		void setModel(GameObject& object, const string& path);
 
@@ -60,7 +60,9 @@ namespace BEbraEngine {
 
 		void destroyPointLight(Light& light);
 
-		GameObjectFactory(Render& render, RenderAllocator& allocator, Physics& physics, RenderWorld& world) noexcept;
+		GameObjectFactory(TransformFactory& transFactory, GameComponentDestroyer& destroyer,
+						  RenderObjectFactory& renderFactory, ColliderFactory& colliderFactory,
+						  RigidBodyFactory& rigidBodyFactory) noexcept;
 
 		~GameObjectFactory() noexcept;
 

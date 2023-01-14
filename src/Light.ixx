@@ -4,11 +4,21 @@ import GameComponent;
 import Vector3;
 import Transform;
 import RenderBufferView;
+import PoolObject;
 import <memory>;
 
 namespace BEbraEngine {
 
-    export struct Light : GameComponent {
+    export struct LightCreateInfo {
+        Vector3 color;
+        Vector3 position;
+        Vector3 lightColor{ 1 };
+        float constant{};
+        float linear{};
+        float quadratic{};
+    };
+
+    export struct Light : GameComponent, PoolObject<Light> {
 
         struct ShaderData {
             alignas(16) Vector3 position;
@@ -21,14 +31,6 @@ namespace BEbraEngine {
             alignas(4) float linear;
             alignas(4) float quadratic;
         };
-
-        struct CreateInfo {
-            const Vector3 lightColor{ 1 };
-            float constant{};
-            float linear{};
-            float quadratic{};
-        };
-
 
         template<typename Destroyer>
         void destroy(Destroyer& destroyer) {

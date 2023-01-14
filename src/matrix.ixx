@@ -26,11 +26,7 @@ namespace BEbraEngine {
 
 		constexpr Matrix4() noexcept {}
 
-		constexpr Matrix4(
-			const Vector4& v0,
-			const Vector4& v1,
-			const Vector4& v2,
-			const Vector4& v3) noexcept;
+		constexpr Matrix4(Vector4 v0,Vector4 v1, Vector4 v2, Vector4 v3) noexcept;
 
 		Matrix4(float all) noexcept;
 

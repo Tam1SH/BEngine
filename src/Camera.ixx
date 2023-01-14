@@ -5,6 +5,7 @@ import Matrix4;
 import Vector3;
 import RenderBufferView;
 import GameComponent;
+import PoolObject;
 
 namespace BEbraEngine {
 
@@ -15,7 +16,11 @@ namespace BEbraEngine {
         RIGHT
     };
 
-    export struct SimpleCamera : GameComponent
+    export struct CameraCreateInfo {
+        Vector3 position;
+    };
+
+    export struct SimpleCamera : GameComponent, PoolObject<SimpleCamera>
     {
         struct ShaderData {
             Matrix4 proj;

@@ -1,74 +1,45 @@
 ﻿module;
-#include "MethodDefineMacros.hpp"
 export module RenderObjectFactory;
-import VulkanRenderObjectFactory;
-import CRenderObjectFactory;
-import Concepts;
-import <concepts>;
-import <variant>;
-
+import Task;
+import Light;
+import DirectionLight;
+import Camera;
+import RenderObject;
+import Material;
+import Vector3;
+import Transform;
+import <optional>;
+import <memory>;
+using namespace std;
 
 namespace BEbraEngine {
 
+	export struct RenderObjectFactory {
 
-	template<typename T>
-	struct Concept : std::bool_constant<CRenderObjectFactory<T>> {};
+		virtual Task<optional<Material*>> createMaterialAsync(shared_ptr<RenderObject> obj, const MaterialCreateInfo& info) = 0;
 
-	template <class...Ts>
-	constexpr bool AreRenderObjectFactories = AreSuitableToBe<Concept, Ts...>;
+		virtual optional<RenderObject*> create(const RenderObjectCreateInfo& info) = 0;
 
-	//Статически типизированный интерфейс для объектов, удовлетворяющими концепту CRenderObjectFactory<T> 
-	export template<typename... RenderObjectFactories>
-		requires AreRenderObjectFactories<RenderObjectFactories...>
-	struct _RenderObjectFactory {
+		virtual optional<Light*> createLight(const LightCreateInfo& info) = 0;
 
-		METHOD_DEFINE_2(createMaterialAsync, CRenderObjectFactory, obj, material)
-		METHOD_DEFINE_1(create, CRenderObjectFactory, renderInfo)
-		METHOD_DEFINE_2(bindTransform, CRenderObjectFactory, obj, trans)
-		METHOD_DEFINE_2(createLight, CRenderObjectFactory, color, position)
-		METHOD_DEFINE_2(createDirLight, CRenderObjectFactory, color, direction)
-		METHOD_DEFINE_1(createCamera, CRenderObjectFactory, position)
-		METHOD_DEFINE_1(destroyObject, CRenderObjectFactory, object)
-		METHOD_DEFINE_1(destroyCamera, CRenderObjectFactory, camera)
-		METHOD_DEFINE_2(setModel, CRenderObjectFactory, object, path)
-		METHOD_DEFINE_1(destroyPointLight, CRenderObjectFactory, light)
-		
+		virtual optional<DirectionLight*> createDirLight(const DirectionLightCreateInfo& info) = 0;
 
-		_RenderObjectFactory() {
-			self = std::variant<RenderObjectFactories...>(std::in_place_index<0>);
-		}
+		virtual optional<SimpleCamera*> createCamera(const CameraCreateInfo& info) = 0;
 
-		template<typename RenderObjectFactory>
-		RenderObjectFactory& get() {
-			return std::get<RenderObjectFactory>(self);
-		}
+		virtual void setMaterial(RenderObject& obj, Material& material) = 0;
 
-		std::variant<RenderObjectFactories...>& variant() {
-			return self;
-		}
+		virtual void bindTransform(Light& light, Transform& transform) = 0;
 
-		template<int index = 0>
-		_RenderObjectFactory(std::in_place_index_t<index> i) {
-			self = std::variant<RenderObjectFactories...>(i);
-		}
+		virtual void bindTransform(RenderObject& object, Transform& transform) = 0;
 
-		template<typename RenderObjectFactory>
-		_RenderObjectFactory(RenderObjectFactory&& member) {
-			//static_assert((std::is_same_v<RenderAllocator, RenderAllocators> && ...),
-			//	"corresponds to the concept but does not correspond to the available types");
-			this->self = std::forward<RenderObjectFactory>(member);
-		}
+		virtual void destroyObject(RenderObject& object) = 0;
 
-	private:
-		std::variant<RenderObjectFactories...> self;
+		virtual void destroyPointLight(Light& light) = 0;
+
+		virtual void destroyCamera(SimpleCamera& camera) = 0;
+
+		virtual void setModel(RenderObject& object, const string& path) = 0;
 	};
-
-	export struct RenderObjectFactoryType {
-		static constexpr auto Vulkan = std::in_place_index<0>;
-	};
-
-	export using RenderObjectFactory = _RenderObjectFactory<VulkanRenderObjectFactory>;
-	static_assert(CRenderObjectFactory<VulkanRenderObjectFactory>);
 }
 
 

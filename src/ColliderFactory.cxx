@@ -1,12 +1,13 @@
 ﻿module;
 #include <stdexcept>
-#include "Physics.hpp"
-export module ColliderFactory_impl;
-import ColliderFactory;
+#include <Physics/btBulletDynamicsCommon.h>
+module ColliderFactory;
+import Physics;
 import utils;
 import Exceptions;
 import RigidBody;
 import Logger;
+import PoolObject;
 import <memory>;
 import <optional>;
 
@@ -92,6 +93,10 @@ namespace BEbraEngine {
 	ColliderFactory::ColliderFactory(Physics& physics) noexcept
 	{
 		this->physics = &physics;
+
+		PoolObject<Collider>::setDeleter([&](Collider& c) {
+			destroyCollider(c);
+		});
 	}
 
 

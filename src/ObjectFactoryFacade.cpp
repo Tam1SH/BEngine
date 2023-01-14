@@ -14,9 +14,9 @@ using std::shared_ptr;
 
 namespace BEbraEngine {
 
-    ObjectFactoryFacade::ObjectFactoryFacade(GameObjectFactory* factory)
+    ObjectFactoryFacade::ObjectFactoryFacade(GameObjectFactory& factory)
     {
-        realFactory_ = factory;
+        realFactory_ = &factory;
     }
 
     void ObjectFactoryFacade::setContext(ScriptState* state)
@@ -70,18 +70,33 @@ namespace BEbraEngine {
 
     shared_ptr<Light> ObjectFactoryFacade::createLight(const Vector3& position)
     {
-        auto light = realFactory_->createLight(position);
-        state_->addLight(*light);
-        return light;
-        throw std::exception();
+
+        LightCreateInfo info{};
+        info.position = position;
+        return realFactory_->createLight(info)
+            .and_then([&](auto light) {
+                state_->addLight(*light);
+                return std::make_optional(light);
+            })
+            //TODO: Нет никакого смысла бросать исключение
+            .or_else([&]() { throw std::exception(); })
+            .value();
     }
 
     shared_ptr<DirectionLight> ObjectFactoryFacade::createDirLight(const Vector3& direction)
     {
-        auto light = realFactory_->createDirLight(direction);
-        state_->addDirLight(*light);
-        return light;
-        throw std::exception();
+        DirectionLightCreateInfo info;
+        info.direction = direction;
+        info.color = Vector3(1);
+
+        return realFactory_->createLight(info)
+            .and_then([&](auto light) {
+                state_->addDirLight(*light);
+                return std::make_optional(light);
+            })
+            //TODO: Нет никакого смысла бросать исключение
+            .or_else([&]() { throw std::exception(); })
+            .value();
     }
 
     void ObjectFactoryFacade::setMaterialAsync(shared_ptr<GameObject> object, const MaterialCreateInfo& info)

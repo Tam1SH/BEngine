@@ -72,7 +72,7 @@
     <ClCompile Include="CommandPool.cpp">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="Physics.cpp">
+    <ClCompile Include="PhysicsImpl.cpp">
       <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
     <ClCompile Include="VulkanRender_impl.ixx">
@@ -81,7 +81,7 @@
     <ClCompile Include="VulkanBuffer.cxx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="GameObjectFactory_impl.ixx">
+    <ClCompile Include="GameObjectFactory.cxx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="ScriptManager.cpp">
@@ -123,7 +123,7 @@
     <ClCompile Include="RigidBodyFactory.cxx">
       <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderFactory_impl.ixx">
+    <ClCompile Include="ColliderFactory.cxx">
       <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
     <ClCompile Include="RenderWorld.cxx">
@@ -222,7 +222,7 @@
     <ClCompile Include="VulkanRenderBufferArray.ixx">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
-    <ClCompile Include="GameComponentDestroyer_impl.ixx">
+    <ClCompile Include="GameComponentDestroyer.cxx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="RenderHelper.ixx">
@@ -420,7 +420,7 @@
     <ClCompile Include="VulkanRenderBufferArray_impl.ixx">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="CreateInfoStructures_impl.ixx">
+    <ClCompile Include="CreateInfoStructures.cxx">
       <Filter>Исходные файлы\Render\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="LineShaderData.ixx">
@@ -462,29 +462,29 @@
     <ClCompile Include="RenderAllocator.ixx">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="CRenderObjectFactory.ixx">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClCompile>
-    <ClCompile Include="CTextureFactory.ixx">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClCompile>
     <ClCompile Include="RenderObjectFactory.ixx">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="TextureFactory.ixx">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="CRenderAllocator.ixx">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClCompile>
     <ClCompile Include="Render.ixx">
-      <Filter>Файлы заголовков\Interfaces</Filter>
-    </ClCompile>
-    <ClCompile Include="CRender.ixx">
       <Filter>Файлы заголовков\Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="VulkanIHateMS.ixx">
       <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolObject.ixx">
+      <Filter>Файлы заголовков\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsProxy.ixx">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.ixx">
+      <Filter>Файлы заголовков\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsProxy.cxx">
+      <Filter>Исходные файлы\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -529,7 +529,7 @@
     <ClInclude Include="platform_window.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Physics.hpp">
+    <ClInclude Include="PhysicsImpl.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">

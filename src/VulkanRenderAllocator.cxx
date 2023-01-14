@@ -4,16 +4,14 @@ import <variant>;
 
 import Vertex;
 import Render;
-import CRender;
-import CRenderAllocator;
 import VulkanRender;
 namespace BEbraEngine {
 	
-	RenderBuffer* VulkanRenderAllocator::createIndexBuffer(std::vector<uint32_t> indices) {
+	RenderBuffer* VulkanRenderAllocator::createIndexBuffer(const std::vector<uint32_t>& indices) {
 		return render->createIndexBuffer(indices);
 	}
 
-	RenderBuffer* VulkanRenderAllocator::createVertexBuffer(std::vector<Vertex> vertices) {
+	RenderBuffer* VulkanRenderAllocator::createVertexBuffer(const std::vector<Vertex>& vertices) {
 		return render->createVertexBuffer(vertices);
 	}
 

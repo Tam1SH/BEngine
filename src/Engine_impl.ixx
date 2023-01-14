@@ -1,22 +1,25 @@
 #include <tbb.h>
-#include "Physics.hpp"
-#include <variant>
 #include "di.hpp"
+#include "PhysicsImpl.hpp"
 namespace di = boost::di;
 
 export module Engine_impl;
 import Engine;
+import Physics;
+import PhysicsProxy;
 import VulkanRenderProxy;
 import VulkanRender;
 import RenderAllocator;
-//import VulkanWindow;
-//import VulkanRenderAllocator;
-//import RenderAllocatorDecl;
+import VulkanWindow;
+import VulkanRenderAllocator;
 import Render;
-//import Time;
-//import Input;
-//import ScriptState;
-
+import RenderWorld;
+import ObjectFactoryFacade;
+import ScriptState;
+import RigidBodyFactory;
+import ColliderFactory;
+import GameComponentDestroyer;
+import ScriptManager;
 namespace BEbraEngine {
 
     /*
@@ -30,20 +33,22 @@ namespace BEbraEngine {
     */
     int Engine::run()
     {
-        Render render = { RenderType::Vulkan };
-        RenderAllocator allocator ={ std::move(VulkanRenderAllocator{render.get<VulkanRender>()})};
 
-        Physics physics ={ };
-        auto dependency_physics = di::bind<Physics>.to(physics);
-        auto dependency_render = di::bind<Render>.to(render);
-        auto dependency_allocator = di::bind<RenderAllocator>.to(render);
+        VulkanRender* render = new VulkanRender{};
+        VulkanRenderAllocator* alloc = new VulkanRenderAllocator{ *render };
+                                            //протекло.
+        Physics* physics = new PhysicsProxy(createPhysicsImpl());
+
+
+        auto dependency_render = di::bind<Render>.to(*render);
+        auto dependency_allocator = di::bind<RenderAllocator>.to(*alloc);
+        auto dependency_physics = di::bind<Physics>.to(*physics);
         const auto injector = di::make_injector(
-            dependency_render,
-            dependency_allocator,
-            dependency_physics
-        );
+            dependency_render, dependency_allocator, dependency_physics);
 
-
+        auto window = injector.create<VulkanWindow>();
+        window.createWindow(Vector2(1000, 1000), "BEEEBRA!!!");
+        auto gameState = injector.create<ScriptState>();
         
         //allocator = BEbraEngine::create::renderAllocator1(render);
         //window = BEbraEngine::create::window(render);
